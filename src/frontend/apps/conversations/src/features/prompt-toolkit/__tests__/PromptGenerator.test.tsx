@@ -117,7 +117,7 @@ describe('<PromptGenerator />', () => {
     ).toBeInTheDocument();
     expect(
       String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
-    ).toContain('<prompts>');
+    ).toContain('<prompt n=\\"2\\">');
     expect(
       String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
     ).toContain('mistral-medium');

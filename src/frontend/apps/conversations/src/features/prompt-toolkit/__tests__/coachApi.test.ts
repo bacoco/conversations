@@ -1,5 +1,6 @@
 import {
   asPlainText,
+  numberPrompts,
   extractJson,
   parseAnalysis,
   parseImprovement,
@@ -58,5 +59,13 @@ describe('asPlainText', () => {
     expect(text).toContain('2. Ajouter l’ordre du jour.');
     expect(text).toContain('Ton : formel');
     expect(text).not.toContain('null');
+  });
+});
+
+describe('numberPrompts', () => {
+  it('numbers the pasted prompts in order', () => {
+    expect(numberPrompts('Résume.\n\nTraduis.\n---\nCorrige.')).toBe(
+      '<prompt n="1">\nRésume.\n</prompt>\n<prompt n="2">\nTraduis.\n</prompt>\n<prompt n="3">\nCorrige.\n</prompt>',
+    );
   });
 });

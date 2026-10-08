@@ -1,5 +1,5 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -8,7 +8,10 @@ import { Box, Icon, Text } from '@/components';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { LibraryView } from '../library/LibraryView';
-import { useSectionReset } from '../stores/usePromptToolkitStore';
+import {
+  usePromptToolkitStore,
+  useSectionReset,
+} from '../stores/usePromptToolkitStore';
 
 import { PromptGenerator } from './PromptGenerator';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
@@ -318,6 +321,17 @@ export const ToolsPanel = () => {
   const { t } = useTranslation();
   const tools = useMemo(() => getDailyTools(t), [t]);
   const [openId, setOpenId] = useState<string | null>(null);
+  // A tool asked from a suggestion opens directly.
+  const toolRequest = usePromptToolkitStore((state) => state.toolRequest);
+  const clearToolRequest = usePromptToolkitStore(
+    (state) => state.clearToolRequest,
+  );
+  useEffect(() => {
+    if (toolRequest) {
+      setOpenId(toolRequest);
+      clearToolRequest();
+    }
+  }, [toolRequest, clearToolRequest]);
   const openTool = tools.find((tool) => tool.id === openId);
   // The trash button empties the open tool by mounting it afresh.
   const [resetKey, setResetKey] = useState(0);

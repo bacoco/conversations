@@ -65,6 +65,10 @@ interface PromptToolkitState {
   lessonRequest: string | null;
   openLesson: (lessonId: string) => void;
   clearLessonRequest: () => void;
+  /** A tool to open in the tools section, asked from a suggestion. */
+  toolRequest: string | null;
+  openTool: (toolId: string) => void;
+  clearToolRequest: () => void;
   setWidth: (width: number) => void;
   toggleExpanded: () => void;
   setResizing: (isResizing: boolean) => void;
@@ -110,6 +114,15 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           fill: null,
         }),
       clearLessonRequest: () => set({ lessonRequest: null }),
+      toolRequest: null,
+      openTool: (toolId) =>
+        set({
+          toolRequest: toolId,
+          mode: 'tools',
+          showHome: false,
+          fill: null,
+        }),
+      clearToolRequest: () => set({ toolRequest: null }),
       // Home always opens on Robin's welcome; "Get started" shows the cards.
       goHome: () =>
         set({

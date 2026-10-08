@@ -5,10 +5,16 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { ROBIN_AVATAR_URL } from '../components/PanelHome';
+import { getCourseContent } from '../learn/content';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { getDailyTools } from '../tools/tools';
 
 import { getPromptLibrary } from './content';
-import { useRecommendations } from './useRecommendations';
+import {
+  Suggestion,
+  libraryToSuggestions,
+  useRecommendations,
+} from './useRecommendations';
 
 const chipCss = css`
   display: inline-flex;
@@ -43,14 +49,52 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
     () => getPromptLibrary(i18n.language),
     [i18n.language],
   );
+  const suggestions = useMemo<Suggestion[]>(() => {
+    const tools = getDailyTools(t).map((tool) => ({
+      key: `tool-${tool.id}`,
+      kind: 'tool' as const,
+      id: tool.id,
+      title: tool.title,
+      summary: `${tool.title} — ${tool.description}`,
+    }));
+    const lessons = getCourseContent(i18n.language).lessons.map(
+      (lesson, index) => ({
+        key: lesson.id,
+        kind: 'lesson' as const,
+        id: lesson.id,
+        title: t('Lesson {{number}}: {{title}}', {
+          number: index + 1,
+          title: lesson.title,
+        }),
+        summary: `${lesson.title} — ${lesson.slides.map((s) => s.title).join(', ')}`,
+      }),
+    );
+    return [...libraryToSuggestions(library), ...tools, ...lessons];
+  }, [library, t, i18n.language]);
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const startFill = usePromptToolkitStore((state) => state.startFill);
+  const openTool = usePromptToolkitStore((state) => state.openTool);
+  const openLesson = usePromptToolkitStore((state) => state.openLesson);
   const [dismissedFor, setDismissedFor] = useState<string | null>(null);
-  const suggestions = useRecommendations(chatInput, library, isActive);
+  const found = useRecommendations(chatInput, suggestions, isActive);
 
-  if (suggestions.length === 0 || dismissedFor === chatInput.trim()) {
+  if (found.length === 0 || dismissedFor === chatInput.trim()) {
     return null;
   }
+
+  const choose = (suggestion: Suggestion) => {
+    if (suggestion.kind === 'tool') {
+      openTool(suggestion.id);
+    } else if (suggestion.kind === 'lesson') {
+      openLesson(suggestion.id);
+    } else {
+      const prompt = library.prompts.find((p) => p.id === suggestion.id);
+      if (prompt) {
+        startFill(prompt.prompt, prompt.title, chatInput);
+      }
+    }
+  };
+  const icon = { prompt: 'auto_awesome', tool: 'apps', lesson: 'school' };
 
   return (
     <Box
@@ -77,7 +121,7 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
           style={{ flex: 'none', borderRadius: '50%' }}
         />
         <Text $size="sm" $weight="700" $css="flex: 1;">
-          {t('Robin suggests a ready-made prompt')}
+          {t('Robin suggests')}
         </Text>
         <Box
           as="button"
@@ -90,18 +134,21 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
         </Box>
       </Box>
       <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
-        {suggestions.map((prompt) => (
+        {found.map((suggestion) => (
           <Box
-            key={prompt.id}
+            key={suggestion.key}
             as="button"
             type="button"
-            title={prompt.description}
-            onClick={() => startFill(prompt.prompt, prompt.title, chatInput)}
+            onClick={() => choose(suggestion)}
             $direction="row"
             $css={chipCss}
           >
-            <Icon iconName="auto_awesome" $size="16px" $withThemeInherited />
-            {prompt.title}
+            <Icon
+              iconName={icon[suggestion.kind]}
+              $size="16px"
+              $withThemeInherited
+            />
+            {suggestion.title}
           </Box>
         ))}
       </Box>

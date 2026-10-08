@@ -2,41 +2,64 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogEntry, matchCatalog } from '../coach/coachApi';
 
-import type { LibraryPrompt, PromptLibrary } from './types';
+import type { PromptLibrary } from './types';
 
 /** Wait for a real pause in typing before asking the model. */
 export const RECOMMENDATION_DEBOUNCE_MS = 1500;
 /** Shorter drafts do not say enough about the need. */
 export const RECOMMENDATION_MIN_LENGTH = 15;
 
-export const toCatalog = (library: PromptLibrary): CatalogEntry[] =>
+/** Something the panel can suggest: a library prompt, a tool or a lesson. */
+export interface Suggestion {
+  /**
+   * Unique across kinds, and simple enough for the model to copy as is:
+   * the prompt id, "tool-<id>", or the lesson id ("lesson-3").
+   */
+  key: string;
+  kind: 'prompt' | 'tool' | 'lesson';
+  id: string;
+  title: string;
+  /** How the model sees it: title, description, keywords. */
+  summary: string;
+}
+
+export const libraryToSuggestions = (library: PromptLibrary): Suggestion[] =>
   library.prompts.map((prompt) => ({
+    key: prompt.id,
+    kind: 'prompt',
     id: prompt.id,
+    title: prompt.title,
     summary: `${prompt.title} — ${prompt.description} (${prompt.keywords.join(', ')})`,
   }));
 
+export const toCatalog = (suggestions: Suggestion[]): CatalogEntry[] =>
+  suggestions.map((suggestion) => ({
+    id: suggestion.key,
+    summary: `[${suggestion.kind}] ${suggestion.summary}`,
+  }));
+
 /**
- * Library prompts that fit what the user is typing, picked by the model
- * after each pause. Results are cached per text, so going back costs nothing.
+ * What fits what the user is typing, picked by the model after each pause.
+ * Results are cached per text, so going back costs nothing.
  */
 export const useRecommendations = (
   text: string,
-  library: PromptLibrary,
+  suggestions: Suggestion[],
   enabled: boolean,
-): LibraryPrompt[] => {
-  const catalog = useMemo(() => toCatalog(library), [library]);
+): Suggestion[] => {
+  const catalog = useMemo(() => toCatalog(suggestions), [suggestions]);
   const cacheRef = useRef(new Map<string, string[]>());
-  const [ids, setIds] = useState<string[]>([]);
+  const [keys, setKeys] = useState<string[]>([]);
   const need = text.trim();
 
   useEffect(() => {
     if (!enabled || need.length < RECOMMENDATION_MIN_LENGTH) {
-      setIds([]);
+      setKeys([]);
       return;
     }
     const cached = cacheRef.current.get(need);
     if (cached) {
-      setIds(cached);
+      setKeys(cached);
       return;
     }
     const controller = new AbortController();
@@ -44,7 +67,7 @@ export const useRecommendations = (
       matchCatalog(need, catalog, controller.signal)
         .then((found) => {
           cacheRef.current.set(need, found);
-          setIds(found);
+          setKeys(found);
         })
         // A suggestion is a bonus: on failure, simply show none.
         .catch(() => undefined);
@@ -57,9 +80,9 @@ export const useRecommendations = (
 
   return useMemo(
     () =>
-      ids
-        .map((id) => library.prompts.find((prompt) => prompt.id === id))
-        .filter((prompt): prompt is LibraryPrompt => Boolean(prompt)),
-    [ids, library],
+      keys
+        .map((key) => suggestions.find((suggestion) => suggestion.key === key))
+        .filter((suggestion): suggestion is Suggestion => Boolean(suggestion)),
+    [keys, suggestions],
   );
 };
