@@ -8,6 +8,11 @@ import { useAssistantHealth } from '@/features/chat/api/useAssistantHealth';
 import { useChatPreferencesStore } from '@/features/chat/stores/useChatPreferencesStore';
 import { Header } from '@/features/header';
 import { LeftPanel } from '@/features/left-panel';
+import {
+  RightPanel,
+  usePanelWidth,
+  usePromptToolkitStore,
+} from '@/features/prompt-toolkit';
 import { SourcePanel } from '@/features/sources-panel';
 import { MAIN_LAYOUT_ID } from '@/layouts/conf';
 import { useResponsiveStore } from '@/stores';
@@ -24,6 +29,15 @@ export function MainLayout({
 }: PropsWithChildren<MainLayoutProps>) {
   const { isDesktop } = useResponsiveStore();
   const { isPanelOpen, isSourcesPanelOpen } = useChatPreferencesStore();
+  const { isOpen: isPromptToolkitOpen, isResizing } = usePromptToolkitStore();
+  const promptToolkitWidth = usePanelWidth();
+  // The sources panel takes precedence: both live on the right side.
+  const showPromptToolkit = isPromptToolkitOpen && !isSourcesPanelOpen;
+  // Mounted on first opening, then kept so the coach keeps its state.
+  const [hasOpenedPromptToolkit, setHasOpenedPromptToolkit] = useState(false);
+  if (showPromptToolkit && !hasOpenedPromptToolkit) {
+    setHasOpenedPromptToolkit(true);
+  }
   const { data: config } = useConfig();
   const { data: assistantHealth } = useAssistantHealth();
   const [sourcesAnchorEl, setSourcesAnchorEl] = useState<HTMLDivElement | null>(
@@ -33,6 +47,9 @@ export function MainLayout({
   const leftPanelOffset = isDesktop && isPanelOpen ? 300 : 0;
   const sourcesPanelOffset =
     isDesktop && isSourcesPanelOpen ? SOURCES_PANEL_WIDTH_PX : 0;
+  const promptToolkitOffset =
+    isDesktop && showPromptToolkit ? promptToolkitWidth : 0;
+  const rightPanelOffset = Math.max(sourcesPanelOffset, promptToolkitOffset);
 
   return (
     <Box className="--docs--main-layout">
@@ -56,11 +73,26 @@ export function MainLayout({
               : undefined
           }
           $css={css`
-            transition: all 0.3s ease;
+            transition: ${isResizing ? 'none' : 'all 0.3s ease'};
             position: fixed;
             left: ${leftPanelOffset}px;
-            width: calc(100vw - ${leftPanelOffset}px - ${sourcesPanelOffset}px);
+            width: calc(100vw - ${leftPanelOffset}px - ${rightPanelOffset}px);
             min-height: 100dvh;
+            /* Next to the right panel, keep a margin around the chat content. */
+            ${
+              promptToolkitOffset
+                ? css`
+                    --chat-content-max-width: min(
+                      ${
+                        isDesktop && !isPanelOpen
+                          ? 'calc(var(--chat-content-base) + var(--left-panel-width))'
+                          : 'var(--chat-content-base)'
+                      },
+                      calc(100% - 48px)
+                    );
+                  `
+                : ''
+            }
           `}
         >
           <Header />
@@ -132,6 +164,41 @@ export function MainLayout({
               transition: right 0.3s ease;
             `}
           />
+          <Box
+            aria-hidden={!showPromptToolkit}
+            className="main-layout__prompt-toolkit"
+            $css={css`
+              ${
+                isDesktop
+                  ? css`
+                      /* Full height: its tabs share the header row. */
+                      position: fixed;
+                      top: 0;
+                      right: ${
+                        showPromptToolkit ? '0px' : `-${promptToolkitWidth}px`
+                      };
+                      bottom: 0;
+                      z-index: 1001;
+                      width: ${promptToolkitWidth}px;
+                    `
+                  : css`
+                      position: fixed;
+                      inset: 0;
+                      width: 100%;
+                      z-index: 1002;
+                    `
+              }
+              /* On desktop only the panel's own parts take the clicks, so the
+                 header buttons under its transparent top row stay usable. */
+              pointer-events: ${showPromptToolkit && !isDesktop ? 'auto' : 'none'};
+              visibility: ${showPromptToolkit ? 'visible' : 'hidden'};
+              transition: ${isResizing ? 'none' : 'right 0.3s ease'};
+            `}
+          >
+            {hasOpenedPromptToolkit && (
+              <RightPanel isVisible={showPromptToolkit} />
+            )}
+          </Box>
         </Box>
       </SourcePanel>
     </Box>

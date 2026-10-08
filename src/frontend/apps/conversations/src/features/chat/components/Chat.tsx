@@ -58,6 +58,7 @@ import {
   STATUS_LINK_KINDS,
   getReindexErrorMessage,
 } from '@/features/chat/components/reindexErrorMessages';
+import { usePromptToolkitStore } from '@/features/prompt-toolkit';
 import { useSourcePanelAnchor } from '@/features/sources-panel';
 import { useClipboard } from '@/hook';
 import { useResponsiveStore } from '@/stores';
@@ -111,6 +112,7 @@ export const Chat = ({
     selectedModelHrid,
     setSelectedModelHrid,
     setSourcesPanelOpen,
+    isSourcesPanelOpen: isSourcesPanelOpenInStore,
   } = useChatPreferencesStore();
 
   const { data: llmConfig } = useLLMConfiguration();
@@ -342,6 +344,21 @@ export const Chat = ({
     [],
   );
 
+  // Let the prompt coach panel follow and replace the input.
+  const registerChatInput = usePromptToolkitStore(
+    (state) => state.registerChatInput,
+  );
+  // With the prompt coach open, the composer stays at the bottom, next to
+  // the coach's analyse button.
+  const isPromptToolkitOpen = usePromptToolkitStore((state) => state.isOpen);
+  const publishChatInput = usePromptToolkitStore(
+    (state) => state.publishChatInput,
+  );
+  useEffect(() => registerChatInput(setInput), [registerChatInput]);
+  useEffect(() => {
+    publishChatInput(input);
+  }, [input, publishChatInput]);
+
   // Deliberately not memoized: the hook keeps the latest handler in a ref, so a
   // fresh closure each render is what keeps `setMessages` pointing at the
   // current conversation's chat.
@@ -465,6 +482,13 @@ export const Chat = ({
     setIsSourceOpen(null);
     setSourcesPanelOpen(false);
   }, [initialConversationId, setSourcesPanelOpen]);
+
+  // The sources panel can be closed from outside (e.g. by the prompt toolkit).
+  useEffect(() => {
+    if (!isSourcesPanelOpenInStore) {
+      setIsSourceOpen(null);
+    }
+  }, [isSourcesPanelOpenInStore]);
 
   const selectedSourceParts = useMemo(() => {
     if (!isSourceOpen) {
@@ -1203,6 +1227,7 @@ export const Chat = ({
           position: relative;
           bottom: ${isMobile ? '8px' : '20px'};
           margin: auto;
+          ${isPromptToolkitOpen && !isMobile ? 'margin-bottom: 0;' : ''}
           background-color: var(--c--contextuals--background--surface--secondary);
           z-index: 1000;
         `}

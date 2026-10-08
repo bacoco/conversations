@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- ✨(front) add an optional prompt-writing side panel (coach, course, prompt library)
+
 ### Fixed
 
 - ⚡️(front) disable posthog-js periodic feature flag reloads

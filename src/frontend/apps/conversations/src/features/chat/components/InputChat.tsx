@@ -3,6 +3,7 @@ import { ArrowSquarepath, FileDelete } from '@gouvfr-lasuite/ui-kit/icons';
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -320,6 +321,29 @@ export const InputChat = ({
   };
 
   const formPadding = isDesktop ? STYLES.formPadding : STYLES.formPaddingMobile;
+
+  // Fit the height when the input is set programmatically (retry, prompt
+  // coach, reset after sending) or when its width changes (side panels):
+  // the change handler below only runs on keystrokes.
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const fit = () => {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+    };
+    fit();
+    if (typeof ResizeObserver === 'undefined') return;
+    let width = textarea.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (textarea.clientWidth !== width) {
+        width = textarea.clientWidth;
+        fit();
+      }
+    });
+    observer.observe(textarea);
+    return () => observer.disconnect();
+  }, [input]);
 
   // handlers
   const handleTextareaChange = useCallback(

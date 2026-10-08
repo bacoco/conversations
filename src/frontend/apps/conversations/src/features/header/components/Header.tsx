@@ -15,6 +15,11 @@ import { Box } from '@/components/';
 import { useCunninghamTheme } from '@/cunningham';
 import { useChatScroll } from '@/features/chat/hooks';
 import { useChatPreferencesStore } from '@/features/chat/stores/useChatPreferencesStore';
+import {
+  RightPanelToggle,
+  usePanelWidth,
+  usePromptToolkitStore,
+} from '@/features/prompt-toolkit';
 import { useResponsiveStore } from '@/stores';
 import { useConversationRouteId } from '@/utils';
 
@@ -47,7 +52,13 @@ export const Header = () => {
   const showLaGaufre =
     (componentTokens as Record<string, unknown>)['la-gaufre'] === true;
   const { isDesktop } = useResponsiveStore();
-  const { setPanelOpen } = useChatPreferencesStore();
+  const { setPanelOpen, isSourcesPanelOpen } = useChatPreferencesStore();
+  const { isOpen: isRightPanelOpen, isResizing } = usePromptToolkitStore();
+  const rightPanelWidth = usePanelWidth();
+  // The right panel opens under the header: span over it so the account
+  // menu keeps its place at the right edge of the screen.
+  const rightPanelOverlap =
+    isDesktop && isRightPanelOpen && !isSourcesPanelOpen ? rightPanelWidth : 0;
   const { isAtTop } = useChatScroll();
   const navigate = useNavigate();
   const hasConversationIdInRoute = !!useConversationRouteId();
@@ -58,6 +69,9 @@ export const Header = () => {
       $css={headerStyles}
       style={{
         height: `${HEADER_HEIGHT}px`,
+        right: `-${rightPanelOverlap}px`,
+        width: `calc(100% + ${rightPanelOverlap}px)`,
+        transition: isResizing ? 'none' : 'right 0.3s ease, width 0.3s ease',
         padding: `${isDesktop ? '0' : '12px'} ${spacingsTokens['base']}`,
         background: `${
           isAtTop
@@ -94,6 +108,9 @@ export const Header = () => {
       {!isDesktop ? (
         <Box $direction="row" $gap={spacingsTokens['sm']} $align="center">
           <Box className="selector-header">
+            <RightPanelToggle />
+          </Box>
+          <Box className="selector-header">
             <Button
               size="small"
               onClick={() => {
@@ -110,7 +127,13 @@ export const Header = () => {
         </Box>
       ) : (
         <Box $align="center" $direction="column">
-          <Box $direction="row" $gap="4px" className="selector-header">
+          <Box
+            $direction="row"
+            $gap="4px"
+            className="selector-header"
+            data-header-account-tools
+          >
+            <RightPanelToggle />
             {showLaGaufre && <LaGaufre />}
             <Suspense fallback={null}>
               <UserInfo />
