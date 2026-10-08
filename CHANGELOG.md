@@ -12,6 +12,7 @@ and this project adheres to
 
 - ⚡️(front) disable posthog-js periodic feature flag reloads
 - 🐛(front) cache hashed static assets and revalidate html
+- 🐛(front) show a reload page instead of a blank page on render errors
 
 ### Security
 
