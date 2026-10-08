@@ -406,6 +406,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
             template={fill.template}
             title={fill.title}
             context={fill.context}
+            mode={fill.mode}
           />
         )}
         <Box

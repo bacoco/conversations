@@ -78,4 +78,33 @@ describe('guided prompt filling', () => {
     );
     expect(usePromptToolkitStore.getState().fill).toBeNull();
   });
+
+  it('strengthens a draft, then changes the final prompt on request', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(completion({ final_prompt: 'Long prompt.' }))
+      .mockResolvedValueOnce(
+        completion({ improved_prompt: 'Short prompt.', changes: ['Shorter'] }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <PromptFillView
+        template="Summarise the report"
+        title="Draft"
+        mode="draft"
+      />,
+    );
+    expect(await screen.findByText('Long prompt.')).toBeInTheDocument();
+    const [, first] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(String(first.body)).toContain('<draft>');
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Shorter' }));
+    });
+    expect(await screen.findByText('Short prompt.')).toBeInTheDocument();
+    const [, second] = fetchMock.mock.calls[1] as [string, RequestInit];
+    expect(String(second.body)).toContain('Long prompt.');
+    expect(String(second.body)).toContain('mistral-medium');
+  });
 });

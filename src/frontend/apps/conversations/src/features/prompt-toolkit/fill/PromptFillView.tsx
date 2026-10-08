@@ -5,11 +5,18 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { FillStep, nextFillStep } from '../coach/coachApi';
+import {
+  FILL_MODEL,
+  FillMode,
+  FillStep,
+  nextFillStep,
+  refinePrompt,
+} from '../coach/coachApi';
 import { languageName } from '../coach/language';
 import { CoachStatus } from '../components/CoachStatus';
 import { ROBIN_AVATAR_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
+import { RefineBar } from '../components/RefineBar';
 import { useReward } from '../rewards/useReward';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
@@ -74,10 +81,12 @@ export const PromptFillView = ({
   template,
   title,
   context = '',
+  mode = 'template',
 }: {
   template: string;
   title: string;
   context?: string;
+  mode?: FillMode;
 }) => {
   const { t, i18n } = useTranslation();
   const { showToast } = useToast();
@@ -93,6 +102,11 @@ export const PromptFillView = ({
     'loading',
   );
   const [answer, setAnswer] = useState('');
+  /** Changes asked on the final prompt, shown as a conversation. */
+  const [adjustments, setAdjustments] = useState<
+    { request: string; reply: string }[]
+  >([]);
+  const [isAdjusting, setIsAdjusting] = useState(false);
   const controllerRef = useRef<AbortController | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const answerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -110,6 +124,7 @@ export const PromptFillView = ({
         controller.signal,
         finishNow,
         context,
+        mode,
       )
         .then((next) => {
           setStep(next);
@@ -121,7 +136,7 @@ export const PromptFillView = ({
           }
         });
     },
-    [template, language, context],
+    [template, language, context, mode],
   );
 
   // Start, and start over when the trash button is pressed.
@@ -129,6 +144,7 @@ export const PromptFillView = ({
     setExchanges([]);
     setStep(null);
     setAnswer('');
+    setAdjustments([]);
     ask([]);
     return () => controllerRef.current?.abort();
   }, [ask, resetCount]);
@@ -139,7 +155,7 @@ export const PromptFillView = ({
     if (status === 'ready' && step?.kind === 'question') {
       answerRef.current?.focus();
     }
-  }, [exchanges, step, status]);
+  }, [exchanges, step, status, adjustments]);
 
   const reply = (text: string) => {
     if (step?.kind !== 'question' || status === 'loading') {
@@ -164,6 +180,47 @@ export const PromptFillView = ({
     }
   };
 
+  // "Change the tone", "add a date": Robin edits the final prompt in place.
+  const adjust = async (request: string) => {
+    if (step?.kind !== 'final') {
+      return;
+    }
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    setIsAdjusting(true);
+    try {
+      const adjusted = await refinePrompt(
+        step.prompt,
+        request,
+        language,
+        controller.signal,
+        FILL_MODEL,
+      );
+      setStep({ kind: 'final', prompt: adjusted.improvedPrompt });
+      setAdjustments((list) => [
+        ...list,
+        {
+          request,
+          reply: adjusted.changes.length
+            ? t('Done: {{changes}}.', {
+                changes: adjusted.changes.join(', '),
+              })
+            : t('Done, the prompt is updated.'),
+        },
+      ]);
+    } catch {
+      if (!controller.signal.aborted) {
+        showToast(
+          'error',
+          t('Robin could not change the prompt. Please retry.'),
+        );
+      }
+    } finally {
+      setIsAdjusting(false);
+    }
+  };
+
   const copy = async (prompt: string) => {
     await navigator.clipboard.writeText(prompt);
     showToast('success', t('Copied to clipboard.'), undefined, 2000);
@@ -175,11 +232,13 @@ export const PromptFillView = ({
   return (
     <Box $css="min-height: 100%;">
       <CoachStatus
-        isLoading={status === 'loading'}
+        isLoading={status === 'loading' || isAdjusting}
         loadingLabel={
-          exchanges.length === 0
-            ? t('Robin is reading the prompt…')
-            : t('Robin is preparing the next step…')
+          isAdjusting
+            ? t('Robin is changing the prompt…')
+            : exchanges.length === 0
+              ? t('Robin is reading the prompt…')
+              : t('Robin is preparing the next step…')
         }
       />
       <Box $gap="14px" $padding={{ all: 'base' }} $css="flex: 1;">
@@ -203,9 +262,13 @@ export const PromptFillView = ({
         </Box>
 
         <Text $size="sm" $variation="secondary">
-          {t(
-            'Robin asks you a few questions, then writes the complete prompt for you.',
-          )}
+          {mode === 'draft'
+            ? t(
+                'Robin asks you two or three questions, then writes a stronger version of your prompt.',
+              )
+            : t(
+                'Robin asks you a few questions, then writes the complete prompt for you.',
+              )}
         </Text>
 
         <Box
@@ -255,6 +318,23 @@ export const PromptFillView = ({
             <Button size="small" onClick={() => ask(exchanges)}>
               {t('Retry')}
             </Button>
+          </Box>
+        )}
+
+        {adjustments.length > 0 && (
+          <Box
+            as="ol"
+            $gap="10px"
+            $css="margin: 0; padding: 0; list-style: none;"
+          >
+            {adjustments.map((item, index) => (
+              <Box as="li" key={index} $gap="10px">
+                <Box $direction="row" $justify="flex-end">
+                  <Box $css={bubbleCss(true)}>{item.request}</Box>
+                </Box>
+                <RobinBubble>{item.reply}</RobinBubble>
+              </Box>
+            ))}
           </Box>
         )}
 
@@ -312,6 +392,10 @@ export const PromptFillView = ({
                 {t('Use this prompt')}
               </Button>
             </Box>
+            <RefineBar
+              onRefine={(request) => void adjust(request)}
+              isRefining={isAdjusting}
+            />
           </Box>
         )}
         <div ref={bottomRef} />

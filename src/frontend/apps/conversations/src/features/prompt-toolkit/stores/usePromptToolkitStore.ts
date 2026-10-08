@@ -57,9 +57,20 @@ interface PromptToolkitState {
   setCoachOptionsOpen: (isOpen: boolean) => void;
   resetSection: () => void;
   /** A prompt being completed by guided questions, shown over the section. */
-  fill: { template: string; title: string; context?: string } | null;
+  fill: {
+    template: string;
+    title: string;
+    context?: string;
+    /** "draft": strengthen the user's own text rather than fill blanks. */
+    mode?: 'template' | 'draft';
+  } | null;
   /** `context`: what the user already wrote, used to ask fewer questions. */
-  startFill: (template: string, title: string, context?: string) => void;
+  startFill: (
+    template: string,
+    title: string,
+    context?: string,
+    mode?: 'template' | 'draft',
+  ) => void;
   closeFill: () => void;
   /** A lesson to open in the course, asked from another section. */
   lessonRequest: string | null;
@@ -102,8 +113,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         set({ coachMode, mode: 'coach', showHome: false, fill: null }),
       openSection: (mode) => set({ mode, showHome: false, fill: null }),
       fill: null,
-      startFill: (template, title, context) =>
-        set({ fill: { template, title, context } }),
+      startFill: (template, title, context, mode) =>
+        set({ fill: { template, title, context, mode } }),
       closeFill: () => set({ fill: null }),
       lessonRequest: null,
       openLesson: (lessonId) =>

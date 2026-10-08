@@ -19,6 +19,7 @@ import { levelColor, levelLabel } from '../coach/levels';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { wordDiff } from '../coach/wordDiff';
+import { useAskRobin } from '../fill/useAskRobin';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { getCourseContent } from '../learn/content';
 import {
@@ -39,6 +40,7 @@ import { CoachStatus } from './CoachStatus';
 import { DiffView } from './DiffView';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
 import { ImpactView } from './ImpactView';
+import { ROBIN_AVATAR_URL } from './PanelHome';
 import { RefineBar } from './RefineBar';
 import { ScoreGauge } from './ScoreGauge';
 import { SessionReviewPanel } from './SessionReviewPanel';
@@ -91,6 +93,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const { showToast } = useToast();
   const offerPrompt = useOfferPrompt();
   const reward = useReward();
+  const askRobin = useAskRobin();
   const openLesson = usePromptToolkitStore((state) => state.openLesson);
   const setSlidePosition = useLearnProgressStore(
     (state) => state.setSlidePosition,
@@ -873,6 +876,25 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
           }
           onClick={analysis.analyzeNow}
           isLoading={analysis.status === 'loading'}
+          secondary={
+            <Button
+              size="small"
+              color="neutral"
+              variant="secondary"
+              onClick={askRobin.ask}
+              icon={
+                <img
+                  src={ROBIN_AVATAR_URL}
+                  alt=""
+                  width={20}
+                  height={20}
+                  style={{ borderRadius: '50%' }}
+                />
+              }
+            >
+              {t('Improve with Robin')}
+            </Button>
+          }
           // The button is only shown with text, even a short one.
           disabled={
             analysis.status === 'loading' ||

@@ -405,6 +405,30 @@ How you work:
 
 Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is; none when you ask to paste a text>"]} or {"final_prompt": "..."}.`;
 
+/** Fill a template's blanks, or strengthen the user's own draft. */
+export type FillMode = 'template' | 'draft';
+
+/** A draft needs fewer questions: only what matters most. */
+export const DRAFT_MAX_QUESTIONS = 3;
+
+const DRAFT_SYSTEM_PROMPT = (language: string, draft: string) =>
+  `You are Robin, a warm and capable assistant who helps a public servant turn their draft into a strong prompt for an AI assistant.
+
+Draft:
+<draft>
+${draft}
+</draft>
+
+How you work:
+- You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on.
+- Find what the draft lacks most among: the precise task, the context, the expected format, the audience, the constraints. Ask about it, one question at a time, at most ${DRAFT_MAX_QUESTIONS} questions, the most useful first.
+- Before each question, check the draft and every answer so far: never ask about something already stated (e.g. "my team" already gives the audience), and never ask the same thing twice. An answer may cover several points at once: take them all into account.
+- If an answer cannot be used, say so kindly and ask again with an example. If the user asks you something, answer it first.
+- Never invent names, dates, figures or facts.
+- When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with the answers, keeping the user's intent and any pasted text, clear and complete, with no brackets left.
+
+Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "..."}.`;
+
 export const parseFillStep = (raw: Record<string, unknown>): FillStep => {
   if (typeof raw.final_prompt === 'string' && raw.final_prompt.trim()) {
     return { kind: 'final', prompt: raw.final_prompt.trim() };
@@ -428,9 +452,18 @@ export const nextFillStep = async (
   signal?: AbortSignal,
   finishNow = false,
   context = '',
+  mode: FillMode = 'template',
 ): Promise<FillStep> => {
+  const maxQuestions =
+    mode === 'draft' ? DRAFT_MAX_QUESTIONS : FILL_MAX_QUESTIONS;
   const messages: ChatMessage[] = [
-    { role: 'system', content: FILL_SYSTEM_PROMPT(language, template) },
+    {
+      role: 'system',
+      content:
+        mode === 'draft'
+          ? DRAFT_SYSTEM_PROMPT(language, template)
+          : FILL_SYSTEM_PROMPT(language, template),
+    },
     {
       role: 'user',
       content: context.trim()
@@ -444,7 +477,7 @@ export const nextFillStep = async (
       { role: 'user', content: answer },
     );
   }
-  const mustFinish = finishNow || answers.length >= FILL_MAX_QUESTIONS;
+  const mustFinish = finishNow || answers.length >= maxQuestions;
   if (mustFinish) {
     messages.push({
       role: 'user',
@@ -555,7 +588,7 @@ const REFINE_SYSTEM_PROMPT = (language: string) =>
   `You are a prompt-writing coach for public servants using an AI assistant.
 ${COMMON_RULES(language)}
 The user gives you a prompt and how to adjust it. Apply exactly that adjustment, keep everything else.
-Never add a name, role, figure, date or fact that is not in the prompt: write a placeholder between square brackets instead.
+Keep every name, date, figure and fact already in the prompt exactly as written. Never invent new ones; if the adjustment needs a fact the user did not give, write a placeholder between square brackets for that new fact only.
 JSON shape: {"improved_prompt": "<the adjusted prompt>", "changes": ["<at most 3 short items>"]}`;
 
 export const refinePrompt = async (
@@ -563,13 +596,20 @@ export const refinePrompt = async (
   request: string,
   language: string,
   signal?: AbortSignal,
+  model = COACH_MODEL,
 ) =>
   parseImprovement(
-    await complete(
-      REFINE_SYSTEM_PROMPT(language),
-      `<prompt>\n${prompt}\n</prompt>\n<adjustment>\n${request}\n</adjustment>`,
+    await completeMessages(
+      [
+        { role: 'system', content: REFINE_SYSTEM_PROMPT(language) },
+        {
+          role: 'user',
+          content: `<prompt>\n${prompt}\n</prompt>\n<adjustment>\n${request}\n</adjustment>`,
+        },
+      ],
       signal,
-      false,
+      0.2,
+      model,
     ),
   );
 

@@ -1,4 +1,5 @@
 import { Loader } from '@gouvfr-lasuite/cunningham-react';
+import { ReactNode } from 'react';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
@@ -14,11 +15,14 @@ export const FloatingAnalyzeButton = ({
   onClick,
   disabled,
   isLoading,
+  secondary,
 }: {
   label: string;
   onClick: () => void;
   disabled: boolean;
   isLoading: boolean;
+  /** A second action at the right of the bar, e.g. "Improve with Robin". */
+  secondary?: ReactNode;
 }) => (
   <Box
     $direction="row"
@@ -85,5 +89,6 @@ export const FloatingAnalyzeButton = ({
     >
       {label}
     </Text>
+    {secondary && <Box $css="margin-left: auto;">{secondary}</Box>}
   </Box>
 );

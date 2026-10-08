@@ -92,4 +92,20 @@ describe('<RecommendationBar />', () => {
     expect(keys.some((key) => /^(tool-|lesson-)/.test(key))).toBe(false);
     expect(new Set(keys).size).toBe(keys.length);
   });
+
+  it('always offers to improve the text with Robin', () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(completion({ ids: [] })));
+    usePromptToolkitStore.setState({
+      chatInput: 'write something to my team about Monday',
+    });
+    render(<RecommendationBar isActive />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /Improve my text with Robin/ }),
+    );
+    expect(usePromptToolkitStore.getState().fill).toMatchObject({
+      template: 'write something to my team about Monday',
+      mode: 'draft',
+    });
+  });
 });

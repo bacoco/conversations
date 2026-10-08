@@ -5,12 +5,14 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { ROBIN_AVATAR_URL } from '../components/PanelHome';
+import { useAskRobin } from '../fill/useAskRobin';
 import { getCourseContent } from '../learn/content';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { getDailyTools } from '../tools/tools';
 
 import { getPromptLibrary } from './content';
 import {
+  RECOMMENDATION_MIN_LENGTH,
   Suggestion,
   libraryToSuggestions,
   useRecommendations,
@@ -77,8 +79,10 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
   const openLesson = usePromptToolkitStore((state) => state.openLesson);
   const [dismissedFor, setDismissedFor] = useState<string | null>(null);
   const found = useRecommendations(chatInput, suggestions, isActive);
+  const askRobin = useAskRobin();
 
-  if (found.length === 0 || dismissedFor === chatInput.trim()) {
+  const isLongEnough = chatInput.trim().length >= RECOMMENDATION_MIN_LENGTH;
+  if (!isActive || !isLongEnough || dismissedFor === chatInput.trim()) {
     return null;
   }
 
@@ -134,6 +138,30 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
         </Box>
       </Box>
       <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
+        {/* Always there: Robin strengthens the user's own text. */}
+        <Box
+          as="button"
+          type="button"
+          onClick={askRobin.ask}
+          $direction="row"
+          $css={css`
+            ${chipCss}
+            color: var(--c--contextuals--content--semantic--brand--on-brand);
+            border-color: transparent;
+            background: var(
+              --c--contextuals--background--semantic--brand--primary
+            );
+            &:hover {
+              background: var(
+                --c--contextuals--background--semantic--brand--primary
+              );
+              filter: brightness(1.1);
+            }
+          `}
+        >
+          <Icon iconName="edit_note" $size="16px" $withThemeInherited />
+          {t('Improve my text with Robin')}
+        </Box>
         {found.map((suggestion) => (
           <Box
             key={suggestion.key}
