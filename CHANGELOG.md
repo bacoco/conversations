@@ -11,6 +11,7 @@ and this project adheres to
 ### Fixed
 
 - ⚡️(front) disable posthog-js periodic feature flag reloads
+- 🐛(front) cache hashed static assets and revalidate html
 
 ### Security
 
