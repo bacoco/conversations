@@ -197,7 +197,8 @@ export const PromptFillView = ({
         controller.signal,
         FILL_MODEL,
       );
-      setStep({ kind: 'final', prompt: adjusted.improvedPrompt });
+      // Keep Robin's congratulation; only the prompt changes.
+      setStep({ ...step, prompt: adjusted.improvedPrompt });
       setAdjustments((list) => [
         ...list,
         {
@@ -320,6 +321,9 @@ export const PromptFillView = ({
             </Button>
           </Box>
         )}
+
+        {/* Robin's word on the result comes before any change asked. */}
+        {final?.message && <RobinBubble>{final.message}</RobinBubble>}
 
         {adjustments.length > 0 && (
           <Box

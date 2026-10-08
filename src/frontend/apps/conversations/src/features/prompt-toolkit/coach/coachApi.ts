@@ -375,7 +375,8 @@ const placeholdersOf = (prompt: string) =>
 
 export type FillStep =
   | { kind: 'question'; question: string; suggestions: string[] }
-  | { kind: 'final'; prompt: string };
+  /** `message`: Robin's word of congratulation, when he gives one. */
+  | { kind: 'final'; prompt: string; message?: string };
 
 export const FILL_MAX_QUESTIONS = 6;
 
@@ -386,6 +387,9 @@ export const FILL_MAX_QUESTIONS = 6;
 export const FILL_MODEL =
   env.VITE_PROMPT_COACH_CHAT_MODEL || 'mistral-medium-3-5';
 
+/** Robin's personality, shared by his conversations. */
+const ROBIN_VOICE = `Your voice: warm, encouraging and lively, with a light touch of humour, never childish nor flattering. Short sentences. React to what the user actually said (e.g. "Deux jours par semaine, c'est clair !") rather than a bare "Thank you".`;
+
 const FILL_SYSTEM_PROMPT = (language: string, template: string) =>
   `You are Robin, a warm and capable assistant who helps a public servant prepare a prompt for an AI assistant, starting from a template.
 
@@ -393,6 +397,8 @@ Template:
 <template>
 ${template}
 </template>
+
+${ROBIN_VOICE}
 
 How you work:
 - You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on, then ask for what is missing.
@@ -403,7 +409,7 @@ How you work:
 - Never invent names, dates, figures or facts.
 - At most ${FILL_MAX_QUESTIONS} questions. When everything is gathered, or when the user wants to finish, return the final prompt: the template rewritten in ${language} with the answers, natural and complete, keeping its structure and instructions, with no brackets left and without the <template> tags. Leave out what the user skipped, adapting the wording.
 
-Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is; none when you ask to paste a text>"]} or {"final_prompt": "..."}.`;
+Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is; none when you ask to paste a text>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
 
 /** Fill a template's blanks, or strengthen the user's own draft. */
 export type FillMode = 'template' | 'draft';
@@ -419,6 +425,8 @@ Draft:
 ${draft}
 </draft>
 
+${ROBIN_VOICE}
+
 How you work:
 - You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on.
 - Find what the draft lacks most among: the precise task, the context, the expected format, the audience, the constraints. Ask about it, one question at a time, at most ${DRAFT_MAX_QUESTIONS} questions, the most useful first.
@@ -427,11 +435,16 @@ How you work:
 - Never invent names, dates, figures or facts.
 - When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with the answers, keeping the user's intent and any pasted text, clear and complete, with no brackets left.
 
-Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "..."}.`;
+Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
 
 export const parseFillStep = (raw: Record<string, unknown>): FillStep => {
   if (typeof raw.final_prompt === 'string' && raw.final_prompt.trim()) {
-    return { kind: 'final', prompt: raw.final_prompt.trim() };
+    const message = typeof raw.message === 'string' ? raw.message.trim() : '';
+    return {
+      kind: 'final',
+      prompt: raw.final_prompt.trim(),
+      ...(message ? { message } : {}),
+    };
   }
   const message = raw.message ?? raw.question;
   if (typeof message === 'string' && message.trim()) {
@@ -516,7 +529,7 @@ export const nextFillStep = async (
 const cleanFillStep = (step: FillStep): FillStep =>
   step.kind === 'final'
     ? {
-        kind: 'final',
+        ...step,
         prompt: step.prompt.replace(/<\/?template>/g, '').trim(),
       }
     : step;

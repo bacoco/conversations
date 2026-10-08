@@ -82,7 +82,12 @@ describe('guided prompt filling', () => {
   it('strengthens a draft, then changes the final prompt on request', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(completion({ final_prompt: 'Long prompt.' }))
+      .mockResolvedValueOnce(
+        completion({
+          final_prompt: 'Long prompt.',
+          message: 'Bravo, the deadline makes it clear!',
+        }),
+      )
       .mockResolvedValueOnce(
         completion({ improved_prompt: 'Short prompt.', changes: ['Shorter'] }),
       );
@@ -96,6 +101,9 @@ describe('guided prompt filling', () => {
       />,
     );
     expect(await screen.findByText('Long prompt.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Bravo, the deadline makes it clear!'),
+    ).toBeInTheDocument();
     const [, first] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(String(first.body)).toContain('<draft>');
 
@@ -103,6 +111,10 @@ describe('guided prompt filling', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Shorter' }));
     });
     expect(await screen.findByText('Short prompt.')).toBeInTheDocument();
+    // The congratulation stays after a change.
+    expect(
+      screen.getByText('Bravo, the deadline makes it clear!'),
+    ).toBeInTheDocument();
     const [, second] = fetchMock.mock.calls[1] as [string, RequestInit];
     expect(String(second.body)).toContain('Long prompt.');
     expect(String(second.body)).toContain('mistral-medium');
