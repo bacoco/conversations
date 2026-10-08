@@ -34,7 +34,18 @@ const LEVEL_STYLES: Record<BannerLevel, LevelStyle> = {
   },
 };
 
-export const Banner = ({ level, title, content }: StatusBanner) => {
+interface BannerAction {
+  label: string;
+  onClick: () => void;
+}
+
+// `action` renders a button inside the banner: only allowed on a banner
+// without `content`, which is itself a button.
+export type BannerProps =
+  | (StatusBanner & { action?: undefined })
+  | (Omit<StatusBanner, 'content'> & { content: ''; action: BannerAction });
+
+export const Banner = ({ level, title, content, action }: BannerProps) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -61,7 +72,7 @@ export const Banner = ({ level, title, content }: StatusBanner) => {
         }
         aria-label={hasContent ? t('Show banner details') : undefined}
         $css={`
-          height: 40px;
+          min-height: 40px;
           padding: 8px;
           border-radius: 8px;
           border: 1px solid ${style.border};
@@ -81,9 +92,30 @@ export const Banner = ({ level, title, content }: StatusBanner) => {
             data-testid="banner-icon"
             width={20}
             height={20}
+            style={{ flexShrink: 0 }}
           />
         )}
         <Text $css={`color: ${style.foreground};`}>{title}</Text>
+        {action && (
+          <Box
+            as="button"
+            type="button"
+            onClick={action.onClick}
+            $css={`
+              flex-shrink: 0;
+              padding: 0;
+              border: none;
+              background: none;
+              color: ${style.foreground};
+              font: inherit;
+              font-weight: 600;
+              text-decoration: underline;
+              cursor: pointer;
+            `}
+          >
+            {action.label}
+          </Box>
+        )}
         {hasContent && (
           <Icon
             iconName="info"
