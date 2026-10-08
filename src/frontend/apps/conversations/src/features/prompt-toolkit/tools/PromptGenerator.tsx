@@ -8,6 +8,7 @@ import { Box, Icon, Text, useToast } from '@/components';
 import {
   GeneratedPrompt,
   GenerationDetail,
+  MergedPrompt,
   generatePrompts,
   mergePrompts,
 } from '../coach/coachApi';
@@ -65,7 +66,9 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
   const [mode, setMode] = useState<'need' | 'merge'>('need');
   const [need, setNeed] = useState('');
   const [detail, setDetail] = useState<GenerationDetail>('detailed');
-  const [results, setResults] = useState<GeneratedPrompt[]>([]);
+  const [results, setResults] = useState<(GeneratedPrompt | MergedPrompt)[]>(
+    [],
+  );
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const controllerRef = useRef<AbortController | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
@@ -264,6 +267,59 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
                     </Text>
                   )}
                 </Box>
+                {'changes' in result && result.changes.length > 0 && (
+                  <Box $gap="4px">
+                    <Text $size="xs" $weight="700">
+                      {t('What was combined')}
+                    </Text>
+                    <Box
+                      as="ul"
+                      $gap="2px"
+                      $css="margin: 0; padding-left: 18px;"
+                    >
+                      {result.changes.map((change) => (
+                        <Text
+                          as="li"
+                          key={change}
+                          $size="xs"
+                          $css="display: list-item;"
+                        >
+                          {change}
+                        </Text>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+                {'conflicts' in result && result.conflicts.length > 0 && (
+                  // Robin chose for the user: say so, so it can be changed.
+                  <Box
+                    role="note"
+                    $gap="4px"
+                    $css={css`
+                      padding: 10px 12px;
+                      border-radius: 8px;
+                      background: var(
+                        --c--contextuals--background--semantic--warning--tertiary
+                      );
+                    `}
+                  >
+                    <Box $direction="row" $align="center" $gap="6px">
+                      <Icon
+                        iconName="call_split"
+                        $size="16px"
+                        $theme="warning"
+                      />
+                      <Text $size="xs" $weight="700">
+                        {t('Contradictions settled — edit if needed')}
+                      </Text>
+                    </Box>
+                    {result.conflicts.map((conflict) => (
+                      <Text key={conflict} $size="xs">
+                        {conflict}
+                      </Text>
+                    ))}
+                  </Box>
+                )}
                 <Text
                   $size="sm"
                   $css={css`

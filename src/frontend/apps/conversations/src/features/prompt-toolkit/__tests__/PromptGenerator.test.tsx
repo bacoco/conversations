@@ -94,7 +94,8 @@ describe('<PromptGenerator />', () => {
               message: {
                 content: JSON.stringify({
                   prompt: '1. Résume. 2. Traduis.',
-                  why: 'Deux tâches numérotées.',
+                  changes: ['Deux résumés fusionnés'],
+                  conflicts: ['« 5 points » ou « court » : 5 points gardés'],
                 }),
               },
             },
@@ -117,5 +118,8 @@ describe('<PromptGenerator />', () => {
     expect(
       String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
     ).toContain('<prompts>');
+    expect(
+      String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
+    ).toContain('mistral-medium');
   });
 });

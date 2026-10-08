@@ -1,4 +1,5 @@
 import {
+  asPlainText,
   extractJson,
   parseAnalysis,
   parseImprovement,
@@ -39,5 +40,23 @@ describe('coachApi parsing', () => {
     expect(
       parseImprovement({ improved_prompt: ' Résume. ', changes: ['x'] }),
     ).toEqual({ improvedPrompt: 'Résume.', changes: ['x'] });
+  });
+});
+
+describe('asPlainText', () => {
+  it('turns a structured prompt back into readable text', () => {
+    const text = asPlainText({
+      contexte: 'Réunion lundi.',
+      tâches: [
+        { numéro: 1, description: 'Rédiger le message.' },
+        { numéro: 2, description: 'Ajouter l’ordre du jour.' },
+      ],
+      contraintes: { ton: 'formel', longueur: null },
+    });
+    expect(text).toContain('Contexte : Réunion lundi.');
+    expect(text).toContain('1. Rédiger le message.');
+    expect(text).toContain('2. Ajouter l’ordre du jour.');
+    expect(text).toContain('Ton : formel');
+    expect(text).not.toContain('null');
   });
 });
