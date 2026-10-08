@@ -27,11 +27,7 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    // Four cards, and the level strip.
-    expect(screen.getAllByRole('button')).toHaveLength(5);
-    expect(
-      screen.getByRole('button', { name: 'My level and badges' }),
-    ).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(4);
     expect(
       screen.queryByRole('button', { name: /off/i }),
     ).not.toBeInTheDocument();

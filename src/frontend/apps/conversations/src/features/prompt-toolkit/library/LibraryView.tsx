@@ -3,15 +3,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import { Box, Icon, Text } from '@/components';
+import { Box, Icon, Text, useToast } from '@/components';
 
+import { hasPlaceholders } from '../coach/coachApi';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 
 import { getPromptLibrary } from './content';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
+import { useMyPromptsStore } from './useMyPromptsStore';
 
 const FAVORITES = 'favorites';
+const MINE = 'mine';
 
 /** Lower case, without accents: "Réunion" matches "reunion". */
 export const normalize = (text: string) =>
@@ -77,14 +80,36 @@ const itemButtonCss = css`
   }
 `;
 
+const CopyButton = ({ text }: { text: string }) => {
+  const { t } = useTranslation();
+  const { showToast } = useToast();
+  return (
+    <Button
+      size="small"
+      color="neutral"
+      variant="tertiary"
+      onClick={() => {
+        void navigator.clipboard.writeText(text);
+        showToast('success', t('Copied to clipboard.'), undefined, 2000);
+      }}
+      icon={<Icon iconName="content_copy" $size="16px" />}
+    >
+      {t('Copy')}
+    </Button>
+  );
+};
+
 const PromptItem = ({
   prompt,
   isOpen,
   onToggle,
+  onDelete,
 }: {
   prompt: LibraryPrompt;
   isOpen: boolean;
   onToggle: () => void;
+  /** For the user's own prompts: a delete button instead of the star. */
+  onDelete?: () => void;
 }) => {
   const { t } = useTranslation();
   const offerPrompt = useOfferPrompt();
@@ -93,6 +118,8 @@ const PromptItem = ({
   );
   const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
   const previewId = `library-${prompt.id}`;
+  // Nothing left to fill in (often the user's own prompts): use it as is.
+  const isComplete = !hasPlaceholders(prompt.prompt);
   const itemRef = useRef<HTMLLIElement | null>(null);
 
   // An opened prompt low in the list scrolls into view.
@@ -122,33 +149,46 @@ const PromptItem = ({
           </Text>
         </Box>
         <Box $css="padding: 6px 6px 0 0;">
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            aria-pressed={isFavorite}
-            aria-label={
-              isFavorite
-                ? t('Remove "{{title}}" from favorites', {
-                    title: prompt.title,
-                  })
-                : t('Add "{{title}}" to favorites', { title: prompt.title })
-            }
-            onClick={() => toggleFavorite(prompt.id)}
-            icon={
-              <Icon
-                iconName="star"
-                variant={isFavorite ? 'filled' : 'outlined'}
-                $size="20px"
-                $css={
-                  isFavorite
-                    ? 'color: var(--c--globals--colors--warning-450);'
-                    : undefined
-                }
-                $variation={isFavorite ? undefined : 'secondary'}
-              />
-            }
-          />
+          {onDelete ? (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-label={t('Delete "{{title}}"', { title: prompt.title })}
+              onClick={onDelete}
+              icon={
+                <Icon iconName="delete" $size="20px" $variation="secondary" />
+              }
+            />
+          ) : (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-pressed={isFavorite}
+              aria-label={
+                isFavorite
+                  ? t('Remove "{{title}}" from favorites', {
+                      title: prompt.title,
+                    })
+                  : t('Add "{{title}}" to favorites', { title: prompt.title })
+              }
+              onClick={() => toggleFavorite(prompt.id)}
+              icon={
+                <Icon
+                  iconName="star"
+                  variant={isFavorite ? 'filled' : 'outlined'}
+                  $size="20px"
+                  $css={
+                    isFavorite
+                      ? 'color: var(--c--globals--colors--warning-450);'
+                      : undefined
+                  }
+                  $variation={isFavorite ? undefined : 'secondary'}
+                />
+              }
+            />
+          )}
         </Box>
       </Box>
       {isOpen && (
@@ -169,19 +209,27 @@ const PromptItem = ({
             {prompt.prompt}
           </Text>
           <Box $direction="row" $gap="8px" $justify="flex-end">
+            {onDelete && <CopyButton text={prompt.prompt} />}
             <Button
               size="small"
               onClick={() => offerPrompt(prompt.prompt, prompt.title)}
-              icon={<Icon iconName="auto_awesome" $size="16px" />}
+              icon={
+                <Icon
+                  iconName={isComplete ? 'north_west' : 'auto_awesome'}
+                  $size="16px"
+                />
+              }
             >
-              {t('Complete with Robin')}
+              {isComplete ? t('Use this prompt') : t('Complete with Robin')}
             </Button>
           </Box>
-          <Text $size="xs" $variation="secondary">
-            {t(
-              'Robin asks you what is missing, then writes the complete prompt.',
-            )}
-          </Text>
+          {!isComplete && (
+            <Text $size="xs" $variation="secondary">
+              {t(
+                'Robin asks you what is missing, then writes the complete prompt.',
+              )}
+            </Text>
+          )}
         </Box>
       )}
     </Box>
@@ -237,24 +285,56 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
     [i18n.language],
   );
   const favorites = useLibraryStore((state) => state.favorites);
+  const myPrompts = useMyPromptsStore((state) => state.prompts);
+  const removeMine = useMyPromptsStore((state) => state.remove);
+  // The user's own prompts, shown like library prompts.
+  const mine = useMemo<LibraryPrompt[]>(
+    () =>
+      myPrompts.map((item) => ({
+        id: `${MINE}-${item.id}`,
+        category: MINE,
+        title: item.title,
+        description: t('Saved on {{date}}', {
+          date: new Date(item.savedAt).toLocaleDateString(i18n.language),
+        }),
+        prompt: item.prompt,
+        keywords: [],
+      })),
+    [myPrompts, t, i18n.language],
+  );
   const [query, setQuery] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const category =
-    categoryId === FAVORITES
-      ? { id: FAVORITES, icon: 'star', title: t('My favorites') }
-      : library.categories.find((c) => c.id === categoryId);
+    categoryId === MINE
+      ? { id: MINE, icon: 'bookmark', title: t('My prompts') }
+      : categoryId === FAVORITES
+        ? { id: FAVORITES, icon: 'star', title: t('My favorites') }
+        : library.categories.find((c) => c.id === categoryId);
   const inCategory = (prompt: LibraryPrompt) =>
     categoryId === FAVORITES
       ? favorites.includes(prompt.id)
       : prompt.category === categoryId;
   const isSearching = query.trim() !== '';
-  const listed = category
-    ? library.prompts.filter(inCategory)
-    : library.prompts.filter((prompt) => matches(prompt, query));
+  const searchMine = (prompt: LibraryPrompt) =>
+    normalize(`${prompt.title} ${prompt.prompt}`).includes(
+      normalize(query.trim()),
+    );
+  const listed =
+    categoryId === MINE
+      ? mine
+      : category
+        ? library.prompts.filter(inCategory)
+        : [
+            ...mine.filter(searchMine),
+            ...library.prompts.filter((prompt) => matches(prompt, query)),
+          ];
 
   const cards = [
+    ...(mine.length > 0
+      ? [{ id: MINE, icon: 'bookmark', title: t('My prompts') }]
+      : []),
     ...(favorites.length > 0
       ? [{ id: FAVORITES, icon: 'star', title: t('My favorites') }]
       : []),
@@ -263,9 +343,11 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
   const promptCount = (count: number) =>
     count === 1 ? t('1 prompt') : t('{{count}} prompts', { count });
   const countOf = (id: string) =>
-    id === FAVORITES
-      ? favorites.length
-      : library.prompts.filter((prompt) => prompt.category === id).length;
+    id === MINE
+      ? mine.length
+      : id === FAVORITES
+        ? favorites.length
+        : library.prompts.filter((prompt) => prompt.category === id).length;
 
   const header = category ? (
     <Box $direction="row" $align="center" $gap="10px">
@@ -346,6 +428,11 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
           <PromptItem
             key={prompt.id}
             prompt={prompt}
+            onDelete={
+              prompt.category === MINE
+                ? () => removeMine(prompt.id.slice(MINE.length + 1))
+                : undefined
+            }
             isOpen={openId === prompt.id}
             onToggle={() =>
               setOpenId((current) => (current === prompt.id ? null : prompt.id))

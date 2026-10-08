@@ -14,6 +14,7 @@ import {
 } from '../stores/usePromptToolkitStore';
 
 import { PromptGenerator } from './PromptGenerator';
+import { FollowUpView, ImproveTextView } from './RobinToolViews';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
 
 const tileCss = css`
@@ -341,6 +342,14 @@ export const ToolsPanel = () => {
     return <PromptGenerator key={resetKey} onBack={() => setOpenId(null)} />;
   }
 
+  if (openId === 'improve') {
+    return <ImproveTextView key={resetKey} onBack={() => setOpenId(null)} />;
+  }
+
+  if (openId === 'follow-up') {
+    return <FollowUpView key={resetKey} onBack={() => setOpenId(null)} />;
+  }
+
   if (openId === 'library') {
     return <LibraryView key={resetKey} onBack={() => setOpenId(null)} />;
   }
@@ -395,6 +404,23 @@ export const ToolsPanel = () => {
             icon: 'auto_fix_high',
             title: t('Prompt generator'),
             description: t('Describe your need, get ready-to-use prompts.'),
+          },
+          // Robin, only when chosen.
+          {
+            id: 'improve',
+            icon: 'edit_note',
+            title: t('Improve my text'),
+            description: t(
+              'Robin strengthens what you wrote, in a few questions.',
+            ),
+          },
+          {
+            id: 'follow-up',
+            icon: 'replay',
+            title: t('Follow up on an answer'),
+            description: t(
+              'The answer does not suit you? Robin writes a better follow-up.',
+            ),
           },
         ].map((tool) => (
           <li key={tool.id}>

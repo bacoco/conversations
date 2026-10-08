@@ -1,12 +1,9 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { BadgesView } from '../rewards/BadgesView';
-import { RewardsStrip } from '../rewards/RewardsStrip';
 import {
   CoachMode,
   usePromptToolkitStore,
@@ -234,7 +231,6 @@ export const PanelHome = () => {
   const startCoach = usePromptToolkitStore((state) => state.startCoach);
   const openSection = usePromptToolkitStore((state) => state.openSection);
   const coach = (mode: CoachMode) => () => startCoach(mode);
-  const [showBadges, setShowBadges] = useState(false);
   const hasSeenWelcome = usePromptToolkitStore((state) => state.hasSeenWelcome);
 
   // New modules (prompting course, everyday tools…) add a card here.
@@ -283,14 +279,9 @@ export const PanelHome = () => {
     return <RobinWelcome />;
   }
 
-  if (showBadges) {
-    return <BadgesView onBack={() => setShowBadges(false)} />;
-  }
-
   return (
     <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
       <RobinHeader />
-      <RewardsStrip onOpen={() => setShowBadges(true)} />
       <Box as="ul" $gap="8px" $css="margin: 0; padding: 0; list-style: none;">
         {cards.map((card) => (
           <li key={card.id}>

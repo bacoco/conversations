@@ -16,7 +16,6 @@ import { useResponsiveStore } from '@/stores';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
-import { RecommendationBar } from '../library/RecommendationBar';
 import {
   CoachMode,
   RightPanelMode,
@@ -396,10 +395,6 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
       >
         {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
         {showHome && <PanelHome />}
-        {/* Suggestions follow what the user types, in the working sections. */}
-        {!showHome && !fill && mode !== 'learn' && (
-          <RecommendationBar isActive={isVisible} />
-        )}
         {!showHome && fill && (
           <PromptFillView
             key={fill.template}

@@ -17,6 +17,7 @@ import { CoachFeedback } from '../components/CoachFeedback';
 import { CoachStatus } from '../components/CoachStatus';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
+import { SavePromptButton } from '../library/SavePromptButton';
 
 const cardCss = css`
   padding: 14px;
@@ -351,6 +352,10 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
                   >
                     {t('Copy')}
                   </Button>
+                  <SavePromptButton
+                    prompt={result.prompt}
+                    title={result.title}
+                  />
                 </Box>
               </Box>
             ))}

@@ -17,6 +17,7 @@ import { CoachStatus } from '../components/CoachStatus';
 import { ROBIN_AVATAR_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { RefineBar } from '../components/RefineBar';
+import { SavePromptButton } from '../library/SavePromptButton';
 import { useReward } from '../rewards/useReward';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
@@ -384,6 +385,7 @@ export const PromptFillView = ({
               >
                 {t('Copy')}
               </Button>
+              <SavePromptButton prompt={final.prompt} title={title} />
               <Button
                 size="small"
                 onClick={() => {

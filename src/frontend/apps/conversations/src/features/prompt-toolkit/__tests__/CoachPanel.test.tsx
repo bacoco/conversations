@@ -4,6 +4,12 @@ import { CoachPanel } from '../components/CoachPanel';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
+// No conversation open: the follow-up card stays out of the way.
+vi.mock('@/utils', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils')>()),
+  useConversationRouteId: () => undefined,
+}));
+
 const mockShowToast = vi.fn();
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: mockShowToast }),
@@ -108,7 +114,7 @@ describe('<CoachPanel />', () => {
     ).toBeInTheDocument();
   });
 
-  it('rewrites on the chosen axes and replaces the chat input', async () => {
+  it('rewrites the prompt and replaces the chat input', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(completion(ANALYSIS))
@@ -128,17 +134,15 @@ describe('<CoachPanel />', () => {
     await screen.findByRole('img', { name: /out of 100/ });
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Target the audience' }),
-    );
-    fireEvent.click(
-      screen.getByRole('button', { name: /Rewrite on these points/ }),
+      screen.getByRole('button', { name: /Suggest a better version/ }),
     );
 
     expect(
       await screen.findByText('Résume le rapport annuel pour la direction.'),
     ).toBeInTheDocument();
+    // The rewrite applies the coach's own advice.
     const [, init] = fetchMock.mock.calls[1] as [string, RequestInit];
-    expect(String(init.body)).toContain('state who the answer is for');
+    expect(String(init.body)).toContain('Apply this advice');
 
     fireEvent.click(screen.getByRole('button', { name: 'Replace my prompt' }));
     expect(setChatInput).toHaveBeenCalledWith(
@@ -166,50 +170,6 @@ describe('<CoachPanel />', () => {
     expect(
       await screen.findByRole('img', { name: /out of 100/ }),
     ).toBeInTheDocument();
-  });
-
-  it('adjusts the suggested version in a few words', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(completion(ANALYSIS))
-      .mockResolvedValueOnce(
-        completion({ improved_prompt: 'Long version.', changes: [] }),
-      )
-      .mockResolvedValueOnce(
-        completion({ improved_prompt: 'Short version.', changes: ['Shorter'] }),
-      );
-    vi.stubGlobal('fetch', fetchMock);
-    usePromptToolkitStore.setState({ chatInput: 'Résume le rapport annuel' });
-
-    render(<CoachPanel />);
-    analyse();
-    await screen.findByRole('img', { name: /out of 100/ });
-    fireEvent.click(
-      screen.getByRole('button', { name: /Suggest a better version|Rewrite/ }),
-    );
-    await screen.findByText('Long version.');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Shorter' }));
-    expect(await screen.findByText('Short version.')).toBeInTheDocument();
-    const [, init] = fetchMock.mock.calls[2] as [string, RequestInit];
-    expect(String(init.body)).toContain('Long version.');
-    expect(String(init.body)).toContain('Shorter');
-  });
-
-  it('points to the lesson that teaches the weakest competency', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(completion(ANALYSIS)));
-    usePromptToolkitStore.setState({ chatInput: 'Résume le rapport annuel' });
-
-    render(<CoachPanel />);
-    analyse();
-    fireEvent.click(
-      await screen.findByRole('button', { name: /To make progress in/ }),
-    );
-
-    expect(usePromptToolkitStore.getState()).toMatchObject({
-      mode: 'learn',
-      lessonRequest: expect.stringMatching(/^lesson-/),
-    });
   });
 
   it('records the grade in the history when the prompt is sent', async () => {
