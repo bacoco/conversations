@@ -68,10 +68,11 @@ describe('<CoachPanel />', () => {
     expect(
       screen.queryByRole('img', { name: /out of 100/ }),
     ).not.toBeInTheDocument();
-    // Only a one-line hint, and no call.
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Write your prompt in the message field',
-    );
+    // Robin introduces himself and explains the steps, without any call.
+    expect(
+      screen.getByRole('heading', { name: /I am Robin/ }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

@@ -87,6 +87,15 @@ interface PromptToolkitState {
   registerChatInput: (setter: (value: string) => void) => () => void;
 }
 
+/**
+ * Same breakpoint as the app's desktop layout. Not in unit tests, where the
+ * app is rendered on a desktop-sized window without the panel's providers.
+ */
+const isFirstVisitOnDesktop = () =>
+  import.meta.env.MODE !== 'test' &&
+  typeof window !== 'undefined' &&
+  window.innerWidth >= 1024;
+
 export const usePromptToolkitStore = create<PromptToolkitState>()(
   persist(
     (set, get) => ({
@@ -179,12 +188,16 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         };
       },
       // A panel left open stays closed if the deployment turned it off.
+      // On the very first visit (nothing stored), it opens on Robin's
+      // welcome, on desktop only: on a phone it would cover the chat.
       merge: (persisted, current) => ({
         ...current,
         ...(persisted as Partial<PromptToolkitState>),
         isOpen:
           PROMPT_TOOLKIT_ENABLED &&
-          Boolean((persisted as Partial<PromptToolkitState>)?.isOpen),
+          (persisted
+            ? Boolean((persisted as Partial<PromptToolkitState>).isOpen)
+            : isFirstVisitOnDesktop()),
       }),
       partialize: (state) => ({
         isOpen: state.isOpen,

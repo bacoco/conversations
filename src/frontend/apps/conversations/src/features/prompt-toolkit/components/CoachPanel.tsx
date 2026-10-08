@@ -20,6 +20,7 @@ import {
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
+import { CoachIntro } from './CoachIntro';
 import { CoachModeSelector } from './CoachModeSelector';
 import { CoachStatus } from './CoachStatus';
 import { DiffView } from './DiffView';
@@ -288,27 +289,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         </Box>
       )}
 
-      {!result && chatInput.trim() === '' && (
-        <Box
-          role="status"
-          $direction="row"
-          $align="center"
-          $gap="8px"
-          $css={css`
-            margin: 16px 16px 0;
-            padding: 10px 12px;
-            border-radius: 8px;
-            background: var(--c--contextuals--background--surface--secondary);
-          `}
-        >
-          <Icon iconName="edit" $size="18px" $variation="secondary" />
-          <Text $size="sm" $variation="secondary">
-            {t(
-              'Write your prompt in the message field, then click the round button to analyse it.',
-            )}
-          </Text>
-        </Box>
-      )}
+      {!result && chatInput.trim() === '' && <CoachIntro />}
 
       {analysis.isLongEnough && !result && analysis.status === 'idle' && (
         <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
