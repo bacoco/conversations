@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import {
   PromptExplanation,
   explainPrompt,
@@ -111,6 +112,7 @@ export const PromptActions = ({
   const startFill = usePromptToolkitStore((state) => state.startFill);
   const [isExplained, setIsExplained] = useState(false);
   const isComplete = !hasPlaceholders(prompt);
+  const isAiAvailable = useAiAvailable();
 
   return (
     <Box $gap="10px">
@@ -120,16 +122,18 @@ export const PromptActions = ({
         $justify="flex-end"
         $css="flex-wrap: wrap;"
       >
-        <Button
-          size="small"
-          color="neutral"
-          variant="secondary"
-          aria-expanded={isExplained}
-          onClick={() => setIsExplained((value) => !value)}
-          icon={<Icon iconName="lightbulb" $size="16px" />}
-        >
-          {isExplained ? t('Hide the explanation') : t('Understand')}
-        </Button>
+        {isAiAvailable && (
+          <Button
+            size="small"
+            color="neutral"
+            variant="secondary"
+            aria-expanded={isExplained}
+            onClick={() => setIsExplained((value) => !value)}
+            icon={<Icon iconName="lightbulb" $size="16px" />}
+          >
+            {isExplained ? t('Hide the explanation') : t('Understand')}
+          </Button>
+        )}
         <Button
           size="small"
           color="neutral"
@@ -139,7 +143,7 @@ export const PromptActions = ({
         >
           {t('Use as is')}
         </Button>
-        {!isComplete && (
+        {isAiAvailable && !isComplete && (
           <Button
             size="small"
             onClick={() => startFill(prompt, title)}

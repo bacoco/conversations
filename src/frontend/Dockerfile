@@ -66,8 +66,11 @@ COPY --from=conversations-builder \
     /usr/share/nginx/html
 
 COPY ./src/frontend/apps/conversations/conf/default.conf /etc/nginx/conf.d
+COPY ./src/frontend/apps/conversations/conf/templates/albert.conf.template /etc/nginx/templates/albert.conf.template
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
+COPY ./docker/files/usr/local/bin/frontend-start /usr/local/bin/frontend-start
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
 
-CMD ["nginx", "-g", "daemon off;"]
+# Renders the Albert relay of the prompt panel when configured, then nginx.
+CMD ["/usr/local/bin/frontend-start"]

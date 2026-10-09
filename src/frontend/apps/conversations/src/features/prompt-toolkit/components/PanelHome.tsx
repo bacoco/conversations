@@ -4,6 +4,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import {
   CoachMode,
   usePromptToolkitStore,
@@ -240,6 +241,7 @@ export const PanelHome = () => {
   const openSection = usePromptToolkitStore((state) => state.openSection);
   const coach = (mode: CoachMode) => () => startCoach(mode);
   const hasSeenWelcome = usePromptToolkitStore((state) => state.hasSeenWelcome);
+  const isAiAvailable = useAiAvailable();
 
   // New modules (prompting course, everyday tools…) add a card here.
   const cards: HomeCard[] = [
@@ -281,12 +283,16 @@ export const PanelHome = () => {
   if (!hasSeenWelcome) {
     return <RobinWelcome />;
   }
+  // Without the Albert relay, only what works without AI is offered.
+  const shownCards = isAiAvailable
+    ? cards
+    : cards.filter((card) => card.id !== 'coach-manual');
 
   return (
     <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
       <RobinHeader />
       <Box as="ul" $gap="8px" $css="margin: 0; padding: 0; list-style: none;">
-        {cards.map((card) => (
+        {shownCards.map((card) => (
           <li key={card.id}>
             <Box
               as="button"

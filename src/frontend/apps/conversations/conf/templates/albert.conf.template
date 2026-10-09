@@ -1,0 +1,52 @@
+# Albert relay for the prompt panel, rendered at start-up by
+# /usr/local/bin/frontend-start only when ALBERT_API_KEY is set.
+#
+#   ALBERT_API_KEY         Albert API key (required to enable the relay)
+#   ASSISTANT_BACKEND_URL  backend URL used to check the user is logged in,
+#                          e.g. http://backend:8000 (required)
+#   ALBERT_API_URL         default https://albert.api.etalab.gouv.fr
+#   NGINX_RESOLVER         default: the container's DNS server
+#
+# The key stays on the server; only logged-in users can use the relay.
+
+# Upstreams are variables, so nginx resolves them per request and starts
+# even when a host is unreachable.
+resolver ${NGINX_RESOLVER} valid=30s ipv6=off;
+
+# Lets the panel know the AI features are available.
+location = /albert/status {
+    return 204;
+}
+
+location = /albert/v1/chat/completions {
+    auth_request /albert/_auth;
+    client_max_body_size 64k;
+    set $albert_upstream "${ALBERT_API_URL}";
+    proxy_set_header Authorization "Bearer ${ALBERT_API_KEY}";
+    proxy_set_header Cookie "";
+    proxy_ssl_server_name on;
+    proxy_read_timeout 120s;
+    proxy_pass $albert_upstream/v1/chat/completions;
+}
+
+location = /albert/v1/embeddings {
+    auth_request /albert/_auth;
+    client_max_body_size 256k;
+    set $albert_upstream "${ALBERT_API_URL}";
+    proxy_set_header Authorization "Bearer ${ALBERT_API_KEY}";
+    proxy_set_header Cookie "";
+    proxy_ssl_server_name on;
+    proxy_read_timeout 60s;
+    proxy_pass $albert_upstream/v1/embeddings;
+}
+
+# 2xx when the session cookie belongs to a logged-in user.
+location = /albert/_auth {
+    internal;
+    set $assistant_backend "${ASSISTANT_BACKEND_URL}";
+    proxy_pass $assistant_backend/api/v1.0/users/me/;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header Host $host;
+    proxy_set_header Cookie $http_cookie;
+}

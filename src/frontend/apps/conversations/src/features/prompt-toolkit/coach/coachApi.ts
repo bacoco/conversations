@@ -7,8 +7,13 @@
 
 const env = import.meta.env as Record<string, string | undefined>;
 
-/** Without it, the whole panel stays hidden: the app is unchanged. */
-export const COACH_COMPLETIONS_URL = env.VITE_PROMPT_COACH_URL ?? '';
+/**
+ * The Albert relay served by the front-end nginx (see
+ * conf/templates/albert.conf.template). Set to an empty value to hide the
+ * whole panel. Without the relay, the panel runs without its AI features.
+ */
+export const COACH_COMPLETIONS_URL =
+  env.VITE_PROMPT_COACH_URL ?? '/albert/v1/chat/completions';
 export const PROMPT_TOOLKIT_ENABLED = COACH_COMPLETIONS_URL !== '';
 export const COACH_MODEL =
   env.VITE_PROMPT_COACH_MODEL || 'mistral-small-3-2-24b-instruct-2506';

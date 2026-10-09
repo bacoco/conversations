@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Starts the front-end nginx. When ALBERT_API_KEY and ASSISTANT_BACKEND_URL
+# are set, it first renders the Albert relay used by the prompt panel;
+# otherwise the panel runs without its AI features.
+
+RELAY_DIR=/tmp/nginx-albert
+mkdir -p "${RELAY_DIR}"
+rm -f "${RELAY_DIR}"/*.conf
+
+if [ -n "${ALBERT_API_KEY}" ] && [ -n "${ASSISTANT_BACKEND_URL}" ]; then
+  export ALBERT_API_URL="${ALBERT_API_URL:-https://albert.api.etalab.gouv.fr}"
+  if [ -z "${NGINX_RESOLVER}" ]; then
+    NGINX_RESOLVER="$(awk '/^nameserver/ { print $2; exit }' /etc/resolv.conf)"
+  fi
+  export NGINX_RESOLVER="${NGINX_RESOLVER:-127.0.0.11}"
+  # Only these variables are replaced: nginx's own $variables stay as they are.
+  # shellcheck disable=SC2016
+  envsubst '${ALBERT_API_KEY} ${ALBERT_API_URL} ${ASSISTANT_BACKEND_URL} ${NGINX_RESOLVER}' \
+    < /etc/nginx/templates/albert.conf.template \
+    > "${RELAY_DIR}/albert.conf"
+  echo "🐳(frontend) Albert relay enabled for the prompt panel."
+elif [ -n "${ALBERT_API_KEY}" ]; then
+  echo "🐳(frontend) ALBERT_API_KEY is set but ASSISTANT_BACKEND_URL is not: Albert relay disabled."
+fi
+
+exec nginx -g "daemon off;"

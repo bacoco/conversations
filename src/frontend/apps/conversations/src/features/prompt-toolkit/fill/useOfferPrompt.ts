@@ -1,3 +1,4 @@
+import { useAiAvailable } from '../coach/aiAvailability';
 import { hasPlaceholders } from '../coach/coachApi';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
@@ -9,9 +10,11 @@ import { usePlacePrompt } from '../tools/usePlacePrompt';
 export const useOfferPrompt = () => {
   const placePrompt = usePlacePrompt();
   const startFill = usePromptToolkitStore((state) => state.startFill);
+  const isAiAvailable = useAiAvailable();
 
   return (prompt: string, title: string) => {
-    if (hasPlaceholders(prompt)) {
+    // Without Robin, the brackets are completed by hand in the message field.
+    if (isAiAvailable && hasPlaceholders(prompt)) {
       startFill(prompt, title);
     } else {
       placePrompt(prompt);

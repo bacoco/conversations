@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import { optionCss } from '../components/CoachModes';
 import {
   ROBIN_ORGANIZE_URL,
@@ -311,8 +312,12 @@ const rowCss = css`
   }
 `;
 
+/** Tools that need Robin, hence the Albert relay. */
+const AI_TOOLS = ['generator', 'improve', 'follow-up'];
+
 export const ToolsPanel = () => {
   const { t } = useTranslation();
+  const isAiAvailable = useAiAvailable();
   const tools = useMemo(() => getDailyTools(t), [t]);
   const [openId, setOpenId] = useState<string | null>(null);
   // A tool asked from a suggestion opens directly.
@@ -410,13 +415,21 @@ export const ToolsPanel = () => {
       icon: 'auto_awesome',
       label: t('Prompts'),
       image: ROBIN_PROMPTS_URL,
-      text: t('Start from a ready-made prompt, or have one written for you.'),
+      text: isAiAvailable
+        ? t('Start from a ready-made prompt, or have one written for you.')
+        : t('Start from a ready-made prompt.'),
       tools: ['library', 'generator', 'follow-up'],
-      steps: [
-        t('The library: prompts ready to use, sorted by theme.'),
-        t('The generator: describe your need, get prompts.'),
-        t('Follow up: improve an answer that does not suit you.'),
-      ],
+      steps: isAiAvailable
+        ? [
+            t('The library: prompts ready to use, sorted by theme.'),
+            t('The generator: describe your need, get prompts.'),
+            t('Follow up: improve an answer that does not suit you.'),
+          ]
+        : [
+            t('Open the library: prompts ready to use, sorted by theme.'),
+            t('Pick a prompt and put it in the message field.'),
+            t('Replace the parts in brackets with your own information.'),
+          ],
     },
   ];
 
@@ -449,6 +462,7 @@ export const ToolsPanel = () => {
   const category =
     categories.find((item) => item.id === categoryId) ?? categories[0];
   const entries = category.tools
+    .filter((id) => isAiAvailable || !AI_TOOLS.includes(id))
     .map((id) => extraTools[id] ?? tools.find((tool) => tool.id === id))
     .filter((tool): tool is ToolEntry => Boolean(tool));
 

@@ -13,6 +13,7 @@ import { Box, Icon } from '@/components';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
+import { useAiAvailability, useAiAvailable } from '../coach/aiAvailability';
 import { languageName } from '../coach/language';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
@@ -188,7 +189,14 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
   } = usePromptToolkitStore();
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
-  const showHome = isHomeRequested || welcomeShown;
+  const isAiAvailable = useAiAvailable();
+  const checkAi = useAiAvailability((state) => state.check);
+  useEffect(() => {
+    void checkAi();
+  }, [checkAi]);
+  // Without the Albert relay there is no coach: the home cards instead.
+  const showHome =
+    isHomeRequested || welcomeShown || (mode === 'coach' && !isAiAvailable);
   // The open space, as named in the header: the coach shows its mode.
   const current =
     mode === 'coach'
@@ -367,7 +375,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
         </Box>
       </Box>
       {/* Robin, on every screen: a round button that opens a sheet. */}
-      <RobinDock language={languageName(i18n.language)} />
+      {isAiAvailable && <RobinDock language={languageName(i18n.language)} />}
     </Box>
   );
 };

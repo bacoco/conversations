@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import {
   ROBIN_CARDS_URL,
   ROBIN_CHALLENGES_URL,
@@ -151,9 +152,12 @@ export const LearnPanel = () => {
   const {
     completedLessons,
     bestQuizScores,
-    lastTab: tab,
+    lastTab,
     setLastTab: setTab,
   } = useLearnProgressStore();
+  // The challenges are graded by the coach: hidden without the Albert relay.
+  const isAiAvailable = useAiAvailable();
+  const tab = !isAiAvailable && lastTab === 'challenges' ? 'lessons' : lastTab;
   const [detail, setDetail] = useState<Detail | null>(null);
   const challenges = useMemo(
     () => getChallenges(i18n.language),
@@ -280,7 +284,15 @@ export const LearnPanel = () => {
     { id: 'lessons', icon: 'menu_book', label: t('Lessons') },
     { id: 'cards', icon: 'style', label: t('Cards') },
     { id: 'quiz', icon: 'quiz', label: t('Quiz') },
-    { id: 'challenges', icon: 'sports_score', label: t('Challenges') },
+    ...(isAiAvailable
+      ? [
+          {
+            id: 'challenges' as const,
+            icon: 'sports_score',
+            label: t('Challenges'),
+          },
+        ]
+      : []),
   ];
 
   return (
