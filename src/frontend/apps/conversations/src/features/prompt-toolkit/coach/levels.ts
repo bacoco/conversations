@@ -20,10 +20,6 @@ const LEVEL_COLOR: Record<ScoreLevel, string> = {
 
 export const levelColor = (score: number) => LEVEL_COLOR[scoreLevel(score)];
 
-export const levelLabel = (score: number, t: TFunction) =>
-  ({
-    insufficient: t('Good start'),
-    progress: t('On the right track'),
-    good: t('Very good'),
-    excellent: t('Excellent!'),
-  })[scoreLevel(score)];
+/** Three plain words, as in the DINUM guide's spirit: no grade out of 100. */
+export const wordLevel = (score: number, t: TFunction) =>
+  score >= 80 ? t('Very clear') : score >= 50 ? t('Correct') : t('To complete');

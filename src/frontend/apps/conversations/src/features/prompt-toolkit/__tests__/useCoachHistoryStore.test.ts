@@ -11,6 +11,8 @@ const competencies = {
   audience: 50,
   constraints: 50,
   verification: 50,
+  sources: 50,
+  examples: 50,
 };
 
 describe('useCoachHistoryStore', () => {

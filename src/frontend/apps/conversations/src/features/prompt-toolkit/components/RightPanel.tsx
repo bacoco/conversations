@@ -32,6 +32,7 @@ import { ToolsPanel } from '../tools/ToolsPanel';
 import { CoachPanel } from './CoachPanel';
 import { PanelHome } from './PanelHome';
 import { RobinDock } from './RobinChat';
+import { SharedPromptBanner } from './SharedPromptBanner';
 
 const KEYBOARD_STEP_PX = 24;
 
@@ -341,6 +342,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           background: var(--c--contextuals--background--surface--primary);
         `}
       >
+        <SharedPromptBanner />
         {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
         {showHome && <PanelHome />}
         {!showHome && fill && (

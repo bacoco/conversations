@@ -46,6 +46,8 @@ export const ChallengeView = ({
   const competencyLabels: Record<Competency, string> = {
     task: t('Task'),
     context: t('Context'),
+    sources: t('Sources'),
+    examples: t('Examples'),
     format: t('Format'),
     audience: t('Audience'),
     constraints: t('Constraints'),

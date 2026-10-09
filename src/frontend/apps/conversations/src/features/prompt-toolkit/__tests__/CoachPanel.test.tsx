@@ -33,6 +33,8 @@ const ANALYSIS = {
     audience: 0,
     constraints: 30,
     verification: 0,
+    sources: 0,
+    examples: 0,
   },
   strengths: ['La tâche est claire.'],
   suggestions: ['Indiquez à qui s’adresse la réponse.'],
@@ -66,7 +68,7 @@ describe('<CoachPanel />', () => {
     render(<CoachPanel />);
 
     expect(
-      screen.queryByRole('img', { name: /out of 100/ }),
+      screen.queryByRole('heading', { name: 'The 4 rules of a good prompt' }),
     ).not.toBeInTheDocument();
     // The mode explains its steps, without any call.
     expect(
@@ -107,7 +109,9 @@ describe('<CoachPanel />', () => {
     expect(String(init.body)).toContain('Résume le rapport annuel');
 
     expect(
-      await screen.findByRole('img', { name: /out of 100/ }),
+      await screen.findByRole('heading', {
+        name: 'The 4 rules of a good prompt',
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText('Précisez le public visé.')).toBeInTheDocument();
     expect(
@@ -132,7 +136,9 @@ describe('<CoachPanel />', () => {
 
     render(<CoachPanel />);
     analyse();
-    await screen.findByRole('img', { name: /out of 100/ });
+    await screen.findByRole('heading', {
+      name: 'The 4 rules of a good prompt',
+    });
 
     fireEvent.click(
       screen.getByRole('button', { name: /Suggest a better version/ }),
@@ -169,7 +175,9 @@ describe('<CoachPanel />', () => {
 
     await act(async () => resolve(completion(ANALYSIS)));
     expect(
-      await screen.findByRole('img', { name: /out of 100/ }),
+      await screen.findByRole('heading', {
+        name: 'The 4 rules of a good prompt',
+      }),
     ).toBeInTheDocument();
   });
 
@@ -181,7 +189,9 @@ describe('<CoachPanel />', () => {
 
     render(<CoachPanel />);
     analyse();
-    await screen.findByRole('img', { name: /out of 100/ });
+    await screen.findByRole('heading', {
+      name: 'The 4 rules of a good prompt',
+    });
 
     // Sending the message empties the chat input.
     act(() => usePromptToolkitStore.setState({ chatInput: '' }));
@@ -192,7 +202,7 @@ describe('<CoachPanel />', () => {
   });
 
   it('waits for the button in on-demand mode', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(completion(ANALYSIS));
+    const fetchMock = vi.fn(() => Promise.resolve(completion(ANALYSIS)));
     vi.stubGlobal('fetch', fetchMock);
     usePromptToolkitStore.setState({
       coachMode: 'manual',
@@ -209,26 +219,31 @@ describe('<CoachPanel />', () => {
       </>,
     );
     await act(() => vi.advanceTimersByTimeAsync(6000));
-    expect(fetchMock).not.toHaveBeenCalled();
+    // Only the light check of the 4 rules runs while typing: no analysis.
+    const isAnalysis = (call: unknown[]) =>
+      String((call[1] as RequestInit).body).includes('competencies');
+    expect(fetchMock.mock.calls.filter(isAnalysis)).toHaveLength(0);
 
     fireEvent.click(screen.getByRole('button', { name: /Analyse my prompt/ }));
     expect(
-      await screen.findByRole('img', { name: /out of 100/ }),
+      await screen.findByRole('heading', {
+        name: 'The 4 rules of a good prompt',
+      }),
     ).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls.filter(isAnalysis)).toHaveLength(1);
     // Up to date: the button is disabled until the prompt changes.
     expect(
       screen.getByRole('button', { name: /Analysis up to date/ }),
     ).toBeDisabled();
 
-    // Editing the prompt makes the analysis stale, still without any call.
+    // Editing the prompt makes the analysis stale, still without analysis.
     act(() =>
       usePromptToolkitStore.setState({
         chatInput: 'Résume le rapport annuel pour la direction',
       }),
     );
     await act(() => vi.advanceTimersByTimeAsync(6000));
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls.filter(isAnalysis)).toHaveLength(1);
     expect(
       screen.getByRole('button', { name: /Update the analysis/ }),
     ).toBeEnabled();

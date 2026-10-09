@@ -15,6 +15,8 @@ import { languageName } from '../coach/language';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
+import { fillTemplate, templateVars } from './templateVars';
+
 const explanationCss = css`
   padding: 10px 12px;
   border-radius: 8px;
@@ -113,6 +115,17 @@ export const PromptActions = ({
   const [isExplained, setIsExplained] = useState(false);
   const isComplete = !hasPlaceholders(prompt);
   const isAiAvailable = useAiAvailable();
+  // Blanks written {{name}}: a small form asks for them before use.
+  const blanks = templateVars(prompt);
+  const [isFilling, setIsFilling] = useState(false);
+  const [values, setValues] = useState<Record<string, string>>({});
+  const useAsIs = () => {
+    if (blanks.length > 0) {
+      setIsFilling(true);
+    } else {
+      placePrompt(prompt);
+    }
+  };
 
   return (
     <Box $gap="10px">
@@ -138,10 +151,10 @@ export const PromptActions = ({
           size="small"
           color="neutral"
           variant="secondary"
-          onClick={() => placePrompt(prompt)}
+          onClick={useAsIs}
           icon={<Icon iconName="north_west" $size="16px" />}
         >
-          {t('Use as is')}
+          {blanks.length > 0 ? t('Fill in and use') : t('Use as is')}
         </Button>
         {isAiAvailable && !isComplete && (
           <Button
@@ -154,6 +167,61 @@ export const PromptActions = ({
         )}
       </Box>
       {isExplained && <Explanation prompt={prompt} />}
+      {isFilling && (
+        <Box
+          as="form"
+          $gap="8px"
+          onSubmit={(event: React.FormEvent) => {
+            event.preventDefault();
+            placePrompt(fillTemplate(prompt, values));
+            setIsFilling(false);
+          }}
+          $css={css`
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: var(--c--contextuals--background--surface--secondary);
+          `}
+        >
+          {blanks.map((name) => (
+            <Box as="label" key={name} $gap="4px">
+              <Text $size="xs" $weight="700">
+                {name}
+              </Text>
+              <Box
+                as="input"
+                value={values[name] ?? ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setValues((previous) => ({
+                    ...previous,
+                    [name]: event.target.value,
+                  }))
+                }
+                $css={css`
+                  padding: 6px 8px;
+                  border-radius: 6px;
+                  font: inherit;
+                  font-size: 0.875rem;
+                  color: inherit;
+                  background: var(
+                    --c--contextuals--background--surface--primary
+                  );
+                  border: 1px solid
+                    var(--c--contextuals--border--surface--primary);
+                `}
+              />
+            </Box>
+          ))}
+          <Box $direction="row" $justify="flex-end">
+            <Button
+              size="small"
+              type="submit"
+              icon={<Icon iconName="north_west" $size="16px" />}
+            >
+              {t('Put in the message field')}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -12,7 +12,7 @@ import {
   improvePrompt,
 } from '../coach/coachApi';
 import { languageName } from '../coach/language';
-import { levelColor, levelLabel } from '../coach/levels';
+import { levelColor, wordLevel } from '../coach/levels';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { wordDiff } from '../coach/wordDiff';
@@ -27,12 +27,14 @@ import {
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
+import { ExplainedComparison, TutorHints } from './CoachExtras';
 import { CoachIntro } from './CoachIntro';
 import { AssistResults, CoachModeTabs, InstantSuggestions } from './CoachModes';
 import { CoachStatus } from './CoachStatus';
 import { DiffView } from './DiffView';
+import { DinumGrid } from './DinumGrid';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
-import { ScoreGauge } from './ScoreGauge';
+import { LivePillars } from './LivePillars';
 import { SessionReviewPanel } from './SessionReviewPanel';
 
 const sectionCss = css`
@@ -157,6 +159,35 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     offerPrompt(improvement.improvedPrompt, t('Improved prompt'));
     reward('improvement');
     setImprovement(null);
+  };
+
+  // Cautious version: allowed to say "I do not know", tied to the sources.
+  const caution = t(
+    'If information is missing or you are not sure, say so instead of guessing. Rely only on the documents provided and quote the passage you use.',
+  );
+  const isCautious =
+    improvement !== null && improvement.improvedPrompt.includes(caution);
+  // "Ask me questions first": the most praised technique among users.
+  const questionsFirst = t(
+    'Before answering, ask me the questions you need to do this well, then wait for my answers.',
+  );
+  const asksQuestions =
+    improvement !== null && improvement.improvedPrompt.includes(questionsFirst);
+  const addQuestionsFirst = () => {
+    if (improvement && !asksQuestions) {
+      setImprovement({
+        ...improvement,
+        improvedPrompt: `${improvement.improvedPrompt.trimEnd()}\n\n${questionsFirst}`,
+      });
+    }
+  };
+  const makeCautious = () => {
+    if (improvement && !isCautious) {
+      setImprovement({
+        ...improvement,
+        improvedPrompt: `${improvement.improvedPrompt.trimEnd()}\n\n${caution}`,
+      });
+    }
   };
 
   const copyImprovement = async () => {
@@ -298,6 +329,9 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         <>
           {analysis.isLongEnough && !result && analysis.status === 'idle' && (
             <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
+              <Box $css="align-self: stretch; margin-bottom: 12px;">
+                <LivePillars text={chatInput} />
+              </Box>
               <Icon iconName="grading" $size="40px" $theme="brand" />
               <Text $textAlign="center" $weight="700">
                 {t('Your prompt is ready to be analysed')}
@@ -342,16 +376,16 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                 $align="center"
                 $css={sectionCss}
               >
-                <ScoreGauge score={result.score} />
                 <Box $direction="column" $gap="4px" $css="min-width: 0;">
                   <Box $direction="row" $gap="8px" $align="center">
                     <Text
+                      $size="lg"
                       $weight="700"
                       $css={css`
                         color: ${levelColor(result.score)};
                       `}
                     >
-                      {levelLabel(result.score, t)}
+                      {wordLevel(result.score, t)}
                     </Text>
                     {analysis.status === 'loading' && <Loader size="small" />}
                   </Box>
@@ -364,6 +398,10 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                       </Text>
                     )}
                 </Box>
+              </Box>
+
+              <Box $css={sectionCss}>
+                <DinumGrid result={result} />
               </Box>
 
               {result.suggestions.length > 0 && (
@@ -412,6 +450,13 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                 >
                   {t('Suggest a better version')}
                 </Button>
+                {/* Learning by oneself: hints instead of a ready version. */}
+                {!improvement && (
+                  <TutorHints
+                    prompt={analysis.analyzedText ?? chatInput}
+                    language={language}
+                  />
+                )}
 
                 {improvement && (
                   <Box
@@ -494,6 +539,33 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                           ))}
                         </Box>
                       </Box>
+                    )}
+                    <ExplainedComparison
+                      original={improvement.original}
+                      improved={improvement.improvedPrompt}
+                      language={language}
+                    />
+                    {!asksQuestions && (
+                      <Button
+                        size="small"
+                        color="neutral"
+                        variant="tertiary"
+                        onClick={addQuestionsFirst}
+                        icon={<Icon iconName="help" $size="16px" />}
+                      >
+                        {t('Questions first')}
+                      </Button>
+                    )}
+                    {!isCautious && (
+                      <Button
+                        size="small"
+                        color="neutral"
+                        variant="tertiary"
+                        onClick={makeCautious}
+                        icon={<Icon iconName="verified_user" $size="16px" />}
+                      >
+                        {t('Make it cautious')}
+                      </Button>
                     )}
                     <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
                       <Button

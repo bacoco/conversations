@@ -238,7 +238,7 @@ const lessons: Lesson[] = [
         title: 'Raisonner étape par étape',
         icon: '\uD83E\uDDE0',
         content:
-          'Pour les problèmes complexes (calculs, analyses, comparaisons), demandez à l\'IA de **raisonner étape par étape**.\n\nAjoutez simplement : "Raisonne étape par étape avant de conclure" ou "Montre ton raisonnement".\n\nCela s\'appelle le "chain of thought" et améliore considérablement la qualité des réponses sur les tâches de raisonnement.',
+          'Pour les problèmes complexes (calculs, analyses, comparaisons), demandez à l\'IA de **raisonner étape par étape**.\n\nAjoutez simplement : "Raisonne étape par étape avant de conclure" ou "Montre ton raisonnement".\n\nCela s\'appelle le "chain of thought" et aidait beaucoup les anciens modèles. Les modèles récents raisonnent souvent déjà seuls : l\'intérêt principal est désormais de **voir les étapes pour pouvoir les vérifier**.',
         example: {
           bad: 'Le budget est-il respecte ?',
           good: "Analyse ce budget étape par étape :\n1. Calcule le total des dépenses\n2. Compare au budget initial\n3. Identifie l'écart\n4. Propose des solutions",
@@ -260,6 +260,48 @@ const lessons: Lesson[] = [
           'L\'IA peut produire des formats structurés :\n\n- **Tableaux** : "Présente sous forme de tableau avec colonnes X, Y, Z"\n- **JSON** : "Retourne les données en JSON valide avec les champs..."\n- **Listes numérotées** : "Liste les 5 points en numérotant"\n- **Markdown** : "Utilise des titres et sous-titres"\n\nLes formats structurés sont plus faciles à réutiliser et à vérifier.',
         keyTakeaway:
           'Plus le format est précis, plus le résultat est exploitable directement.',
+      },
+    ],
+  },
+  {
+    id: 'lesson-8',
+    title: 'Ce qui marche vraiment',
+    icon: '\uD83E\uDDEA',
+    slides: [
+      {
+        title: 'Les formules magiques ne suffisent pas',
+        icon: '\u2728',
+        content:
+          "Des études récentes ont testé les « astuces » qui circulent : **« Tu es un expert »**, promettre un pourboire, menacer l'IA, être très poli.\n\nRésultat : **aucun effet fiable sur l'exactitude** des réponses. Un rôle peut aider pour le **ton**, pas pour la justesse.\n\nCe qui compte vraiment, c'est l'**information** que vous donnez : la tâche, le contexte, le document de référence, le format.",
+        example: {
+          bad: 'Tu es le meilleur expert juridique du monde. Réponds parfaitement.',
+          good: 'Explique à un agent d’accueil, en 10 lignes, ce que change le décret ci-dessous pour les demandes de carte grise.\n\n"""\n[coller le décret]\n"""',
+          note: 'La seconde version ne flatte pas l’IA : elle lui donne ce dont elle a besoin.',
+        },
+      },
+      {
+        title: 'L’IA se trompe avec assurance',
+        icon: '\u26A0\uFE0F',
+        content:
+          "Une IA peut **inventer** un article de loi, un chiffre ou une référence, avec un ton parfaitement sûr.\n\nLe guide de l'État le rappelle : elle peut citer des textes qui n'existent pas. Même quand elle cite une source, la citation n'est pas toujours exacte.\n\nVérifiez donc **toujours** les chiffres, les dates, les noms et les références avant de les utiliser.",
+        keyTakeaway:
+          'Une réponse sûre d’elle n’est pas une réponse vraie : les faits se vérifient.',
+      },
+      {
+        title: 'Deux phrases qui protègent',
+        icon: '\uD83D\uDEE1\uFE0F',
+        content:
+          "Ajoutez à vos prompts importants :\n\n- **« Si une information te manque ou si tu n'es pas sûr, dis-le plutôt que de deviner. »** L'IA a le droit de ne pas savoir.\n- **« Appuie-toi uniquement sur le document fourni et cite le passage utilisé. »** Vous pourrez vérifier.\n\nEt quand votre demande est floue, commencez par : **« Pose-moi les questions dont tu as besoin avant de répondre. »**",
+        keyTakeaway:
+          'Dans le Coach, les boutons « Rendre la version prudente » et « Questions d’abord » ajoutent ces phrases pour vous.',
+      },
+      {
+        title: 'Un essai ne prouve rien',
+        icon: '\uD83D\uDD01',
+        content:
+          "La même demande, formulée un peu autrement, peut donner une réponse très différente.\n\nSi une réponse vous déçoit, ne concluez pas que l'IA « ne sait pas faire » : **reformulez**, précisez le contexte ou donnez un exemple, puis comparez.\n\nC'est en comparant deux formulations qu'on apprend ce qui marche pour ses propres tâches.",
+        keyTakeaway:
+          'Itérer et comparer vaut mieux que chercher LA formule parfaite.',
       },
     ],
   },
@@ -567,6 +609,44 @@ const quiz: QuizQuestion[] = [
     correctIndex: 1,
     explanation:
       'Les formats structurés (JSON, tableaux, listes) sont directement exploitables par des outils, des bases de données ou des tableurs. Le texte libre est plus difficile à réutiliser.',
+  },
+  {
+    id: 'q24',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question: "Ajouter « Tu es un expert » au début d'un prompt…",
+    options: [
+      'Rend toujours les réponses plus exactes',
+      "N'a pas d'effet fiable sur l'exactitude ; cela peut seulement changer le ton",
+      "Empêche l'IA de se tromper",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Les études n'ont pas trouvé d'effet fiable sur l'exactitude. Ce qui améliore les réponses, c'est l'information donnée : tâche, contexte, document, format.",
+  },
+  {
+    id: 'q25',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      "Si l'IA cite un article de loi avec assurance, on peut l'utiliser sans vérifier.",
+    correctAnswer: false,
+    explanation:
+      'Une IA peut inventer des références avec un ton très sûr. Vérifiez toujours les textes, chiffres et dates.',
+  },
+  {
+    id: 'q26',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question: "Quelle phrase réduit le risque d'invention ?",
+    options: [
+      "« Réponds parfaitement, c'est très important »",
+      "« Si tu n'es pas sûr, dis-le, et appuie-toi uniquement sur le document fourni »",
+      "« Tu auras un pourboire si c'est juste »",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Autoriser l'IA à dire qu'elle ne sait pas et la limiter au document fourni rend la réponse vérifiable.",
   },
 ];
 

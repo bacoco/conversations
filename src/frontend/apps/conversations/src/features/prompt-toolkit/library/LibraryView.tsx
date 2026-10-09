@@ -9,6 +9,7 @@ import { PromptActions } from './PromptActions';
 import { getPromptLibrary } from './content';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
+import { shareLink } from './templateVars';
 import {
   exportMyPrompts,
   parseMyPromptsFile,
@@ -117,6 +118,7 @@ const PromptItem = ({
   onRename?: (title: string) => void;
 }) => {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const [isRenaming, setIsRenaming] = useState(false);
   const [name, setName] = useState(prompt.title);
   const finishRename = () => {
@@ -199,6 +201,32 @@ const PromptItem = ({
           </Box>
         )}
         <Box $direction="row" $css="padding: 6px 6px 0 0;">
+          {onRename && !isRenaming && (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-label={t('Share "{{title}}"', { title: prompt.title })}
+              title={t('Copy a link to share this prompt')}
+              onClick={() => {
+                void navigator.clipboard
+                  .writeText(shareLink(prompt.title, prompt.prompt))
+                  .then(() =>
+                    showToast(
+                      'success',
+                      t(
+                        'Link copied: whoever opens it can add this prompt to their prompts.',
+                      ),
+                      undefined,
+                      4000,
+                    ),
+                  );
+              }}
+              icon={
+                <Icon iconName="share" $size="20px" $variation="secondary" />
+              }
+            />
+          )}
           {onRename && !isRenaming && (
             <Button
               size="small"

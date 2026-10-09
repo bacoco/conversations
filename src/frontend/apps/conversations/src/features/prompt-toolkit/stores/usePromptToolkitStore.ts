@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { PROMPT_TOOLKIT_ENABLED, RobinTurn } from '../coach/coachApi';
+import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
 export type RightPanelMode = 'coach' | 'learn' | 'tools';
@@ -76,6 +77,9 @@ interface PromptToolkitState {
     mode?: 'template' | 'draft',
   ) => void;
   closeFill: () => void;
+  /** A prompt shared by a colleague through a link, waiting to be imported. */
+  sharedPrompt: { title: string; prompt: string } | null;
+  clearSharedPrompt: () => void;
   /** The conversation with Robin, kept while the page is open. */
   robinChat: RobinTurn[];
   setRobinChat: (turns: RobinTurn[]) => void;
@@ -132,6 +136,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       startFill: (template, title, context, mode) =>
         set({ fill: { template, title, context, mode } }),
       closeFill: () => set({ fill: null }),
+      sharedPrompt: null,
+      clearSharedPrompt: () => set({ sharedPrompt: null }),
       robinChat: [],
       setRobinChat: (robinChat) => set({ robinChat }),
       lessonRequest: null,
@@ -226,6 +232,27 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
     },
   ),
 );
+
+/**
+ * A link shared by a colleague (#robin-prompt=…) opens the panel with an
+ * offer to import the prompt; the address is then cleaned.
+ */
+const takeSharedPrompt = () => {
+  const shared = readSharedPrompt(window.location.hash);
+  if (shared) {
+    usePromptToolkitStore.setState({ sharedPrompt: shared, isOpen: true });
+    window.history.replaceState(
+      null,
+      '',
+      window.location.pathname + window.location.search,
+    );
+  }
+};
+if (typeof window !== 'undefined' && PROMPT_TOOLKIT_ENABLED) {
+  takeSharedPrompt();
+  // Also when the link is opened in a tab where the app already runs.
+  window.addEventListener('hashchange', takeSharedPrompt);
+}
 
 /** Runs `onReset` when the header trash button is pressed in `mode`. */
 export const useSectionReset = (mode: RightPanelMode, onReset: () => void) => {

@@ -238,7 +238,7 @@ const lessons: Lesson[] = [
         title: 'Reasoning step by step',
         icon: '🧠',
         content:
-          'For complex problems (calculations, analyses, comparisons), ask the AI to **reason step by step**.\n\nSimply add: "Reason step by step before concluding" or "Show your reasoning".\n\nThis is called "chain of thought" and it greatly improves the quality of answers on reasoning tasks.',
+          'For complex problems (calculations, analyses, comparisons), ask the AI to **reason step by step**.\n\nSimply add: "Reason step by step before concluding" or "Show your reasoning".\n\nThis is called "chain of thought" and it helped older models a lot. Recent models often reason on their own already: the main benefit now is to **see the steps so you can check them**.',
         example: {
           bad: 'Is the budget on track?',
           good: 'Analyse this budget step by step:\n1. Calculate total spending\n2. Compare it with the initial budget\n3. Identify the gap\n4. Suggest solutions',
@@ -260,6 +260,48 @@ const lessons: Lesson[] = [
           'AI can produce structured formats:\n\n- **Tables**: "Present this as a table with columns X, Y, Z"\n- **JSON**: "Return the data as valid JSON with the fields..."\n- **Numbered lists**: "List the 5 points, numbered"\n- **Markdown**: "Use headings and subheadings"\n\nStructured formats are easier to reuse and to check.',
         keyTakeaway:
           'The more precise the format, the more directly usable the result.',
+      },
+    ],
+  },
+  {
+    id: 'lesson-8',
+    title: 'What really works',
+    icon: '\uD83E\uDDEA',
+    slides: [
+      {
+        title: 'Magic formulas are not enough',
+        icon: '\u2728',
+        content:
+          'Recent studies tested the popular "tricks": **"You are an expert"**, promising a tip, threatening the AI, being very polite.\n\nResult: **no reliable effect on the accuracy** of answers. A role can help with **tone**, not with correctness.\n\nWhat really counts is the **information** you give: the task, the context, the reference document, the format.',
+        example: {
+          bad: 'You are the best legal expert in the world. Answer perfectly.',
+          good: 'Explain to a front-desk agent, in 10 lines, what the decree below changes for vehicle registration requests.\n\n"""\n[paste the decree]\n"""',
+          note: 'The second version does not flatter the AI: it gives it what it needs.',
+        },
+      },
+      {
+        title: 'AI is wrong with confidence',
+        icon: '\u26A0\uFE0F',
+        content:
+          "An AI can **invent** a law article, a figure or a reference, in a perfectly confident tone.\n\nThe State's guide says so: it can quote texts that do not exist. Even when it quotes a source, the quote is not always accurate.\n\nSo **always** check figures, dates, names and references before using them.",
+        keyTakeaway:
+          'A confident answer is not a true answer: facts must be checked.',
+      },
+      {
+        title: 'Two sentences that protect you',
+        icon: '\uD83D\uDEE1\uFE0F',
+        content:
+          'Add to your important prompts:\n\n- **"If information is missing or you are not sure, say so instead of guessing."** The AI is allowed not to know.\n- **"Rely only on the document provided and quote the passage you use."** You will be able to check.\n\nAnd when your request is vague, start with: **"Ask me the questions you need before answering."**',
+        keyTakeaway:
+          'In the Coach, the "Make it cautious" and "Questions first" buttons add these sentences for you.',
+      },
+      {
+        title: 'One try proves nothing',
+        icon: '\uD83D\uDD01',
+        content:
+          'The same request, worded a little differently, can give a very different answer.\n\nIf an answer disappoints you, do not conclude the AI "cannot do it": **rephrase**, add context or give an example, then compare.\n\nComparing two wordings is how you learn what works for your own tasks.',
+        keyTakeaway:
+          'Iterating and comparing beats looking for THE perfect formula.',
       },
     ],
   },
@@ -564,6 +606,44 @@ const quiz: QuizQuestion[] = [
     correctIndex: 1,
     explanation:
       'Structured formats (JSON, tables, lists) can be used directly by tools, databases or spreadsheets. Free text is harder to reuse.',
+  },
+  {
+    id: 'q24',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question: 'Adding "You are an expert" at the start of a prompt…',
+    options: [
+      'Always makes answers more accurate',
+      'Has no reliable effect on accuracy; it can only change the tone',
+      'Stops the AI from making mistakes',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Studies found no reliable effect on accuracy. What improves answers is the information given: task, context, document, format.',
+  },
+  {
+    id: 'q25',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      'If the AI quotes a law article confidently, you can use it without checking.',
+    correctAnswer: false,
+    explanation:
+      'An AI can invent references in a very confident tone. Always check texts, figures and dates.',
+  },
+  {
+    id: 'q26',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question: 'Which sentence reduces the risk of invention?',
+    options: [
+      '"Answer perfectly, it is very important"',
+      '"If you are not sure, say so, and rely only on the document provided"',
+      '"You will get a tip if it is right"',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Allowing the AI to say it does not know and limiting it to the document provided makes the answer checkable.',
   },
 ];
 

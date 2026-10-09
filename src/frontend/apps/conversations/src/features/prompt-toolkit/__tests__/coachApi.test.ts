@@ -31,6 +31,8 @@ describe('coachApi parsing', () => {
       audience: 0,
       constraints: 0,
       verification: 0,
+      sources: 0,
+      examples: 0,
     });
     expect(analysis.strengths).toEqual(['clear']);
     expect(analysis.suggestions).toEqual(['a', 'b', 'c']);
