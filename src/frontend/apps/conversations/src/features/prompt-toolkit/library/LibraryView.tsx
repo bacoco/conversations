@@ -9,7 +9,11 @@ import { PromptActions } from './PromptActions';
 import { getPromptLibrary } from './content';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
-import { useMyPromptsStore } from './useMyPromptsStore';
+import {
+  exportMyPrompts,
+  parseMyPromptsFile,
+  useMyPromptsStore,
+} from './useMyPromptsStore';
 
 const FAVORITES = 'favorites';
 const MINE = 'mine';
@@ -102,14 +106,27 @@ const PromptItem = ({
   isOpen,
   onToggle,
   onDelete,
+  onRename,
 }: {
   prompt: LibraryPrompt;
   isOpen: boolean;
   onToggle: () => void;
   /** For the user's own prompts: a delete button instead of the star. */
   onDelete?: () => void;
+  /** For the user's own prompts: the title can be changed. */
+  onRename?: (title: string) => void;
 }) => {
   const { t } = useTranslation();
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [name, setName] = useState(prompt.title);
+  const finishRename = () => {
+    setIsRenaming(false);
+    if (name.trim() && name.trim() !== prompt.title) {
+      onRename?.(name);
+    } else {
+      setName(prompt.title);
+    }
+  };
   const isFavorite = useLibraryStore((state) =>
     state.favorites.includes(prompt.id),
   );
@@ -128,23 +145,72 @@ const PromptItem = ({
   return (
     <Box as="li" ref={itemRef} $css={itemCss(isOpen)}>
       <Box $direction="row" $align="flex-start">
-        <Box
-          as="button"
-          type="button"
-          aria-expanded={isOpen}
-          aria-controls={previewId}
-          onClick={onToggle}
-          $gap="2px"
-          $css={itemButtonCss}
-        >
-          <Text $size="sm" $weight="700">
-            {prompt.title}
-          </Text>
-          <Text $size="xs" $variation="secondary">
-            {prompt.description}
-          </Text>
-        </Box>
-        <Box $css="padding: 6px 6px 0 0;">
+        {isRenaming ? (
+          <Box $css="flex: 1; padding: 8px 0 8px 12px;">
+            <Box
+              as="input"
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
+              aria-label={t('New name')}
+              value={name}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setName(event.target.value)
+              }
+              onBlur={finishRename}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  finishRename();
+                }
+                if (event.key === 'Escape') {
+                  setName(prompt.title);
+                  setIsRenaming(false);
+                }
+              }}
+              $css={css`
+                width: 100%;
+                padding: 6px 8px;
+                border-radius: 6px;
+                font: inherit;
+                font-size: 0.875rem;
+                font-weight: 700;
+                color: inherit;
+                background: var(--c--contextuals--background--surface--primary);
+                border: 1px solid
+                  var(--c--contextuals--border--semantic--brand--primary);
+              `}
+            />
+          </Box>
+        ) : (
+          <Box
+            as="button"
+            type="button"
+            aria-expanded={isOpen}
+            aria-controls={previewId}
+            onClick={onToggle}
+            $gap="2px"
+            $css={itemButtonCss}
+          >
+            <Text $size="sm" $weight="700">
+              {prompt.title}
+            </Text>
+            <Text $size="xs" $variation="secondary">
+              {prompt.description}
+            </Text>
+          </Box>
+        )}
+        <Box $direction="row" $css="padding: 6px 6px 0 0;">
+          {onRename && !isRenaming && (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-label={t('Rename "{{title}}"', { title: prompt.title })}
+              onClick={() => setIsRenaming(true)}
+              icon={
+                <Icon iconName="edit" $size="20px" $variation="secondary" />
+              }
+            />
+          )}
           {onDelete ? (
             <Button
               size="small"
@@ -267,6 +333,34 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
   const favorites = useLibraryStore((state) => state.favorites);
   const myPrompts = useMyPromptsStore((state) => state.prompts);
   const removeMine = useMyPromptsStore((state) => state.remove);
+  const renameMine = useMyPromptsStore((state) => state.rename);
+  const importMine = useMyPromptsStore((state) => state.importPrompts);
+  const { showToast } = useToast();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const exportFile = () => {
+    const blob = new Blob([exportMyPrompts(myPrompts)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${t('my-prompts')}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+  const importFile = async (file: File) => {
+    try {
+      const added = importMine(parseMyPromptsFile(await file.text()));
+      showToast(
+        'success',
+        t('{{count}} prompts imported.', { count: added }),
+        undefined,
+        3000,
+      );
+    } catch {
+      showToast('error', t('This file is not a "My prompts" export.'));
+    }
+  };
   // The user's own prompts, shown like library prompts.
   const mine = useMemo<LibraryPrompt[]>(
     () =>
@@ -312,9 +406,8 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
           ];
 
   const cards = [
-    ...(mine.length > 0
-      ? [{ id: MINE, icon: 'bookmark', title: t('My prompts') }]
-      : []),
+    // Always there: it is also where prompts are imported.
+    { id: MINE, icon: 'bookmark', title: t('My prompts') },
     ...(favorites.length > 0
       ? [{ id: FAVORITES, icon: 'star', title: t('My favorites') }]
       : []),
@@ -386,6 +479,44 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
     </Box>
   );
 
+  // Moving "My prompts" to another computer: a file to export, then import.
+  const mineTools = categoryId === MINE && (
+    <Box $direction="row" $gap="8px" $justify="flex-end">
+      <input
+        ref={fileRef}
+        type="file"
+        accept="application/json,.json"
+        hidden
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) {
+            void importFile(file);
+          }
+          event.target.value = '';
+        }}
+      />
+      <Button
+        size="small"
+        color="neutral"
+        variant="secondary"
+        onClick={() => fileRef.current?.click()}
+        icon={<Icon iconName="upload" $size="16px" />}
+      >
+        {t('Import')}
+      </Button>
+      <Button
+        size="small"
+        color="neutral"
+        variant="secondary"
+        disabled={myPrompts.length === 0}
+        onClick={exportFile}
+        icon={<Icon iconName="download" $size="16px" />}
+      >
+        {t('Export')}
+      </Button>
+    </Box>
+  );
+
   const list =
     listed.length === 0 ? (
       <Box $align="center" $gap="6px" $padding={{ vertical: 'lg' }}>
@@ -397,9 +528,13 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
         <Text $size="sm" $variation="secondary" $textAlign="center">
           {categoryId === FAVORITES
             ? t('Star a prompt to find it here.')
-            : t(
-                'No prompt matches. Try another word, or the prompt generator.',
-              )}
+            : categoryId === MINE
+              ? t(
+                  'Save a prompt to find it here, or import a file exported from another computer.',
+                )
+              : t(
+                  'No prompt matches. Try another word, or the prompt generator.',
+                )}
         </Text>
       </Box>
     ) : (
@@ -411,6 +546,11 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
             onDelete={
               prompt.category === MINE
                 ? () => removeMine(prompt.id.slice(MINE.length + 1))
+                : undefined
+            }
+            onRename={
+              prompt.category === MINE
+                ? (title) => renameMine(prompt.id.slice(MINE.length + 1), title)
                 : undefined
             }
             isOpen={openId === prompt.id}
@@ -434,6 +574,7 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
       }
     >
       {header}
+      {mineTools}
 
       {!category && (
         <Box $css="position: relative;">

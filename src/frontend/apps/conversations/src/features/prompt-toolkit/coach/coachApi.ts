@@ -90,6 +90,11 @@ Rewrite the prompt into ONE version that replaces the original and can be sent a
 Keep the user's intent, subject and facts exactly: never change the topic, never add a subject, name, role, figure, date or fact that is not in the original.
 Improve only what would really change the answer for this request. If the prompt already fits its purpose, keep it almost unchanged. Never add elements this request does not need (audience, role, sources, verification).
 Only when a detail is essential and missing, write a placeholder between square brackets, e.g. [subject of the text]; never for optional details.
+Never ask the assistant to make up a fact the user did not give (a reason, a date, a name, a figure, whether they can be reached, who replaces them): if the answer needs it, write a placeholder the user will fill in.
+Example for "email to my boss to say I will be away on Friday":
+- wrong: "…Add a short explanation of the absence and say whether I can be reached."
+- right: "…Reason: [reason]. Reachable: [yes/no]. Ton: cordial, 5 lines at most."
+
 If the prompt contains source material (an email, a text), keep it once, unchanged.
 Each item of "changes" describes a change really made in improved_prompt; if almost nothing changed, list only what did.
 JSON shape: {"improved_prompt": "<the rewritten prompt>", "changes": ["<at most 4 short items>"]}`;

@@ -7,7 +7,8 @@
 #   ALBERT_API_URL         default https://albert.api.etalab.gouv.fr
 #   NGINX_RESOLVER         default: the container's DNS server
 #
-# The key stays on the server; only logged-in users can use the relay.
+# The key stays on the server; only logged-in users can use the relay, within
+# a per-client rate limit (see default.conf).
 
 # Upstreams are variables, so nginx resolves them per request and starts
 # even when a host is unreachable.
@@ -20,6 +21,8 @@ location = /albert/status {
 
 location = /albert/v1/chat/completions {
     auth_request /albert/_auth;
+    limit_req zone=albert_chat burst=10 nodelay;
+    limit_req_status 429;
     client_max_body_size 64k;
     set $albert_upstream "${ALBERT_API_URL}";
     proxy_set_header Authorization "Bearer ${ALBERT_API_KEY}";
@@ -31,6 +34,8 @@ location = /albert/v1/chat/completions {
 
 location = /albert/v1/embeddings {
     auth_request /albert/_auth;
+    limit_req zone=albert_embed burst=30 nodelay;
+    limit_req_status 429;
     client_max_body_size 256k;
     set $albert_upstream "${ALBERT_API_URL}";
     proxy_set_header Authorization "Bearer ${ALBERT_API_KEY}";

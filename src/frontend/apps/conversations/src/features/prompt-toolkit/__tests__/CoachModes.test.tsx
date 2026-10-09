@@ -56,7 +56,7 @@ describe('coach modes', () => {
     await act(() => vi.advanceTimersByTimeAsync(700));
 
     const request = await screen.findByRole('button', {
-      name: /Write the minutes of this meeting/,
+      name: /Write the minutes from the transcript/,
     });
     // Only embeddings: no chat model is called while typing.
     fetchMock.mock.calls.forEach(([url]) =>
@@ -64,7 +64,7 @@ describe('coach modes', () => {
     );
     fireEvent.click(request);
     expect(setChatInput).toHaveBeenCalledWith(
-      'Write the minutes of this meeting',
+      'Write the minutes from the transcript',
     );
   });
 

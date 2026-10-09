@@ -2,7 +2,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { LibraryView } from '../library/LibraryView';
 import { SavePromptButton } from '../library/SavePromptButton';
-import { titleFrom, useMyPromptsStore } from '../library/useMyPromptsStore';
+import {
+  exportMyPrompts,
+  parseMyPromptsFile,
+  titleFrom,
+  useMyPromptsStore,
+} from '../library/useMyPromptsStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/components/ToastProvider', () => ({
@@ -47,5 +52,34 @@ describe('My prompts', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^Delete/ }));
     expect(useMyPromptsStore.getState().prompts).toEqual([]);
+  });
+});
+
+describe('My prompts: rename, export, import', () => {
+  beforeEach(() => useMyPromptsStore.setState({ prompts: [] }));
+
+  it('renames a saved prompt', () => {
+    const { save, rename } = useMyPromptsStore.getState();
+    save('Write the weekly note', 'Weekly');
+    const [saved] = useMyPromptsStore.getState().prompts;
+    rename(saved.id, 'Weekly note');
+    expect(useMyPromptsStore.getState().prompts[0].title).toBe('Weekly note');
+  });
+
+  it('exports then imports without duplicates', () => {
+    const { save } = useMyPromptsStore.getState();
+    save('First prompt', 'One');
+    save('Second prompt', 'Two');
+    const file = exportMyPrompts(useMyPromptsStore.getState().prompts);
+    useMyPromptsStore.setState({ prompts: [] });
+    const items = parseMyPromptsFile(file);
+    expect(useMyPromptsStore.getState().importPrompts(items)).toBe(2);
+    // Importing the same file again adds nothing.
+    expect(useMyPromptsStore.getState().importPrompts(items)).toBe(0);
+    expect(useMyPromptsStore.getState().prompts).toHaveLength(2);
+  });
+
+  it('refuses a file that is not an export', () => {
+    expect(() => parseMyPromptsFile('{"hello": 1}')).toThrow();
   });
 });

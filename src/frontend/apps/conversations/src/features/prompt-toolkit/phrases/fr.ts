@@ -20,9 +20,7 @@ export const PHRASES_FR: PhraseLibrary = {
     { id: 'project', label: 'Projet' },
   ],
   phrases: [
-    // Synthèse
     ['summary', 'Résume ceci en 5 points clés'],
-    ['summary', 'Résume ceci en 3 points clés'],
     ['summary', 'Fais une synthèse d’une page pour ma direction'],
     ['summary', 'Synthétise ce mail et déduis-en un plan d’action'],
     ['summary', 'Fais une synthèse analytique de ce texte'],
@@ -34,7 +32,7 @@ export const PHRASES_FR: PhraseLibrary = {
     ['summary', 'Classe ces contributions par thème'],
     ['summary', 'Quels sont les principaux enseignements ?'],
     ['summary', 'Résume ce mail en 3 phrases'],
-    ['summary', 'Classe ces mails par urgence'],
+    ['summary', 'Classe ces messages par urgence'],
     ['summary', 'Fais-moi le point sur ce dossier'],
     ['summary', 'Résume cette présentation en une diapositive'],
     ['summary', 'Résume ceci en version courte, moyenne et longue'],
@@ -42,7 +40,6 @@ export const PHRASES_FR: PhraseLibrary = {
     ['summary', 'Extrais les chiffres clés'],
     ['summary', 'Liste les échéances et les dates'],
     ['summary', 'Résume ce fil de mails avant de le transférer'],
-    // Courriel
     ['email', 'Rédige un courriel pour reporter la réunion'],
     ['email', 'Rédige un courriel formel de 10 lignes maximum'],
     ['email', 'Réponds à ce courriel point par point'],
@@ -60,7 +57,6 @@ export const PHRASES_FR: PhraseLibrary = {
     ['email', 'Réponds à cette réclamation'],
     ['email', 'Explique aux agents comment résoudre ce problème'],
     ['email', 'Rédige mon message d’absence'],
-    // Rédaction
     ['writing', 'Rédige une note de synthèse pour la direction'],
     ['writing', 'Rédige une réponse à cette question parlementaire'],
     ['writing', 'Mets à jour cette note interne'],
@@ -79,7 +75,6 @@ export const PHRASES_FR: PhraseLibrary = {
     ['writing', 'Rédige un argumentaire pour cette option'],
     ['writing', 'Rédige le cahier des charges'],
     ['writing', 'Prépare une présentation de 10 diapositives'],
-    // Relecture
     ['editing', 'Corrige l’orthographe et la grammaire'],
     ['editing', 'Rends ce paragraphe plus clair et concis'],
     ['editing', 'Propose des améliorations'],
@@ -100,16 +95,14 @@ export const PHRASES_FR: PhraseLibrary = {
     ['editing', 'Pseudonymise ce document'],
     ['editing', 'Compare ces deux versions'],
     ['editing', 'Mets en forme avec titres, listes et tableau'],
-    // Traduction
     ['translation', 'Traduis en anglais'],
     ['translation', 'Traduis en allemand avec un glossaire'],
-    ['translation', 'Traduis sans toucher aux commandes ni aux fichiers'],
+    ['translation', 'Traduis sans modifier les noms techniques'],
     ['translation', 'Traduis rapidement ce document'],
     ['translation', 'Rédige une annonce et traduis-la en deux langues'],
     ['translation', 'Traduis ce courriel et propose une réponse'],
     ['translation', 'Traduis et explique les termes juridiques'],
     ['translation', 'Vérifie cette traduction'],
-    // Réunion
     ['meeting', 'Fais le compte rendu à partir de la transcription'],
     ['meeting', 'Fais le compte rendu à partir de mes notes'],
     ['meeting', 'Transforme ces notes en ordre du jour'],
@@ -125,7 +118,6 @@ export const PHRASES_FR: PhraseLibrary = {
     ['meeting', 'Prépare mon entretien individuel'],
     ['meeting', 'Prépare mes éléments de langage'],
     ['meeting', 'Résume en 3 décisions et 3 actions'],
-    // Comprendre
     ['understand', 'Explique-moi simplement cette notion'],
     ['understand', 'Explique-moi les bases de ce sujet'],
     ['understand', 'Explique cette procédure aux agents d’accueil'],
@@ -138,10 +130,9 @@ export const PHRASES_FR: PhraseLibrary = {
     ['understand', 'Quels sont les points de vigilance ?'],
     ['understand', 'Explique ce sigle dans son contexte'],
     ['understand', 'Où ce sujet est-il traité ? Cite le passage'],
-    ['understand', 'Corrige cette formule de tableur'],
     ['understand', 'Fais une recherche approfondie sur ce sujet'],
     ['understand', 'Vérifie si cette affirmation est exacte'],
-    // Données
+    ['data', 'Corrige cette formule de tableur'],
     ['data', 'Analyse ce fichier : tendances et anomalies'],
     ['data', 'Y a-t-il des tendances dans ces données ?'],
     ['data', 'Repère les incohérences dans ces données'],
@@ -157,18 +148,16 @@ export const PHRASES_FR: PhraseLibrary = {
     ['data', 'Propose un graphique pour la direction'],
     ['data', 'Identifie les problèmes les plus fréquents'],
     ['data', 'Quelles analyses faire dans le tableur ?'],
-    // Juridique
     ['legal', 'Résume ce texte de loi'],
     ['legal', 'Vulgarise ce décret pour des non-juristes'],
     ['legal', 'Repère les contradictions avec les textes existants'],
     ['legal', 'Compare cette convention à la réglementation'],
     ['legal', 'Vérifie la conformité de cette procédure'],
     ['legal', 'Que faut-il réviser après cette nouvelle loi ?'],
-    ['legal', 'Quelles obligations de l’AI Act pour ce projet ?'],
+    ['legal', 'Quelles obligations du règlement européen sur l’IA ?'],
     ['legal', 'Explique les obligations de cette circulaire'],
     ['legal', 'Liste les références juridiques à vérifier'],
     ['legal', 'Signale les clauses à risque de ce contrat'],
-    // RH
     ['hr', 'Rédige un retour pour l’entretien annuel'],
     ['hr', 'Rédige une fiche de poste'],
     ['hr', 'Rédige une lettre de recommandation'],
@@ -181,7 +170,6 @@ export const PHRASES_FR: PhraseLibrary = {
     ['hr', 'Compare mon parcours à cette fiche de poste'],
     ['hr', 'Prépare ma passation avant mon absence'],
     ['hr', 'Rends ce message à l’équipe plus bienveillant'],
-    // Communication
     ['communication', 'Rédige un message pour Tchap et pour l’intranet'],
     ['communication', 'Rédige une publication pour les réseaux sociaux'],
     ['communication', 'Rédige un communiqué d’urgence, un SMS et un post'],
@@ -189,11 +177,10 @@ export const PHRASES_FR: PhraseLibrary = {
     ['communication', 'Rédige un article d’intranet'],
     ['communication', 'Améliore cette diapositive'],
     ['communication', 'Propose 3 accroches pour cette campagne'],
-    // Projet
     ['project', 'Construis la chronologie de ce projet'],
     ['project', 'Crée le registre des risques'],
     ['project', 'Rédige le point d’avancement'],
-    ['project', 'Fais ma liste de tâches de la semaine'],
+    ['project', 'Transforme ces notes en liste de tâches'],
     ['project', 'Décris les rôles et les flux en une diapositive'],
     ['project', 'Propose des indicateurs partagés'],
     ['project', 'Fais le retour d’expérience de cette crise'],
