@@ -5,7 +5,9 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { ROBIN_TOOLS_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
+import { SpaceIntro } from '../components/SpaceIntro';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { LibraryView } from '../library/LibraryView';
 import {
@@ -370,14 +372,20 @@ export const ToolsPanel = () => {
       $padding={{ all: 'base' }}
       $css="min-height: 100%; justify-content: center;"
     >
-      <Box $gap="4px">
-        <Text as="h2" $size="md" $weight="700" $margin="0">
-          {t('Everyday tools')}
-        </Text>
-        <Text $size="sm" $variation="secondary">
-          {t('Pick a task: the panel prepares a well-built prompt for you.')}
-        </Text>
-      </Box>
+      <SpaceIntro
+        image={ROBIN_TOOLS_URL}
+        title={t('Everyday tools')}
+        text={t(
+          'Not sure how to ask? Pick the task to do: I prepare a well-built prompt for you.',
+        )}
+        steps={[
+          t('Choose a task below: an email, minutes, a summary…'),
+          t('Set two or three options: tone, length, audience.'),
+          t(
+            'The prompt goes into the message field: complete it, then send it.',
+          ),
+        ]}
+      />
       {/* Featured: start from a ready-made prompt. */}
       <FeaturedTile
         icon="menu_book"

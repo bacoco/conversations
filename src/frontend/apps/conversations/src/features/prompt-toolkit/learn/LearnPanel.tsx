@@ -5,6 +5,8 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { ROBIN_COURSE_URL } from '../components/PanelHome';
+import { SpaceIntro } from '../components/SpaceIntro';
 import {
   usePromptToolkitStore,
   useSectionReset,
@@ -233,6 +235,16 @@ export const LearnPanel = () => {
 
   return (
     <Box $gap="16px" $padding={{ all: 'base' }}>
+      <SpaceIntro
+        image={ROBIN_COURSE_URL}
+        title={t('Prompting course')}
+        text={t('Learn to write good prompts, a few minutes at a time.')}
+        steps={[
+          t('Lessons: short, to read in order.'),
+          t('Cards: the essentials, to review.'),
+          t('Quiz and challenges: to practise on real cases.'),
+        ]}
+      />
       <Box
         role="tablist"
         aria-label={t('Prompting course')}
@@ -317,7 +329,7 @@ export const LearnPanel = () => {
           <Box $gap="6px" $css="flex: 1; min-width: 0;">
             <Text $weight="700">
               {nextLesson
-                ? t('Prompting course')
+                ? t('Your progress')
                 : t('Course completed, congratulations!')}
             </Text>
             {nextLesson ? (
