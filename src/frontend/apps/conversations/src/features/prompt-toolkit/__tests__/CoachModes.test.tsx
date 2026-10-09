@@ -131,3 +131,18 @@ describe('embedding batches', () => {
     expect(fetchMock.mock.calls.length).toBeGreaterThan(2);
   });
 });
+
+describe('links to the full templates', () => {
+  it('every linked request points to an existing library prompt', async () => {
+    const { getPhrases } = await import('../phrases');
+    const { getPromptLibrary } = await import('../library/content');
+    for (const language of ['fr', 'en']) {
+      const ids = new Set(getPromptLibrary(language).prompts.map((p) => p.id));
+      const linked = getPhrases(language).filter((p) => p.templateId);
+      expect(linked.length).toBeGreaterThan(50);
+      linked.forEach((phrase) =>
+        expect(ids.has(phrase.templateId!)).toBe(true),
+      );
+    }
+  });
+});

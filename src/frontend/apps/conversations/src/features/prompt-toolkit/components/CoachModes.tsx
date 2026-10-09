@@ -5,10 +5,13 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import type { GeneratedPrompt } from '../coach/coachApi';
+import { hasPlaceholders } from '../coach/coachApi';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { PromptActions } from '../library/PromptActions';
 import { SavePromptButton } from '../library/SavePromptButton';
+import { getPromptLibrary } from '../library/content';
 import { searchPhrases } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
 import type { Phrase } from '../phrases/types';
@@ -349,6 +352,101 @@ const tagCss = (tone: (typeof TAG_TONES)[number]) => css`
   background: var(--c--contextuals--background--semantic--${tone}--tertiary);
 `;
 
+/** The improved version of a request: another colour, so it stands apart. */
+const improvedRowCss = css`
+  ${phraseRowCss}
+  border-color: var(--c--contextuals--border--semantic--brand--secondary);
+  background: var(--c--contextuals--background--semantic--brand--tertiary);
+`;
+
+/**
+ * One request, a click puts it in the message field. When the library has a
+ * full template for it, that template comes right below as a second
+ * suggestion, in another colour: the improved version of the first.
+ */
+const PhraseRow = ({
+  phrase,
+  showImproved,
+  onUse,
+}: {
+  phrase: Phrase;
+  /** False when an earlier request already shows the same template. */
+  showImproved: boolean;
+  onUse?: (text: string) => void;
+}) => {
+  const { t, i18n } = useTranslation();
+  // Robin asks for what is missing ([date], [recipient]…) when he can.
+  const offerPrompt = useOfferPrompt();
+  const isAiAvailable = useAiAvailable();
+  const template =
+    showImproved && phrase.templateId
+      ? getPromptLibrary(i18n.language).prompts.find(
+          (prompt) => prompt.id === phrase.templateId,
+        )
+      : undefined;
+  return (
+    <>
+      <li>
+        <Box
+          as="button"
+          type="button"
+          disabled={!onUse}
+          onClick={() => onUse?.(phrase.text)}
+          $direction="row"
+          $align="center"
+          $gap="12px"
+          $css={phraseRowCss}
+        >
+          <Box as="span" $css={tagCss(toneOf(phrase.category.id))}>
+            {phrase.category.label}
+          </Box>
+          <Text $weight="600" $css="flex: 1; min-width: 0;">
+            {phrase.text}
+          </Text>
+          <Icon iconName="north_west" $size="18px" $variation="secondary" />
+        </Box>
+      </li>
+      {template && (
+        <li>
+          <Box
+            as="button"
+            type="button"
+            disabled={!onUse}
+            onClick={() => offerPrompt(template.prompt, template.title)}
+            $direction="row"
+            $align="center"
+            $gap="12px"
+            $css={improvedRowCss}
+          >
+            <Box
+              as="span"
+              $direction="row"
+              $align="center"
+              $gap="4px"
+              $css={tagCss('brand')}
+            >
+              <Icon iconName="auto_awesome" $size="14px" $withThemeInherited />
+              {t('Improved version')}
+            </Box>
+            <Box $gap="2px" $css="flex: 1; min-width: 0;">
+              <Text $weight="600">{template.title}</Text>
+              <Text $size="xs" $variation="secondary">
+                {template.description}
+              </Text>
+              {isAiAvailable && hasPlaceholders(template.prompt) && (
+                <Text $size="xs" $theme="brand" $weight="600">
+                  {t('Robin will ask you what is missing.')}
+                </Text>
+              )}
+            </Box>
+            <Icon iconName="north_west" $size="18px" $theme="brand" />
+          </Box>
+        </li>
+      )}
+    </>
+  );
+};
+
 /** How many phrases are offered at a time. */
 const PHRASE_COUNT = 6;
 
@@ -422,27 +520,18 @@ export const InstantSuggestions = ({ text }: { text: string }) => {
           transition: opacity 0.15s ease;
         `}
       >
-        {phrases.map((phrase) => (
-          <li key={phrase.id}>
-            <Box
-              as="button"
-              type="button"
-              disabled={!setChatInput}
-              onClick={() => setChatInput?.(phrase.text)}
-              $direction="row"
-              $align="center"
-              $gap="12px"
-              $css={phraseRowCss}
-            >
-              <Box as="span" $css={tagCss(toneOf(phrase.category.id))}>
-                {phrase.category.label}
-              </Box>
-              <Text $weight="600" $css="flex: 1; min-width: 0;">
-                {phrase.text}
-              </Text>
-              <Icon iconName="north_west" $size="18px" $variation="secondary" />
-            </Box>
-          </li>
+        {phrases.map((phrase, index) => (
+          <PhraseRow
+            key={phrase.id}
+            phrase={phrase}
+            // The same template shows only once, under the first request.
+            showImproved={
+              !phrases
+                .slice(0, index)
+                .some((earlier) => earlier.templateId === phrase.templateId)
+            }
+            onUse={setChatInput ?? undefined}
+          />
         ))}
       </Box>
     </Box>

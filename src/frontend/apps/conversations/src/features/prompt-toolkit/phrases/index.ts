@@ -4,10 +4,11 @@ import type { Phrase, PhraseLibrary } from './types';
 
 const toPhrases = (library: PhraseLibrary): Phrase[] => {
   const categories = new Map(library.categories.map((c) => [c.id, c]));
-  return library.phrases.map(([categoryId, text], index) => ({
+  return library.phrases.map(([categoryId, text, templateId], index) => ({
     id: `${categoryId}-${index}`,
     category: categories.get(categoryId) ?? { id: categoryId, label: '' },
     text,
+    templateId,
   }));
 };
 
