@@ -273,6 +273,22 @@ export const PromptFillView = ({
               )}
         </Text>
 
+        {/* The starting request stays in view, at the top of the thread. */}
+        <Box $gap="4px" $align="flex-end">
+          <Text $size="xs" $weight="600" $variation="secondary">
+            {mode === 'draft' ? t('Your request') : t('Starting prompt')}
+          </Text>
+          <Box
+            $css={css`
+              ${bubbleCss(true)}
+              max-height: 180px;
+              overflow-y: auto;
+            `}
+          >
+            {template}
+          </Box>
+        </Box>
+
         <Box
           as="ol"
           $gap="10px"
