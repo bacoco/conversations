@@ -5,9 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { hasPlaceholders } from '../coach/coachApi';
-import { useOfferPrompt } from '../fill/useOfferPrompt';
-
+import { PromptActions } from './PromptActions';
 import { getPromptLibrary } from './content';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
@@ -112,14 +110,12 @@ const PromptItem = ({
   onDelete?: () => void;
 }) => {
   const { t } = useTranslation();
-  const offerPrompt = useOfferPrompt();
   const isFavorite = useLibraryStore((state) =>
     state.favorites.includes(prompt.id),
   );
   const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
   const previewId = `library-${prompt.id}`;
   // Nothing left to fill in (often the user's own prompts): use it as is.
-  const isComplete = !hasPlaceholders(prompt.prompt);
   const itemRef = useRef<HTMLLIElement | null>(null);
 
   // An opened prompt low in the list scrolls into view.
@@ -208,28 +204,12 @@ const PromptItem = ({
           >
             {prompt.prompt}
           </Text>
-          <Box $direction="row" $gap="8px" $justify="flex-end">
-            {onDelete && <CopyButton text={prompt.prompt} />}
-            <Button
-              size="small"
-              onClick={() => offerPrompt(prompt.prompt, prompt.title)}
-              icon={
-                <Icon
-                  iconName={isComplete ? 'north_west' : 'auto_awesome'}
-                  $size="16px"
-                />
-              }
-            >
-              {isComplete ? t('Use this prompt') : t('Complete with Robin')}
-            </Button>
-          </Box>
-          {!isComplete && (
-            <Text $size="xs" $variation="secondary">
-              {t(
-                'Robin asks you what is missing, then writes the complete prompt.',
-              )}
-            </Text>
+          {onDelete && (
+            <Box $direction="row" $justify="flex-end">
+              <CopyButton text={prompt.prompt} />
+            </Box>
           )}
+          <PromptActions prompt={prompt.prompt} title={prompt.title} />
         </Box>
       )}
     </Box>

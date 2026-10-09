@@ -87,6 +87,14 @@ Only when a detail is essential and missing, write a placeholder between square 
 If the prompt contains source material (an email, a text), keep it once, unchanged.
 JSON shape: {"improved_prompt": "<the rewritten prompt>", "changes": ["<at most 4 short items>"]}`;
 
+/** Never wait forever: a slow model gives up and lets the user retry. */
+export const COACH_TIMEOUT_MS = 30000;
+
+const withTimeout = (signal?: AbortSignal) => {
+  const timeout = AbortSignal.timeout(COACH_TIMEOUT_MS);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+};
+
 export class CoachError extends Error {
   constructor(
     message: string,
@@ -137,7 +145,7 @@ const completeMessages = async (
   const response = await fetch(COACH_COMPLETIONS_URL, {
     method: 'POST',
     credentials: 'include',
-    signal,
+    signal: withTimeout(signal),
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model,
@@ -406,6 +414,7 @@ How you work:
 - You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on, then ask for what is missing.
 - Ask one question at a time, and only about what the template really needs: the parts between [brackets]. When a part is a text to paste (an email, notes, a document), ask the user to paste it.
 - If an answer cannot be used (gibberish, off-topic, too vague), say so kindly, explain what you need and ask again, with an example.
+- Respect the user's answers: never question, judge or correct a plausible choice (a recipient, a tone, a subject), even an unusual one such as "my mother". Take it and move on.
 - If the user asks you something, answer it first.
 - Never ask for information the template does not need. Never mention brackets, placeholders or the template.
 - Never invent names, dates, figures or facts.
@@ -434,6 +443,7 @@ How you work:
 - Find what the draft lacks most among: the precise task, the context, the expected format, the audience, the constraints. Ask about it, one question at a time, at most ${DRAFT_MAX_QUESTIONS} questions, the most useful first.
 - Before each question, check the draft and every answer so far: never ask about something already stated (e.g. "my team" already gives the audience), and never ask the same thing twice. An answer may cover several points at once: take them all into account.
 - If an answer cannot be used, say so kindly and ask again with an example. If the user asks you something, answer it first.
+- Respect the user's answers: never question, judge or correct a plausible choice (a recipient, a tone, a subject), even an unusual one. Take it and move on.
 - Never invent names, dates, figures or facts.
 - When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with the answers, keeping the user's intent and any pasted text, clear and complete, with no brackets left.
 
@@ -579,7 +589,7 @@ export const answerPrompt = async (
   const response = await fetch(COACH_COMPLETIONS_URL, {
     method: 'POST',
     credentials: 'include',
-    signal,
+    signal: withTimeout(signal),
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: COACH_MODEL,
@@ -771,4 +781,120 @@ export const followUpPrompt = async (
     throw new CoachError('The coach returned no follow-up');
   }
   return { prompt, why: typeof raw.why === 'string' ? raw.why.trim() : '' };
+};
+
+/* Chat with Robin: a prompt-writing helper you can talk with. */
+
+export interface RobinTurn {
+  role: 'user' | 'robin';
+  text: string;
+  /** A ready-to-send prompt Robin proposes, when he has one. */
+  prompt?: string;
+}
+
+/** What Robin knows about the panel, to answer "what can you do?". */
+const ROBIN_HELP = `The panel offers: the Coach (Analysis: grade and advice on a prompt, then a better version; Prompt help: written versions plus matching library prompts; As you type: sentence completion and library prompts while typing, no AI; Session review: a review of the whole conversation), Robin (this chat, always at the bottom of the panel), the prompting Course (lessons, cards, quizzes, challenges), and Everyday tools (prompt library with favorites and "My prompts", email reply, rewriting, minutes, summary, translation, official letter, action plan, brainstorming, prompt generator and merge, improve my text, follow up on an answer).`;
+
+const ROBIN_CHAT_SYSTEM_PROMPT = (language: string, where: string) =>
+  `You are Robin, the helper of this prompt panel inside a public servants' AI assistant.
+${ROBIN_VOICE}
+- Talk in ${language}, addressing the user formally (in French, use "vous"). Short answers: 1 to 4 sentences.
+- Your main job: explain what the panel does and how to use it. What it offers: ${ROBIN_HELP}
+- The user is currently on: ${where}. By default, answer about this screen (what it is for, what to do next) unless they ask about something else.
+- You also help with prompting for any request: ask what is missing (task, context, format, audience), one question at a time, then propose a complete prompt.
+- Do not do the task yourself (no letter, no summary): propose the prompt, the assistant will do the task.
+- Never invent features; respect the user's choices.
+Reply only with JSON: {"message": "<what you say>", "prompt": "<a complete, ready-to-send prompt when you propose one, else omit>"}.`;
+
+export const chatWithRobin = async (
+  history: RobinTurn[],
+  language: string,
+  /** The screen the user is on, so Robin helps there by default. */
+  where: string,
+  signal?: AbortSignal,
+): Promise<RobinTurn> => {
+  const raw = await completeMessages(
+    [
+      { role: 'system', content: ROBIN_CHAT_SYSTEM_PROMPT(language, where) },
+      ...history.map((turn): ChatMessage =>
+        turn.role === 'user'
+          ? { role: 'user', content: turn.text }
+          : {
+              role: 'assistant',
+              content: JSON.stringify({
+                message: turn.text,
+                ...(turn.prompt ? { prompt: turn.prompt } : {}),
+              }),
+            },
+      ),
+    ],
+    signal,
+    0.4,
+    FILL_MODEL,
+  );
+  const text = typeof raw.message === 'string' ? raw.message.trim() : '';
+  const prompt = asPlainText(raw.prompt).trim();
+  if (!text && !prompt) {
+    throw new CoachError('Robin returned no answer');
+  }
+  return { role: 'robin', text, ...(prompt ? { prompt } : {}) };
+};
+
+/* Explaining a library prompt: what each part does and what to put in it. */
+
+export interface PromptPart {
+  /** The part, as written in the prompt ("Sujet : [sujet]"). */
+  part: string;
+  /** Why this part makes the answer better. */
+  why: string;
+  /** What to put in it, with a short example. */
+  fill: string;
+}
+
+export interface PromptExplanation {
+  summary: string;
+  parts: PromptPart[];
+}
+
+const EXPLAIN_SYSTEM_PROMPT = (language: string) =>
+  `You explain a ready-made prompt to a public servant who is learning to write prompts.
+Answer in ${language}, simply, without jargon.
+- "summary": one sentence: what the prompt makes the assistant do, and why it is built this way.
+- "parts": the 3 to 6 important parts of the prompt, in order. For each: "part" (a short quote of the part, as written), "why" (one sentence: what it brings to the answer), "fill" (for a part in [brackets]: what to put there, with a short concrete example; for a fixed part: when to change it).
+Reply only with JSON: {"summary": "...", "parts": [{"part": "...", "why": "...", "fill": "..."}]}.`;
+
+const explanations = new Map<string, PromptExplanation>();
+
+export const explainPrompt = async (
+  prompt: string,
+  language: string,
+  signal?: AbortSignal,
+): Promise<PromptExplanation> => {
+  const key = `${language}\n${prompt}`;
+  const cached = explanations.get(key);
+  if (cached) {
+    return cached;
+  }
+  const raw = await completeMessages(
+    [
+      { role: 'system', content: EXPLAIN_SYSTEM_PROMPT(language) },
+      { role: 'user', content: prompt },
+    ],
+    signal,
+  );
+  const parts = (Array.isArray(raw.parts) ? raw.parts : [])
+    .map((item) => item as Record<string, unknown>)
+    .map((item) => ({
+      part: asPlainText(item.part).trim(),
+      why: asPlainText(item.why).trim(),
+      fill: asPlainText(item.fill).trim(),
+    }))
+    .filter((item) => item.part && (item.why || item.fill));
+  const summary = asPlainText(raw.summary).trim();
+  if (!summary && parts.length === 0) {
+    throw new CoachError('No explanation');
+  }
+  const explanation = { summary, parts };
+  explanations.set(key, explanation);
+  return explanation;
 };

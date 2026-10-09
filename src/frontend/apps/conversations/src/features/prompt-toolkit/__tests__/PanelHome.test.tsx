@@ -7,7 +7,7 @@ describe('<PanelHome />', () => {
   beforeEach(() =>
     usePromptToolkitStore.setState({
       showHome: true,
-      coachMode: 'off',
+      coachMode: 'session',
       hasSeenWelcome: true,
     }),
   );
@@ -15,7 +15,7 @@ describe('<PanelHome />', () => {
   it('opens the coach in the mode of the chosen card', () => {
     render(<PanelHome />);
 
-    fireEvent.click(screen.getByRole('button', { name: /On-demand coach/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Prompt coach/ }));
 
     expect(usePromptToolkitStore.getState()).toMatchObject({
       showHome: false,
@@ -27,7 +27,7 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    expect(screen.getAllByRole('button')).toHaveLength(4);
+    expect(screen.getAllByRole('button')).toHaveLength(3);
     expect(
       screen.queryByRole('button', { name: /off/i }),
     ).not.toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('<PanelHome />', () => {
 
     rerender(<PanelHome />);
     expect(
-      screen.getByRole('button', { name: /On-demand coach/ }),
+      screen.getByRole('button', { name: /Prompt coach/ }),
     ).toBeInTheDocument();
   });
 });

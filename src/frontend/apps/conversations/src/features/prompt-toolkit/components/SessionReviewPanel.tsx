@@ -65,6 +65,9 @@ const List = ({
     </Box>
   );
 
+/** Robin reviewing the session; replaced by a dedicated illustration later. */
+const SESSION_IMAGE_URL = '/assets/robin-bilan.webp';
+
 /** Coach of the whole session: how the user prompted, not one prompt. */
 export const SessionReviewPanel = ({ language }: { language: string }) => {
   const { t } = useTranslation();
@@ -116,18 +119,115 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
     }
   };
 
-  if (!conversationId) {
+  const button = (
+    <Button
+      fullWidth
+      disabled={status === 'loading'}
+      onClick={() => void runReview()}
+      icon={
+        status === 'loading' ? (
+          <Loader size="small" />
+        ) : (
+          <Icon iconName="insights" $size="18px" />
+        )
+      }
+    >
+      {review ? t('Review again') : t('Review this session')}
+    </Button>
+  );
+
+  // Before the first review: a page that says what you will get.
+  if (!review || !conversationId) {
     return (
-      <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
-        <Icon iconName="insights" $size="40px" $variation="secondary" />
-        <Text $textAlign="center" $weight="700">
-          {t('Open a conversation to review it')}
-        </Text>
-        <Text $textAlign="center" $size="sm" $variation="secondary">
-          {t(
-            'The session review looks at all the prompts you sent in a conversation and how your way of prompting evolved.',
-          )}
-        </Text>
+      <Box
+        $align="center"
+        $justify="center"
+        $gap="20px"
+        $css={css`
+          flex: 1;
+          padding: 24px 24px 120px;
+          text-align: center;
+        `}
+      >
+        <Box
+          $css={css`
+            width: min(260px, 70%);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f7f8fd;
+          `}
+        >
+          <img
+            src={SESSION_IMAGE_URL}
+            alt=""
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </Box>
+        <Box $gap="6px" $align="center">
+          <Text as="h3" $size="h4" $weight="800" $margin="0">
+            {t('Session review')}
+          </Text>
+          <Text $variation="secondary" $css="max-width: 34ch;">
+            {t(
+              'Robin reads all the prompts of this conversation and tells you how you prompt.',
+            )}
+          </Text>
+        </Box>
+        <Box
+          as="ul"
+          $gap="10px"
+          $css={css`
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            text-align: left;
+          `}
+        >
+          {[
+            { icon: 'check_circle', label: t('What you already do well') },
+            { icon: 'trending_up', label: t('The habits to build') },
+            { icon: 'lightbulb', label: t('Three tips for next time') },
+          ].map((item) => (
+            <Box
+              as="li"
+              key={item.icon}
+              $direction="row"
+              $align="center"
+              $gap="10px"
+            >
+              <Icon iconName={item.icon} $size="20px" $theme="brand" />
+              <Text $weight="600">{item.label}</Text>
+            </Box>
+          ))}
+        </Box>
+        {conversationId ? (
+          <Box $css="width: min(320px, 100%);">{button}</Box>
+        ) : (
+          <Text $size="sm" $weight="600" $theme="brand">
+            {t('Open a conversation to review it')}
+          </Text>
+        )}
+        {status === 'loading' && (
+          <Text $size="sm" $variation="secondary" role="status">
+            {t('The coach is reading your conversation…')}
+          </Text>
+        )}
+        {status === 'empty' && (
+          <Text $size="sm" role="status">
+            {t('Send a few prompts in this conversation first.')}
+          </Text>
+        )}
+        {status === 'error' && (
+          <Text $size="sm" $theme="danger" role="alert">
+            {t('The coach could not review this session. Please retry.')}
+          </Text>
+        )}
       </Box>
     );
   }
@@ -139,25 +239,7 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
         loadingLabel={t('The coach is reading your conversation…')}
       />
       <Box $gap="8px" $css={sectionCss}>
-        <Text $size="sm" $variation="secondary">
-          {t(
-            'A review of this whole conversation: what you do well, the habits to build and three tips for next time.',
-          )}
-        </Text>
-        <Button
-          fullWidth
-          disabled={status === 'loading'}
-          onClick={() => void runReview()}
-          icon={
-            status === 'loading' ? (
-              <Loader size="small" />
-            ) : (
-              <Icon iconName="insights" $size="18px" />
-            )
-          }
-        >
-          {review ? t('Review again') : t('Review this session')}
-        </Button>
+        {button}
         {status === 'empty' && (
           <Text $size="sm" role="status">
             {t('Send a few prompts in this conversation first.')}

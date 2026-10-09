@@ -239,19 +239,11 @@ export const PanelHome = () => {
       id: 'coach-manual',
       icon: 'touch_app',
       tone: 'brand',
-      title: t('On-demand coach'),
-      description: t('An analysis of your prompt, only when you ask for it.'),
-      onSelect: coach('manual'),
-    },
-    {
-      id: 'coach-session',
-      icon: 'insights',
-      tone: 'info',
-      title: t('Session review'),
+      title: t('Prompt coach'),
       description: t(
-        'A review of the whole conversation, with tips for next time.',
+        'Analysis, prompt help with versions, or suggestions as you type.',
       ),
-      onSelect: coach('session'),
+      onSelect: coach('manual'),
     },
     {
       id: 'course',

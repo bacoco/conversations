@@ -27,7 +27,7 @@ interface Exchange {
   answer: string;
 }
 
-const bubbleCss = (fromUser: boolean) => css`
+export const bubbleCss = (fromUser: boolean) => css`
   max-width: 85%;
   padding: 10px 12px;
   border-radius: ${fromUser ? '12px 12px 4px 12px' : '12px 12px 12px 4px'};
@@ -61,7 +61,7 @@ const suggestionCss = css`
   }
 `;
 
-const RobinBubble = ({ children }: { children: string }) => (
+export const RobinBubble = ({ children }: { children: string }) => (
   <Box $direction="row" $align="flex-end" $gap="8px">
     <img
       src={ROBIN_AVATAR_URL}
@@ -312,6 +312,54 @@ export const PromptFillView = ({
           )}
         </Box>
 
+        {question && (
+          <Box
+            $gap="8px"
+            // Right under Robin's question, in the thread: not hidden below.
+            $css="padding-left: 36px;"
+          >
+            <PanelTextArea
+              label={t('Your answer')}
+              value={answer}
+              onChange={setAnswer}
+              onKeyDown={onKeyDown}
+              placeholder={t('Your answer… (Enter to send)')}
+              minRows={2}
+              inputRef={answerRef}
+            />
+            <Box $direction="row" $justify="space-between" $gap="8px">
+              <Button
+                size="small"
+                color="neutral"
+                variant="tertiary"
+                disabled={status === 'loading'}
+                onClick={() => ask(exchanges, true)}
+              >
+                {t('Finish now')}
+              </Button>
+              <Box $direction="row" $gap="8px">
+                <Button
+                  size="small"
+                  color="neutral"
+                  variant="secondary"
+                  disabled={status === 'loading'}
+                  onClick={() => reply(t('I do not know, skip this question.'))}
+                >
+                  {t('Skip')}
+                </Button>
+                <Button
+                  size="small"
+                  disabled={status === 'loading' || !answer.trim()}
+                  onClick={send}
+                  icon={<Icon iconName="send" $size="16px" />}
+                >
+                  {t('Send')}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        )}
+
         {status === 'error' && (
           <Box role="alert" $gap="8px" $align="flex-start">
             <Text $size="sm">
@@ -406,60 +454,6 @@ export const PromptFillView = ({
         )}
         <div ref={bottomRef} />
       </Box>
-
-      {question && (
-        <Box
-          $gap="8px"
-          $css={css`
-            position: sticky;
-            bottom: 0;
-            padding: 12px 16px;
-            border-top: 1px solid
-              var(--c--contextuals--border--surface--primary);
-            background: var(--c--contextuals--background--surface--primary);
-          `}
-        >
-          <PanelTextArea
-            label={t('Your answer')}
-            value={answer}
-            onChange={setAnswer}
-            onKeyDown={onKeyDown}
-            placeholder={t('Your answer… (Enter to send)')}
-            minRows={2}
-            inputRef={answerRef}
-          />
-          <Box $direction="row" $justify="space-between" $gap="8px">
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              disabled={status === 'loading'}
-              onClick={() => ask(exchanges, true)}
-            >
-              {t('Finish now')}
-            </Button>
-            <Box $direction="row" $gap="8px">
-              <Button
-                size="small"
-                color="neutral"
-                variant="secondary"
-                disabled={status === 'loading'}
-                onClick={() => reply(t('I do not know, skip this question.'))}
-              >
-                {t('Skip')}
-              </Button>
-              <Button
-                size="small"
-                disabled={status === 'loading' || !answer.trim()}
-                onClick={send}
-                icon={<Icon iconName="send" $size="16px" />}
-              >
-                {t('Send')}
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 };

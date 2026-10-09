@@ -40,7 +40,7 @@ describe('My prompts', () => {
       screen.getByRole('button', { name: /Write the weekly note/ }),
     );
     // Nothing to fill in: it goes straight to the message field.
-    fireEvent.click(screen.getByRole('button', { name: 'Use this prompt' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Use as is' }));
     expect(setChatInput).toHaveBeenCalledWith(
       'Write the weekly note for the team.',
     );

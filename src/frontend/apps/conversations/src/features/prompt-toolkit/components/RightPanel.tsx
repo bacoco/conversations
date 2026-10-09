@@ -13,11 +13,11 @@ import { Box, Icon } from '@/components';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
+import { languageName } from '../coach/language';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
 import {
-  CoachMode,
   RightPanelMode,
   clampPanelWidth,
   usePromptToolkitStore,
@@ -26,6 +26,7 @@ import { ToolsPanel } from '../tools/ToolsPanel';
 
 import { CoachPanel } from './CoachPanel';
 import { PanelHome } from './PanelHome';
+import { RobinDock } from './RobinChat';
 
 const KEYBOARD_STEP_PX = 24;
 
@@ -130,51 +131,26 @@ const useSections = () => {
   }[];
 };
 
-const tabCss = (isActive: boolean) => css`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+const homeButtonCss = css`
+  flex: none;
   height: 32px;
-  padding: 0 ${isActive ? 12 : 8}px;
+  padding: 0 10px 0 8px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: ${isActive ? 600 : 400};
-  color: ${
-    isActive
-      ? 'var(--c--contextuals--content--semantic--brand--primary)'
-      : 'var(--c--contextuals--content--semantic--neutral--secondary)'
-  };
-  background: ${
-    isActive
-      ? 'var(--c--contextuals--background--semantic--brand--tertiary)'
-      : 'transparent'
-  };
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--c--contextuals--content--semantic--brand--primary);
+  background: var(--c--contextuals--background--semantic--brand--tertiary);
   &:hover {
-    color: var(--c--contextuals--content--semantic--brand--primary);
+    filter: brightness(0.97);
   }
   &:focus-visible {
     outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
     outline-offset: 1px;
   }
 `;
-
-const COACH_MODE_ICON: Record<CoachMode, { icon: string; color: string }> = {
-  off: {
-    icon: 'block',
-    color: 'var(--c--contextuals--content--semantic--error--primary)',
-  },
-  manual: {
-    icon: 'touch_app',
-    color: 'var(--c--contextuals--content--semantic--brand--primary)',
-  },
-  session: {
-    icon: 'insights',
-    color: 'var(--c--contextuals--content--semantic--info--primary)',
-  },
-};
 
 /** Width of the header's toggle + account menu, kept free in the tab row. */
 const useAccountToolsWidth = () => {
@@ -195,34 +171,33 @@ const useAccountToolsWidth = () => {
 
 /** Both sections stay mounted so switching tabs keeps their content. */
 export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isDesktop } = useResponsiveStore();
   const accountToolsWidth = useAccountToolsWidth();
   // Robin's welcome comes first, whatever section was last open.
   const welcomeShown = !usePromptToolkitStore((state) => state.hasSeenWelcome);
-  const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const {
     mode,
     close,
     isExpanded,
     toggleExpanded,
-    coachMode,
-    isCoachOptionsOpen,
-    setCoachOptionsOpen,
     resetSection,
     showHome: isHomeRequested,
     goHome,
-    openSection,
+    goWelcome,
   } = usePromptToolkitStore();
-  const coachModeLabels: Record<CoachMode, string> = {
-    off: t('Off'),
-    manual: t('On demand'),
-    session: t('Session review'),
-  };
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
   const showHome = isHomeRequested || welcomeShown;
-  const title = sections.find((section) => section.mode === mode)?.label ?? '';
+  // The open space, as named in the header: the coach shows its mode.
+  const current =
+    mode === 'coach'
+      ? { icon: 'touch_app', label: t('Coach') }
+      : (sections.find((section) => section.mode === mode) ?? {
+          icon: 'apps',
+          label: '',
+        });
+  const title = showHome ? t('Prompt help') : current.label;
 
   return (
     <Box
@@ -261,90 +236,47 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
             var(--c--contextuals--border--surface--primary);
         `}
       >
-        <Box $direction="row" $gap="4px" role="tablist">
-          {sections.map((section) => {
-            const isActive = section.mode === mode && !showHome;
-            const isCoach = section.mode === 'coach';
-            return (
+        {/*
+         * One space at a time: inside a space, "Home" and the space's name;
+         * on the cards, "Home" alone; on the welcome, nothing.
+         */}
+        {welcomeShown ? (
+          <span />
+        ) : (
+          <Box
+            $direction="row"
+            $align="center"
+            $gap="10px"
+            $css="min-width: 0;"
+          >
+            <Box
+              as="button"
+              type="button"
+              // From a space, Home shows the cards; from the cards, the welcome.
+              onClick={showHome ? goWelcome : goHome}
+              $direction="row"
+              $align="center"
+              $gap="6px"
+              $css={homeButtonCss}
+            >
+              <Icon iconName="home" $size="18px" $withThemeInherited />
+              {t('Home')}
+            </Box>
+            {!showHome && (
               <Box
-                key={section.mode}
-                as="button"
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-expanded={
-                  isCoach && isActive ? isCoachOptionsOpen : undefined
-                }
-                aria-controls={isCoach ? 'coach-options' : undefined}
-                title={
-                  isCoach
-                    ? t('Coach mode: {{mode}}. Click again to change it.', {
-                        mode: coachModeLabels[coachMode],
-                      })
-                    : section.label
-                }
+                as="h2"
                 $direction="row"
-                onClick={() => {
-                  if (isCoach && isActive) {
-                    // A second click on the active Coach tab shows the modes.
-                    setCoachOptionsOpen(!isCoachOptionsOpen);
-                  } else {
-                    if (welcomeShown) {
-                      dismissWelcome();
-                    }
-                    openSection(section.mode);
-                  }
-                }}
-                $css={tabCss(isActive)}
+                $align="center"
+                $gap="6px"
+                $css="margin: 0; font-size: 0.9375rem; font-weight: 700; min-width: 0; white-space: nowrap;"
               >
-                <Icon
-                  iconName={section.icon}
-                  $size="18px"
-                  $withThemeInherited
-                />
-                {/* Only the active tab shows its name, to keep the header on one line. */}
-                {isActive ? (
-                  section.label
-                ) : (
-                  <span className="sr-only">{section.label}</span>
-                )}
-                {isCoach && (
-                  <>
-                    <Icon
-                      iconName={COACH_MODE_ICON[coachMode].icon}
-                      $size="16px"
-                      $color={COACH_MODE_ICON[coachMode].color}
-                    />
-                    <span className="sr-only">
-                      {coachModeLabels[coachMode]}
-                    </span>
-                    {isActive && (
-                      <Icon
-                        iconName={
-                          isCoachOptionsOpen ? 'expand_less' : 'expand_more'
-                        }
-                        $size="16px"
-                        $withThemeInherited
-                      />
-                    )}
-                  </>
-                )}
+                <Icon iconName={current.icon} $size="18px" $theme="brand" />
+                {current.label}
               </Box>
-            );
-          })}
-        </Box>
+            )}
+          </Box>
+        )}
         <Box $direction="row" $gap="4px">
-          {!welcomeShown && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={goHome}
-              aria-label={t('Back to the home cards')}
-              title={t('Back to the home cards')}
-              icon={<Icon iconName="home" $size="20px" />}
-            />
-          )}
           {!showHome && (
             <Button
               size="small"
@@ -373,14 +305,17 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
               }
             />
           )}
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            onClick={close}
-            aria-label={t('Close the panel')}
-            icon={<Icon iconName="close" $size="20px" />}
-          />
+          {/* On desktop the panel button next to it already closes it. */}
+          {!isDesktop && (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={close}
+              aria-label={t('Close the panel')}
+              icon={<Icon iconName="close" $size="20px" />}
+            />
+          )}
         </Box>
       </Box>
       <Box
@@ -431,6 +366,8 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           <ToolsPanel />
         </Box>
       </Box>
+      {/* Robin, on every screen: a round button that opens a sheet. */}
+      <RobinDock language={languageName(i18n.language)} />
     </Box>
   );
 };

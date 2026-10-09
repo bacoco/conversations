@@ -5,7 +5,12 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { PromptImprovement, improvePrompt } from '../coach/coachApi';
+import {
+  GeneratedPrompt,
+  PromptImprovement,
+  generatePrompts,
+  improvePrompt,
+} from '../coach/coachApi';
 import { languageName } from '../coach/language';
 import { levelColor, levelLabel } from '../coach/levels';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
@@ -13,6 +18,8 @@ import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { wordDiff } from '../coach/wordDiff';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
+import { searchLibrary } from '../library/embeddingSearch';
+import type { LibraryPrompt } from '../library/types';
 import { useReward } from '../rewards/useReward';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 import {
@@ -21,7 +28,7 @@ import {
 } from '../stores/usePromptToolkitStore';
 
 import { CoachIntro } from './CoachIntro';
-import { CoachModeSelector } from './CoachModeSelector';
+import { AssistResults, CoachModeTabs, InstantSuggestions } from './CoachModes';
 import { CoachStatus } from './CoachStatus';
 import { DiffView } from './DiffView';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
@@ -45,13 +52,6 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const setChatInput = usePromptToolkitStore((state) => state.setChatInput);
   const coachMode = usePromptToolkitStore((state) => state.coachMode);
-  const setCoachMode = usePromptToolkitStore((state) => state.setCoachMode);
-  const isOptionsOpen = usePromptToolkitStore(
-    (state) => state.isCoachOptionsOpen,
-  );
-  const setOptionsOpen = usePromptToolkitStore(
-    (state) => state.setCoachOptionsOpen,
-  );
   const language = languageName(i18n.language);
 
   const analysis = usePromptAnalysis(chatInput, language);
@@ -61,6 +61,13 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     (PromptImprovement & { original: string }) | null
   >(null);
   const [showDiff, setShowDiff] = useState(false);
+  const [assist, setAssist] = useState<{
+    variants: GeneratedPrompt[];
+    matches: LibraryPrompt[];
+  } | null>(null);
+  const [isAssisting, setIsAssisting] = useState(false);
+  const [assistError, setAssistError] = useState(false);
+  const assistControllerRef = useRef<AbortController | null>(null);
   const [isImproving, setIsImproving] = useState(false);
   const improveControllerRef = useRef<AbortController | null>(null);
   const improvementRef = useRef<HTMLDivElement | null>(null);
@@ -98,16 +105,11 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     setIsImproving(false);
     setImprovement(null);
     analysis.reset();
+    assistControllerRef.current?.abort();
+    setAssist(null);
+    setAssistError(false);
   });
 
-  // The mode options fold away as soon as the user types.
-  const typedRef = useRef(chatInput);
-  useEffect(() => {
-    if (chatInput !== typedRef.current) {
-      typedRef.current = chatInput;
-      setOptionsOpen(false);
-    }
-  }, [chatInput, setOptionsOpen]);
   useEffect(() => () => improveControllerRef.current?.abort(), []);
 
   const sensitiveLabels: Record<SensitiveKind, string> = {
@@ -190,67 +192,48 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
-  const modeDescriptions = {
-    off: t('Nothing you type is sent to the coach.'),
-    manual: t('The coach reads your prompt only when you ask for it.'),
-    live: t('The coach reads your prompt at each pause in typing.'),
-    session: t('The coach reviews the whole conversation when you ask.'),
-  };
-
-  const modeRow = isOptionsOpen && (
-    <Box
-      id="coach-options"
-      $gap="6px"
-      $css={css`
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--c--contextuals--border--surface--primary);
-        background: var(--c--contextuals--background--surface--secondary);
-      `}
-    >
-      <CoachModeSelector value={coachMode} onChange={setCoachMode} />
-      <Text $size="xs" $variation="secondary">
-        {modeDescriptions[coachMode]}
-      </Text>
-    </Box>
-  );
-
   if (coachMode === 'session') {
     return (
-      <Box $direction="column">
-        {modeRow}
+      <Box $direction="column" $css="flex: 1;">
+        <CoachModeTabs />
         <SessionReviewPanel language={language} />
       </Box>
     );
   }
 
-  if (coachMode === 'off') {
-    return (
-      <Box $direction="column">
-        {modeRow}
-        <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
-          <Icon iconName="pause_circle" $size="40px" $variation="secondary" />
-          <Text $textAlign="center" $weight="700">
-            {t('The coach is off')}
-          </Text>
-          <Text $textAlign="center" $size="sm" $variation="secondary">
-            {t('Choose "On demand" or "Live" to get a grade and advice.')}
-          </Text>
-          {!isOptionsOpen && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="secondary"
-              onClick={() => setOptionsOpen(true)}
-            >
-              {t('Change mode')}
-            </Button>
-          )}
-        </Box>
-      </Box>
-    );
-  }
-
   const showAnalyzeButton = isActive && chatInput.trim() !== '';
+
+  // "Prompt help": versions written by Robin, plus library matches.
+  const runAssist = async () => {
+    const draft = chatInput.trim();
+    assistControllerRef.current?.abort();
+    const controller = new AbortController();
+    assistControllerRef.current = controller;
+    setIsAssisting(true);
+    setAssistError(false);
+    // Library prompts closest in meaning, alongside Robin's versions.
+    const matchesPromise = searchLibrary(
+      draft,
+      i18n.language,
+      3,
+      controller.signal,
+    ).catch(() => []);
+    try {
+      const [variants, matches] = await Promise.all([
+        generatePrompts(draft, language, 'detailed', controller.signal),
+        matchesPromise,
+      ]);
+      setAssist({ variants, matches });
+    } catch {
+      if (!controller.signal.aborted) {
+        // The library matches are still worth showing.
+        setAssist({ variants: [], matches: await matchesPromise });
+        setAssistError(true);
+      }
+    } finally {
+      setIsAssisting(false);
+    }
+  };
 
   return (
     <Box
@@ -258,8 +241,15 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       // Fills the panel, so the analyse bar sits at its bottom.
       $css="flex: 1 0 auto;"
     >
-      {modeRow}
-      <CoachStatus isLoading={analysis.status === 'loading'} />
+      <CoachStatus
+        isLoading={analysis.status === 'loading' || isAssisting}
+        loadingLabel={
+          isAssisting
+            ? t('Robin is writing versions of your prompt…')
+            : undefined
+        }
+      />
+      <CoachModeTabs />
       {sensitive.length > 0 && (
         <Box
           role="alert"
@@ -289,223 +279,262 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         </Box>
       )}
 
-      {!result && chatInput.trim() === '' && <CoachIntro />}
+      {/* "As you type" shows its list of requests instead. */}
+      {chatInput.trim() === '' &&
+        coachMode !== 'instant' &&
+        (coachMode !== 'manual' || !result) && <CoachIntro mode={coachMode} />}
 
-      {analysis.isLongEnough && !result && analysis.status === 'idle' && (
-        <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
-          <Icon iconName="grading" $size="40px" $theme="brand" />
-          <Text $textAlign="center" $weight="700">
-            {t('Your prompt is ready to be analysed')}
-          </Text>
-          <Text $textAlign="center" $size="sm" $variation="secondary">
-            {t(
-              'Click the round button at the bottom of the panel when you want the coach to read it.',
-            )}
-          </Text>
-        </Box>
+      {coachMode === 'assist' && chatInput.trim() !== '' && assist && (
+        <AssistResults variants={assist.variants} matches={assist.matches} />
+      )}
+      {coachMode === 'assist' && assistError && (
+        <Text $size="sm" role="alert" $css="padding: 16px;">
+          {t('Robin could not write versions. Please retry.')}
+        </Text>
       )}
 
-      {analysis.status === 'error' && !result && (
-        <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
-          <Text $textAlign="center" $size="sm">
-            {analysis.errorStatus === 429
-              ? t('Too many requests: wait a minute, then retry.')
-              : t('The coach could not grade this prompt.')}
-          </Text>
-          <Button size="small" color="neutral" onClick={analysis.analyzeNow}>
-            {t('Retry')}
-          </Button>
-        </Box>
-      )}
+      {coachMode === 'instant' && <InstantSuggestions text={chatInput} />}
 
-      {result && (
-        <Box
-          $direction="column"
-          aria-busy={analysis.status === 'loading'}
-          $css={css`
-            transition: opacity 0.2s ease;
-            opacity: ${analysis.isStale ? 0.6 : 1};
-          `}
-        >
-          <Box $direction="row" $gap="16px" $align="center" $css={sectionCss}>
-            <ScoreGauge score={result.score} />
-            <Box $direction="column" $gap="4px" $css="min-width: 0;">
-              <Box $direction="row" $gap="8px" $align="center">
-                <Text
-                  $weight="700"
-                  $css={css`
-                    color: ${levelColor(result.score)};
-                  `}
-                >
-                  {levelLabel(result.score, t)}
-                </Text>
-                {analysis.status === 'loading' && <Loader size="small" />}
-              </Box>
-              {result.verdict && <Text $size="sm">{result.verdict}</Text>}
-              {analysis.isStale &&
-                analysis.status !== 'loading' &&
-                chatInput.trim() !== '' && (
-                  <Text $size="xs" $variation="secondary">
-                    {t('Your prompt has changed since this analysis.')}
-                  </Text>
+      {coachMode === 'manual' && (
+        <>
+          {analysis.isLongEnough && !result && analysis.status === 'idle' && (
+            <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
+              <Icon iconName="grading" $size="40px" $theme="brand" />
+              <Text $textAlign="center" $weight="700">
+                {t('Your prompt is ready to be analysed')}
+              </Text>
+              <Text $textAlign="center" $size="sm" $variation="secondary">
+                {t(
+                  'Click the round button at the bottom of the panel when you want the coach to read it.',
                 )}
-            </Box>
-          </Box>
-
-          {result.suggestions.length > 0 && (
-            <Box $gap="12px" $css={sectionCss}>
-              {result.suggestions.length > 0 && (
-                <Box $gap="8px">
-                  <Text as="h3" $size="sm" $weight="700" $margin="0">
-                    {t('To go further')}
-                  </Text>
-                  <Box as="ul" $gap="8px" $css="margin: 0; padding: 0;">
-                    {result.suggestions.map((suggestion) => (
-                      <Box
-                        as="li"
-                        key={suggestion}
-                        $direction="row"
-                        $gap="8px"
-                        $css="list-style: none;"
-                      >
-                        <Icon
-                          iconName="arrow_forward"
-                          $size="16px"
-                          $theme="brand"
-                          $css="margin-top: 2px;"
-                        />
-                        <Text $size="sm">{suggestion}</Text>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              )}
+              </Text>
             </Box>
           )}
 
-          <Box $gap="12px" $css={sectionCss}>
-            <Button
-              fullWidth
-              disabled={isImproving}
-              onClick={() => void runImprovement()}
-              icon={
-                isImproving ? (
-                  <Loader size="small" />
-                ) : (
-                  <Icon iconName="auto_fix_high" $size="18px" />
-                )
-              }
-            >
-              {t('Suggest a better version')}
-            </Button>
-
-            {improvement && (
-              <Box
-                ref={improvementRef}
-                $gap="12px"
-                $css={css`
-                  scroll-margin-top: 16px;
-                  padding: 12px;
-                  border-radius: 8px;
-                  border: 1px solid
-                    var(--c--contextuals--border--semantic--brand--secondary);
-                  background: var(
-                    --c--contextuals--background--semantic--brand--tertiary
-                  );
-                `}
+          {analysis.status === 'error' && !result && (
+            <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
+              <Text $textAlign="center" $size="sm">
+                {analysis.errorStatus === 429
+                  ? t('Too many requests: wait a minute, then retry.')
+                  : t('The coach could not grade this prompt.')}
+              </Text>
+              <Button
+                size="small"
+                color="neutral"
+                onClick={analysis.analyzeNow}
               >
-                <Box
-                  $direction="row"
-                  $align="center"
-                  $justify="space-between"
-                  $gap="8px"
-                >
-                  <Text as="h4" $size="sm" $weight="700" $margin="0">
-                    {t('Suggested version')}
-                  </Text>
-                  {improvementDiff && (
-                    <Button
-                      size="nano"
-                      color="neutral"
-                      variant="tertiary"
-                      aria-pressed={showDiff}
-                      onClick={() => setShowDiff((value) => !value)}
-                      icon={<Icon iconName="difference" $size="16px" />}
+                {t('Retry')}
+              </Button>
+            </Box>
+          )}
+
+          {result && (
+            <Box
+              $direction="column"
+              aria-busy={analysis.status === 'loading'}
+              $css={css`
+                transition: opacity 0.2s ease;
+                opacity: ${analysis.isStale ? 0.6 : 1};
+              `}
+            >
+              <Box
+                $direction="row"
+                $gap="16px"
+                $align="center"
+                $css={sectionCss}
+              >
+                <ScoreGauge score={result.score} />
+                <Box $direction="column" $gap="4px" $css="min-width: 0;">
+                  <Box $direction="row" $gap="8px" $align="center">
+                    <Text
+                      $weight="700"
+                      $css={css`
+                        color: ${levelColor(result.score)};
+                      `}
                     >
-                      {showDiff
-                        ? t('Show the new version')
-                        : t('Show the changes')}
-                    </Button>
+                      {levelLabel(result.score, t)}
+                    </Text>
+                    {analysis.status === 'loading' && <Loader size="small" />}
+                  </Box>
+                  {result.verdict && <Text $size="sm">{result.verdict}</Text>}
+                  {analysis.isStale &&
+                    analysis.status !== 'loading' &&
+                    chatInput.trim() !== '' && (
+                      <Text $size="xs" $variation="secondary">
+                        {t('Your prompt has changed since this analysis.')}
+                      </Text>
+                    )}
+                </Box>
+              </Box>
+
+              {result.suggestions.length > 0 && (
+                <Box $gap="12px" $css={sectionCss}>
+                  {result.suggestions.length > 0 && (
+                    <Box $gap="8px">
+                      <Text as="h3" $size="sm" $weight="700" $margin="0">
+                        {t('To go further')}
+                      </Text>
+                      <Box as="ul" $gap="8px" $css="margin: 0; padding: 0;">
+                        {result.suggestions.map((suggestion) => (
+                          <Box
+                            as="li"
+                            key={suggestion}
+                            $direction="row"
+                            $gap="8px"
+                            $css="list-style: none;"
+                          >
+                            <Icon
+                              iconName="arrow_forward"
+                              $size="16px"
+                              $theme="brand"
+                              $css="margin-top: 2px;"
+                            />
+                            <Text $size="sm">{suggestion}</Text>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
                   )}
                 </Box>
-                {showDiff && improvementDiff ? (
-                  <DiffView parts={improvementDiff} />
-                ) : (
-                  <Text
-                    $size="sm"
+              )}
+
+              <Box $gap="12px" $css={sectionCss}>
+                <Button
+                  fullWidth
+                  disabled={isImproving}
+                  onClick={() => void runImprovement()}
+                  icon={
+                    isImproving ? (
+                      <Loader size="small" />
+                    ) : (
+                      <Icon iconName="auto_fix_high" $size="18px" />
+                    )
+                  }
+                >
+                  {t('Suggest a better version')}
+                </Button>
+
+                {improvement && (
+                  <Box
+                    ref={improvementRef}
+                    $gap="12px"
                     $css={css`
-                      white-space: pre-wrap;
-                      overflow-wrap: anywhere;
-                      padding: 10px 12px;
-                      border-radius: 6px;
+                      scroll-margin-top: 16px;
+                      padding: 12px;
+                      border-radius: 8px;
+                      border: 1px solid
+                        var(
+                          --c--contextuals--border--semantic--brand--secondary
+                        );
                       background: var(
-                        --c--contextuals--background--surface--primary
+                        --c--contextuals--background--semantic--brand--tertiary
                       );
                     `}
                   >
-                    {improvement.improvedPrompt}
-                  </Text>
-                )}
-                {improvement.changes.length > 0 && (
-                  <Box $gap="4px">
-                    <Text $size="xs" $weight="600">
-                      {t('What changed')}
-                    </Text>
                     <Box
-                      as="ul"
-                      $gap="2px"
-                      $css="margin: 0; padding-left: 18px;"
+                      $direction="row"
+                      $align="center"
+                      $justify="space-between"
+                      $gap="8px"
                     >
-                      {improvement.changes.map((change) => (
-                        <Text
-                          as="li"
-                          key={change}
-                          $size="xs"
-                          $css="display: list-item;"
+                      <Text as="h4" $size="sm" $weight="700" $margin="0">
+                        {t('Suggested version')}
+                      </Text>
+                      {improvementDiff && (
+                        <Button
+                          size="nano"
+                          color="neutral"
+                          variant="tertiary"
+                          aria-pressed={showDiff}
+                          onClick={() => setShowDiff((value) => !value)}
+                          icon={<Icon iconName="difference" $size="16px" />}
                         >
-                          {change}
+                          {showDiff
+                            ? t('Show the new version')
+                            : t('Show the changes')}
+                        </Button>
+                      )}
+                    </Box>
+                    {showDiff && improvementDiff ? (
+                      <DiffView parts={improvementDiff} />
+                    ) : (
+                      <Text
+                        $size="sm"
+                        $css={css`
+                          white-space: pre-wrap;
+                          overflow-wrap: anywhere;
+                          padding: 10px 12px;
+                          border-radius: 6px;
+                          background: var(
+                            --c--contextuals--background--surface--primary
+                          );
+                        `}
+                      >
+                        {improvement.improvedPrompt}
+                      </Text>
+                    )}
+                    {improvement.changes.length > 0 && (
+                      <Box $gap="4px">
+                        <Text $size="xs" $weight="600">
+                          {t('What changed')}
                         </Text>
-                      ))}
+                        <Box
+                          as="ul"
+                          $gap="2px"
+                          $css="margin: 0; padding-left: 18px;"
+                        >
+                          {improvement.changes.map((change) => (
+                            <Text
+                              as="li"
+                              key={change}
+                              $size="xs"
+                              $css="display: list-item;"
+                            >
+                              {change}
+                            </Text>
+                          ))}
+                        </Box>
+                      </Box>
+                    )}
+                    <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
+                      <Button
+                        size="small"
+                        disabled={!setChatInput}
+                        onClick={applyImprovement}
+                        icon={<Icon iconName="check" $size="16px" />}
+                      >
+                        {t('Replace my prompt')}
+                      </Button>
+                      <Button
+                        size="small"
+                        color="neutral"
+                        variant="secondary"
+                        onClick={() => void copyImprovement()}
+                        icon={<Icon iconName="content_copy" $size="16px" />}
+                      >
+                        {t('Copy')}
+                      </Button>
+                      <SavePromptButton prompt={improvement.improvedPrompt} />
                     </Box>
                   </Box>
                 )}
-                <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
-                  <Button
-                    size="small"
-                    disabled={!setChatInput}
-                    onClick={applyImprovement}
-                    icon={<Icon iconName="check" $size="16px" />}
-                  >
-                    {t('Replace my prompt')}
-                  </Button>
-                  <Button
-                    size="small"
-                    color="neutral"
-                    variant="secondary"
-                    onClick={() => void copyImprovement()}
-                    icon={<Icon iconName="content_copy" $size="16px" />}
-                  >
-                    {t('Copy')}
-                  </Button>
-                  <SavePromptButton prompt={improvement.improvedPrompt} />
-                </Box>
               </Box>
-            )}
-          </Box>
-        </Box>
+            </Box>
+          )}
+          {/* Only useful once the user has started typing. */}
+        </>
       )}
-      {/* Only useful once the user has started typing. */}
-      {showAnalyzeButton && (
+
+      {showAnalyzeButton && coachMode === 'assist' && (
+        <FloatingAnalyzeButton
+          label={t('Help me with this prompt')}
+          onClick={() => void runAssist()}
+          isLoading={isAssisting}
+          disabled={isAssisting}
+        />
+      )}
+
+      {showAnalyzeButton && coachMode === 'manual' && (
         <FloatingAnalyzeButton
           label={
             result && !analysis.isStale

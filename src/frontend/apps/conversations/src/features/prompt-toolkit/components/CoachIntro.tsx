@@ -3,6 +3,8 @@ import { css } from 'styled-components';
 
 import { Box, Text } from '@/components';
 
+import type { CoachMode } from '../stores/usePromptToolkitStore';
+
 import { ROBIN_AVATAR_URL } from './PanelHome';
 
 const stepBadgeCss = css`
@@ -17,13 +19,31 @@ const stepBadgeCss = css`
 `;
 
 /** Robin introduces himself and says what to do, while the coach waits. */
-export const CoachIntro = () => {
+export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
   const { t } = useTranslation();
-  const steps = [
-    t('Write your request in the message field, at the bottom of the chat.'),
-    t('Click the round button that appears: I analyse your prompt.'),
-    t('I suggest a better version, ready to send.'),
-  ];
+  const write = t(
+    'Write your request in the message field, at the bottom of the chat.',
+  );
+  const steps =
+    mode === 'assist'
+      ? [
+          write,
+          t('Click the round button that appears.'),
+          t(
+            'I write several versions and find matching prompts in the library.',
+          ),
+        ]
+      : mode === 'instant'
+        ? [
+            write,
+            t('Matching prompts from the library appear here as you type.'),
+            t('Use one as is, or with Robin to complete it.'),
+          ]
+        : [
+            write,
+            t('Click the round button that appears: I analyse your prompt.'),
+            t('I suggest a better version, ready to send.'),
+          ];
 
   return (
     <Box

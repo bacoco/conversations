@@ -2,15 +2,17 @@ import { useEffect, useRef } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { PROMPT_TOOLKIT_ENABLED } from '../coach/coachApi';
+import { PROMPT_TOOLKIT_ENABLED, RobinTurn } from '../coach/coachApi';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
 export type RightPanelMode = 'coach' | 'learn' | 'tools';
 /**
- * off: nothing is sent; manual: on button press; session: a review of the
- * whole conversation.
+ * manual: analysis on button press; assist: versions and library matches on
+ * button press; instant: library matches as you type (no model);
+ * session: a review of the whole conversation.
+ * Opening the coach is enough to use it: there is no "off" mode.
  */
-export type CoachMode = 'off' | 'manual' | 'session';
+export type CoachMode = 'manual' | 'assist' | 'instant' | 'session';
 
 export const PANEL_MIN_WIDTH_PX = 340;
 export const PANEL_DEFAULT_WIDTH_PX = 400;
@@ -54,6 +56,8 @@ interface PromptToolkitState {
   /** Open a section of the panel, leaving the home cards. */
   openSection: (mode: RightPanelMode) => void;
   goHome: () => void;
+  /** From the cards, Home again: back to Robin's big welcome. */
+  goWelcome: () => void;
   setCoachOptionsOpen: (isOpen: boolean) => void;
   resetSection: () => void;
   /** A prompt being completed by guided questions, shown over the section. */
@@ -72,6 +76,9 @@ interface PromptToolkitState {
     mode?: 'template' | 'draft',
   ) => void;
   closeFill: () => void;
+  /** The conversation with Robin, kept while the page is open. */
+  robinChat: RobinTurn[];
+  setRobinChat: (turns: RobinTurn[]) => void;
   /** A lesson to open in the course, asked from another section. */
   lessonRequest: string | null;
   openLesson: (lessonId: string) => void;
@@ -125,6 +132,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       startFill: (template, title, context, mode) =>
         set({ fill: { template, title, context, mode } }),
       closeFill: () => set({ fill: null }),
+      robinChat: [],
+      setRobinChat: (robinChat) => set({ robinChat }),
       lessonRequest: null,
       openLesson: (lessonId) =>
         set({
@@ -143,12 +152,18 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           fill: null,
         }),
       clearToolRequest: () => set({ toolRequest: null }),
-      // Home always opens on Robin's welcome; "Get started" shows the cards.
-      goHome: () =>
+      goWelcome: () =>
         set({
           fill: null,
           showHome: true,
           hasSeenWelcome: false,
+          isCoachOptionsOpen: false,
+        }),
+      // Home opens the cards; a second Home goes back to the welcome.
+      goHome: () =>
+        set({
+          fill: null,
+          showHome: true,
           isCoachOptionsOpen: false,
         }),
       // The trash button: clear the coach and come back to the home cards.
@@ -169,8 +184,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
     }),
     {
       name: 'prompt-toolkit',
-      // v2 removed the live coach: stored "live" modes become on demand.
-      version: 2,
+      // v2 removed the live coach, v3 the "off" mode: both become on demand.
+      version: 3,
       migrate: (persisted) => {
         const state = {
           isOpen: false,
@@ -183,8 +198,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         };
         return {
           ...state,
-          coachMode:
-            (state.coachMode as string) === 'live' ? 'manual' : state.coachMode,
+          coachMode: ['live', 'off'].includes(state.coachMode)
+            ? 'manual'
+            : state.coachMode,
         };
       },
       // A panel left open stays closed if the deployment turned it off.

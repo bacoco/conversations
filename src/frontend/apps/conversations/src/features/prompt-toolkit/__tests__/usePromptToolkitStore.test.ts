@@ -66,12 +66,21 @@ describe('usePromptToolkitStore', () => {
     });
   });
 
-  it('shows Robin again when going back home', () => {
+  it('goes to the welcome when Home is pressed again on the cards', () => {
+    usePromptToolkitStore.getState().dismissWelcome();
+    usePromptToolkitStore.getState().goWelcome();
+    expect(usePromptToolkitStore.getState()).toMatchObject({
+      showHome: true,
+      hasSeenWelcome: false,
+    });
+  });
+
+  it('goes back to the cards at home, not to the welcome', () => {
     usePromptToolkitStore.getState().dismissWelcome();
     usePromptToolkitStore.getState().goHome();
     expect(usePromptToolkitStore.getState()).toMatchObject({
       showHome: true,
-      hasSeenWelcome: false,
+      hasSeenWelcome: true,
     });
   });
 

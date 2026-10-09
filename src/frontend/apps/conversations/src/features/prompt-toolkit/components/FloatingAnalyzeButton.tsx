@@ -33,7 +33,8 @@ export const FloatingAnalyzeButton = ({
       bottom: 0;
       z-index: 1;
       margin-top: auto;
-      padding: 12px 16px;
+      /* The bottom padding puts the button level with the chat message field. */
+      padding: 12px 16px 64px;
       border-top: 1px solid var(--c--contextuals--border--surface--primary);
       background: var(--c--contextuals--background--surface--primary);
     `}

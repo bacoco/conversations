@@ -191,22 +191,6 @@ describe('<CoachPanel />', () => {
     ]);
   });
 
-  it('sends nothing to the model when the coach is off', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(completion(ANALYSIS));
-    vi.stubGlobal('fetch', fetchMock);
-    usePromptToolkitStore.setState({
-      chatInput: 'Résume le rapport annuel',
-    });
-
-    usePromptToolkitStore.setState({ isCoachOptionsOpen: true });
-    render(<CoachPanel />);
-    fireEvent.click(screen.getByRole('radio', { name: /Off/ }));
-    await act(() => vi.advanceTimersByTimeAsync(5100));
-
-    expect(screen.getByText('The coach is off')).toBeInTheDocument();
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
   it('waits for the button in on-demand mode', async () => {
     const fetchMock = vi.fn().mockResolvedValue(completion(ANALYSIS));
     vi.stubGlobal('fetch', fetchMock);
