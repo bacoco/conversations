@@ -5,7 +5,7 @@ import { Box, Text } from '@/components';
 
 import type { CoachMode } from '../stores/usePromptToolkitStore';
 
-import { ROBIN_AVATAR_URL } from './PanelHome';
+import { ROBIN_ANALYSIS_URL, ROBIN_HELP_URL } from './PanelHome';
 
 const stepBadgeCss = css`
   flex: none;
@@ -33,17 +33,12 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
             'I write several versions and find matching prompts in the library.',
           ),
         ]
-      : mode === 'instant'
-        ? [
-            write,
-            t('Matching prompts from the library appear here as you type.'),
-            t('Use one as is, or with Robin to complete it.'),
-          ]
-        : [
-            write,
-            t('Click the round button that appears: I analyse your prompt.'),
-            t('I suggest a better version, ready to send.'),
-          ];
+      : [
+          write,
+          t('Click the round button that appears: I analyse your prompt.'),
+          t('I suggest a better version, ready to send.'),
+        ];
+  const isHelp = mode === 'assist';
 
   return (
     <Box
@@ -55,19 +50,29 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
         padding: 32px 24px;
       `}
     >
-      <img
-        src={ROBIN_AVATAR_URL}
-        alt=""
-        width={112}
-        height={112}
-        style={{
-          borderRadius: '50%',
-          boxShadow: '0 6px 20px rgba(0, 0, 0, 0.12)',
-        }}
-      />
+      <Box
+        $css={css`
+          width: min(240px, 65%);
+          aspect-ratio: 1;
+          border-radius: 50%;
+          overflow: hidden;
+          background: #f7f8fd;
+        `}
+      >
+        <img
+          src={isHelp ? ROBIN_HELP_URL : ROBIN_ANALYSIS_URL}
+          alt=""
+          style={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </Box>
       <Box $align="center" $gap="6px" $css="max-width: 360px;">
         <Text as="h2" $size="lg" $weight="700" $margin="0" $textAlign="center">
-          {t('Hello, I am Robin, your prompt coach')}
+          {isHelp ? t('Prompt help') : t('Prompt analysis')}
         </Text>
         <Text $size="sm" $variation="secondary" $textAlign="center">
           {t('A good prompt gets a better answer. Here is how I help you:')}

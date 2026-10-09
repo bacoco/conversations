@@ -17,6 +17,7 @@ interface HomeCard {
   tone: Tone;
   title: string;
   description: string;
+  image: string;
   onSelect: () => void;
 }
 
@@ -43,15 +44,6 @@ const cardCss = (tone: Tone) => css`
   }
 `;
 
-const badgeCss = (tone: Tone) => css`
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: var(--c--contextuals--content--semantic--${tone}--primary);
-  background: var(--c--contextuals--background--semantic--${tone}--tertiary);
-`;
-
 /** Home content sits in the middle of the panel height. */
 const centeredCss = css`
   min-height: 100%;
@@ -60,6 +52,11 @@ const centeredCss = css`
 
 export const ROBIN_IMAGE_URL = '/assets/robin.webp';
 export const ROBIN_AVATAR_URL = '/assets/robin-avatar.webp';
+/** Robin in each space of the panel, same style as the welcome. */
+export const ROBIN_ANALYSIS_URL = '/assets/robin-analyse.webp';
+export const ROBIN_HELP_URL = '/assets/robin-aide.webp';
+export const ROBIN_COURSE_URL = '/assets/robin-cours.webp';
+export const ROBIN_TOOLS_URL = '/assets/robin-outils.webp';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 const ROBIN_NAVY = 'var(--c--globals--colors--brand-900, #12175c)';
@@ -237,6 +234,7 @@ export const PanelHome = () => {
   const cards: HomeCard[] = [
     {
       id: 'coach-manual',
+      image: ROBIN_ANALYSIS_URL,
       icon: 'touch_app',
       tone: 'brand',
       title: t('Prompt coach'),
@@ -247,6 +245,7 @@ export const PanelHome = () => {
     },
     {
       id: 'course',
+      image: ROBIN_COURSE_URL,
       icon: 'school',
       tone: 'brand',
       title: t('Prompting course'),
@@ -257,6 +256,7 @@ export const PanelHome = () => {
     },
     {
       id: 'tools',
+      image: ROBIN_TOOLS_URL,
       icon: 'apps',
       tone: 'success',
       title: t('Everyday tools'),
@@ -286,9 +286,18 @@ export const PanelHome = () => {
               $gap="12px"
               $css={cardCss(card.tone)}
             >
-              <Box $align="center" $justify="center" $css={badgeCss(card.tone)}>
-                <Icon iconName={card.icon} $size="20px" $withThemeInherited />
-              </Box>
+              <img
+                src={card.image}
+                alt=""
+                width={56}
+                height={56}
+                style={{
+                  flex: 'none',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  background: ILLUSTRATION_BACKGROUND,
+                }}
+              />
               <Box $gap="2px" $css="flex: 1; min-width: 0;">
                 <Text $weight="700">{card.title}</Text>
                 <Text $size="sm" $variation="secondary">

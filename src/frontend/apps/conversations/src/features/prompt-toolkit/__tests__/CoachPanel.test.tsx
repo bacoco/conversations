@@ -68,9 +68,9 @@ describe('<CoachPanel />', () => {
     expect(
       screen.queryByRole('img', { name: /out of 100/ }),
     ).not.toBeInTheDocument();
-    // Robin introduces himself and explains the steps, without any call.
+    // The mode explains its steps, without any call.
     expect(
-      screen.getByRole('heading', { name: /I am Robin/ }),
+      screen.getByRole('heading', { name: 'Prompt analysis' }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(fetchMock).not.toHaveBeenCalled();
