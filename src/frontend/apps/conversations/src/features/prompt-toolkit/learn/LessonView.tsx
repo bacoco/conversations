@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { ROBIN_LESSONS_URL } from '../components/PanelHome';
 import { useReward } from '../rewards/useReward';
 
 import { RichText } from './RichText';
@@ -71,8 +72,13 @@ export const LessonView = ({
 
   return (
     <Box $css="min-height: 100%;">
-      <Box ref={topRef} $gap="14px" $padding={{ all: 'base' }} $css="flex: 1;">
-        <Box $direction="row" $align="center" $gap="8px">
+      <Box ref={topRef} $css="flex: 1;">
+        <Box
+          $direction="row"
+          $align="center"
+          $gap="12px"
+          $css="padding: 16px 16px 8px;"
+        >
           <Button
             size="small"
             color="neutral"
@@ -80,6 +86,13 @@ export const LessonView = ({
             onClick={onBack}
             aria-label={t('Back to the lessons')}
             icon={<Icon iconName="arrow_back" $size="18px" />}
+          />
+          <img
+            src={ROBIN_LESSONS_URL}
+            alt=""
+            width={52}
+            height={52}
+            style={{ flex: 'none', borderRadius: '50%', background: '#f7f8fd' }}
           />
           <Box $css="flex: 1; min-width: 0;">
             <Text $size="xs" $variation="secondary">
@@ -91,134 +104,147 @@ export const LessonView = ({
           </Box>
         </Box>
 
+        {/* The slide sits in the middle of the space, in a calm column. */}
         <Box
-          role="progressbar"
-          aria-label={t('Slide {{current}} of {{total}}', {
-            current: index + 1,
-            total: lesson.slides.length,
-          })}
-          aria-valuemin={1}
-          aria-valuemax={lesson.slides.length}
-          aria-valuenow={index + 1}
-          $direction="row"
-          $gap="4px"
-        >
-          {lesson.slides.map((_, dot) => (
-            <Box
-              key={dot}
-              $css={css`
-                flex: 1;
-                min-width: 0;
-                height: 4px;
-                border-radius: 2px;
-                transition: background 0.2s ease;
-                background: ${
-                  dot <= index
-                    ? 'var(--c--contextuals--background--semantic--brand--primary)'
-                    : 'var(--c--contextuals--border--surface--primary)'
-                };
-              `}
-            />
-          ))}
-        </Box>
-
-        <Box
-          as="section"
-          aria-live="polite"
-          $gap="16px"
+          $gap="20px"
           $css={css`
-            padding: 18px;
-            border-radius: 12px;
-            border: 1px solid var(--c--contextuals--border--surface--primary);
-            background: var(--c--contextuals--background--surface--primary);
+            flex: 1;
+            justify-content: center;
+            width: 100%;
+            max-width: 520px;
+            margin-inline: auto;
+            padding: 16px 20px 32px;
           `}
         >
-          <Box $direction="row" $align="center" $gap="12px">
-            <Box
-              aria-hidden="true"
-              $align="center"
-              $justify="center"
-              $css={css`
-                flex: none;
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
-                font-size: 1.5rem;
-                background: var(
-                  --c--contextuals--background--semantic--brand--tertiary
-                );
-              `}
-            >
-              {slide.icon}
-            </Box>
-            <Text as="h3" $size="lg" $weight="700" $margin="0">
-              {slide.title}
-            </Text>
+          <Box
+            role="progressbar"
+            aria-label={t('Slide {{current}} of {{total}}', {
+              current: index + 1,
+              total: lesson.slides.length,
+            })}
+            aria-valuemin={1}
+            aria-valuemax={lesson.slides.length}
+            aria-valuenow={index + 1}
+            $direction="row"
+            $gap="4px"
+          >
+            {lesson.slides.map((_, dot) => (
+              <Box
+                key={dot}
+                $css={css`
+                  flex: 1;
+                  min-width: 0;
+                  height: 4px;
+                  border-radius: 2px;
+                  transition: background 0.2s ease;
+                  background: ${
+                    dot <= index
+                      ? 'var(--c--contextuals--background--semantic--brand--primary)'
+                      : 'var(--c--contextuals--border--surface--primary)'
+                  };
+                `}
+              />
+            ))}
           </Box>
 
-          <RichText text={slide.content} />
-
-          {(slide.example?.bad || slide.example?.good) && (
-            <Box $gap="8px">
-              {slide.example?.bad && (
-                <Box $gap="6px" $css={exampleCss('error')}>
-                  <Box $direction="row" $align="center" $gap="6px">
-                    <Icon iconName="close" $size="16px" $theme="error" />
-                    <Text $size="xs" $weight="700" $theme="error">
-                      {t('To avoid')}
-                    </Text>
-                  </Box>
-                  <Text $size="sm" $css="font-style: italic;">
-                    « {slide.example.bad} »
-                  </Text>
-                </Box>
-              )}
-              {slide.example?.good && (
-                <Box $gap="6px" $css={exampleCss('success')}>
-                  <Box $direction="row" $align="center" $gap="6px">
-                    <Icon iconName="check" $size="16px" $theme="success" />
-                    <Text $size="xs" $weight="700" $theme="success">
-                      {t('Better')}
-                    </Text>
-                  </Box>
-                  <Text $size="sm" $css="font-style: italic;">
-                    « {slide.example.good} »
-                  </Text>
-                </Box>
-              )}
-              {slide.example?.note && (
-                <Text $size="xs" $variation="secondary">
-                  {slide.example.note}
-                </Text>
-              )}
-            </Box>
-          )}
-
-          {slide.keyTakeaway && (
-            <Box
-              $direction="row"
-              $gap="10px"
-              $css={css`
-                padding: 12px 14px;
-                border-radius: 10px;
-                border-left: 4px solid
-                  var(--c--contextuals--border--semantic--brand--primary);
-                background: var(
-                  --c--contextuals--background--semantic--brand--tertiary
-                );
-              `}
-            >
-              <Icon iconName="lightbulb" $size="20px" $theme="brand" />
-              <Box $gap="2px">
-                <Text $size="xs" $weight="700" $theme="brand">
-                  {t('Key takeaway')}
-                </Text>
-                <Text $size="sm" $weight="600">
-                  {slide.keyTakeaway}
-                </Text>
+          <Box
+            as="section"
+            aria-live="polite"
+            $gap="16px"
+            $css={css`
+              padding: 18px;
+              border-radius: 12px;
+              border: 1px solid var(--c--contextuals--border--surface--primary);
+              background: var(--c--contextuals--background--surface--primary);
+            `}
+          >
+            <Box $direction="row" $align="center" $gap="12px">
+              <Box
+                aria-hidden="true"
+                $align="center"
+                $justify="center"
+                $css={css`
+                  flex: none;
+                  width: 44px;
+                  height: 44px;
+                  border-radius: 12px;
+                  font-size: 1.5rem;
+                  background: var(
+                    --c--contextuals--background--semantic--brand--tertiary
+                  );
+                `}
+              >
+                {slide.icon}
               </Box>
+              <Text as="h3" $size="lg" $weight="700" $margin="0">
+                {slide.title}
+              </Text>
             </Box>
-          )}
+
+            <RichText text={slide.content} />
+
+            {(slide.example?.bad || slide.example?.good) && (
+              <Box $gap="8px">
+                {slide.example?.bad && (
+                  <Box $gap="6px" $css={exampleCss('error')}>
+                    <Box $direction="row" $align="center" $gap="6px">
+                      <Icon iconName="close" $size="16px" $theme="error" />
+                      <Text $size="xs" $weight="700" $theme="error">
+                        {t('To avoid')}
+                      </Text>
+                    </Box>
+                    <Text $size="sm" $css="font-style: italic;">
+                      « {slide.example.bad} »
+                    </Text>
+                  </Box>
+                )}
+                {slide.example?.good && (
+                  <Box $gap="6px" $css={exampleCss('success')}>
+                    <Box $direction="row" $align="center" $gap="6px">
+                      <Icon iconName="check" $size="16px" $theme="success" />
+                      <Text $size="xs" $weight="700" $theme="success">
+                        {t('Better')}
+                      </Text>
+                    </Box>
+                    <Text $size="sm" $css="font-style: italic;">
+                      « {slide.example.good} »
+                    </Text>
+                  </Box>
+                )}
+                {slide.example?.note && (
+                  <Text $size="xs" $variation="secondary">
+                    {slide.example.note}
+                  </Text>
+                )}
+              </Box>
+            )}
+
+            {slide.keyTakeaway && (
+              <Box
+                $direction="row"
+                $gap="10px"
+                $css={css`
+                  padding: 12px 14px;
+                  border-radius: 10px;
+                  border-left: 4px solid
+                    var(--c--contextuals--border--semantic--brand--primary);
+                  background: var(
+                    --c--contextuals--background--semantic--brand--tertiary
+                  );
+                `}
+              >
+                <Icon iconName="lightbulb" $size="20px" $theme="brand" />
+                <Box $gap="2px">
+                  <Text $size="xs" $weight="700" $theme="brand">
+                    {t('Key takeaway')}
+                  </Text>
+                  <Text $size="sm" $weight="600">
+                    {slide.keyTakeaway}
+                  </Text>
+                </Box>
+              </Box>
+            )}
+          </Box>
         </Box>
       </Box>
 
@@ -231,7 +257,8 @@ export const LessonView = ({
         $css={css`
           position: sticky;
           bottom: 0;
-          padding: 12px 16px;
+          /* Room on the right for Robin's round button. */
+          padding: 12px 84px 12px 16px;
           border-top: 1px solid var(--c--contextuals--border--surface--primary);
           background: var(--c--contextuals--background--surface--primary);
         `}

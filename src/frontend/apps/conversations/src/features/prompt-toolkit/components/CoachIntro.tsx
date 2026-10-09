@@ -5,7 +5,11 @@ import { Box, Text } from '@/components';
 
 import type { CoachMode } from '../stores/usePromptToolkitStore';
 
-import { ROBIN_ANALYSIS_URL, ROBIN_HELP_URL } from './PanelHome';
+import {
+  ROBIN_ANALYSIS_URL,
+  ROBIN_HELP_URL,
+  ROBIN_INSTANT_URL,
+} from './PanelHome';
 
 const stepBadgeCss = css`
   flex: none;
@@ -33,12 +37,29 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
             'I write several versions and find matching prompts in the library.',
           ),
         ]
-      : [
-          write,
-          t('Click the round button that appears: I analyse your prompt.'),
-          t('I suggest a better version, ready to send.'),
-        ];
-  const isHelp = mode === 'assist';
+      : mode === 'instant'
+        ? [
+            write,
+            t('The closest requests appear here as you type.'),
+            t('Click one to put it in the message field.'),
+          ]
+        : [
+            write,
+            t('Click the round button that appears: I analyse your prompt.'),
+            t('I suggest a better version, ready to send.'),
+          ];
+  const image =
+    mode === 'assist'
+      ? ROBIN_HELP_URL
+      : mode === 'instant'
+        ? ROBIN_INSTANT_URL
+        : ROBIN_ANALYSIS_URL;
+  const title =
+    mode === 'assist'
+      ? t('Prompt help')
+      : mode === 'instant'
+        ? t('As you type')
+        : t('Prompt analysis');
 
   return (
     <Box
@@ -60,7 +81,7 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
         `}
       >
         <img
-          src={isHelp ? ROBIN_HELP_URL : ROBIN_ANALYSIS_URL}
+          src={image}
           alt=""
           style={{
             display: 'block',
@@ -72,7 +93,7 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
       </Box>
       <Box $align="center" $gap="6px" $css="max-width: 360px;">
         <Text as="h2" $size="lg" $weight="700" $margin="0" $textAlign="center">
-          {isHelp ? t('Prompt help') : t('Prompt analysis')}
+          {title}
         </Text>
         <Text $size="sm" $variation="secondary" $textAlign="center">
           {t('A good prompt gets a better answer. Here is how I help you:')}

@@ -5,6 +5,9 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
+import { DetailPage } from '../components/DetailPage';
+import { ROBIN_COURSE_URL } from '../components/PanelHome';
+
 import type { CourseContent } from './types';
 import { FULL_QUIZ, useLearnProgressStore } from './useLearnProgressStore';
 
@@ -143,28 +146,15 @@ export const ManageProgressView = ({
   };
 
   return (
-    <Box $gap="14px" $padding={{ all: 'base' }}>
-      <Box $direction="row" $align="center" $gap="8px">
-        <Button
-          size="small"
-          color="neutral"
-          variant="tertiary"
-          onClick={onBack}
-          aria-label={t('Back to the lessons')}
-          icon={<Icon iconName="arrow_back" $size="18px" />}
-        />
-        <Box>
-          <Text as="h2" $size="md" $weight="700" $margin="0">
-            {t('Manage my progress')}
-          </Text>
-          <Text $size="xs" $variation="secondary">
-            {t(
-              'Your progress is kept in this browser. Tick what you want to start over.',
-            )}
-          </Text>
-        </Box>
-      </Box>
-
+    <DetailPage
+      onBack={onBack}
+      backLabel={t('Back to the lessons')}
+      title={t('Manage my progress')}
+      subtitle={t(
+        'Your progress is kept in this browser. Tick what you want to start over.',
+      )}
+      image={ROBIN_COURSE_URL}
+    >
       <Box $direction="row" $justify="flex-end">
         <Button
           size="small"
@@ -257,6 +247,6 @@ export const ManageProgressView = ({
           {t('Start over on the selection')}
         </Button>
       )}
-    </Box>
+    </DetailPage>
   );
 };

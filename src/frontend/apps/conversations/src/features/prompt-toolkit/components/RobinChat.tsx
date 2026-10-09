@@ -112,11 +112,8 @@ export const RobinDock = ({ language }: { language: string }) => {
   const turns = usePromptToolkitStore((state) => state.robinChat);
   const setTurns = usePromptToolkitStore((state) => state.setRobinChat);
   const [draft, setDraft] = useState('');
-  // Open by default on the home pages only: elsewhere the screen has enough.
-  const isHome = usePromptToolkitStore(
-    (state) => state.showHome || !state.hasSeenWelcome,
-  );
-  const [isOpen, setIsOpen] = useState(isHome);
+  // Folded by default: a small animated button invites the user to ask.
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const controllerRef = useRef<AbortController | null>(null);
@@ -167,10 +164,9 @@ export const RobinDock = ({ language }: { language: string }) => {
   useEffect(() => {
     if (shownScreenRef.current !== where) {
       shownScreenRef.current = where;
-      // Open on the home pages, folded elsewhere.
-      setIsOpen(isHome);
+      setIsOpen(false);
     }
-  }, [where, isHome]);
+  }, [where]);
 
   useEffect(() => {
     if (isOpen) {
@@ -207,7 +203,7 @@ export const RobinDock = ({ language }: { language: string }) => {
         $css={css`
           position: absolute;
           right: 16px;
-          bottom: 64px;
+          bottom: 16px;
           z-index: 3;
           width: 52px;
           height: 52px;
@@ -220,6 +216,30 @@ export const RobinDock = ({ language }: { language: string }) => {
             var(--c--contextuals--border--semantic--brand--primary);
           background: var(--c--contextuals--background--surface--primary);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          /* A gentle pulse, so Robin gets noticed without getting in the way. */
+          animation: robin-pulse 2.4s ease-in-out infinite;
+          @keyframes robin-pulse {
+            0%,
+            70%,
+            100% {
+              transform: scale(1);
+              box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.15),
+                0 0 0 0 rgba(0, 0, 145, 0.35);
+            }
+            35% {
+              transform: scale(1.08);
+              box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.15),
+                0 0 0 10px rgba(0, 0, 145, 0);
+            }
+          }
+          &:hover {
+            animation-play-state: paused;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            animation: none;
+          }
           &:focus-visible {
             outline: 2px solid
               var(--c--contextuals--border--semantic--brand--primary);

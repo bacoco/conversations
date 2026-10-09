@@ -55,8 +55,18 @@ export const ROBIN_AVATAR_URL = '/assets/robin-avatar.webp';
 /** Robin in each space of the panel, same style as the welcome. */
 export const ROBIN_ANALYSIS_URL = '/assets/robin-analyse.webp';
 export const ROBIN_HELP_URL = '/assets/robin-aide.webp';
+export const ROBIN_HOME_URL = '/assets/robin-accueil.webp';
+export const ROBIN_INSTANT_URL = '/assets/robin-volee.webp';
 export const ROBIN_COURSE_URL = '/assets/robin-cours.webp';
 export const ROBIN_TOOLS_URL = '/assets/robin-outils.webp';
+export const ROBIN_WRITE_URL = '/assets/robin-ecrire.webp';
+export const ROBIN_SUMMARIZE_URL = '/assets/robin-resumer.webp';
+export const ROBIN_ORGANIZE_URL = '/assets/robin-organiser.webp';
+export const ROBIN_PROMPTS_URL = '/assets/robin-prompts.webp';
+export const ROBIN_LESSONS_URL = '/assets/robin-lecons.webp';
+export const ROBIN_CARDS_URL = '/assets/robin-fiches.webp';
+export const ROBIN_QUIZ_URL = '/assets/robin-quiz.webp';
+export const ROBIN_CHALLENGES_URL = '/assets/robin-defis.webp';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 const ROBIN_NAVY = 'var(--c--globals--colors--brand-900, #12175c)';
@@ -198,23 +208,23 @@ const RobinWelcome = () => {
   );
 };
 
-/** Compact header once the welcome has been seen. */
+/** Header of the cards page: Robin, large, then the question. */
 const RobinHeader = () => {
   const { t } = useTranslation();
   return (
-    <Box $direction="row" $align="center" $gap="12px">
+    <Box $align="center" $gap="10px" $css="text-align: center;">
       <img
-        src={ROBIN_AVATAR_URL}
+        src={ROBIN_HOME_URL}
         alt=""
-        width={44}
-        height={44}
+        width={180}
+        height={180}
         style={{ borderRadius: '50%', background: ILLUSTRATION_BACKGROUND }}
       />
-      <Box>
-        <Text as="h2" $size="md" $weight="700" $margin="0">
+      <Box $gap="2px">
+        <Text as="h2" $size="h4" $weight="700" $margin="0">
           {t('How can I help you write?')}
         </Text>
-        <Text $size="xs" $variation="secondary">
+        <Text $size="sm" $variation="secondary">
           {t('Robin, your prompt copilot')}
         </Text>
       </Box>

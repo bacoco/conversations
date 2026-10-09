@@ -11,7 +11,6 @@ import { PromptActions } from '../library/PromptActions';
 import { SavePromptButton } from '../library/SavePromptButton';
 import { searchPhrases } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
-import { getPhrases } from '../phrases';
 import type { Phrase } from '../phrases/types';
 import {
   CoachMode,
@@ -21,7 +20,7 @@ import {
 /** Pause in typing before searching the library by meaning. */
 export const INSTANT_DELAY_MS = 400;
 
-const optionCss = (isChecked: boolean) => css`
+export const optionCss = (isChecked: boolean) => css`
   flex: 1;
   min-width: 0;
   display: inline-flex;
@@ -367,16 +366,7 @@ export const InstantSuggestions = ({ text }: { text: string }) => {
 
   useEffect(() => {
     if (!query) {
-      // Nothing typed yet: the most common requests.
-      setPhrases(
-        getPhrases(i18n.language)
-          .filter(
-            (phrase, index, all) =>
-              all.findIndex((p) => p.category.id === phrase.category.id) ===
-              index,
-          )
-          .slice(0, PHRASE_COUNT),
-      );
+      setPhrases([]);
       return;
     }
     const controller = new AbortController();
@@ -404,11 +394,15 @@ export const InstantSuggestions = ({ text }: { text: string }) => {
     };
   }, [query, i18n.language]);
 
+  // Nothing typed yet: the coach shows how this mode works instead.
+  if (!query) {
+    return null;
+  }
   return (
     <Box $gap="14px" $padding={{ all: 'base' }} aria-busy={isSearching}>
       <Box $gap="2px">
         <Text as="h3" $size="md" $weight="700" $margin="0">
-          {query ? t('Suggested requests') : t('Most common requests')}
+          {t('Suggested requests')}
         </Text>
         <Text $size="sm" $variation="secondary">
           {t('Click a request to put it in the message field.')}

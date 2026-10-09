@@ -279,10 +279,9 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         </Box>
       )}
 
-      {/* "As you type" shows its list of requests instead. */}
-      {chatInput.trim() === '' &&
-        coachMode !== 'instant' &&
-        (coachMode !== 'manual' || !result) && <CoachIntro mode={coachMode} />}
+      {chatInput.trim() === '' && (coachMode !== 'manual' || !result) && (
+        <CoachIntro mode={coachMode} />
+      )}
 
       {coachMode === 'assist' && chatInput.trim() !== '' && assist && (
         <AssistResults variants={assist.variants} matches={assist.matches} />

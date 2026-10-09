@@ -1,10 +1,13 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { DetailPage } from '../components/DetailPage';
+import { ROBIN_QUIZ_URL } from '../components/PanelHome';
 import { useReward } from '../rewards/useReward';
 
 import type { QuizQuestion } from './types';
@@ -146,32 +149,22 @@ export const QuizView = ({
     setIsFinished(false);
   };
 
-  const header = (
-    <Box $direction="row" $align="center" $gap="8px">
-      <Button
-        size="small"
-        color="neutral"
-        variant="tertiary"
-        onClick={onBack}
-        aria-label={t('Back to the lessons')}
-        icon={<Icon iconName="arrow_back" $size="18px" />}
-      />
-      <Box $css="flex: 1; min-width: 0;">
-        <Text $size="xs" $variation="secondary">
-          {t('Quiz')}
-        </Text>
-        <Text $weight="700" $ellipsis>
-          {title}
-        </Text>
-      </Box>
-    </Box>
+  const page = (children: ReactNode) => (
+    <DetailPage
+      onBack={onBack}
+      backLabel={t('Back to the lessons')}
+      eyebrow={t('Quiz')}
+      title={title}
+      image={ROBIN_QUIZ_URL}
+    >
+      {children}
+    </DetailPage>
   );
 
   if (isFinished) {
     const share = Math.round((rightCount / questions.length) * 100);
-    return (
-      <Box $gap="16px" $padding={{ all: 'base' }}>
-        {header}
+    return page(
+      <>
         <Box
           $align="center"
           $gap="10px"
@@ -221,7 +214,7 @@ export const QuizView = ({
             {t('Back to the lessons')}
           </Button>
         </Box>
-      </Box>
+      </>,
     );
   }
 
@@ -234,10 +227,8 @@ export const QuizView = ({
         ];
   const isAnswerRight = answer !== null && isRight(question, answer);
 
-  return (
-    <Box $gap="16px" $padding={{ all: 'base' }}>
-      {header}
-
+  return page(
+    <>
       <Box $gap="6px">
         <Box $direction="row" $justify="space-between">
           <Text $size="xs" $variation="secondary">
@@ -372,6 +363,6 @@ export const QuizView = ({
           </Box>
         </>
       )}
-    </Box>
+    </>,
   );
 };

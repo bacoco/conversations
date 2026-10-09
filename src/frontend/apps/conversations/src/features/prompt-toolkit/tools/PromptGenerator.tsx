@@ -15,6 +15,8 @@ import {
 import { languageName } from '../coach/language';
 import { CoachFeedback } from '../components/CoachFeedback';
 import { CoachStatus } from '../components/CoachStatus';
+import { DetailPage } from '../components/DetailPage';
+import { ROBIN_PROMPTS_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
@@ -125,246 +127,221 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
   };
 
   return (
-    <Box $css="min-height: 100%;">
-      <CoachStatus
-        isLoading={status === 'loading'}
-        loadingLabel={t('The coach is writing prompts for you…')}
-      />
-      <Box $gap="14px" $padding={{ all: 'base' }} $css="flex: 1;">
-        <Box $direction="row" $align="center" $gap="10px">
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            onClick={onBack}
-            aria-label={t('Back to the tools')}
-            icon={<Icon iconName="arrow_back" $size="18px" />}
-          />
-          <Box $css="min-width: 0;">
-            <Text as="h2" $size="md" $weight="700" $margin="0">
-              {t('Prompt generator')}
-            </Text>
-            <Text $size="xs" $variation="secondary">
-              {t('Describe what you need in your own words.')}
-            </Text>
-          </Box>
-        </Box>
-
+    <DetailPage
+      onBack={onBack}
+      backLabel={t('Back to the tools')}
+      title={t('Prompt generator')}
+      subtitle={t('Describe what you need in your own words.')}
+      image={ROBIN_PROMPTS_URL}
+      status={
+        <CoachStatus
+          isLoading={status === 'loading'}
+          loadingLabel={t('The coach is writing prompts for you…')}
+        />
+      }
+    >
+      <Box
+        $gap="10px"
+        $css={css`
+          ${cardCss}
+        `}
+      >
         <Box
-          $gap="10px"
-          $css={css`
-            ${cardCss}
-            ${results.length === 0 ? 'flex: 1;' : ''}
-          `}
+          role="radiogroup"
+          aria-label={t('What do you want to do?')}
+          $direction="row"
+          $gap="6px"
         >
-          <Box
-            role="radiogroup"
-            aria-label={t('What do you want to do?')}
-            $direction="row"
-            $gap="6px"
-          >
-            {(
-              [
-                ['need', t('From a need')],
-                ['merge', t('Merge prompts')],
-              ] as const
-            ).map(([value, label]) => (
-              <Box
-                key={value}
-                as="button"
-                type="button"
-                role="radio"
-                aria-checked={mode === value}
-                onClick={() => {
-                  setMode(value);
-                  setResults([]);
-                }}
-                $direction="row"
-                $css={choiceCss(mode === value)}
-              >
-                {mode === value && (
-                  <Icon iconName="check" $size="16px" $withThemeInherited />
-                )}
-                {label}
-              </Box>
-            ))}
-          </Box>
-          <PanelTextArea
-            fill={results.length === 0}
-            label={mode === 'merge' ? t('Your prompts') : t('Your need')}
-            minRows={4}
-            value={need}
-            placeholder={
-              mode === 'merge'
-                ? t('Paste two or more prompts, separated by an empty line.')
-                : t('E.g. I must explain the new remote-work rules to my team.')
-            }
-            onChange={setNeed}
-          />
-          <Box
-            role="radiogroup"
-            aria-label={t('Level of detail')}
-            $direction="row"
-            $gap="6px"
-            $display={mode === 'merge' ? 'none' : undefined}
-          >
-            {(
-              [
-                ['simple', t('Short')],
-                ['detailed', t('Detailed')],
-              ] as const
-            ).map(([value, label]) => (
-              <Box
-                key={value}
-                as="button"
-                type="button"
-                role="radio"
-                aria-checked={detail === value}
-                onClick={() => setDetail(value)}
-                $direction="row"
-                $css={choiceCss(detail === value)}
-              >
-                {detail === value && (
-                  <Icon iconName="check" $size="16px" $withThemeInherited />
-                )}
-                {label}
-              </Box>
-            ))}
-          </Box>
-          <Button
-            fullWidth
-            disabled={!need.trim() || status === 'loading'}
-            onClick={() => void generate()}
-            icon={<Icon iconName="auto_fix_high" $size="18px" />}
-          >
-            {mode === 'merge'
-              ? t('Merge into one prompt')
-              : results.length
-                ? t('Suggest other prompts')
-                : t('Suggest prompts')}
-          </Button>
-          {status === 'error' && (
-            <Text $size="sm" role="alert">
-              {t('The coach could not write prompts. Please retry.')}
-            </Text>
-          )}
+          {(
+            [
+              ['need', t('From a need')],
+              ['merge', t('Merge prompts')],
+            ] as const
+          ).map(([value, label]) => (
+            <Box
+              key={value}
+              as="button"
+              type="button"
+              role="radio"
+              aria-checked={mode === value}
+              onClick={() => {
+                setMode(value);
+                setResults([]);
+              }}
+              $direction="row"
+              $css={choiceCss(mode === value)}
+            >
+              {mode === value && (
+                <Icon iconName="check" $size="16px" $withThemeInherited />
+              )}
+              {label}
+            </Box>
+          ))}
         </Box>
+        <PanelTextArea
+          fill={results.length === 0}
+          label={mode === 'merge' ? t('Your prompts') : t('Your need')}
+          minRows={4}
+          value={need}
+          placeholder={
+            mode === 'merge'
+              ? t('Paste two or more prompts, separated by an empty line.')
+              : t('E.g. I must explain the new remote-work rules to my team.')
+          }
+          onChange={setNeed}
+        />
+        <Box
+          role="radiogroup"
+          aria-label={t('Level of detail')}
+          $direction="row"
+          $gap="6px"
+          $display={mode === 'merge' ? 'none' : undefined}
+        >
+          {(
+            [
+              ['simple', t('Short')],
+              ['detailed', t('Detailed')],
+            ] as const
+          ).map(([value, label]) => (
+            <Box
+              key={value}
+              as="button"
+              type="button"
+              role="radio"
+              aria-checked={detail === value}
+              onClick={() => setDetail(value)}
+              $direction="row"
+              $css={choiceCss(detail === value)}
+            >
+              {detail === value && (
+                <Icon iconName="check" $size="16px" $withThemeInherited />
+              )}
+              {label}
+            </Box>
+          ))}
+        </Box>
+        <Button
+          fullWidth
+          disabled={!need.trim() || status === 'loading'}
+          onClick={() => void generate()}
+          icon={<Icon iconName="auto_fix_high" $size="18px" />}
+        >
+          {mode === 'merge'
+            ? t('Merge into one prompt')
+            : results.length
+              ? t('Suggest other prompts')
+              : t('Suggest prompts')}
+        </Button>
+        {status === 'error' && (
+          <Text $size="sm" role="alert">
+            {t('The coach could not write prompts. Please retry.')}
+          </Text>
+        )}
+      </Box>
 
-        {results.length > 0 && (
-          <Box ref={resultsRef} $gap="10px" $css="scroll-margin-top: 16px;">
-            <Text as="h3" $size="sm" $weight="700" $margin="0">
-              {t('Suggestions')}
-            </Text>
-            {results.map((result, index) => (
-              <Box key={index} $gap="10px" $css={cardCss}>
-                <Box $gap="2px">
-                  <Text $weight="700">
-                    {result.title ||
-                      t('Suggestion {{number}}', { number: index + 1 })}
+      {results.length > 0 && (
+        <Box ref={resultsRef} $gap="10px" $css="scroll-margin-top: 16px;">
+          <Text as="h3" $size="sm" $weight="700" $margin="0">
+            {t('Suggestions')}
+          </Text>
+          {results.map((result, index) => (
+            <Box key={index} $gap="10px" $css={cardCss}>
+              <Box $gap="2px">
+                <Text $weight="700">
+                  {result.title ||
+                    t('Suggestion {{number}}', { number: index + 1 })}
+                </Text>
+                {result.why && (
+                  <Text $size="xs" $variation="secondary">
+                    {result.why}
                   </Text>
-                  {result.why && (
-                    <Text $size="xs" $variation="secondary">
-                      {result.why}
-                    </Text>
-                  )}
-                </Box>
-                {'changes' in result && result.changes.length > 0 && (
-                  <Box $gap="4px">
-                    <Text $size="xs" $weight="700">
-                      {t('What was combined')}
-                    </Text>
-                    <Box
-                      as="ul"
-                      $gap="2px"
-                      $css="margin: 0; padding-left: 18px;"
-                    >
-                      {result.changes.map((change) => (
-                        <Text
-                          as="li"
-                          key={change}
-                          $size="xs"
-                          $css="display: list-item;"
-                        >
-                          {change}
-                        </Text>
-                      ))}
-                    </Box>
-                  </Box>
                 )}
-                {'conflicts' in result && result.conflicts.length > 0 && (
-                  // Robin chose for the user: say so, so it can be changed.
-                  <Box
-                    role="note"
-                    $gap="4px"
-                    $css={css`
-                      padding: 10px 12px;
-                      border-radius: 8px;
-                      background: var(
-                        --c--contextuals--background--semantic--warning--tertiary
-                      );
-                    `}
-                  >
-                    <Box $direction="row" $align="center" $gap="6px">
-                      <Icon
-                        iconName="call_split"
-                        $size="16px"
-                        $theme="warning"
-                      />
-                      <Text $size="xs" $weight="700">
-                        {t('Contradictions settled — edit if needed')}
-                      </Text>
-                    </Box>
-                    {result.conflicts.map((conflict) => (
-                      <Text key={conflict} $size="xs">
-                        {conflict}
+              </Box>
+              {'changes' in result && result.changes.length > 0 && (
+                <Box $gap="4px">
+                  <Text $size="xs" $weight="700">
+                    {t('What was combined')}
+                  </Text>
+                  <Box as="ul" $gap="2px" $css="margin: 0; padding-left: 18px;">
+                    {result.changes.map((change) => (
+                      <Text
+                        as="li"
+                        key={change}
+                        $size="xs"
+                        $css="display: list-item;"
+                      >
+                        {change}
                       </Text>
                     ))}
                   </Box>
-                )}
-                <Text
-                  $size="sm"
+                </Box>
+              )}
+              {'conflicts' in result && result.conflicts.length > 0 && (
+                // Robin chose for the user: say so, so it can be changed.
+                <Box
+                  role="note"
+                  $gap="4px"
                   $css={css`
-                    white-space: pre-wrap;
-                    overflow-wrap: anywhere;
                     padding: 10px 12px;
                     border-radius: 8px;
                     background: var(
-                      --c--contextuals--background--surface--secondary
+                      --c--contextuals--background--semantic--warning--tertiary
                     );
                   `}
                 >
-                  {result.prompt}
-                </Text>
-                <Box $direction="row" $gap="8px">
-                  <Button
-                    size="small"
-                    onClick={() => use(result.prompt)}
-                    icon={<Icon iconName="arrow_upward" $size="16px" />}
-                  >
-                    {t('Use')}
-                  </Button>
-                  <Button
-                    size="small"
-                    color="neutral"
-                    variant="secondary"
-                    onClick={() => void copy(result.prompt)}
-                    icon={<Icon iconName="content_copy" $size="16px" />}
-                  >
-                    {t('Copy')}
-                  </Button>
-                  <SavePromptButton
-                    prompt={result.prompt}
-                    title={result.title}
-                  />
+                  <Box $direction="row" $align="center" $gap="6px">
+                    <Icon iconName="call_split" $size="16px" $theme="warning" />
+                    <Text $size="xs" $weight="700">
+                      {t('Contradictions settled — edit if needed')}
+                    </Text>
+                  </Box>
+                  {result.conflicts.map((conflict) => (
+                    <Text key={conflict} $size="xs">
+                      {conflict}
+                    </Text>
+                  ))}
                 </Box>
+              )}
+              <Text
+                $size="sm"
+                $css={css`
+                  white-space: pre-wrap;
+                  overflow-wrap: anywhere;
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  background: var(
+                    --c--contextuals--background--surface--secondary
+                  );
+                `}
+              >
+                {result.prompt}
+              </Text>
+              <Box $direction="row" $gap="8px">
+                <Button
+                  size="small"
+                  onClick={() => use(result.prompt)}
+                  icon={<Icon iconName="arrow_upward" $size="16px" />}
+                >
+                  {t('Use')}
+                </Button>
+                <Button
+                  size="small"
+                  color="neutral"
+                  variant="secondary"
+                  onClick={() => void copy(result.prompt)}
+                  icon={<Icon iconName="content_copy" $size="16px" />}
+                >
+                  {t('Copy')}
+                </Button>
+                <SavePromptButton prompt={result.prompt} title={result.title} />
               </Box>
-            ))}
-            <Box $direction="row" $justify="flex-end">
-              <CoachFeedback target="generation" />
             </Box>
+          ))}
+          <Box $direction="row" $justify="flex-end">
+            <CoachFeedback target="generation" />
           </Box>
-        )}
-      </Box>
-    </Box>
+        </Box>
+      )}
+    </DetailPage>
   );
 };

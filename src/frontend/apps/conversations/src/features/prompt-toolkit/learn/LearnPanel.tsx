@@ -5,7 +5,12 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { ROBIN_COURSE_URL } from '../components/PanelHome';
+import {
+  ROBIN_CARDS_URL,
+  ROBIN_CHALLENGES_URL,
+  ROBIN_LESSONS_URL,
+  ROBIN_QUIZ_URL,
+} from '../components/PanelHome';
 import { SpaceIntro } from '../components/SpaceIntro';
 import {
   usePromptToolkitStore,
@@ -226,6 +231,51 @@ export const LearnPanel = () => {
   );
   const nextLesson = nextIndex === -1 ? null : course.lessons[nextIndex];
   const ratio = doneCount / course.lessons.length;
+  const intros: Record<
+    LearnTab,
+    { image: string; title: string; text: string; steps: string[] }
+  > = {
+    lessons: {
+      image: ROBIN_LESSONS_URL,
+      title: t('Lessons'),
+      text: t('Short lessons to learn how to write a good prompt.'),
+      steps: [
+        t('Start with lesson 1: they follow on from each other.'),
+        t('Each lesson takes a few slides.'),
+        t('Your progress updates with each lesson completed.'),
+      ],
+    },
+    cards: {
+      image: ROBIN_CARDS_URL,
+      title: t('Cards'),
+      text: t('Review the essentials in a few minutes.'),
+      steps: [
+        t('Read the question on the card.'),
+        t('Click the card to see the answer.'),
+        t('Say whether you knew it or whether to review it.'),
+      ],
+    },
+    quiz: {
+      image: ROBIN_QUIZ_URL,
+      title: t('Quiz'),
+      text: t('Check what you remember.'),
+      steps: [
+        t('Take the full quiz or the quiz of one lesson.'),
+        t('Answer the questions.'),
+        t('See the right answer after each question.'),
+      ],
+    },
+    challenges: {
+      image: ROBIN_CHALLENGES_URL,
+      title: t('Challenges'),
+      text: t('Practise on real cases.'),
+      steps: [
+        t('Choose a challenge.'),
+        t('Fix the weak prompt it gives you.'),
+        t('The coach grades your version and gives you advice.'),
+      ],
+    },
+  };
   const tabs: { id: LearnTab; icon: string; label: string }[] = [
     { id: 'lessons', icon: 'menu_book', label: t('Lessons') },
     { id: 'cards', icon: 'style', label: t('Cards') },
@@ -235,16 +285,6 @@ export const LearnPanel = () => {
 
   return (
     <Box $gap="16px" $padding={{ all: 'base' }}>
-      <SpaceIntro
-        image={ROBIN_COURSE_URL}
-        title={t('Prompting course')}
-        text={t('Learn to write good prompts, a few minutes at a time.')}
-        steps={[
-          t('Lessons: short, to read in order.'),
-          t('Cards: the essentials, to review.'),
-          t('Quiz and challenges: to practise on real cases.'),
-        ]}
-      />
       <Box
         role="tablist"
         aria-label={t('Prompting course')}
@@ -272,6 +312,9 @@ export const LearnPanel = () => {
           </Box>
         ))}
       </Box>
+
+      {/* Like the coach: the intro follows the selected tab. */}
+      <SpaceIntro key={tab} {...intros[tab]} />
 
       {/* Lesson progress and the next step, at the top of the lessons. */}
       {tab === 'lessons' && (
@@ -420,9 +463,6 @@ export const LearnPanel = () => {
 
       {tab === 'challenges' && (
         <Box $gap="10px">
-          <Text $size="sm" $variation="secondary">
-            {t('Fix a weak prompt: the coach grades your version.')}
-          </Text>
           <Box as="ol" aria-label={t('Challenges')} $css={pathCss}>
             {challenges.map((challenge, index) => {
               const done = completedChallenges.includes(challenge.id);
