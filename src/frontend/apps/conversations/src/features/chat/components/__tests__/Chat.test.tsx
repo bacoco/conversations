@@ -8,10 +8,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import type { Mock } from 'vitest';
 
-import { fetchAPI } from '@/api';
+import { APIError, fetchAPI } from '@/api';
 import { ToastProvider } from '@/components/ToastProvider';
 import { getConversation } from '@/features/chat/api/useConversation';
 import { usePendingChatStore } from '@/features/chat/stores/usePendingChatStore';
@@ -405,5 +405,80 @@ describe('Chat connector notices', () => {
     expect(
       screen.queryByText('DataGouv could not be reached'),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('Chat on a conversation deleted elsewhere', () => {
+  const fetchAPIMock = vi.mocked(fetchAPI) as unknown as Mock;
+  const getConversationMock = vi.mocked(getConversation) as unknown as Mock;
+
+  const renderAt = () =>
+    render(
+      <MemoryRouter initialEntries={['/chat/gone']}>
+        <QueryClientProvider
+          client={
+            new QueryClient({ defaultOptions: { queries: { retry: false } } })
+          }
+        >
+          <CunninghamProvider>
+            <ToastProvider>
+              <Suspense fallback={null}>
+                <Routes>
+                  <Route path="/" element={<p>New conversation</p>} />
+                  <Route
+                    path="/chat/:id"
+                    element={<Chat initialConversationId="gone" />}
+                  />
+                </Routes>
+              </Suspense>
+            </ToastProvider>
+          </CunninghamProvider>
+        </QueryClientProvider>
+      </MemoryRouter>,
+    );
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    usePendingChatStore.setState({ input: '', files: null });
+    fetchAPIMock.mockImplementation((url: string) => {
+      if (url.startsWith('chat-cooldown')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ cooldown_seconds: 0 }),
+        });
+      }
+      return Promise.resolve({ ok: false, status: 404 });
+    });
+  });
+
+  it('goes back to a new conversation when opening it', async () => {
+    getConversationMock.mockRejectedValue(
+      new APIError('Not found', { status: 404 }),
+    );
+
+    renderAt();
+
+    expect(await screen.findByText('New conversation')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'This conversation was deleted. You can start a new one.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('sends the message in a new conversation instead of failing', async () => {
+    getConversationMock.mockResolvedValue({ messages: [] });
+    renderAt();
+    await waitFor(() => expect(getConversationMock).toHaveBeenCalled());
+
+    await ask('Still there?');
+
+    expect(await screen.findByText('New conversation')).toBeInTheDocument();
+    expect(usePendingChatStore.getState().input).toBe('Still there?');
+    expect(
+      screen.getByText(
+        'This conversation was deleted: your message is sent in a new conversation.',
+      ),
+    ).toBeInTheDocument();
   });
 });

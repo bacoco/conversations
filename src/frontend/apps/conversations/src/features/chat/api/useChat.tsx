@@ -14,7 +14,16 @@ import { KEY_LIST_CONVERSATION } from '@/features/chat/api/useConversations';
 import { KEY_LIST_PROJECT } from '@/features/chat/api/useProjects';
 import { useChatPreferencesStore } from '@/features/chat/stores/useChatPreferencesStore';
 
-const fetchAPIAdapter = (input: RequestInfo | URL, init?: RequestInit) => {
+/**
+ * Raised when a message is sent to a conversation that no longer exists,
+ * e.g. deleted from another tab while this one stayed open.
+ */
+export const CONVERSATION_NOT_FOUND = 'conversation_not_found';
+
+const fetchAPIAdapter = async (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) => {
   let url: string;
   if (typeof input === 'string') {
     url = input;
@@ -50,7 +59,11 @@ const fetchAPIAdapter = (input: RequestInfo | URL, init?: RequestInit) => {
     url = `${url}${separator}${searchParams.toString()}`;
   }
 
-  return fetchAPI(url, init);
+  const response = await fetchAPI(url, init);
+  if (response.status === 404) {
+    throw new Error(CONVERSATION_NOT_FOUND);
+  }
+  return response;
 };
 
 interface ConversationMetadataEvent {

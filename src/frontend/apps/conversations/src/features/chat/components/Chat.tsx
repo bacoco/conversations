@@ -35,6 +35,7 @@ import { useReindexProjectAttachment } from '@/features/attachments/api/useReind
 import { useUploadFile } from '@/features/attachments/hooks/useUploadFile';
 import { getUploadContentType } from '@/features/attachments/utils/fileTypes';
 import {
+  CONVERSATION_NOT_FOUND,
   ImagesSkippedEventKind,
   stampImagesSkippedOnLatestUserMessage,
   useChat,
@@ -317,8 +318,41 @@ export const Chat = ({
     }
   }, [isErrorAttachment, errorAttachment, config?.attachment_max_size, t]);
 
+  // The conversation was deleted elsewhere (another tab, another device):
+  // go back to a new conversation instead of failing on every message. A
+  // message the user was sending goes into that new conversation.
+  const leaveDeletedConversation = (pending?: {
+    input: string;
+    files: FileList | null;
+  }) => {
+    if (pending && (pending.input.trim() || pending.files?.length)) {
+      setPendingChat(pending.input, pending.files);
+      showToast(
+        'info',
+        t(
+          'This conversation was deleted: your message is sent in a new conversation.',
+        ),
+        undefined,
+        6000,
+      );
+    } else {
+      showToast(
+        'info',
+        t('This conversation was deleted. You can start a new one.'),
+        undefined,
+        6000,
+      );
+    }
+    void navigate('/');
+  };
+
   // Handle errors from the chat API
   const onErrorChat = (error: Error) => {
+    if (error.message === CONVERSATION_NOT_FOUND) {
+      leaveDeletedConversation(lastSubmissionRef.current ?? undefined);
+      return;
+    }
+
     if (error.message === 'attachment_summary_not_supported') {
       setChatErrorModal({
         title: t('Attachment summary not supported'),
@@ -875,8 +909,16 @@ export const Chat = ({
             setConversationProjectId(conversation.project?.id ?? null);
             setHasInitialized(true);
           }
-        } catch {
-          // Optionally handle error (e.g., setInitialConversationMessages([]) or show error)
+        } catch (error) {
+          if (
+            !ignore &&
+            error instanceof APIError &&
+            error.status === 404 &&
+            !hasSentRef.current
+          ) {
+            leaveDeletedConversation();
+            return;
+          }
           if (!ignore) {
             setInitialConversationMessages([]);
             // Same rule as the success branch above: a failed refetch must not
