@@ -29,9 +29,9 @@ export const ImproveTextView = ({ onBack }: { onBack: () => void }) => {
       )}
       image={ROBIN_WRITE_URL}
     >
-      <Box $gap="10px" $css="flex: 1;">
+      <Box $gap="12px">
         <PanelTextArea
-          fill
+          minRows={8}
           label={t('Your text')}
           value={text}
           onChange={setText}
@@ -68,7 +68,7 @@ export const FollowUpView = ({ onBack }: { onBack: () => void }) => {
       {conversationId ? (
         <FollowUpCard />
       ) : (
-        <Text $size="sm" $variation="secondary">
+        <Text $size="sm" $variation="secondary" $textAlign="center">
           {t('Open a conversation with an answer to follow up on.')}
         </Text>
       )}

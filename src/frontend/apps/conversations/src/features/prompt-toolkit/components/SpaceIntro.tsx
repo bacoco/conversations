@@ -2,8 +2,6 @@ import { css } from 'styled-components';
 
 import { Box, Text } from '@/components';
 
-const ILLUSTRATION_BACKGROUND = '#f7f8fd';
-
 /**
  * What a space of the panel is for, in user words: Robin's illustration, a
  * title, one sentence and three short pointers to get started.
@@ -24,7 +22,8 @@ export const SpaceIntro = ({
     $css={css`
       padding: 14px;
       border-radius: 14px;
-      background: ${ILLUSTRATION_BACKGROUND};
+      /* Theme colour, so the text stays readable in dark mode. */
+      background: var(--c--contextuals--background--semantic--brand--tertiary);
     `}
   >
     <Box $direction="row" $align="center" $gap="14px">

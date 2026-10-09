@@ -69,7 +69,8 @@ export const ROBIN_QUIZ_URL = '/assets/robin-quiz.webp';
 export const ROBIN_CHALLENGES_URL = '/assets/robin-defis.webp';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
-const ROBIN_NAVY = 'var(--c--globals--colors--brand-900, #12175c)';
+// Theme colour: readable in light and dark mode.
+const ROBIN_NAVY = 'var(--c--contextuals--content--semantic--brand--primary)';
 
 const valueBadgeCss = (color: string) => css`
   flex: none;
