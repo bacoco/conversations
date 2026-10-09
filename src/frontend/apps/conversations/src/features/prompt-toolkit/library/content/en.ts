@@ -12,6 +12,7 @@ export const LIBRARY_EN: PromptLibrary = {
     { id: 'communication', icon: 'campaign', title: 'Communication' },
     { id: 'data', icon: 'table_chart', title: 'Spreadsheets and data' },
     { id: 'public', icon: 'support_agent', title: 'Serving the public' },
+    { id: 'project', icon: 'account_tree', title: 'Projects and steering' },
   ],
   prompts: [
     // Emails and letters
@@ -726,6 +727,858 @@ If an administrative term has no equivalent, keep it and add a short explanation
         'language',
         'foreign',
         'multilingual',
+      ],
+    },
+    // Additions: emails, summaries, writing, meetings, HR, legal,
+    // communication, data, public, and the Projects and steering theme.
+    {
+      id: 'mail-acknowledge',
+      category: 'mail',
+      title: 'Acknowledge receipt',
+      description: 'Confirm receipt and give the processing time.',
+      prompt: `Write an acknowledgement of receipt for the request below, received on [date].
+
+State: that the request is registered, the expected processing time ([time]), and who to contact ([contact]).
+Tone: courteous and reassuring.
+Format: an email of 6 lines at most.
+Constraint: make no commitment on the answer itself.
+
+Request received:
+"""
+[paste the request]
+"""`,
+      keywords: [
+        'acknowledge',
+        'receipt',
+        'processing time',
+        'request',
+        'confirm',
+      ],
+    },
+    {
+      id: 'mail-missing-document',
+      category: 'mail',
+      title: 'Ask for a missing document',
+      description: 'Request a document without putting people off.',
+      prompt: `Write an email to [recipient] asking for the following missing document: [document].
+
+Recall why it is needed ([reason]) and the deadline to send it ([date]).
+Say how to send it: [how to send].
+Tone: friendly and clear, no reproach.
+Format: 8 lines at most, the request in the first sentence.`,
+      keywords: [
+        'missing document',
+        'incomplete file',
+        'supporting document',
+        'reminder',
+      ],
+    },
+    {
+      id: 'mail-announce-change',
+      category: 'mail',
+      title: 'Announce a change',
+      description: 'Tell people about a new organisation, tool or rule.',
+      prompt: `Write an email announcing the following change to [recipients]: [change].
+
+Explain: what changes, from when ([date]), why ([reason]), and what everyone must do ([expected action]).
+Tone: positive and factual.
+Format: a clear subject line, then 4 short paragraphs; end with the contact for questions ([contact]).`,
+      keywords: ['announce', 'change', 'reorganisation', 'information', 'team'],
+    },
+    {
+      id: 'mail-thank',
+      category: 'mail',
+      title: 'Say thank you',
+      description: 'A sincere and specific thank-you.',
+      prompt: `Write a thank-you message to [recipient] for [what was done].
+
+Mention one concrete contribution ([contribution]) and its effect ([effect]).
+Tone: warm and sincere, without overstatement.
+Format: 5 lines at most.`,
+      keywords: ['thank', 'thanks', 'gratitude', 'recognition'],
+    },
+    {
+      id: 'mail-meeting-request',
+      category: 'mail',
+      title: 'Request a meeting',
+      description: 'Suggest a meeting with time slots.',
+      prompt: `Write an email to [recipient] suggesting a meeting about [subject].
+
+State the purpose ([purpose]), the expected length ([length]) and three possible slots: [slots].
+Tone: professional and courteous.
+Format: 6 lines at most.`,
+      keywords: ['meeting', 'appointment', 'slot', 'propose', 'call'],
+    },
+    {
+      id: 'mail-apology',
+      category: 'mail',
+      title: 'Apologise',
+      description: 'Acknowledge a mistake and say what is being done.',
+      prompt: `Write an apology email to [recipient] for [mistake or delay].
+
+Acknowledge the problem without long justifications, explain what was done to fix it ([fix]) and what will prevent it from happening again ([measure]).
+Tone: sober and respectful.
+Format: 8 lines at most.
+Constraint: promise nothing that is not stated above.`,
+      keywords: ['apology', 'sorry', 'mistake', 'delay'],
+    },
+    {
+      id: 'mail-forward-context',
+      category: 'mail',
+      title: 'Forward with context',
+      description: 'A forwarding note that says why and what is expected.',
+      prompt: `Write a short note to forward the exchange below to [recipient].
+
+In 3 sentences: what it is about, why I am forwarding it, and what I expect ([expected action], by [date]).
+
+Exchange:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['forward', 'forwarding', 'pass on', 'context'],
+    },
+    {
+      id: 'summary-email-thread',
+      category: 'summary',
+      title: 'Summarise an email thread',
+      description: 'Where things stand, who expects what.',
+      prompt: `Summarise the email thread below.
+
+Give: the subject in one sentence, the decisions taken, the open questions, and what is expected from me ([my role]).
+Format: 4 bulleted sections, 10 lines at most in total.
+Constraint: add no information that is not in the emails.
+
+Thread:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['thread', 'emails', 'exchange', 'summarise', 'status'],
+    },
+    {
+      id: 'summary-report-decider',
+      category: 'summary',
+      title: 'Summary for a decision maker',
+      description: 'The essence of a report, with a recommendation.',
+      prompt: `Write a summary of the report below for [decision maker].
+
+Structure: the context in 2 sentences, the 3 main findings, the possible options, then a reasoned recommendation.
+Format: one page at most, short sentences.
+Constraint: every figure must come from the report; point out what is missing to decide.
+
+Report:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'summary',
+        'decision maker',
+        'management',
+        'report',
+        'recommendation',
+      ],
+    },
+    {
+      id: 'summary-consultation',
+      category: 'summary',
+      title: 'Summarise a consultation',
+      description: 'Sort opinions or contributions by theme.',
+      prompt: `Analyse the contributions below from [consultation or survey].
+
+Group them by theme; for each theme, give the number of contributions, the main idea and a representative quote.
+End with the 3 most frequent expectations.
+Constraint: do not distort opinions; flag off-topic contributions.
+
+Contributions:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'consultation',
+        'contributions',
+        'opinions',
+        'survey',
+        'themes',
+      ],
+    },
+    {
+      id: 'summary-key-figures',
+      category: 'summary',
+      title: 'Extract the key figures',
+      description:
+        'The important data of a document, with where it comes from.',
+      prompt: `Extract from the document below the key figures about [subject].
+
+For each figure: the value, what it measures, the period and where it appears in the document.
+Format: a 4-column table.
+Constraint: do not calculate or round anything; flag any ambiguous figure.
+
+Document:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['figures', 'data', 'statistics', 'extract', 'indicators'],
+    },
+    {
+      id: 'summary-swot',
+      category: 'summary',
+      title: 'Strengths and weaknesses',
+      description: 'A strengths, weaknesses, opportunities, threats grid.',
+      prompt: `Do a strengths, weaknesses, opportunities and threats analysis of [project or situation].
+
+Use only the elements below.
+Format: a 4-box table, 3 points at most per box, then 2 recommendations.
+Constraint: separate facts from assumptions.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'swot',
+        'strengths',
+        'weaknesses',
+        'opportunities',
+        'threats',
+        'analysis',
+      ],
+    },
+    {
+      id: 'summary-talking-points',
+      category: 'summary',
+      title: 'Talking points',
+      description: 'Key messages ready to be said.',
+      prompt: `From the document below, write talking points for [audience or situation].
+
+Give: 3 key messages of one sentence each, the figures to remember, and short answers to 3 likely questions.
+Tone: clear, factual, not polemical.
+Constraint: nothing that is not in the document.
+
+Document:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['talking points', 'key messages', 'arguments', 'questions'],
+    },
+    {
+      id: 'summary-versions',
+      category: 'summary',
+      title: 'Summary in three lengths',
+      description: 'A short, medium and long version of the same text.',
+      prompt: `Summarise the text below in three versions:
+1. one sentence;
+2. 5 lines;
+3. a 15-line paragraph.
+
+Audience: [audience].
+Constraint: the three versions say the same thing; no information added.
+
+Text:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['summary', 'short', 'long', 'versions'],
+    },
+    {
+      id: 'writing-briefing-note',
+      category: 'writing',
+      title: 'Note to management',
+      description: 'A note that sets out, analyses and proposes.',
+      prompt: `Write a note to [recipient] about [subject].
+
+Structure: subject, context, analysis, proposals, decision expected.
+Tone: formal, precise, neutral.
+Format: 1 to 2 pages, short headings.
+Constraint: use only the elements below; write [to be specified] when information is missing.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['note', 'management', 'briefing', 'proposal'],
+    },
+    {
+      id: 'writing-parliamentary',
+      category: 'writing',
+      title: 'Answer to a written question',
+      description: 'A draft answer from approved material.',
+      prompt: `Draft an answer to the question below, using the approved material provided.
+
+Structure: recall of the question, current law or situation, actions taken, outlook.
+Tone: institutional and factual.
+Constraint: add no figure or commitment that is not in the approved material.
+
+Question:
+"""
+[paste the question]
+"""
+
+Approved material:
+"""
+[paste the material]
+"""`,
+      keywords: [
+        'written question',
+        'parliamentary',
+        'answer',
+        'elected official',
+      ],
+    },
+    {
+      id: 'writing-plain-letter',
+      category: 'writing',
+      title: 'Letter in plain language',
+      description: 'Rewrite an administrative letter so it is understood.',
+      prompt: `Rewrite the letter below in plain language for [recipient].
+
+Rules: the decision or main information first, short sentences, one subject per paragraph, everyday words, acronyms explained, what the person must do highlighted.
+Constraint: keep all legal information and dates.
+
+Letter:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'plain language',
+        'letter',
+        'simplify',
+        'understandable',
+        'rewrite',
+      ],
+    },
+    {
+      id: 'writing-glossary',
+      category: 'writing',
+      title: 'Create a glossary',
+      description: 'The technical terms of a document, explained simply.',
+      prompt: `Create a glossary of the technical terms, acronyms and abbreviations in the document below.
+
+For each term: its full form if it is an acronym, then a one-sentence plain definition.
+Format: a table sorted alphabetically.
+Constraint: if the document does not allow defining a term, write "to be checked".
+
+Document:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['glossary', 'acronyms', 'definitions', 'vocabulary'],
+    },
+    {
+      id: 'writing-speech',
+      category: 'writing',
+      title: 'Short speech',
+      description: 'A few minutes of speech, to be said out loud.',
+      prompt: `Write a [length]-minute speech for [occasion], given by [speaker] to [audience].
+
+Structure: an opening hook, 3 messages, a conclusion that thanks or calls to action.
+Tone: [tone], sentences made to be spoken.
+Constraint: about 130 words per minute; no invented facts, write [to be completed] if needed.`,
+      keywords: ['speech', 'address', 'talk', 'ceremony'],
+    },
+    {
+      id: 'writing-questionnaire',
+      category: 'writing',
+      title: 'Create a questionnaire',
+      description: 'Gather the opinion of staff or citizens.',
+      prompt: `Write a questionnaire to gather the opinion of [audience] about [subject].
+
+Goal: [what we want to know].
+Format: 10 questions at most, closed ones first then 2 open ones; give the possible answers for closed questions.
+Constraint: neutral questions that do not steer the answer; under 5 minutes to fill in.`,
+      keywords: ['questionnaire', 'survey', 'poll', 'opinion', 'satisfaction'],
+    },
+    {
+      id: 'writing-tutorial',
+      category: 'writing',
+      title: 'Step-by-step tutorial',
+      description: 'Explain a task to colleagues.',
+      prompt: `Write a tutorial explaining to [audience] how to [task].
+
+Structure: the expected result, the prerequisites, then numbered steps (one action per step), and frequent mistakes with their fix.
+Tone: simple and direct, imperative.
+Constraint: use the notes below; flag the steps you cannot describe with certainty.
+
+Notes:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['tutorial', 'step by step', 'how-to', 'guide', 'steps'],
+    },
+    {
+      id: 'meetings-minutes-transcript',
+      category: 'meetings',
+      title: 'Minutes from a transcript',
+      description: 'Turn a video-call transcript into minutes.',
+      prompt: `Write the minutes of the meeting from the transcript below.
+
+Structure: participants, topics discussed, decisions, open points, actions (who, what, by when).
+Tone: neutral and concise.
+Constraint: attribute to no one words they did not say; flag any unclear passage.
+
+Transcript:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['minutes', 'transcript', 'video call', 'meeting'],
+    },
+    {
+      id: 'meetings-questions',
+      category: 'meetings',
+      title: 'Prepare your questions',
+      description: 'The right questions to ask in a meeting.',
+      prompt: `I am attending a meeting with [person] about [subject]. My goal: [goal].
+
+Prepare 8 questions ranked by priority, each with what it helps obtain.
+Add 2 questions to keep in reserve if the discussion gets tense.
+Format: numbered list.`,
+      keywords: ['questions', 'prepare', 'meeting', 'interview'],
+    },
+    {
+      id: 'meetings-workshop',
+      category: 'meetings',
+      title: 'Run a workshop',
+      description: 'The timed plan of a participatory workshop.',
+      prompt: `Suggest the plan of a [length] workshop with [number] participants about [subject].
+
+Goal: [expected result].
+Format: a timed table (sequence, length, facilitation method, materials), with an icebreaker and a conclusion that sets next steps.
+Constraint: simple methods that work without digital tools.`,
+      keywords: [
+        'workshop',
+        'facilitation',
+        'participatory',
+        'agenda',
+        'seminar',
+      ],
+    },
+    {
+      id: 'meetings-decisions-log',
+      category: 'meetings',
+      title: 'Decision log',
+      description: 'Only what was decided and who is in charge.',
+      prompt: `From the notes below, write a decision log.
+
+For each decision: the decision in one sentence, the owner, the deadline.
+Format: a table, with no account of the discussion.
+Constraint: if an owner or deadline is missing, write [to be defined].
+
+Notes:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['decision log', 'decisions', 'owner', 'deadline', 'meeting'],
+    },
+    {
+      id: 'hr-feedback',
+      category: 'hr',
+      title: 'Give constructive feedback',
+      description: 'Say what works and what must improve, tactfully.',
+      prompt: `Help me phrase feedback for [team member] about [situation or work].
+
+Strengths observed: [strengths].
+Point to improve: [point to improve].
+Structure: a specific fact, its effect, a concrete proposal for what comes next.
+Tone: kind and direct.
+Format: a message of 8 lines at most, or notes for a conversation if I say so.`,
+      keywords: ['feedback', 'manager', 'team member', 'improvement'],
+    },
+    {
+      id: 'hr-smart-objectives',
+      category: 'hr',
+      title: 'Set SMART objectives',
+      description: 'Precise, measurable, dated objectives.',
+      prompt: `Turn the priorities below into 3 to 5 SMART objectives for [person or team] over [period].
+
+For each objective: the objective in one sentence, the success indicator, the deadline, the resources needed.
+Format: a table.
+Constraint: objectives reachable with the stated resources; flag those that seem too ambitious.
+
+Priorities:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'objectives',
+        'smart',
+        'annual review',
+        'indicators',
+        'priorities',
+      ],
+    },
+    {
+      id: 'hr-handover',
+      category: 'hr',
+      title: 'Prepare a handover',
+      description: 'Pass everything on before an absence or departure.',
+      prompt: `Help me prepare the handover of my files to [replacement] before [absence or departure] on [date].
+
+For each file below: where it stands, the next step, the deadline, useful contacts and points to watch.
+Format: a table, then the list of accesses and documents to pass on.
+
+My files:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['handover', 'absence', 'departure', 'files', 'replacement'],
+    },
+    {
+      id: 'procurement-compare-bids',
+      category: 'procurement',
+      title: 'Compare bids',
+      description: 'An analysis table against the announced criteria.',
+      prompt: `Compare the bids below against the announced criteria: [criteria and weightings].
+
+For each bid: what it offers on each criterion, its strengths and weaknesses.
+Format: a comparison table, then a 5-line summary.
+Constraint: use only the content of the bids; give no final score, the decision belongs to the buyer.
+
+Bids:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'bids',
+        'compare',
+        'public procurement',
+        'analysis',
+        'criteria',
+      ],
+    },
+    {
+      id: 'procurement-risky-clauses',
+      category: 'procurement',
+      title: 'Spot risky clauses',
+      description: 'The points of a contract that need attention.',
+      prompt: `Review the contract or agreement below from the point of view of [my organisation].
+
+Find the risky clauses (commitments, penalties, duration, termination, liabilities, data) and explain each risk in one sentence.
+Format: a clause, risk, question-to-ask table.
+Constraint: this is not legal advice; flag what a lawyer must check.
+
+Contract:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['contract', 'agreement', 'clauses', 'risks', 'legal'],
+    },
+    {
+      id: 'procurement-decree-explained',
+      category: 'procurement',
+      title: 'Explain a legal text',
+      description: 'What changes for staff, in plain words.',
+      prompt: `Explain the text below to non-lawyer staff of [department].
+
+Structure: what changes, what does not, what is expected of them, from when.
+Tone: simple and precise.
+Format: one page at most, with the references of the articles concerned.
+Constraint: do not add to the text; flag points open to interpretation.
+
+Text:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['decree', 'order', 'circular', 'explain', 'regulation', 'law'],
+    },
+    {
+      id: 'communication-press-release',
+      category: 'communication',
+      title: 'Press release',
+      description: 'A factual release from a report or an event.',
+      prompt: `Write a press release about [subject], from the elements below.
+
+Structure: an informative headline, a lead answering who, what, when, where, why, 3 paragraphs, a quote from [spokesperson] to be approved, the press contact.
+Tone: institutional and factual.
+Format: one page at most.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'press release',
+        'press',
+        'media',
+        'announcement',
+        'journalists',
+      ],
+    },
+    {
+      id: 'communication-multichannel',
+      category: 'communication',
+      title: 'Adapt a message',
+      description: 'The same message for the intranet, chat and social media.',
+      prompt: `Adapt the message below into three versions:
+1. an intranet article (150 words);
+2. a chat message (300 characters);
+3. a social media post (280 characters, no jargon).
+
+Audience: [audience].
+Constraint: the same information in all three versions.
+
+Message:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['adapt', 'intranet', 'social media', 'chat', 'channels'],
+    },
+    {
+      id: 'data-pivot',
+      category: 'data',
+      title: 'Build a pivot table',
+      description: 'The steps to summarise a table by category.',
+      prompt: `I have a table with the following columns: [columns]. I want to get [expected result, e.g. the total per department and per month].
+
+Explain step by step how to build the pivot table in [spreadsheet], then how to present it clearly.
+Add the frequent mistakes to avoid.`,
+      keywords: ['pivot table', 'spreadsheet', 'excel', 'summary'],
+    },
+    {
+      id: 'data-budget-gaps',
+      category: 'data',
+      title: 'Analyse budget gaps',
+      description: 'Planned, actual and likely causes.',
+      prompt: `Analyse the budget table below (planned and actual columns).
+
+Find the lines where the gap exceeds [threshold]%, calculate the gap in value and percentage, and suggest likely causes to check.
+Format: a table sorted by decreasing gap, then 3 points of attention.
+Constraint: present causes as assumptions.
+
+Table:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['budget', 'gaps', 'planned', 'actual', 'spending', 'finance'],
+    },
+    {
+      id: 'public-documents-list',
+      category: 'public',
+      title: 'List of documents to provide',
+      description: 'A clear list to put a file together.',
+      prompt: `Write, for a citizen, the list of documents to provide for [procedure], from the elements below.
+
+For each document: its name, a useful detail (original, copy, under 3 months…), and who it applies to.
+Format: a checklist, then the address or link to submit: [address or link].
+Constraint: add no document that is not in the elements.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'documents to provide',
+        'file',
+        'supporting documents',
+        'procedure',
+        'citizen',
+      ],
+    },
+    {
+      id: 'public-refusal',
+      category: 'public',
+      title: 'Explain a refusal',
+      description: 'Announce an unfavourable decision respectfully.',
+      prompt: `Write a letter to [citizen] announcing that their request for [object] is refused.
+
+Reason: [reason].
+State the means of appeal ([appeal and deadline]) and, if any, an alternative ([alternative]).
+Tone: respectful, clear, no jargon.
+Constraint: the reason must be accurate and understandable; no blaming wording.`,
+      keywords: [
+        'refusal',
+        'unfavourable decision',
+        'appeal',
+        'citizen',
+        'letter',
+      ],
+    },
+    {
+      id: 'public-faq-users',
+      category: 'public',
+      title: 'FAQ for citizens',
+      description: 'The questions citizens really ask.',
+      prompt: `From the citizens' questions below, write an FAQ about [procedure or service].
+
+Group similar questions, phrase them in the citizens' words, and answer each in 3 lines at most.
+Format: 8 to 10 questions, ordered by frequency.
+Constraint: answer only from the elements provided; flag questions without an answer.
+
+Questions and elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['faq', 'frequently asked questions', 'citizens'],
+    },
+    {
+      id: 'project-brief',
+      category: 'project',
+      title: 'Project brief',
+      description: 'Lay the foundations of a project before launching it.',
+      prompt: `Write the brief of the project [project name].
+
+Structure: context and stakes, measurable objectives, scope (in and out), stakeholders, timeline, budget, main risks, governance.
+Format: 2 pages at most.
+Constraint: use the elements below; write [to be specified] for what is missing.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['project brief', 'project', 'scoping', 'launch', 'scope'],
+    },
+    {
+      id: 'project-status',
+      category: 'project',
+      title: 'Progress update',
+      description: 'Where the project stands, in one page.',
+      prompt: `Write the progress update of the project [name] for [recipients], from the elements below.
+
+Structure: overall status (ahead, on time, late), achievements since the last update, next steps, risks and decisions needed.
+Format: one page, with a colour status for each workstream.
+Constraint: factual; do not hide delays.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'progress update',
+        'status',
+        'reporting',
+        'steering',
+        'project status',
+      ],
+    },
+    {
+      id: 'project-risks',
+      category: 'project',
+      title: 'Risk register',
+      description: 'Identify, assess and handle risks.',
+      prompt: `Draw up the risk register of the project [name], from the description below.
+
+For each risk: description, likelihood (low, medium, high), impact, mitigation, owner.
+Format: a table sorted by criticality.
+Constraint: 8 to 12 realistic risks specific to this project.
+
+Description:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'risks',
+        'risk register',
+        'criticality',
+        'mitigation',
+        'project',
+      ],
+    },
+    {
+      id: 'project-raci',
+      category: 'project',
+      title: 'Who does what (RACI)',
+      description: 'Clarify everyone’s role.',
+      prompt: `Draw up a RACI matrix for the project [name].
+
+Actors: [actors].
+Activities: [main activities].
+For each activity: who does it, who decides, who is consulted, who is informed.
+Format: a table, then the grey areas to clarify.`,
+      keywords: [
+        'raci',
+        'roles',
+        'responsibilities',
+        'who does what',
+        'governance',
+      ],
+    },
+    {
+      id: 'project-schedule',
+      category: 'project',
+      title: 'Backward schedule',
+      description: 'Start from the deadline to set the steps.',
+      prompt: `Build the backward schedule of [project or deliverable] with a deadline on [date].
+
+Known steps: [steps].
+For each step: estimated length, start date, end date, dependencies, owner.
+Format: a table from nearest to furthest, then the critical steps.
+Constraint: flag if the deadline looks unrealistic.`,
+      keywords: ['schedule', 'planning', 'timeline', 'deadline', 'milestones'],
+    },
+    {
+      id: 'project-lessons',
+      category: 'project',
+      title: 'Lessons learned',
+      description: 'Draw lessons from a project or a crisis.',
+      prompt: `Write the lessons learned from [project or event], from the elements below.
+
+Structure: recap of facts, what worked well, what worked less well, causes, concrete recommendations with an owner.
+Tone: constructive, blaming no one.
+Format: 2 pages at most.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: ['lessons learned', 'review', 'retrospective', 'crisis'],
+    },
+    {
+      id: 'project-indicators',
+      category: 'project',
+      title: 'Monitoring indicators',
+      description: 'Measure progress and results.',
+      prompt: `Suggest indicators to monitor the project [name], whose objectives are: [objectives].
+
+For each indicator: what it measures, the formula, the data source, the frequency, the target.
+Format: a table of 6 indicators at most, mixing progress and results.
+Constraint: indicators measurable with data that is really available.`,
+      keywords: ['indicators', 'dashboard', 'monitoring', 'steering', 'kpi'],
+    },
+    {
+      id: 'project-steering',
+      category: 'project',
+      title: 'Prepare a steering committee',
+      description: 'The deck and the decisions to obtain.',
+      prompt: `Prepare the steering committee of the project [name] on [date].
+
+Suggest: the timed agenda, the content of 6 slides (progress, budget, risks, decisions expected), and the list of decisions to be approved.
+Constraint: use the elements below; highlight the trade-offs needed.
+
+Elements:
+
+"""
+[paste the text]
+"""`,
+      keywords: [
+        'steering committee',
+        'governance',
+        'decision',
+        'presentation',
       ],
     },
   ],
