@@ -13,7 +13,11 @@ import { Box, Icon } from '@/components';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
-import { useAiAvailability, useAiAvailable } from '../coach/aiAvailability';
+import {
+  useAiAvailability,
+  useAiAvailable,
+  useAiUnavailable,
+} from '../coach/aiAvailability';
 import { languageName } from '../coach/language';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
@@ -190,13 +194,14 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
   const isAiAvailable = useAiAvailable();
+  const isAiUnavailable = useAiUnavailable();
   const checkAi = useAiAvailability((state) => state.check);
   useEffect(() => {
     void checkAi();
   }, [checkAi]);
   // Without the Albert relay there is no coach: the home cards instead.
   const showHome =
-    isHomeRequested || welcomeShown || (mode === 'coach' && !isAiAvailable);
+    isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);
   // The open space, as named in the header: the coach shows its mode.
   const current =
     mode === 'coach'

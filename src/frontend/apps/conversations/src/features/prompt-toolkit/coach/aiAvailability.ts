@@ -43,3 +43,10 @@ export const useAiAvailability = create<AiAvailabilityState>()((set, get) => ({
 
 export const useAiAvailable = () =>
   useAiAvailability((state) => state.status === 'available');
+
+/**
+ * True only once the relay is known to be missing: while checking, screens
+ * stay as asked, so nothing flickers or switches under the user.
+ */
+export const useAiUnavailable = () =>
+  useAiAvailability((state) => state.status === 'unavailable');
