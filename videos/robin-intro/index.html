@@ -1,0 +1,871 @@
+<!doctype html>
+<html
+  lang="fr"
+  data-composition-variables='[
+    {"id":"lang","type":"enum","label":"Language","default":"fr","options":[{"value":"fr","label":"Français"},{"value":"en","label":"English"}]}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Robin — présentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Marianne";
+        src: url("assets/fonts/Marianne-Regular.woff2") format("woff2");
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: "Marianne";
+        src: url("assets/fonts/Marianne-Medium.woff2") format("woff2");
+        font-weight: 500;
+      }
+      @font-face {
+        font-family: "Marianne";
+        src: url("assets/fonts/Marianne-Bold.woff2") format("woff2");
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: "Marianne";
+        src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2");
+        font-weight: 800;
+      }
+      :root {
+        --canvas: #f7f8fd;
+        --ink: #161616;
+        --muted: #4f5568;
+        --navy: #000091;
+        --navy-soft: #e3e3fd;
+        --info: #0063cb;
+        --success: #18753c;
+        --success-soft: #dffee6;
+        --red: #e1000f;
+        --card: #ffffff;
+        --line: #dde0ee;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--canvas);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--canvas);
+        font-family: "Marianne", sans-serif;
+        color: var(--ink);
+      }
+      .bg {
+        position: absolute;
+        inset: 0;
+        /* Flat: the panel paints the same colour around the letterboxed video. */
+        background: var(--canvas);
+      }
+      .flag {
+        position: absolute;
+        left: 90px;
+        top: 96px;
+        width: 150px;
+        height: 10px;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--navy) 33%, #ffffff 33% 66%, var(--red) 66%);
+        box-shadow: 0 0 0 1px var(--line);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .wrap {
+        position: absolute;
+        inset: 0;
+        padding: 200px 90px 140px;
+        display: flex;
+        flex-direction: column;
+        gap: 44px;
+      }
+      .center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .round {
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ffffff;
+        display: block;
+      }
+      .eyebrow {
+        display: block;
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--navy);
+      }
+      .h1 {
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        color: var(--navy);
+      }
+      .h2 {
+        font-size: 66px;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        color: var(--navy);
+      }
+      .lead {
+        font-size: 44px;
+        line-height: 1.35;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .card {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 32px;
+        box-shadow: 0 18px 40px rgba(0, 0, 145, 0.07);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+      }
+      .head .txt {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      /* Scene 1: intro */
+      #s1-title {
+        font-size: 200px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: var(--navy);
+      }
+      #s1-sub {
+        font-size: 56px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      #s1-art {
+        width: 900px;
+        border-radius: 48px;
+        overflow: hidden;
+        background: #f6f8fa;
+        box-shadow: 0 30px 70px rgba(0, 0, 145, 0.12);
+      }
+      #s1-art img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      #s1-serve {
+        font-size: 38px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      /* Scene 2: values */
+      .value {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        padding: 40px 48px;
+      }
+      .badge {
+        flex: none;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .badge svg {
+        width: 64px;
+        height: 64px;
+      }
+      .value .v-title {
+        display: block;
+        font-size: 60px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .value .v-text {
+        display: block;
+        font-size: 44px;
+        color: var(--muted);
+      }
+
+      /* Scene 3: home cards */
+      .home-card {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+        padding: 34px 38px;
+      }
+      .home-card .t {
+        display: block;
+        font-size: 50px;
+        font-weight: 800;
+      }
+      .home-card .d {
+        display: block;
+        font-size: 36px;
+        line-height: 1.3;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .chev {
+        flex: none;
+        width: 46px;
+        height: 46px;
+        color: var(--muted);
+      }
+      #s3-cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 84px;
+        height: 84px;
+      }
+
+      /* Scene 4: coach */
+      .chips {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        font-size: 36px;
+        font-weight: 700;
+        padding: 16px 30px;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 2px solid var(--line);
+        color: var(--muted);
+      }
+      .chip.on {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: #ffffff;
+      }
+      #s4-input {
+        position: relative;
+        padding: 40px 160px 40px 44px;
+        font-size: 48px;
+        line-height: 1.35;
+        min-height: 270px;
+      }
+      #s4-input .lbl,
+      #s4-better .lbl {
+        display: block;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      #s4-analyse {
+        position: absolute;
+        right: 34px;
+        bottom: 26px;
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        background: var(--navy);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #s4-analyse svg {
+        width: 52px;
+        height: 52px;
+      }
+      #s4-scores {
+        display: flex;
+        gap: 30px;
+      }
+      .score {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding: 28px 32px;
+      }
+      .ring {
+        position: relative;
+        flex: none;
+        width: 140px;
+        height: 140px;
+      }
+      .ring svg {
+        width: 140px;
+        height: 140px;
+      }
+      .ring .num {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        font-weight: 800;
+      }
+      .score .s-lbl {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--muted);
+        line-height: 1.2;
+      }
+      #s4-better {
+        padding: 38px 44px;
+        border-color: #9ad5ab;
+        background: #f3fbf5;
+        font-size: 44px;
+        line-height: 1.38;
+      }
+      #s4-better .lbl {
+        color: var(--success);
+      }
+      mark {
+        background: transparent;
+        color: var(--success);
+        font-weight: 700;
+      }
+
+      /* Scene 5: course */
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      .tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        padding: 36px 24px 34px;
+        text-align: center;
+      }
+      .tile img {
+        width: 220px;
+        height: 220px;
+      }
+      .tile .t {
+        display: block;
+        font-size: 50px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .tile .d {
+        display: block;
+        font-size: 32px;
+        line-height: 1.3;
+        color: var(--muted);
+      }
+      #s5-progress {
+        padding: 34px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      #s5-progress .top {
+        display: flex;
+        justify-content: space-between;
+        font-size: 40px;
+        font-weight: 700;
+      }
+      .bar {
+        height: 26px;
+        border-radius: 13px;
+        background: var(--navy-soft);
+        overflow: hidden;
+      }
+      #s5-fill {
+        width: 100%;
+        height: 100%;
+        border-radius: 13px;
+        background: linear-gradient(90deg, var(--navy), var(--info));
+        transform-origin: 0 50%;
+      }
+
+      /* Scene 6: tools */
+      .tool {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding: 26px 30px;
+      }
+      .tool img {
+        flex: none;
+        width: 130px;
+        height: 130px;
+      }
+      .tool .t {
+        font-size: 44px;
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1.15;
+      }
+      .tool.small {
+        padding: 30px 32px;
+      }
+      .tool .ico {
+        flex: none;
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: var(--success-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tool .ico svg {
+        width: 50px;
+        height: 50px;
+      }
+
+      /* Scene 7: outro */
+      #s7-art {
+        width: 760px;
+        border-radius: 48px;
+        overflow: hidden;
+        background: #f6f8fa;
+        box-shadow: 0 30px 70px rgba(0, 0, 145, 0.12);
+      }
+      #s7-art img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      #s7-tag {
+        font-size: 84px;
+        font-weight: 800;
+        line-height: 1.08;
+        color: var(--navy);
+        letter-spacing: -0.02em;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="40"
+      data-width="1080"
+      data-height="1920"
+      data-fps="30"
+    >
+      <div id="ground" class="clip" data-start="0" data-duration="40" data-track-index="0">
+        <div class="bg"></div>
+        <div class="flag" id="flag"></div>
+      </div>
+
+      <!-- 1 · Robin, the copilot -->
+      <section id="s1" class="scene clip" data-start="0" data-duration="5.8" data-track-index="1">
+        <div class="wrap center" id="s1-in">
+          <div id="s1-title">Robin</div>
+          <div id="s1-sub" data-t="copilot"></div>
+          <div id="s1-art" data-layout-allow-overflow><img src="assets/robin.webp" alt="" /></div>
+          <div id="s1-serve" data-t="serve"></div>
+        </div>
+      </section>
+
+      <!-- 2 · What Robin does -->
+      <section id="s2" class="scene clip" data-start="5.4" data-duration="6" data-track-index="2">
+        <div class="wrap" id="s2-in" style="justify-content: center">
+          <div class="head" id="s2-head">
+            <img class="round" src="assets/robin-avatar.webp" alt="" style="width: 190px; height: 190px" />
+            <div class="txt">
+              <span class="eyebrow" data-t="eyebrow2"></span>
+              <div class="h2" data-t="intro2"></div>
+            </div>
+          </div>
+          <div class="card value" id="v1">
+            <div class="badge" style="background: var(--info)">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z" /></svg>
+            </div>
+            <div><span class="v-title" data-t="clarifies"></span><span class="v-text" data-t="request"></span></div>
+          </div>
+          <div class="card value" id="v2">
+            <div class="badge" style="background: var(--success)">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z" /></svg>
+            </div>
+            <div><span class="v-title" data-t="improves"></span><span class="v-text" data-t="prompts"></span></div>
+          </div>
+          <div class="card value" id="v3">
+            <div class="badge" style="background: var(--navy)">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM7 12h10v1.6H7V12zm0 4h10v1.6H7V16z" /></svg>
+            </div>
+            <div><span class="v-title" data-t="structures"></span><span class="v-text" data-t="ideas"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · The home cards: three spaces -->
+      <section id="s3" class="scene clip" data-start="11" data-duration="6.6" data-track-index="3">
+        <div class="wrap center" id="s3-in" style="gap: 36px">
+          <img class="round" id="s3-robin" src="assets/robin-accueil.webp" alt="" style="width: 340px; height: 340px" />
+          <div class="h2" data-t="help" style="max-width: 860px"></div>
+          <div id="s3-cards" style="display: flex; flex-direction: column; gap: 26px; width: 100%; text-align: left">
+            <div class="card home-card" id="c1">
+              <img class="round" src="assets/robin-analyse.webp" alt="" style="width: 150px; height: 150px; flex: none" />
+              <div style="flex: 1; min-width: 0"><span class="t" data-t="coach"></span><span class="d" data-t="coachD"></span></div>
+              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+            </div>
+            <div class="card home-card" id="c2">
+              <img class="round" src="assets/robin-cours.webp" alt="" style="width: 150px; height: 150px; flex: none" />
+              <div style="flex: 1; min-width: 0"><span class="t" data-t="course"></span><span class="d" data-t="courseD"></span></div>
+              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+            </div>
+            <div class="card home-card" id="c3">
+              <img class="round" src="assets/robin-outils.webp" alt="" style="width: 150px; height: 150px; flex: none" />
+              <div style="flex: 1; min-width: 0"><span class="t" data-t="tools"></span><span class="d" data-t="toolsD"></span></div>
+              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · Prompt coach: a weak prompt becomes a strong one -->
+      <section id="s4" class="scene clip" data-start="17.2" data-duration="8.6" data-track-index="4">
+        <div class="wrap" id="s4-in" style="gap: 36px; justify-content: center">
+          <div class="head" id="s4-head">
+            <img class="round" src="assets/robin-analyse.webp" alt="" style="width: 200px; height: 200px" />
+            <div class="txt">
+              <span class="eyebrow" data-t="num1"></span>
+              <div class="h2" data-t="coach"></div>
+            </div>
+          </div>
+          <div class="chips" id="s4-chips">
+            <span class="chip on" data-t="analysis"></span>
+            <span class="chip" data-t="versions"></span>
+            <span class="chip" data-t="asYouType"></span>
+          </div>
+          <div class="card" id="s4-input">
+            <span class="lbl" data-t="yourPrompt"></span>
+            <span id="s4-typed"></span>
+            <div id="s4-analyse">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.9 5.6L19.5 9.5 13.9 11.4 12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" /></svg>
+            </div>
+          </div>
+          <div id="s4-scores">
+            <div class="card score" id="s4-before">
+              <div class="ring">
+                <svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="58" fill="none" stroke="#f3dada" stroke-width="14" /><circle id="s4-arc1" cx="70" cy="70" r="58" fill="none" stroke="#ce0500" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
+                <div class="num" id="s4-n1" style="color: #ce0500">0</div>
+              </div>
+              <div class="s-lbl" data-t="before"></div>
+            </div>
+            <div class="card score" id="s4-after">
+              <div class="ring">
+                <svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="58" fill="none" stroke="#d4f0dc" stroke-width="14" /><circle id="s4-arc2" cx="70" cy="70" r="58" fill="none" stroke="#18753c" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
+                <div class="num" id="s4-n2" style="color: #18753c">0</div>
+              </div>
+              <div class="s-lbl" data-t="after"></div>
+            </div>
+          </div>
+          <div class="card" id="s4-better">
+            <span class="lbl" data-t="suggested"></span>
+            <div id="s4-better-text"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · Prompting course -->
+      <section id="s5" class="scene clip" data-start="25.4" data-duration="6.4" data-track-index="5">
+        <div class="wrap" id="s5-in" style="gap: 34px; justify-content: center">
+          <div class="head" id="s5-head">
+            <img class="round" src="assets/robin-cours.webp" alt="" style="width: 200px; height: 200px" />
+            <div class="txt">
+              <span class="eyebrow" data-t="num2"></span>
+              <div class="h2" data-t="course"></div>
+            </div>
+          </div>
+          <div class="lead" data-t="courseD" id="s5-lead"></div>
+          <div class="grid2">
+            <div class="card tile" id="t1"><img class="round" src="assets/robin-lecons.webp" alt="" /><span class="t" data-t="lessons"></span><span class="d" data-t="lessonsD"></span></div>
+            <div class="card tile" id="t2"><img class="round" src="assets/robin-fiches.webp" alt="" /><span class="t" data-t="cards"></span><span class="d" data-t="cardsD"></span></div>
+            <div class="card tile" id="t3"><img class="round" src="assets/robin-quiz.webp" alt="" /><span class="t" data-t="quiz"></span><span class="d" data-t="quizD"></span></div>
+            <div class="card tile" id="t4"><img class="round" src="assets/robin-defis.webp" alt="" /><span class="t" data-t="challenges"></span><span class="d" data-t="challengesD"></span></div>
+          </div>
+          <div class="card" id="s5-progress">
+            <div class="top"><span data-t="progress"></span><span id="s5-pct">0 %</span></div>
+            <div class="bar"><div id="s5-fill"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 · Everyday tools -->
+      <section id="s6" class="scene clip" data-start="31.4" data-duration="6" data-track-index="6">
+        <div class="wrap" id="s6-in" style="gap: 30px; justify-content: center">
+          <div class="head" id="s6-head">
+            <img class="round" src="assets/robin-outils.webp" alt="" style="width: 200px; height: 200px" />
+            <div class="txt">
+              <span class="eyebrow" data-t="num3"></span>
+              <div class="h2" data-t="tools"></div>
+            </div>
+          </div>
+          <div class="lead" data-t="toolsD" id="s6-lead"></div>
+          <div class="grid2" style="gap: 24px">
+            <div class="card tool" id="o1"><img class="round" src="assets/robin-ecrire.webp" alt="" /><span class="t" data-t="write"></span></div>
+            <div class="card tool" id="o2"><img class="round" src="assets/robin-resumer.webp" alt="" /><span class="t" data-t="summarise"></span></div>
+            <div class="card tool" id="o3"><img class="round" src="assets/robin-organiser.webp" alt="" /><span class="t" data-t="organise"></span></div>
+            <div class="card tool" id="o4"><img class="round" src="assets/robin-prompts.webp" alt="" /><span class="t" data-t="library"></span></div>
+            <div class="card tool small" id="o5">
+              <div class="ico"><svg viewBox="0 0 24 24" fill="#18753c"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></div>
+              <span class="t" data-t="improve"></span>
+            </div>
+            <div class="card tool small" id="o6">
+              <div class="ico"><svg viewBox="0 0 24 24" fill="#18753c"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6a5.9 5.9 0 0 1 4.22 1.78L13 11h7V4l-2.35 2.35z" /></svg></div>
+              <span class="t" data-t="followUp"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 · Outro -->
+      <section id="s7" class="scene clip" data-start="37" data-duration="3" data-track-index="7">
+        <div class="wrap center" id="s7-in" style="gap: 50px">
+          <div id="s7-art"><img src="assets/robin.webp" alt="" /></div>
+          <div id="s7-tag" data-t="tagline"></div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const STRINGS = {
+        fr: {
+          copilot: "Votre copilote de prompts",
+          serve: "Au service du service public",
+          eyebrow2: "Robin",
+          intro2: "Un bon prompt donne une meilleure réponse.",
+          clarifies: "Clarifie",
+          request: "votre demande",
+          improves: "Améliore",
+          prompts: "vos prompts",
+          structures: "Structure",
+          ideas: "vos idées",
+          help: "Comment puis-je vous aider à rédiger ?",
+          coach: "Coach de prompt",
+          coachD: "Analyse, versions proposées ou suggestions pendant la frappe.",
+          course: "Cours de prompting",
+          courseD: "Des leçons courtes, des fiches et des quiz, à votre rythme.",
+          tools: "Outils du quotidien",
+          toolsD: "Courriel, compte rendu, synthèse, traduction… préparés pour vous.",
+          num1: "Espace 1",
+          num2: "Espace 2",
+          num3: "Espace 3",
+          analysis: "Analyse",
+          versions: "Versions proposées",
+          asYouType: "À la volée",
+          yourPrompt: "Votre prompt",
+          typed: "Fais un résumé de ce document.",
+          before: "Avant",
+          after: "Après",
+          suggested: "Version proposée",
+          better:
+            "Résume ce rapport en <mark>5 points clés</mark> pour <mark>un directeur</mark>, en <mark>moins de 200 mots</mark>, sur un <mark>ton neutre</mark>.",
+          lessons: "Leçons",
+          lessonsD: "Apprendre pas à pas",
+          cards: "Fiches",
+          cardsD: "Réviser l’essentiel",
+          quiz: "Quiz",
+          quizD: "Vérifier ses acquis",
+          challenges: "Défis",
+          challengesD: "S’entraîner sur des cas concrets",
+          progress: "Votre progression",
+          write: "Écrire",
+          summarise: "Résumer",
+          organise: "Organiser",
+          library: "Bibliothèque de prompts",
+          improve: "Améliorer mon texte",
+          followUp: "Relancer une réponse",
+          tagline: "Un meilleur prompt, plus d’impact !",
+          getStarted: "Commencer",
+        },
+        en: {
+          copilot: "Your prompt copilot",
+          serve: "Serving the public service",
+          eyebrow2: "Robin",
+          intro2: "A good prompt gets a better answer.",
+          clarifies: "Clarifies",
+          request: "your request",
+          improves: "Improves",
+          prompts: "your prompts",
+          structures: "Structures",
+          ideas: "your ideas",
+          help: "How can I help you write?",
+          coach: "Prompt coach",
+          coachD: "Analysis, suggested versions, or suggestions as you type.",
+          course: "Prompting course",
+          courseD: "Short lessons, review cards and quizzes, at your own pace.",
+          tools: "Everyday tools",
+          toolsD: "Email reply, meeting minutes, summary, translation… prepared for you.",
+          num1: "Space 1",
+          num2: "Space 2",
+          num3: "Space 3",
+          analysis: "Analysis",
+          versions: "Suggested versions",
+          asYouType: "As you type",
+          yourPrompt: "Your prompt",
+          typed: "Summarise this document.",
+          before: "Before",
+          after: "After",
+          suggested: "Suggested version",
+          better:
+            "Summarise this report in <mark>5 key points</mark> for <mark>a director</mark>, in <mark>under 200 words</mark>, in a <mark>neutral tone</mark>.",
+          lessons: "Lessons",
+          lessonsD: "Learn step by step",
+          cards: "Cards",
+          cardsD: "Review the essentials",
+          quiz: "Quiz",
+          quizD: "Check what you know",
+          challenges: "Challenges",
+          challengesD: "Practise on real cases",
+          progress: "Your progress",
+          write: "Write",
+          summarise: "Summarise",
+          organise: "Organise",
+          library: "Prompt library",
+          improve: "Improve my text",
+          followUp: "Follow up on an answer",
+          tagline: "A better prompt, more impact!",
+          getStarted: "Get started",
+        },
+      };
+
+      const vars = (window.__hyperframes && window.__hyperframes.getVariables && window.__hyperframes.getVariables()) || {};
+      const lang = vars.lang === "en" ? "en" : "fr";
+      const S = STRINGS[lang];
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-t]").forEach((el) => {
+        el.textContent = S[el.dataset.t];
+      });
+      document.getElementById("s4-better-text").innerHTML = S.better;
+      // One span per character, so the prompt can be typed in.
+      const typed = document.getElementById("s4-typed");
+      [...S.typed].forEach((ch) => {
+        const span = document.createElement("span");
+        span.textContent = ch;
+        span.className = "ch";
+        typed.appendChild(span);
+      });
+
+      const tl = gsap.timeline({ paused: true });
+      const out = "power3.out";
+      const fadeIn = (sel, at, y = 40, d = 0.7) =>
+        tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: out }, at);
+      const fadeOut = (sel, at, d = 0.45) => tl.to(sel, { opacity: 0, y: -30, duration: d, ease: "power2.in" }, at);
+
+      // Ground
+      tl.fromTo("#flag", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.8, ease: out }, 0.2);
+
+      // 1 · Intro (0 – 5.8)
+      tl.fromTo("#s1-title", { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "back.out(1.6)" }, 0.2);
+      fadeIn("#s1-sub", 0.6);
+      tl.fromTo("#s1-art", { opacity: 0, y: 80, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: out }, 1.0);
+      tl.to("#s1-art img", { scale: 1.06, duration: 4.8, ease: "none" }, 1.0);
+      fadeIn("#s1-serve", 1.8);
+      fadeOut("#s1-in", 5.3);
+
+      // 2 · Values (5.4 – 11.4)
+      fadeIn("#s2-head", 5.6);
+      ["#v1", "#v2", "#v3"].forEach((sel, i) => {
+        tl.fromTo(sel, { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.7, ease: out }, 6.6 + i * 0.9);
+        tl.fromTo(`${sel} .badge`, { scale: 0 }, { scale: 1, duration: 0.6, ease: "back.out(2.2)" }, 6.8 + i * 0.9);
+      });
+      fadeOut("#s2-in", 10.9);
+
+      // 3 · Home cards (11 – 17.6)
+      tl.fromTo("#s3-robin", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 11.2);
+      fadeIn("#s3-in .h2", 11.6);
+      ["#c1", "#c2", "#c3"].forEach((sel, i) => {
+        fadeIn(sel, 12.3 + i * 0.35, 60);
+      });
+      // Each space in turn, as if pointed at.
+      ["#c1", "#c2", "#c3"].forEach((sel, i) => {
+        const at = 14 + i * 0.95;
+        tl.to(sel, { scale: 1.035, borderColor: i === 2 ? "#18753c" : "#000091", duration: 0.3, ease: out }, at);
+        tl.to(sel, { scale: 1, borderColor: "#dde0ee", duration: 0.35, ease: "power2.inOut" }, at + 0.7);
+      });
+      fadeOut("#s3-in", 17.1);
+
+      // 4 · Coach (17.2 – 25.8)
+      fadeIn("#s4-head", 17.4);
+      fadeIn("#s4-chips", 17.8, 30);
+      fadeIn("#s4-input", 18.1, 30);
+      tl.fromTo("#s4-typed .ch", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.045 }, 18.6);
+      tl.fromTo("#s4-analyse", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.4)" }, 20.0);
+      tl.to("#s4-analyse", { scale: 0.86, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" }, 20.6);
+      fadeIn("#s4-before", 20.9, 30, 0.5);
+      tl.to("#s4-arc1", { attr: { "stroke-dashoffset": 364.4 * (1 - 0.3) }, duration: 0.9, ease: out }, 21.0);
+      const n1 = { v: 0 };
+      tl.to(n1, { v: 3, duration: 0.9, ease: out, onUpdate: () => (document.getElementById("s4-n1").textContent = Math.round(n1.v)) }, 21.0);
+      tl.to("#s4-chips .chip:nth-child(1)", { backgroundColor: "#ffffff", color: "#4f5568", borderColor: "#dde0ee", duration: 0.3 }, 21.8);
+      tl.to("#s4-chips .chip:nth-child(2)", { backgroundColor: "#000091", color: "#ffffff", borderColor: "#000091", duration: 0.3 }, 21.8);
+      fadeIn("#s4-better", 22.0, 50);
+      tl.fromTo("#s4-better mark", { color: "#161616" }, { color: "#18753c", duration: 0.35, stagger: 0.3 }, 22.6);
+      fadeIn("#s4-after", 23.2, 30, 0.5);
+      tl.to("#s4-arc2", { attr: { "stroke-dashoffset": 364.4 * (1 - 0.9) }, duration: 1, ease: out }, 23.3);
+      const n2 = { v: 0 };
+      tl.to(n2, { v: 9, duration: 1, ease: out, onUpdate: () => (document.getElementById("s4-n2").textContent = Math.round(n2.v)) }, 23.3);
+      tl.to("#s4-chips .chip:nth-child(2)", { backgroundColor: "#ffffff", color: "#4f5568", borderColor: "#dde0ee", duration: 0.3 }, 24.4);
+      tl.to("#s4-chips .chip:nth-child(3)", { backgroundColor: "#000091", color: "#ffffff", borderColor: "#000091", duration: 0.3 }, 24.4);
+      fadeOut("#s4-in", 25.3);
+
+      // 5 · Course (25.4 – 31.8)
+      fadeIn("#s5-head", 25.6);
+      fadeIn("#s5-lead", 25.9, 30);
+      ["#t1", "#t2", "#t3", "#t4"].forEach((sel, i) => {
+        tl.fromTo(sel, { opacity: 0, y: 60, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, 26.4 + i * 0.3);
+      });
+      fadeIn("#s5-progress", 27.9, 30);
+      tl.fromTo("#s5-fill", { scaleX: 0 }, { scaleX: 0.75, duration: 2, ease: "power2.inOut" }, 28.3);
+      const pct = { v: 0 };
+      tl.to(pct, { v: 75, duration: 2, ease: "power2.inOut", onUpdate: () => (document.getElementById("s5-pct").textContent = `${Math.round(pct.v)} %`) }, 28.3);
+      fadeOut("#s5-in", 31.3);
+
+      // 6 · Tools (31.4 – 37.4)
+      fadeIn("#s6-head", 31.6);
+      fadeIn("#s6-lead", 31.9, 30);
+      ["#o1", "#o2", "#o3", "#o4", "#o5", "#o6"].forEach((sel, i) => {
+        tl.fromTo(sel, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.55, ease: out }, 32.4 + i * 0.22);
+      });
+      tl.to("#o2", { scale: 1.04, borderColor: "#18753c", duration: 0.3, ease: out }, 34.6);
+      tl.to("#o2", { scale: 1, borderColor: "#dde0ee", duration: 0.35 }, 35.4);
+      fadeOut("#s6-in", 36.9);
+
+      // 7 · Outro (37 – 40)
+      tl.fromTo("#s7-art", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, ease: out }, 37.1);
+      fadeIn("#s7-tag", 37.5);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

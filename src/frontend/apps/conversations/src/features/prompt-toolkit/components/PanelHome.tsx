@@ -1,4 +1,5 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -9,6 +10,8 @@ import {
   CoachMode,
   usePromptToolkitStore,
 } from '../stores/usePromptToolkitStore';
+
+import { RobinIntroVideo, prefersReducedMotion } from './RobinIntroVideo';
 
 type Tone = 'success' | 'brand' | 'info';
 
@@ -82,8 +85,8 @@ const valueBadgeCss = (color: string) => css`
   background: ${color};
 `;
 
-/** Robin's welcome, shown once: who Robin is and what it does. */
-const RobinWelcome = () => {
+/** Robin's welcome, without motion: who Robin is and what it does. */
+const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
   const { t } = useTranslation();
   const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const values = [
@@ -206,7 +209,42 @@ const RobinWelcome = () => {
       >
         {t('Get started')}
       </Button>
+      {onWatch && (
+        <Button
+          fullWidth
+          color="neutral"
+          variant="tertiary"
+          onClick={onWatch}
+          icon={<Icon iconName="play_circle" $size="20px" />}
+        >
+          {t('Watch the presentation')}
+        </Button>
+      )}
     </Box>
+  );
+};
+
+/**
+ * Robin's welcome, shown once: the presentation video, or the still welcome
+ * when motion is reduced or the video cannot play.
+ */
+const RobinIntro = () => {
+  const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
+  const [isVideoShown, setVideoShown] = useState(() => !prefersReducedMotion());
+  const [hasVideoFailed, setVideoFailed] = useState(false);
+
+  if (isVideoShown && !hasVideoFailed) {
+    return (
+      <RobinIntroVideo
+        onDone={dismissWelcome}
+        onError={() => setVideoFailed(true)}
+      />
+    );
+  }
+  return (
+    <RobinWelcome
+      onWatch={hasVideoFailed ? undefined : () => setVideoShown(true)}
+    />
   );
 };
 
@@ -281,7 +319,7 @@ export const PanelHome = () => {
   ];
 
   if (!hasSeenWelcome) {
-    return <RobinWelcome />;
+    return <RobinIntro />;
   }
   // Without the Albert relay, only what works without AI is offered.
   const shownCards = isAiAvailable
