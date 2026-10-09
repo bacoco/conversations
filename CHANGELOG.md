@@ -15,10 +15,13 @@ and this project adheres to
 ### Fixed
 
 - ⚡️(front) disable posthog-js periodic feature flag reloads
+- 🐛(front) avoid stale pages and blank screens after a deploy
+- 🐛(front) ask to reload when a new version has been deployed
 
 ### Security
 
 - 🔒️(project) keep user prompts out of logs and telemetry
+- 🔒️(docker) bind dev compose ports to localhost only
 
 ### Changed
 
