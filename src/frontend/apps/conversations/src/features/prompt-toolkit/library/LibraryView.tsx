@@ -447,7 +447,11 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
     ...library.categories.filter((category) => category.id !== jobId),
   ];
   const promptCount = (count: number) =>
-    count === 1 ? t('1 prompt') : t('{{count}} prompts', { count });
+    count === 0
+      ? t('No prompt yet')
+      : count === 1
+        ? t('1 prompt')
+        : t('{{count}} prompts', { count });
   const countOf = (id: string) =>
     id === MINE
       ? mine.length
