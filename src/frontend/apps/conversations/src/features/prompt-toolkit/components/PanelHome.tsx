@@ -11,6 +11,7 @@ import {
   usePromptToolkitStore,
 } from '../stores/usePromptToolkitStore';
 
+import { ProfileSettings } from './ProfileSettings';
 import { RobinIntroVideo, prefersReducedMotion } from './RobinIntroVideo';
 
 type Tone = 'success' | 'brand' | 'info';
@@ -368,6 +369,7 @@ export const PanelHome = () => {
           </li>
         ))}
       </Box>
+      <ProfileSettings />
     </Box>
   );
 };

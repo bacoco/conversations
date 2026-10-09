@@ -22,6 +22,7 @@ import { searchLibrary } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
 import { useReward } from '../rewards/useReward';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import {
   usePromptToolkitStore,
   useSectionReset,
@@ -35,6 +36,7 @@ import { DiffView } from './DiffView';
 import { DinumGrid } from './DinumGrid';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
 import { LivePillars } from './LivePillars';
+import { PromptAddOns } from './PromptAddOns';
 import { SessionReviewPanel } from './SessionReviewPanel';
 
 const sectionCss = css`
@@ -161,35 +163,6 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     setImprovement(null);
   };
 
-  // Cautious version: allowed to say "I do not know", tied to the sources.
-  const caution = t(
-    'If information is missing or you are not sure, say so instead of guessing. Rely only on the documents provided and quote the passage you use.',
-  );
-  const isCautious =
-    improvement !== null && improvement.improvedPrompt.includes(caution);
-  // "Ask me questions first": the most praised technique among users.
-  const questionsFirst = t(
-    'Before answering, ask me the questions you need to do this well, then wait for my answers.',
-  );
-  const asksQuestions =
-    improvement !== null && improvement.improvedPrompt.includes(questionsFirst);
-  const addQuestionsFirst = () => {
-    if (improvement && !asksQuestions) {
-      setImprovement({
-        ...improvement,
-        improvedPrompt: `${improvement.improvedPrompt.trimEnd()}\n\n${questionsFirst}`,
-      });
-    }
-  };
-  const makeCautious = () => {
-    if (improvement && !isCautious) {
-      setImprovement({
-        ...improvement,
-        improvedPrompt: `${improvement.improvedPrompt.trimEnd()}\n\n${caution}`,
-      });
-    }
-  };
-
   const copyImprovement = async () => {
     if (!improvement) {
       return;
@@ -199,6 +172,11 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   };
 
   const result = analysis.analysis;
+  // Beginners see the essentials: the level, two next steps, a better version.
+  const isBeginner = useProfileStore((state) => state.isBeginner);
+  const visibleSuggestions = result
+    ? result.suggestions.slice(0, isBeginner ? 2 : undefined)
+    : [];
 
   const improvementDiff = useMemo(
     () =>
@@ -329,9 +307,11 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         <>
           {analysis.isLongEnough && !result && analysis.status === 'idle' && (
             <Box $align="center" $gap="8px" $padding={{ all: 'lg' }}>
-              <Box $css="align-self: stretch; margin-bottom: 12px;">
-                <LivePillars text={chatInput} />
-              </Box>
+              {!isBeginner && (
+                <Box $css="align-self: stretch; margin-bottom: 12px;">
+                  <LivePillars text={chatInput} />
+                </Box>
+              )}
               <Icon iconName="grading" $size="40px" $theme="brand" />
               <Text $textAlign="center" $weight="700">
                 {t('Your prompt is ready to be analysed')}
@@ -400,9 +380,11 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                 </Box>
               </Box>
 
-              <Box $css={sectionCss}>
-                <DinumGrid result={result} />
-              </Box>
+              {!isBeginner && (
+                <Box $css={sectionCss}>
+                  <DinumGrid result={result} />
+                </Box>
+              )}
 
               {result.suggestions.length > 0 && (
                 <Box $gap="12px" $css={sectionCss}>
@@ -412,7 +394,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                         {t('To go further')}
                       </Text>
                       <Box as="ul" $gap="8px" $css="margin: 0; padding: 0;">
-                        {result.suggestions.map((suggestion) => (
+                        {visibleSuggestions.map((suggestion) => (
                           <Box
                             as="li"
                             key={suggestion}
@@ -540,32 +522,20 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
                         </Box>
                       </Box>
                     )}
-                    <ExplainedComparison
-                      original={improvement.original}
-                      improved={improvement.improvedPrompt}
-                      language={language}
-                    />
-                    {!asksQuestions && (
-                      <Button
-                        size="small"
-                        color="neutral"
-                        variant="tertiary"
-                        onClick={addQuestionsFirst}
-                        icon={<Icon iconName="help" $size="16px" />}
-                      >
-                        {t('Questions first')}
-                      </Button>
-                    )}
-                    {!isCautious && (
-                      <Button
-                        size="small"
-                        color="neutral"
-                        variant="tertiary"
-                        onClick={makeCautious}
-                        icon={<Icon iconName="verified_user" $size="16px" />}
-                      >
-                        {t('Make it cautious')}
-                      </Button>
+                    {!isBeginner && (
+                      <>
+                        <ExplainedComparison
+                          original={improvement.original}
+                          improved={improvement.improvedPrompt}
+                          language={language}
+                        />
+                        <PromptAddOns
+                          prompt={improvement.improvedPrompt}
+                          onChange={(improvedPrompt) =>
+                            setImprovement({ ...improvement, improvedPrompt })
+                          }
+                        />
+                      </>
                     )}
                     <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
                       <Button

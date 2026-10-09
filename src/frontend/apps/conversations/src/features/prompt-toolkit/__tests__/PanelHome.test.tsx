@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PanelHome } from '../components/PanelHome';
+import { profileRules, useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 describe('<PanelHome />', () => {
@@ -27,10 +28,28 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    expect(screen.getAllByRole('button')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(
       screen.queryByRole('button', { name: /off/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it('keeps the field and the beginner mode chosen by the user', () => {
+    useProfileStore.setState({ job: null, isBeginner: false });
+    render(<PanelHome />);
+
+    fireEvent.change(screen.getByLabelText('My field'), {
+      target: { value: 'meetings' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'I am a beginner' }));
+
+    const { job, isBeginner } = useProfileStore.getState();
+    expect(job?.id).toBe('meetings');
+    expect(isBeginner).toBe(true);
+    expect(profileRules()).toContain(job?.label);
+    expect(
+      screen.getByRole('button', { name: 'I am a beginner' }),
+    ).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('greets with the presentation video once, then shows the cards', () => {

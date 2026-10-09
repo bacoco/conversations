@@ -648,6 +648,71 @@ const quiz: QuizQuestion[] = [
     explanation:
       "Autoriser l'IA à dire qu'elle ne sait pas et la limiter au document fourni rend la réponse vérifiable.",
   },
+  {
+    id: 'q27',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      "Vrai ou inventé ? L'IA répond : « Selon l'article L. 4127-12 du code des relations entre le public et l'administration, le délai est de 15 jours. » Que faites-vous ?",
+    options: [
+      'Je recopie la référence, elle est très précise',
+      "Je vérifie l'article sur Légifrance avant de l'utiliser",
+      "Je demande à l'IA si elle est sûre et je la crois",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Une référence précise peut être inventée. Seule la source officielle (Légifrance) fait foi ; demander à l'IA de confirmer ne prouve rien.",
+  },
+  {
+    id: 'q28',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      "Vrai ou inventé ? L'IA cite : « Comme l'a déclaré le ministre le 3 mars 2024 : … ». Cette citation est…",
+    options: [
+      "Fiable, puisqu'elle est datée",
+      "À vérifier : les citations et les dates font partie de ce que l'IA invente le plus",
+      'Fiable si le texte est entre guillemets',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Les citations, dates et noms propres sont des inventions fréquentes. Retrouvez la source avant de citer.',
+  },
+  {
+    id: 'q29',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      "Vrai ou inventé ? Quand l'IA reformule le texte que vous lui avez fourni, sans rien ajouter, le risque d'invention est plus faible que quand elle répond de mémoire.",
+    correctAnswer: true,
+    explanation:
+      "S'appuyer sur un document fourni réduit le risque d'invention. Il faut quand même relire : une reformulation peut changer le sens.",
+  },
+  {
+    id: 'q30',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      "Vrai ou inventé ? Si l'IA donne un chiffre avec une décimale (« 37,4 % »), c'est le signe qu'il est exact.",
+    correctAnswer: false,
+    explanation:
+      'La précision apparente ne prouve rien : un chiffre inventé peut être très précis. Vérifiez la source du chiffre.',
+  },
+  {
+    id: 'q31',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      "Vrai ou inventé ? L'IA résume un rapport que vous ne lui avez pas donné, en citant ses conclusions. Que faites-vous ?",
+    options: [
+      "Je l'utilise : elle connaît sans doute ce rapport",
+      "Je lui fournis le rapport et je lui demande de s'appuyer uniquement dessus",
+      'Je lui demande de résumer plus court',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Sans le document, l'IA reconstitue de mémoire et peut inventer. Donnez-lui le texte et demandez-lui de citer les passages utilisés.",
+  },
 ];
 
 // ---------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import { languageName } from '../coach/language';
 import { levelColor } from '../coach/levels';
 import { CoachStatus } from '../components/CoachStatus';
 import { DetailPage } from '../components/DetailPage';
+import { ImpactView } from '../components/ImpactView';
 import { ROBIN_CHALLENGES_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useReward } from '../rewards/useReward';
@@ -39,6 +40,7 @@ export const ChallengeView = ({
   );
   const [draft, setDraft] = useState(challenge.badPrompt);
   const [analysis, setAnalysis] = useState<PromptAnalysis | null>(null);
+  const [gradedText, setGradedText] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [showHints, setShowHints] = useState(false);
   const controllerRef = useRef<AbortController | null>(null);
@@ -72,6 +74,7 @@ export const ChallengeView = ({
         controller.signal,
       );
       setAnalysis(result);
+      setGradedText(draft.trim());
       setStatus('idle');
       const isPassed = challenge.targets.every(
         (target) => result.competencies[target] >= CHALLENGE_PASS_GRADE,
@@ -228,6 +231,19 @@ export const ChallengeView = ({
             <Text $size="sm">{analysis.suggestions[0]}</Text>
           )}
         </Box>
+      )}
+
+      {/* Before / after: the real answers to both prompts, side by side. */}
+      {analysis && (
+        <ImpactView
+          original={challenge.badPrompt}
+          improved={gradedText}
+          labels={{
+            button: t('See the before / after'),
+            before: t('With the prompt to fix'),
+            after: t('With your version'),
+          }}
+        />
       )}
     </DetailPage>
   );

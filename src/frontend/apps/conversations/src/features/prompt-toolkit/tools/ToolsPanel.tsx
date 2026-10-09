@@ -22,6 +22,7 @@ import {
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
+import { MyStyleView } from './MyStyleView';
 import { PromptGenerator } from './PromptGenerator';
 import { FollowUpView, ImproveTextView } from './RobinToolViews';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
@@ -313,7 +314,7 @@ const rowCss = css`
 `;
 
 /** Tools that need Robin, hence the Albert relay. */
-const AI_TOOLS = ['generator', 'improve', 'follow-up'];
+const AI_TOOLS = ['generator', 'improve', 'follow-up', 'my-style'];
 
 export const ToolsPanel = () => {
   const { t } = useTranslation();
@@ -356,6 +357,14 @@ export const ToolsPanel = () => {
       title: t('Improve my text'),
       description: t('Robin strengthens what you wrote, in a few questions.'),
     },
+    'my-style': {
+      id: 'my-style',
+      icon: 'draw',
+      title: t('My writing style'),
+      description: t(
+        'Robin describes your style from your texts, to reuse in your prompts.',
+      ),
+    },
     'follow-up': {
       id: 'follow-up',
       icon: 'replay',
@@ -377,7 +386,14 @@ export const ToolsPanel = () => {
       text: t(
         'Reply to an email, write a letter, rewrite or translate a text.',
       ),
-      tools: ['email-reply', 'letter', 'rewrite', 'translate', 'improve'],
+      tools: [
+        'email-reply',
+        'letter',
+        'rewrite',
+        'translate',
+        'improve',
+        'my-style',
+      ],
       steps: [
         t('Choose what you want to write below.'),
         t('Answer a few simple choices: tone, length, recipient.'),
@@ -443,6 +459,10 @@ export const ToolsPanel = () => {
 
   if (openId === 'follow-up') {
     return <FollowUpView key={resetKey} onBack={() => setOpenId(null)} />;
+  }
+
+  if (openId === 'my-style') {
+    return <MyStyleView key={resetKey} onBack={() => setOpenId(null)} />;
   }
 
   if (openId === 'library') {

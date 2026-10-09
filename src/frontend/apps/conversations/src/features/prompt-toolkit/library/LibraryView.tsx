@@ -6,6 +6,8 @@ import styled, { css } from 'styled-components';
 import { Box, Icon, Text, useToast } from '@/components';
 
 import { PromptActions } from './PromptActions';
+import { useProfileStore } from '../stores/useProfileStore';
+
 import { getPromptLibrary } from './content';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
@@ -359,6 +361,7 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
     [i18n.language],
   );
   const favorites = useLibraryStore((state) => state.favorites);
+  const jobId = useProfileStore((state) => state.job?.id);
   const myPrompts = useMyPromptsStore((state) => state.prompts);
   const removeMine = useMyPromptsStore((state) => state.remove);
   const renameMine = useMyPromptsStore((state) => state.rename);
@@ -439,7 +442,9 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
     ...(favorites.length > 0
       ? [{ id: FAVORITES, icon: 'star', title: t('My favorites') }]
       : []),
-    ...library.categories,
+    // The user's own field comes first.
+    ...library.categories.filter((category) => category.id === jobId),
+    ...library.categories.filter((category) => category.id !== jobId),
   ];
   const promptCount = (count: number) =>
     count === 1 ? t('1 prompt') : t('{{count}} prompts', { count });

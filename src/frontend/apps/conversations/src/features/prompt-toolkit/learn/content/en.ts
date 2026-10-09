@@ -645,6 +645,71 @@ const quiz: QuizQuestion[] = [
     explanation:
       'Allowing the AI to say it does not know and limiting it to the document provided makes the answer checkable.',
   },
+  {
+    id: 'q27',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      'True or invented? The AI answers: "According to article L. 4127-12 of the code governing relations between the public and the administration, the deadline is 15 days." What do you do?',
+    options: [
+      'I copy the reference, it is very precise',
+      'I check the article on the official legal database before using it',
+      'I ask the AI if it is sure and trust it',
+    ],
+    correctIndex: 1,
+    explanation:
+      'A precise reference can be invented. Only the official source counts; asking the AI to confirm proves nothing.',
+  },
+  {
+    id: 'q28',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      'True or invented? The AI quotes: "As the minister stated on 3 March 2024: …". This quote is…',
+    options: [
+      'Reliable, since it is dated',
+      'To be checked: quotes and dates are among what AI invents most',
+      'Reliable if the text is in quotation marks',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Quotes, dates and proper names are frequent inventions. Find the source before quoting.',
+  },
+  {
+    id: 'q29',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      'True or invented? When the AI rephrases the text you gave it, adding nothing, the risk of invention is lower than when it answers from memory.',
+    correctAnswer: true,
+    explanation:
+      'Relying on a provided document reduces the risk of invention. Still reread it: a rephrasing can change the meaning.',
+  },
+  {
+    id: 'q30',
+    lessonId: 'lesson-8',
+    type: 'true-false',
+    question:
+      'True or invented? If the AI gives a figure with a decimal ("37.4%"), it is a sign that it is accurate.',
+    correctAnswer: false,
+    explanation:
+      'Apparent precision proves nothing: an invented figure can be very precise. Check where the figure comes from.',
+  },
+  {
+    id: 'q31',
+    lessonId: 'lesson-8',
+    type: 'mcq',
+    question:
+      'True or invented? The AI summarises a report you did not give it, quoting its conclusions. What do you do?',
+    options: [
+      'I use it: it probably knows the report',
+      'I give it the report and ask it to rely only on it',
+      'I ask it for a shorter summary',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Without the document, the AI reconstructs from memory and can invent. Give it the text and ask it to quote the passages used.',
+  },
 ];
 
 // ---------------------------------------------------------------------------

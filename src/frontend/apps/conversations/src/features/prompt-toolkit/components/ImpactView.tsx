@@ -30,9 +30,12 @@ const answerCss = (isImproved: boolean) => css`
 export const ImpactView = ({
   original,
   improved,
+  labels,
 }: {
   original: string;
   improved: string;
+  /** Wording for another context, such as the before / after exercise. */
+  labels?: { button: string; before: string; after: string };
 }) => {
   const { t } = useTranslation();
   const [answers, setAnswers] = useState<[string, string] | null>(null);
@@ -88,16 +91,20 @@ export const ImpactView = ({
           onClick={() => void compare()}
           icon={<Icon iconName="compare_arrows" $size="16px" />}
         >
-          {t('See the impact on the answer')}
+          {labels?.button ?? t('See the impact on the answer')}
         </Button>
       </Box>
     );
   }
 
   const columns = [
-    { title: t('With your prompt'), text: answers[0], isImproved: false },
     {
-      title: t('With the suggested version'),
+      title: labels?.before ?? t('With your prompt'),
+      text: answers[0],
+      isImproved: false,
+    },
+    {
+      title: labels?.after ?? t('With the suggested version'),
       text: answers[1],
       isImproved: true,
     },
