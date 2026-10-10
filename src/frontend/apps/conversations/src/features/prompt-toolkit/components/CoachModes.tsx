@@ -375,7 +375,7 @@ const PhraseRow = ({
   onUse?: (text: string) => void;
 }) => {
   const { t, i18n } = useTranslation();
-  // Robin asks for what is missing ([date], [recipient]…) when he can.
+  // Nestor asks for what is missing ([date], [recipient]…) when he can.
   const offerPrompt = useOfferPrompt();
   const isAiAvailable = useAiAvailable();
   const template =
@@ -435,7 +435,7 @@ const PhraseRow = ({
               </Text>
               {isAiAvailable && hasPlaceholders(template.prompt) && (
                 <Text $size="xs" $theme="brand" $weight="600">
-                  {t('Robin will ask you what is missing.')}
+                  {t('Nestor will ask you what is missing.')}
                 </Text>
               )}
             </Box>

@@ -22,7 +22,7 @@ const selectCss = css`
 
 /**
  * Two optional settings, kept in this browser: the user's field, so that
- * Robin's examples and the library fit their work, and a beginner mode.
+ * Nestor's examples and the library fit their work, and a beginner mode.
  */
 export const ProfileSettings = () => {
   const { t, i18n } = useTranslation();
@@ -46,14 +46,14 @@ export const ProfileSettings = () => {
       `}
     >
       <Box $direction="row" $align="center" $gap="8px">
-        <label htmlFor="robin-job">
+        <label htmlFor="nestor-job">
           <Text $size="sm" $weight="600">
             {t('My field')}
           </Text>
         </label>
         <Box
           as="select"
-          id="robin-job"
+          id="nestor-job"
           value={job?.id ?? ''}
           onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
             const category = categories.find(
@@ -91,7 +91,7 @@ export const ProfileSettings = () => {
       <Text $size="xs" $variation="secondary">
         {isBeginner
           ? t('Beginner mode: fewer details on screen, simpler words.')
-          : t('Robin adapts its examples and the library to your field.')}
+          : t('Nestor adapts its examples and the library to your field.')}
       </Text>
     </Box>
   );

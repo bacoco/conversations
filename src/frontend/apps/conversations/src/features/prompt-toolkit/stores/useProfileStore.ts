@@ -9,7 +9,7 @@ export interface Job {
 
 interface ProfileState {
   job: Job | null;
-  /** Fewer details on screen and simpler words from Robin. */
+  /** Fewer details on screen and simpler words from Nestor. */
   isBeginner: boolean;
   setJob: (job: Job | null) => void;
   setBeginner: (isBeginner: boolean) => void;
@@ -27,7 +27,7 @@ export const useProfileStore = create<ProfileState>()(
   ),
 );
 
-/** What Robin's instructions say about the user, if anything. */
+/** What Nestor's instructions say about the user, if anything. */
 export const profileRules = () => {
   const { job, isBeginner } = useProfileStore.getState();
   return [

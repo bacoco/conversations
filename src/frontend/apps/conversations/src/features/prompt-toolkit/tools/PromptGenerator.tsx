@@ -16,7 +16,7 @@ import { languageName } from '../coach/language';
 import { CoachFeedback } from '../components/CoachFeedback';
 import { CoachStatus } from '../components/CoachStatus';
 import { DetailPage } from '../components/DetailPage';
-import { ROBIN_PROMPTS_URL } from '../components/PanelHome';
+import { NESTOR_PROMPTS_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
@@ -132,7 +132,7 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
       backLabel={t('Back to the tools')}
       title={t('Prompt generator')}
       subtitle={t('Describe what you need in your own words.')}
-      image={ROBIN_PROMPTS_URL}
+      image={NESTOR_PROMPTS_URL}
       status={
         <CoachStatus
           isLoading={status === 'loading'}
@@ -277,7 +277,7 @@ export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
                 </Box>
               )}
               {'conflicts' in result && result.conflicts.length > 0 && (
-                // Robin chose for the user: say so, so it can be changed.
+                // Nestor chose for the user: say so, so it can be changed.
                 <Box
                   role="note"
                   $gap="4px"

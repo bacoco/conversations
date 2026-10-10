@@ -157,7 +157,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     if (!improvement) {
       return;
     }
-    // Placeholders left by the rewrite are filled through Robin's questions.
+    // Placeholders left by the rewrite are filled through Nestor's questions.
     offerPrompt(improvement.improvedPrompt, t('Improved prompt'));
     reward('improvement');
     setImprovement(null);
@@ -212,7 +212,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
 
   const showAnalyzeButton = isActive && chatInput.trim() !== '';
 
-  // "Prompt help": versions written by Robin, plus library matches.
+  // "Prompt help": versions written by Nestor, plus library matches.
   const runAssist = async () => {
     const draft = chatInput.trim();
     assistControllerRef.current?.abort();
@@ -220,7 +220,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     assistControllerRef.current = controller;
     setIsAssisting(true);
     setAssistError(false);
-    // Library prompts closest in meaning, alongside Robin's versions.
+    // Library prompts closest in meaning, alongside Nestor's versions.
     const matchesPromise = searchLibrary(
       draft,
       i18n.language,
@@ -254,7 +254,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         isLoading={analysis.status === 'loading' || isAssisting}
         loadingLabel={
           isAssisting
-            ? t('Robin is writing versions of your prompt…')
+            ? t('Nestor is writing versions of your prompt…')
             : undefined
         }
       />
@@ -297,7 +297,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       )}
       {coachMode === 'assist' && assistError && (
         <Text $size="sm" role="alert" $css="padding: 16px;">
-          {t('Robin could not write versions. Please retry.')}
+          {t('Nestor could not write versions. Please retry.')}
         </Text>
       )}
 

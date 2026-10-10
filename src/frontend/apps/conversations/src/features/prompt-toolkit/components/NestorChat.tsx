@@ -5,8 +5,8 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { RobinTurn, chatWithRobin } from '../coach/coachApi';
-import { RobinBubble, bubbleCss } from '../fill/PromptFillView';
+import { NestorTurn, chatWithNestor } from '../coach/coachApi';
+import { NestorBubble, bubbleCss } from '../fill/PromptFillView';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
 import {
@@ -14,7 +14,7 @@ import {
   usePromptToolkitStore,
 } from '../stores/usePromptToolkitStore';
 
-import { ROBIN_AVATAR_URL } from './PanelHome';
+import { NESTOR_AVATAR_URL } from './PanelHome';
 import { PanelTextArea } from './PanelTextArea';
 
 const promptCss = css`
@@ -31,7 +31,7 @@ const promptTextCss = css`
   line-height: 1.5;
 `;
 
-/** A prompt Robin proposes, in the thread, with what to do with it. */
+/** A prompt Nestor proposes, in the thread, with what to do with it. */
 const ProposedPrompt = ({ prompt }: { prompt: string }) => {
   const { t } = useTranslation();
   const { showToast } = useToast();
@@ -47,7 +47,7 @@ const ProposedPrompt = ({ prompt }: { prompt: string }) => {
         $justify="flex-end"
         $css="flex-wrap: wrap;"
       >
-        <SavePromptButton prompt={prompt} title={t('Prompt from Robin')} />
+        <SavePromptButton prompt={prompt} title={t('Prompt from Nestor')} />
         <Button
           size="small"
           color="neutral"
@@ -62,7 +62,7 @@ const ProposedPrompt = ({ prompt }: { prompt: string }) => {
         </Button>
         <Button
           size="small"
-          onClick={() => offerPrompt(prompt, t('Prompt from Robin'))}
+          onClick={() => offerPrompt(prompt, t('Prompt from Nestor'))}
           icon={<Icon iconName="north_west" $size="16px" />}
         >
           {t('Use')}
@@ -79,14 +79,14 @@ const SCREEN_NAMES: Record<CoachMode, string> = {
   session: 'the Coach, Session review',
 };
 
-/** Where the user is, in words Robin understands. */
+/** Where the user is, in words Nestor understands. */
 const useCurrentScreen = () => {
   const state = usePromptToolkitStore();
   if (state.fill) {
-    return `Robin's guided questions to complete the prompt "${state.fill.title}"`;
+    return `Nestor's guided questions to complete the prompt "${state.fill.title}"`;
   }
   if (!state.hasSeenWelcome) {
-    return "the panel's welcome page, presenting Robin";
+    return "the panel's welcome page, presenting Nestor";
   }
   if (state.showHome) {
     return 'the home page with the cards: Coach, Course, Everyday tools';
@@ -103,14 +103,14 @@ const threadCss = css`
 `;
 
 /**
- * Robin, always at the bottom of the panel: explains the screen the user is
+ * Nestor, always at the bottom of the panel: explains the screen the user is
  * on, what the panel can do, and helps write any prompt.
  */
-export const RobinDock = ({ language }: { language: string }) => {
+export const NestorDock = ({ language }: { language: string }) => {
   const { t } = useTranslation();
   const where = useCurrentScreen();
-  const turns = usePromptToolkitStore((state) => state.robinChat);
-  const setTurns = usePromptToolkitStore((state) => state.setRobinChat);
+  const turns = usePromptToolkitStore((state) => state.nestorChat);
+  const setTurns = usePromptToolkitStore((state) => state.setNestorChat);
   const [draft, setDraft] = useState('');
   // Folded by default: a small animated button invites the user to ask.
   const [isOpen, setIsOpen] = useState(false);
@@ -128,14 +128,14 @@ export const RobinDock = ({ language }: { language: string }) => {
     controllerRef.current?.abort();
     const controller = new AbortController();
     controllerRef.current = controller;
-    const next: RobinTurn[] = [...history, { role: 'user', text: message }];
+    const next: NestorTurn[] = [...history, { role: 'user', text: message }];
     setTurns(next);
     setDraft('');
     setIsOpen(true);
     setHasError(false);
     setIsLoading(true);
     try {
-      const answer = await chatWithRobin(
+      const answer = await chatWithNestor(
         next,
         language,
         where,
@@ -191,15 +191,15 @@ export const RobinDock = ({ language }: { language: string }) => {
 
   const lastUser = [...turns].reverse().find((turn) => turn.role === 'user');
 
-  // Folded: a small round Robin button, level with the panel's action bar.
+  // Folded: a small round Nestor button, level with the panel's action bar.
   if (!isOpen) {
     return (
       <Box
         as="button"
         type="button"
         onClick={() => setIsOpen(true)}
-        aria-label={t('Ask Robin')}
-        title={t('Ask Robin')}
+        aria-label={t('Ask Nestor')}
+        title={t('Ask Nestor')}
         $css={css`
           position: absolute;
           right: 16px;
@@ -216,9 +216,9 @@ export const RobinDock = ({ language }: { language: string }) => {
             var(--c--contextuals--border--semantic--brand--primary);
           background: var(--c--contextuals--background--surface--primary);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-          /* A gentle pulse, so Robin gets noticed without getting in the way. */
-          animation: robin-pulse 2.4s ease-in-out infinite;
-          @keyframes robin-pulse {
+          /* A gentle pulse, so Nestor gets noticed without getting in the way. */
+          animation: nestor-pulse 2.4s ease-in-out infinite;
+          @keyframes nestor-pulse {
             0%,
             70%,
             100% {
@@ -248,7 +248,7 @@ export const RobinDock = ({ language }: { language: string }) => {
         `}
       >
         <img
-          src={ROBIN_AVATAR_URL}
+          src={NESTOR_AVATAR_URL}
           alt=""
           width={48}
           height={48}
@@ -262,7 +262,7 @@ export const RobinDock = ({ language }: { language: string }) => {
   return (
     <Box
       role="dialog"
-      aria-label={t('Ask Robin')}
+      aria-label={t('Ask Nestor')}
       $css={css`
         position: absolute;
         left: 0;
@@ -284,14 +284,14 @@ export const RobinDock = ({ language }: { language: string }) => {
         $css="flex: none; padding: 10px 8px 6px 16px;"
       >
         <img
-          src={ROBIN_AVATAR_URL}
+          src={NESTOR_AVATAR_URL}
           alt=""
           width={28}
           height={28}
           style={{ borderRadius: '50%' }}
         />
         <Text $weight="700" $css="flex: 1;">
-          Robin
+          Nestor
         </Text>
         {turns.length > 0 && (
           <Button
@@ -299,8 +299,8 @@ export const RobinDock = ({ language }: { language: string }) => {
             color="neutral"
             variant="tertiary"
             onClick={restart}
-            aria-label={t('New conversation with Robin')}
-            title={t('New conversation with Robin')}
+            aria-label={t('New conversation with Nestor')}
+            title={t('New conversation with Nestor')}
             icon={<Icon iconName="delete" $size="18px" />}
           />
         )}
@@ -309,8 +309,8 @@ export const RobinDock = ({ language }: { language: string }) => {
           color="neutral"
           variant="tertiary"
           onClick={() => setIsOpen(false)}
-          aria-label={t('Hide the conversation with Robin')}
-          title={t('Hide the conversation with Robin')}
+          aria-label={t('Hide the conversation with Nestor')}
+          title={t('Hide the conversation with Nestor')}
           icon={<Icon iconName="expand_more" $size="20px" />}
         />
       </Box>
@@ -328,11 +328,11 @@ export const RobinDock = ({ language }: { language: string }) => {
       >
         {turns.length === 0 && (
           <li>
-            <RobinBubble>
+            <NestorBubble>
               {t(
                 'Ask me what this screen is for, what the panel can do, or help to write a prompt.',
               )}
-            </RobinBubble>
+            </NestorBubble>
           </li>
         )}
         {turns.map((turn, index) => (
@@ -343,7 +343,7 @@ export const RobinDock = ({ language }: { language: string }) => {
               </Box>
             ) : (
               <>
-                {turn.text && <RobinBubble>{turn.text}</RobinBubble>}
+                {turn.text && <NestorBubble>{turn.text}</NestorBubble>}
                 {turn.prompt && <ProposedPrompt prompt={turn.prompt} />}
               </>
             )}
@@ -351,13 +351,13 @@ export const RobinDock = ({ language }: { language: string }) => {
         ))}
         {isLoading && (
           <li>
-            <RobinBubble>{t('Robin is thinking…')}</RobinBubble>
+            <NestorBubble>{t('Nestor is thinking…')}</NestorBubble>
           </li>
         )}
         {hasError && (
           <Box as="li" $direction="row" $align="center" $gap="8px">
             <Text $size="sm" $theme="danger">
-              {t('Robin did not answer. Try again.')}
+              {t('Nestor did not answer. Try again.')}
             </Text>
             {lastUser && (
               <Button
@@ -381,7 +381,7 @@ export const RobinDock = ({ language }: { language: string }) => {
       >
         <Box $css="flex: 1; min-width: 0;">
           <PanelTextArea
-            label={t('Your message to Robin')}
+            label={t('Your message to Nestor')}
             value={draft}
             onChange={setDraft}
             onKeyDown={onKeyDown}

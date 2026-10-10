@@ -26,7 +26,7 @@ export const DetailPage = ({
   eyebrow?: string;
   title: string;
   subtitle?: string;
-  /** Robin's illustration for this kind of screen. */
+  /** Nestor's illustration for this kind of screen. */
   image?: string;
   /** A loading bar or banner, right under the header. */
   status?: ReactNode;

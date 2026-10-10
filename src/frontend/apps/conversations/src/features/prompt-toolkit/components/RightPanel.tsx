@@ -30,8 +30,8 @@ import {
 import { ToolsPanel } from '../tools/ToolsPanel';
 
 import { CoachPanel } from './CoachPanel';
+import { NestorDock } from './NestorChat';
 import { PanelHome } from './PanelHome';
-import { RobinDock } from './RobinChat';
 import { SharedPromptBanner } from './SharedPromptBanner';
 
 const KEYBOARD_STEP_PX = 24;
@@ -180,7 +180,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
   const { t, i18n } = useTranslation();
   const { isDesktop } = useResponsiveStore();
   const accountToolsWidth = useAccountToolsWidth();
-  // Robin's welcome comes first, whatever section was last open.
+  // Nestor's welcome comes first, whatever section was last open.
   const welcomeShown = !usePromptToolkitStore((state) => state.hasSeenWelcome);
   const {
     mode,
@@ -381,8 +381,8 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           <ToolsPanel />
         </Box>
       </Box>
-      {/* Robin, on every screen: a round button that opens a sheet. */}
-      {isAiAvailable && <RobinDock language={languageName(i18n.language)} />}
+      {/* Nestor, on every screen: a round button that opens a sheet. */}
+      {isAiAvailable && <NestorDock language={languageName(i18n.language)} />}
     </Box>
   );
 };

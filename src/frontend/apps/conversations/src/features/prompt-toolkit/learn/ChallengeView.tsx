@@ -11,7 +11,7 @@ import { levelColor } from '../coach/levels';
 import { CoachStatus } from '../components/CoachStatus';
 import { DetailPage } from '../components/DetailPage';
 import { ImpactView } from '../components/ImpactView';
-import { ROBIN_CHALLENGES_URL } from '../components/PanelHome';
+import { NESTOR_CHALLENGES_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useReward } from '../rewards/useReward';
 
@@ -99,7 +99,7 @@ export const ChallengeView = ({
       backLabel={t('Back to the challenges')}
       eyebrow={t('Challenge · level {{level}}', { level: challenge.level })}
       title={challenge.title}
-      image={ROBIN_CHALLENGES_URL}
+      image={NESTOR_CHALLENGES_URL}
       status={
         <CoachStatus
           isLoading={status === 'loading'}

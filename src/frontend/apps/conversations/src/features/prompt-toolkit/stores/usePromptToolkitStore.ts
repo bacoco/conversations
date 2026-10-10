@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { PROMPT_TOOLKIT_ENABLED, RobinTurn } from '../coach/coachApi';
+import { NestorTurn, PROMPT_TOOLKIT_ENABLED } from '../coach/coachApi';
 import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
@@ -37,7 +37,7 @@ interface PromptToolkitState {
   coachMode: CoachMode;
   /** The cards home, shown on first opening and after a reset. */
   showHome: boolean;
-  /** False while Robin's welcome is shown: first opening, and each Home. */
+  /** False while Nestor's welcome is shown: first opening, and each Home. */
   hasSeenWelcome: boolean;
   dismissWelcome: () => void;
   /** The coaching mode options, folded by default to save room. */
@@ -57,7 +57,7 @@ interface PromptToolkitState {
   /** Open a section of the panel, leaving the home cards. */
   openSection: (mode: RightPanelMode) => void;
   goHome: () => void;
-  /** From the cards, Home again: back to Robin's big welcome. */
+  /** From the cards, Home again: back to Nestor's big welcome. */
   goWelcome: () => void;
   setCoachOptionsOpen: (isOpen: boolean) => void;
   resetSection: () => void;
@@ -80,9 +80,9 @@ interface PromptToolkitState {
   /** A prompt shared by a colleague through a link, waiting to be imported. */
   sharedPrompt: { title: string; prompt: string } | null;
   clearSharedPrompt: () => void;
-  /** The conversation with Robin, kept while the page is open. */
-  robinChat: RobinTurn[];
-  setRobinChat: (turns: RobinTurn[]) => void;
+  /** The conversation with Nestor, kept while the page is open. */
+  nestorChat: NestorTurn[];
+  setNestorChat: (turns: NestorTurn[]) => void;
   /** A lesson to open in the course, asked from another section. */
   lessonRequest: string | null;
   openLesson: (lessonId: string) => void;
@@ -138,8 +138,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       closeFill: () => set({ fill: null }),
       sharedPrompt: null,
       clearSharedPrompt: () => set({ sharedPrompt: null }),
-      robinChat: [],
-      setRobinChat: (robinChat) => set({ robinChat }),
+      nestorChat: [],
+      setNestorChat: (nestorChat) => set({ nestorChat }),
       lessonRequest: null,
       openLesson: (lessonId) =>
         set({
@@ -210,7 +210,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         };
       },
       // A panel left open stays closed if the deployment turned it off.
-      // On the very first visit (nothing stored), it opens on Robin's
+      // On the very first visit (nothing stored), it opens on Nestor's
       // welcome, on desktop only: on a phone it would cover the chat.
       merge: (persisted, current) => ({
         ...current,
@@ -234,8 +234,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
 );
 
 /**
- * A link shared by a colleague (#robin-prompt=…) opens the panel with an
- * offer to import the prompt; the address is then cleaned.
+ * A link shared by a colleague (#nestor-prompt=…, or the older #robin-prompt=…)
+ * opens the panel with an offer to import the prompt; the address is then
+ * cleaned.
  */
 const takeSharedPrompt = () => {
   const shared = readSharedPrompt(window.location.hash);

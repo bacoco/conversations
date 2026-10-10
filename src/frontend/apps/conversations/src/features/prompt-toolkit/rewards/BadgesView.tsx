@@ -44,7 +44,7 @@ export const BadgesView = ({ onBack }: { onBack: () => void }) => {
     { event: 'analysis', label: t('A prompt analysed') },
     { event: 'great-prompt', label: t('A grade of 80 or more') },
     { event: 'improvement', label: t('An improved prompt used') },
-    { event: 'fill', label: t('A prompt completed with Robin') },
+    { event: 'fill', label: t('A prompt completed with Nestor') },
     { event: 'lesson', label: t('A lesson finished') },
     { event: 'quiz-passed', label: t('A lesson quiz at 80% or more') },
     { event: 'full-quiz-passed', label: t('The full quiz at 80% or more') },

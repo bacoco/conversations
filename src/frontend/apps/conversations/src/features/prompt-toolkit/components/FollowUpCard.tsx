@@ -52,7 +52,7 @@ const chipCss = css`
 `;
 
 /**
- * "The answer does not suit you?": Robin reads the last exchange and writes
+ * "The answer does not suit you?": Nestor reads the last exchange and writes
  * a better-worded follow-up, the moment users most need help.
  */
 export const FollowUpCard = () => {
@@ -111,7 +111,7 @@ export const FollowUpCard = () => {
       if (!controller.signal.aborted) {
         showToast(
           'error',
-          t('Robin could not write a follow-up. Please retry.'),
+          t('Nestor could not write a follow-up. Please retry.'),
         );
       }
     } finally {
@@ -138,7 +138,7 @@ export const FollowUpCard = () => {
         </Text>
       </Box>
       <Text $size="xs" $variation="secondary">
-        {t('Say what is wrong: Robin writes a better follow-up for you.')}
+        {t('Say what is wrong: Nestor writes a better follow-up for you.')}
       </Text>
       <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
         {issues.map((issue) => (
@@ -189,7 +189,7 @@ export const FollowUpCard = () => {
       {isLoading && (
         <CoachStatus
           isLoading
-          loadingLabel={t('Robin is reading the last answer…')}
+          loadingLabel={t('Nestor is reading the last answer…')}
         />
       )}
       {result && (

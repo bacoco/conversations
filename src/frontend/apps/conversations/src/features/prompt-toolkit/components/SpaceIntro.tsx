@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 import { Box, Text } from '@/components';
 
 /**
- * What a space of the panel is for, in user words: Robin's illustration, a
+ * What a space of the panel is for, in user words: Nestor's illustration, a
  * title, one sentence and three short pointers to get started.
  */
 export const SpaceIntro = ({

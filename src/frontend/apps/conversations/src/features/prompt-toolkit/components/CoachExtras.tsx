@@ -20,7 +20,7 @@ const cardCss = css`
 `;
 
 /**
- * Tutor mode: Robin gives one hint at a time and lets the user improve the
+ * Tutor mode: Nestor gives one hint at a time and lets the user improve the
  * prompt on their own, which teaches more than a ready-made version.
  */
 export const TutorHints = ({
@@ -105,7 +105,7 @@ export const TutorHints = ({
       )}
       {hasError && (
         <Text $size="sm" role="alert">
-          {t('Robin could not give a hint. Please retry.')}
+          {t('Nestor could not give a hint. Please retry.')}
         </Text>
       )}
       <Button
@@ -213,7 +213,7 @@ export const ExplainedComparison = ({
       </Button>
       {hasError && (
         <Text $size="xs" role="alert">
-          {t('Robin could not compare the two versions. Please retry.')}
+          {t('Nestor could not compare the two versions. Please retry.')}
         </Text>
       )}
     </Box>

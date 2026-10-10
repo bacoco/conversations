@@ -6,9 +6,9 @@ import { Box, Text } from '@/components';
 import type { CoachMode } from '../stores/usePromptToolkitStore';
 
 import {
-  ROBIN_ANALYSIS_URL,
-  ROBIN_HELP_URL,
-  ROBIN_INSTANT_URL,
+  NESTOR_ANALYSIS_URL,
+  NESTOR_HELP_URL,
+  NESTOR_INSTANT_URL,
 } from './PanelHome';
 
 const stepBadgeCss = css`
@@ -22,7 +22,7 @@ const stepBadgeCss = css`
   background: var(--c--contextuals--background--semantic--brand--primary);
 `;
 
-/** Robin introduces himself and says what to do, while the coach waits. */
+/** Nestor introduces himself and says what to do, while the coach waits. */
 export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
   const { t } = useTranslation();
   const write = t(
@@ -50,10 +50,10 @@ export const CoachIntro = ({ mode = 'manual' }: { mode?: CoachMode }) => {
           ];
   const image =
     mode === 'assist'
-      ? ROBIN_HELP_URL
+      ? NESTOR_HELP_URL
       : mode === 'instant'
-        ? ROBIN_INSTANT_URL
-        : ROBIN_ANALYSIS_URL;
+        ? NESTOR_INSTANT_URL
+        : NESTOR_ANALYSIS_URL;
   const title =
     mode === 'assist'
       ? t('Prompt help')

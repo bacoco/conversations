@@ -67,7 +67,7 @@ const Explanation = ({ prompt }: { prompt: string }) => {
     return (
       <Box $css={explanationCss} aria-busy="true">
         <Text $size="sm" $variation="secondary">
-          {t('Robin reads the prompt…')}
+          {t('Nestor reads the prompt…')}
         </Text>
       </Box>
     );
@@ -100,7 +100,7 @@ const Explanation = ({ prompt }: { prompt: string }) => {
 
 /**
  * The three ways to take a library prompt: understand it, use it as it is,
- * or let Robin ask for what is missing.
+ * or let Nestor ask for what is missing.
  */
 export const PromptActions = ({
   prompt,
@@ -162,7 +162,7 @@ export const PromptActions = ({
             onClick={() => startFill(prompt, title)}
             icon={<Icon iconName="auto_awesome" $size="16px" />}
           >
-            {t('Complete with Robin')}
+            {t('Complete with Nestor')}
           </Button>
         )}
       </Box>

@@ -7,12 +7,12 @@ import { Box, Icon, Text, useToast } from '@/components';
 import { describeStyle } from '../coach/coachApi';
 import { languageName } from '../coach/language';
 import { DetailPage } from '../components/DetailPage';
-import { ROBIN_WRITE_URL } from '../components/PanelHome';
+import { NESTOR_WRITE_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useMyStyleStore } from '../stores/useMyStyleStore';
 
 /**
- * "My writing style": Robin reads two or three texts the user wrote and
+ * "My writing style": Nestor reads two or three texts the user wrote and
  * describes their style; the description is kept in this browser and can be
  * added to any suggested prompt.
  */
@@ -58,9 +58,9 @@ export const MyStyleView = ({ onBack }: { onBack: () => void }) => {
       backLabel={t('Back to the tools')}
       title={t('My writing style')}
       subtitle={t(
-        'Paste two or three texts you wrote: Robin describes your style.',
+        'Paste two or three texts you wrote: Nestor describes your style.',
       )}
-      image={ROBIN_WRITE_URL}
+      image={NESTOR_WRITE_URL}
     >
       <Box $gap="8px">
         <PanelTextArea
@@ -88,14 +88,14 @@ export const MyStyleView = ({ onBack }: { onBack: () => void }) => {
         </Button>
         {hasError && (
           <Text $size="sm" role="alert">
-            {t('Robin could not describe your style. Please retry.')}
+            {t('Nestor could not describe your style. Please retry.')}
           </Text>
         )}
       </Box>
       {draft && (
         <Box $gap="8px">
           <Text $size="sm" $weight="700">
-            {t('Your style, as Robin sees it (you can change it)')}
+            {t('Your style, as Nestor sees it (you can change it)')}
           </Text>
           <PanelTextArea
             label={t('Your style')}

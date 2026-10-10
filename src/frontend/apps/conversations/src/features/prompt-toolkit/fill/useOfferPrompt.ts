@@ -5,7 +5,7 @@ import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 /**
  * Hands a prompt to the user: straight to the message field when it is
- * complete, through Robin's guided questions when something is missing.
+ * complete, through Nestor's guided questions when something is missing.
  */
 export const useOfferPrompt = () => {
   const placePrompt = usePlacePrompt();
@@ -13,7 +13,7 @@ export const useOfferPrompt = () => {
   const isAiAvailable = useAiAvailable();
 
   return (prompt: string, title: string) => {
-    // Without Robin, the brackets are completed by hand in the message field.
+    // Without Nestor, the brackets are completed by hand in the message field.
     if (isAiAvailable && hasPlaceholders(prompt)) {
       startFill(prompt, title);
     } else {

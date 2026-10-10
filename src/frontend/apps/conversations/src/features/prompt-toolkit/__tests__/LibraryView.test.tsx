@@ -45,13 +45,13 @@ describe('<LibraryView />', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('hands the chosen prompt to Robin to fill in what is missing', () => {
+  it('hands the chosen prompt to Nestor to fill in what is missing', () => {
     render(<LibraryView onBack={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /^Meetings/ }));
     fireEvent.click(screen.getByRole('button', { name: /Meeting minutes/ }));
     fireEvent.click(
-      screen.getByRole('button', { name: 'Complete with Robin' }),
+      screen.getByRole('button', { name: 'Complete with Nestor' }),
     );
 
     const minutes = LIBRARY_EN.prompts.find((p) => p.id === 'meeting-minutes');
