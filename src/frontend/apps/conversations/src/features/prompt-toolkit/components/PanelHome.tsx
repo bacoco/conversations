@@ -7,10 +7,7 @@ import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
-import {
-  CoachMode,
-  usePromptToolkitStore,
-} from '../stores/usePromptToolkitStore';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
 import { ProfileSettings } from './ProfileSettings';
@@ -281,7 +278,6 @@ export const PanelHome = () => {
   const { t } = useTranslation();
   const startCoach = usePromptToolkitStore((state) => state.startCoach);
   const openSection = usePromptToolkitStore((state) => state.openSection);
-  const coach = (mode: CoachMode) => () => startCoach(mode);
   const hasSeenWelcome = usePromptToolkitStore((state) => state.hasSeenWelcome);
   const isAiUnavailable = useAiUnavailable();
   const isAiAvailable = useAiAvailable();
@@ -307,7 +303,7 @@ export const PanelHome = () => {
       tone: 'brand',
       title: t('Prompt coach'),
       description: t('Analyses and improves your prompt.'),
-      onSelect: coach('manual'),
+      onSelect: startCoach,
     },
     {
       id: 'course',

@@ -1,78 +1,28 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import {
-  FILL_MODEL,
-  FillMode,
-  FillStep,
-  nextFillStep,
-  refinePrompt,
-} from '../coach/coachApi';
+import type { FillMode } from '../coach/coachApi';
 import { languageName } from '../coach/language';
 import { CoachStatus } from '../components/CoachStatus';
-import { NESTOR_AVATAR_URL } from '../components/PanelHome';
-import { PanelTextArea } from '../components/PanelTextArea';
 import { RefineBar } from '../components/RefineBar';
 import { SavePromptButton } from '../library/SavePromptButton';
 import { useReward } from '../rewards/useReward';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
-interface Exchange {
-  question: string;
-  answer: string;
-}
+import {
+  GuidedThread,
+  NestorBubble,
+  UserBubble,
+  bubbleCss,
+} from './GuidedThread';
+import { useGuidedFill } from './useGuidedFill';
 
-export const bubbleCss = (fromUser: boolean) => css`
-  max-width: 85%;
-  padding: 10px 12px;
-  border-radius: ${fromUser ? '12px 12px 4px 12px' : '12px 12px 12px 4px'};
-  font-size: 0.875rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background: ${
-    fromUser
-      ? 'var(--c--contextuals--background--semantic--brand--tertiary)'
-      : 'var(--c--contextuals--background--surface--tertiary)'
-  };
-`;
-
-const suggestionCss = css`
-  padding: 6px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.8125rem;
-  text-align: left;
-  color: var(--c--contextuals--content--semantic--brand--primary);
-  border: 1px solid var(--c--contextuals--border--semantic--brand--secondary);
-  background: var(--c--contextuals--background--surface--primary);
-  &:hover {
-    background: var(--c--contextuals--background--semantic--brand--tertiary);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
-    outline-offset: 2px;
-  }
-`;
-
-export const NestorBubble = ({ children }: { children: string }) => (
-  <Box $direction="row" $align="flex-end" $gap="8px">
-    <img
-      src={NESTOR_AVATAR_URL}
-      alt=""
-      width={28}
-      height={28}
-      style={{ flex: 'none', borderRadius: '50%' }}
-    />
-    <Box $css={bubbleCss(false)}>{children}</Box>
-  </Box>
-);
+export { NestorBubble, bubbleCss };
 
 /**
  * Completes a prompt template by asking the user, one question at a time,
@@ -95,141 +45,24 @@ export const PromptFillView = ({
   const reward = useReward();
   const closeFill = usePromptToolkitStore((state) => state.closeFill);
   const resetCount = usePromptToolkitStore((state) => state.resetCount);
-  const language = languageName(i18n.language);
-
-  const [exchanges, setExchanges] = useState<Exchange[]>([]);
-  const [step, setStep] = useState<FillStep | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
-    'loading',
-  );
-  const [answer, setAnswer] = useState('');
-  /** Changes asked on the final prompt, shown as a conversation. */
-  const [adjustments, setAdjustments] = useState<
-    { request: string; reply: string }[]
-  >([]);
-  const [isAdjusting, setIsAdjusting] = useState(false);
-  const controllerRef = useRef<AbortController | null>(null);
+  const fill = useGuidedFill({
+    template,
+    language: languageName(i18n.language),
+    context,
+    mode,
+    restartKey: resetCount,
+  });
+  const { exchanges, final, status, adjustments, isAdjusting } = fill;
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const answerRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const ask = useCallback(
-    (history: Exchange[], finishNow = false) => {
-      controllerRef.current?.abort();
-      const controller = new AbortController();
-      controllerRef.current = controller;
-      setStatus('loading');
-      nextFillStep(
-        template,
-        history,
-        language,
-        controller.signal,
-        finishNow,
-        context,
-        mode,
-      )
-        .then((next) => {
-          setStep(next);
-          setStatus('ready');
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) {
-            setStatus('error');
-          }
-        });
-    },
-    [template, language, context, mode],
-  );
-
-  // Start, and start over when the trash button is pressed.
-  useEffect(() => {
-    setExchanges([]);
-    setStep(null);
-    setAnswer('');
-    setAdjustments([]);
-    ask([]);
-    return () => controllerRef.current?.abort();
-  }, [ask, resetCount]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ block: 'nearest' });
-    // Each new question is ready to be answered from the keyboard.
-    if (status === 'ready' && step?.kind === 'question') {
-      answerRef.current?.focus();
-    }
-  }, [exchanges, step, status, adjustments]);
-
-  const reply = (text: string) => {
-    if (step?.kind !== 'question' || status === 'loading') {
-      return;
-    }
-    const history = [...exchanges, { question: step.question, answer: text }];
-    setExchanges(history);
-    setAnswer('');
-    ask(history);
-  };
-
-  const send = () => {
-    if (answer.trim()) {
-      reply(answer.trim());
-    }
-  };
-
-  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      send();
-    }
-  };
-
-  // "Change the tone", "add a date": Nestor edits the final prompt in place.
-  const adjust = async (request: string) => {
-    if (step?.kind !== 'final') {
-      return;
-    }
-    controllerRef.current?.abort();
-    const controller = new AbortController();
-    controllerRef.current = controller;
-    setIsAdjusting(true);
-    try {
-      const adjusted = await refinePrompt(
-        step.prompt,
-        request,
-        language,
-        controller.signal,
-        FILL_MODEL,
-      );
-      // Keep Nestor's congratulation; only the prompt changes.
-      setStep({ ...step, prompt: adjusted.improvedPrompt });
-      setAdjustments((list) => [
-        ...list,
-        {
-          request,
-          reply: adjusted.changes.length
-            ? t('Done: {{changes}}.', {
-                changes: adjusted.changes.join(', '),
-              })
-            : t('Done, the prompt is updated.'),
-        },
-      ]);
-    } catch {
-      if (!controller.signal.aborted) {
-        showToast(
-          'error',
-          t('Nestor could not change the prompt. Please retry.'),
-        );
-      }
-    } finally {
-      setIsAdjusting(false);
-    }
-  };
+  }, [final, adjustments]);
 
   const copy = async (prompt: string) => {
     await navigator.clipboard.writeText(prompt);
     showToast('success', t('Copied to clipboard.'), undefined, 2000);
   };
-
-  const question = step?.kind === 'question' ? step : null;
-  const final = step?.kind === 'final' ? step : null;
 
   return (
     <Box $css="min-height: 100%;">
@@ -289,103 +122,7 @@ export const PromptFillView = ({
           </Box>
         </Box>
 
-        <Box
-          as="ol"
-          $gap="10px"
-          $css="margin: 0; padding: 0; list-style: none;"
-        >
-          {exchanges.map((exchange, index) => (
-            <Box as="li" key={index} $gap="10px">
-              <NestorBubble>{exchange.question}</NestorBubble>
-              <Box $direction="row" $justify="flex-end">
-                <Box $css={bubbleCss(true)}>{exchange.answer}</Box>
-              </Box>
-            </Box>
-          ))}
-          {question && (
-            <Box as="li" $gap="8px" aria-live="polite">
-              <NestorBubble>{question.question}</NestorBubble>
-              {question.suggestions.length > 0 && status === 'ready' && (
-                <Box
-                  $direction="row"
-                  $gap="6px"
-                  $css="flex-wrap: wrap; padding-left: 36px;"
-                >
-                  {question.suggestions.map((suggestion) => (
-                    <Box
-                      key={suggestion}
-                      as="button"
-                      type="button"
-                      onClick={() => reply(suggestion)}
-                      $css={suggestionCss}
-                    >
-                      {suggestion}
-                    </Box>
-                  ))}
-                </Box>
-              )}
-            </Box>
-          )}
-        </Box>
-
-        {question && (
-          <Box
-            $gap="8px"
-            // Right under Nestor's question, in the thread: not hidden below.
-            $css="padding-left: 36px;"
-          >
-            <PanelTextArea
-              label={t('Your answer')}
-              value={answer}
-              onChange={setAnswer}
-              onKeyDown={onKeyDown}
-              placeholder={t('Your answer… (Enter to send)')}
-              minRows={2}
-              inputRef={answerRef}
-            />
-            <Box $direction="row" $justify="space-between" $gap="8px">
-              <Button
-                size="small"
-                color="neutral"
-                variant="tertiary"
-                disabled={status === 'loading'}
-                onClick={() => ask(exchanges, true)}
-              >
-                {t('Finish now')}
-              </Button>
-              <Box $direction="row" $gap="8px">
-                <Button
-                  size="small"
-                  color="neutral"
-                  variant="secondary"
-                  disabled={status === 'loading'}
-                  onClick={() => reply(t('I do not know, skip this question.'))}
-                >
-                  {t('Skip')}
-                </Button>
-                <Button
-                  size="small"
-                  disabled={status === 'loading' || !answer.trim()}
-                  onClick={send}
-                  icon={<Icon iconName="send" $size="16px" />}
-                >
-                  {t('Send')}
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        )}
-
-        {status === 'error' && (
-          <Box role="alert" $gap="8px" $align="flex-start">
-            <Text $size="sm">
-              {t('Nestor could not answer. Check your connection, then retry.')}
-            </Text>
-            <Button size="small" onClick={() => ask(exchanges)}>
-              {t('Retry')}
-            </Button>
-          </Box>
-        )}
+        <GuidedThread fill={fill} />
 
         {/* Nestor's word on the result comes before any change asked. */}
         {final?.message && <NestorBubble>{final.message}</NestorBubble>}
@@ -398,9 +135,7 @@ export const PromptFillView = ({
           >
             {adjustments.map((item, index) => (
               <Box as="li" key={index} $gap="10px">
-                <Box $direction="row" $justify="flex-end">
-                  <Box $css={bubbleCss(true)}>{item.request}</Box>
-                </Box>
+                <UserBubble>{item.request}</UserBubble>
                 <NestorBubble>{item.reply}</NestorBubble>
               </Box>
             ))}
@@ -463,7 +198,7 @@ export const PromptFillView = ({
               </Button>
             </Box>
             <RefineBar
-              onRefine={(request) => void adjust(request)}
+              onRefine={(request) => void fill.adjust(request)}
               isRefining={isAdjusting}
             />
           </Box>

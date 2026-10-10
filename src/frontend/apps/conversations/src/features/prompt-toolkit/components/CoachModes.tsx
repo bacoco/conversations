@@ -15,14 +15,12 @@ import { getPromptLibrary } from '../library/content';
 import { searchPhrases } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
 import type { Phrase } from '../phrases/types';
-import {
-  CoachMode,
-  usePromptToolkitStore,
-} from '../stores/usePromptToolkitStore';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 /** Pause in typing before searching the library by meaning. */
 export const INSTANT_DELAY_MS = 400;
 
+/** A choice in a row of options (formats, categories). */
 export const optionCss = (isChecked: boolean) => css`
   flex: 1;
   min-width: 0;
@@ -54,55 +52,6 @@ export const optionCss = (isChecked: boolean) => css`
     outline-offset: 1px;
   }
 `;
-
-/** Always visible at the top of the coach: analyse, help, or as you type. */
-export const CoachModeTabs = () => {
-  const { t } = useTranslation();
-  const coachMode = usePromptToolkitStore((state) => state.coachMode);
-  const setCoachMode = usePromptToolkitStore((state) => state.setCoachMode);
-  const options: { mode: CoachMode; icon: string; label: string }[] = [
-    { mode: 'manual', icon: 'grading', label: t('Analysis') },
-    { mode: 'assist', icon: 'auto_awesome', label: t('Prompt help') },
-    { mode: 'instant', icon: 'bolt', label: t('As you type') },
-    // The review of the whole session takes the full second line.
-    { mode: 'session', icon: 'insights', label: t('Session review') },
-  ];
-
-  return (
-    <Box
-      role="radiogroup"
-      aria-label={t('Coach mode')}
-      $css={css`
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 4px;
-        margin: 12px 16px 0;
-        padding: 4px;
-        border-radius: 8px;
-        border: 1px solid var(--c--contextuals--border--surface--primary);
-        & > :last-child {
-          grid-column: 1 / -1;
-        }
-      `}
-    >
-      {options.map((option) => (
-        <Box
-          key={option.mode}
-          as="button"
-          type="button"
-          role="radio"
-          aria-checked={coachMode === option.mode}
-          onClick={() => setCoachMode(option.mode)}
-          $direction="row"
-          $css={optionCss(coachMode === option.mode)}
-        >
-          <Icon iconName={option.icon} $size="16px" $withThemeInherited />
-          {option.label}
-        </Box>
-      ))}
-    </Box>
-  );
-};
 
 const cardCss = css`
   padding: 12px;
@@ -492,7 +441,7 @@ export const InstantSuggestions = ({ text }: { text: string }) => {
     };
   }, [query, i18n.language]);
 
-  // Nothing typed yet: the coach shows how this mode works instead.
+  // Nothing typed yet: nothing to look for.
   if (!query) {
     return null;
   }

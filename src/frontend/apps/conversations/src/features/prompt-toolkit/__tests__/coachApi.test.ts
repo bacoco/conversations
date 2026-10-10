@@ -2,6 +2,7 @@ import {
   asPlainText,
   numberPrompts,
   extractJson,
+  formatConversationContext,
   parseAnalysis,
   parseImprovement,
 } from '../coach/coachApi';
@@ -69,5 +70,17 @@ describe('numberPrompts', () => {
     expect(numberPrompts('Résume.\n\nTraduis.\n---\nCorrige.')).toBe(
       '<prompt n="1">\nRésume.\n</prompt>\n<prompt n="2">\nTraduis.\n</prompt>\n<prompt n="3">\nCorrige.\n</prompt>',
     );
+  });
+});
+
+describe('formatConversationContext', () => {
+  it('keeps recent user and assistant turns in a bounded context', () => {
+    const context = formatConversationContext([
+      { role: 'user', text: 'Prépare une note sur le budget.' },
+      { role: 'assistant', text: 'Voici un plan de note.' },
+    ]);
+
+    expect(context).toContain('User: Prépare une note sur le budget.');
+    expect(context).toContain('Assistant: Voici un plan de note.');
   });
 });

@@ -59,7 +59,9 @@ import {
   STATUS_LINK_KINDS,
   getReindexErrorMessage,
 } from '@/features/chat/components/reindexErrorMessages';
+import { getMessageText } from '@/features/chat/utils/getMessageText';
 import { usePromptToolkitStore } from '@/features/prompt-toolkit';
+import { useMainConversationStore } from '@/features/prompt-toolkit/stores/useMainConversationStore';
 import { useSourcePanelAnchor } from '@/features/sources-panel';
 import { useClipboard } from '@/hook';
 import { useResponsiveStore } from '@/stores';
@@ -429,6 +431,51 @@ export const Chat = ({
     onImagesSkipped,
     onConnectorUnavailable,
   });
+
+  // The right panel observes the main chat but never renders inside it: its
+  // coach reads the exchange to help with the answer, in the panel.
+  const publishMainConversation = useMainConversationStore(
+    (state) => state.publish,
+  );
+  const clearMainConversation = useMainConversationStore(
+    (state) => state.clear,
+  );
+  const mainConversationTurns = useMemo(
+    () =>
+      messages
+        .filter(
+          (message) => message.role === 'user' || message.role === 'assistant',
+        )
+        .map((message) => ({
+          role: message.role as 'user' | 'assistant',
+          text: getMessageText(message),
+        }))
+        .filter((turn) => turn.text.trim()),
+    [messages],
+  );
+  const latestMainMessage = messages.at(-1);
+  const isAssistantResponding =
+    status === 'submitted' || status === 'streaming';
+  const latestCompletedAssistantMessageId =
+    !isAssistantResponding &&
+    status === 'ready' &&
+    latestMainMessage?.role === 'assistant' &&
+    getMessageText(latestMainMessage).trim()
+      ? latestMainMessage.id
+      : null;
+  useEffect(() => {
+    publishMainConversation({
+      turns: mainConversationTurns,
+      latestCompletedAssistantMessageId,
+      isAssistantResponding,
+    });
+  }, [
+    isAssistantResponding,
+    latestCompletedAssistantMessageId,
+    mainConversationTurns,
+    publishMainConversation,
+  ]);
+  useEffect(() => clearMainConversation, [clearMainConversation]);
 
   const stopGeneration = async () => {
     await stopChat();
@@ -997,14 +1044,20 @@ export const Chat = ({
       filename: attachment.name,
     }));
 
-  const send = (text: string, attachments: Attachment[]) => {
+  const send = (
+    text: string,
+    attachments: Attachment[],
+    keepComposer = false,
+  ) => {
     hasSentRef.current = true;
     void sendMessage({ text, files: toFileParts(attachments) });
-    setInput('');
+    if (!keepComposer) {
+      setInput('');
+    }
   };
 
   // Custom submit to include attachments and handle chat creation
-  const submitMessage = async () => {
+  const submitMessage = async (messageOverride?: string) => {
     if (submitLockRef.current) {
       return;
     }
@@ -1015,13 +1068,17 @@ export const Chat = ({
       // conversation would look empty apart from this new exchange. Two
       // submissions would otherwise wait here and resume on the same input.
       await historyFetchRef.current;
-      await runSubmit();
+      await runSubmit(messageOverride);
     } finally {
       submitLockRef.current = false;
     }
   };
 
-  const runSubmit = async () => {
+  const runSubmit = async (messageOverride?: string) => {
+    const message = messageOverride ?? input;
+    // A question suggested by the right panel is a clean text submission: it
+    // must not accidentally carry a file selected in the composer.
+    const messageFiles = messageOverride === undefined ? files : null;
     // Inference-load cooldown: block new messages until the wait elapses.
     if (cooldownUntil && Date.now() < cooldownUntil) {
       return;
@@ -1035,10 +1092,10 @@ export const Chat = ({
 
     // Upload files to server and get URLs
     let attachments: Attachment[] = [];
-    if (files && files.length > 0 && conversationId) {
+    if (messageFiles && messageFiles.length > 0 && conversationId) {
       try {
         setIsUploadingFiles(true);
-        const uploadPromises = Array.from(files).map(async (file) => {
+        const uploadPromises = Array.from(messageFiles).map(async (file) => {
           const url = await uploadFile(file);
 
           return {
@@ -1064,15 +1121,15 @@ export const Chat = ({
 
     if (!conversationId) {
       // Save the message and files, then create the chat
-      setPendingFirstMessage({ input, attachments, forceWebSearch });
+      setPendingFirstMessage({ input: message, attachments, forceWebSearch });
       // Save input and files to Zustand store before navigation
-      setPendingChat(input, files);
+      setPendingChat(message, messageFiles);
       if (checkProjectHasInstructions()) {
         setHasProjectInstructions(true);
       }
       void createChatConversation(
         {
-          title: input.length > 100 ? `${input.slice(0, 97)}...` : input,
+          title: message.length > 100 ? `${message.slice(0, 97)}...` : message,
           ...(pendingProjectId && { project: pendingProjectId }),
         },
         {
@@ -1131,9 +1188,14 @@ export const Chat = ({
     }
 
     setChatErrorType('generic');
-    lastSubmissionRef.current = { input, files };
+    lastSubmissionRef.current = { input: message, files: messageFiles };
 
-    send(input, attachments);
+    // A message sent from the right panel leaves the user's draft and files.
+    const keepComposer = messageOverride !== undefined;
+    send(message, attachments, keepComposer);
+    if (keepComposer) {
+      return;
+    }
     // Attendre un peu avant de vider les fichiers pour s'assurer qu'ils sont traités
     setTimeout(() => {
       setFiles(null);
@@ -1142,6 +1204,25 @@ export const Chat = ({
       }
     }, 100);
   };
+
+  // This is intentionally only a technical bridge. The right panel owns its
+  // UI; a message the user chooses to send there takes the normal submission
+  // path, without touching what is being typed in the composer.
+  const submitMessageRef = useRef(submitMessage);
+  submitMessageRef.current = submitMessage;
+  const registerQuestionSender = useMainConversationStore(
+    (state) => state.registerQuestionSender,
+  );
+  useEffect(
+    () =>
+      registerQuestionSender((question) => {
+        const text = question.trim();
+        if (text) {
+          void submitMessageRef.current(text);
+        }
+      }),
+    [registerQuestionSender],
+  );
 
   return (
     <Box

@@ -203,7 +203,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
   // Without the Albert relay there is no coach: the home cards instead.
   const showHome =
     isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);
-  // The open space, as named in the header: the coach shows its mode.
+  // The open space, as named in the header.
   const current =
     mode === 'coach'
       ? { icon: 'touch_app', label: t('Coach') }
@@ -358,7 +358,9 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           $display={!showHome && !fill && mode === 'coach' ? undefined : 'none'}
           $css="flex: 1 0 auto;"
         >
-          <CoachPanel isActive={isVisible && !showHome && mode === 'coach'} />
+          <CoachPanel
+            isActive={isVisible && !showHome && !fill && mode === 'coach'}
+          />
         </Box>
         <Box
           $display={!showHome && !fill && mode === 'learn' ? undefined : 'none'}

@@ -92,11 +92,17 @@ describe('<SessionReviewPanel />', () => {
     expect(
       screen.getByText('Donner le contexte dès le départ.'),
     ).toBeInTheDocument();
-    const body = String(
-      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body,
-    );
+    const body = (fetchMock.mock.calls[0] as [string, RequestInit])[1]
+      .body as string;
     expect(body).toContain('En cinq points pour la direction');
     expect(body).not.toContain('Voici');
+
+    // Words first: the level of the session, then the figures on demand.
+    expect(screen.getByText('Correct')).toBeInTheDocument();
+    expect(screen.queryByText('51/100')).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: /The details, request by request/ }),
+    );
 
     // The dashboard: average, progress, and the kinds of requests.
     expect(screen.getByText('51/100')).toBeInTheDocument();

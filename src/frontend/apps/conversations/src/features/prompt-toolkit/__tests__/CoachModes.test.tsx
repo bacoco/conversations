@@ -1,6 +1,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { CoachPanel } from '../components/CoachPanel';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/components/ToastProvider', () => ({
@@ -24,20 +26,20 @@ const embeddingsResponse = (body: string) => {
   );
 };
 
-describe('coach modes', () => {
+describe('more ways to help, under "More details"', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    usePromptToolkitStore.setState({ chatInput: '', coachMode: 'manual' });
+    useProfileStore.setState({ isBeginner: true });
+    useMainConversationStore.setState({
+      turns: [],
+      latestCompletedAssistantMessageId: null,
+      isAssistantResponding: false,
+      sendQuestion: null,
+    });
   });
   afterEach(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
-  });
-
-  it('switches mode from the selector shown at the top', () => {
-    render(<CoachPanel />);
-    fireEvent.click(screen.getByRole('radio', { name: /As you type/ }));
-    expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
   });
 
   it('offers the closest ready-made requests by meaning as you type', async () => {
@@ -47,12 +49,21 @@ describe('coach modes', () => {
     vi.stubGlobal('fetch', fetchMock);
     const setChatInput = vi.fn();
     usePromptToolkitStore.setState({
-      coachMode: 'instant',
       chatInput: 'Write the minutes of this morning meeting',
       setChatInput,
     });
 
     render(<CoachPanel />);
+    await act(() => vi.advanceTimersByTimeAsync(700));
+    // Folded: nothing is looked for until asked.
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More details' }));
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Show close requests, already well written',
+      }),
+    );
     await act(() => vi.advanceTimersByTimeAsync(700));
 
     const request = await screen.findByRole('button', {
@@ -98,19 +109,53 @@ describe('coach modes', () => {
       ),
     );
     usePromptToolkitStore.setState({
-      coachMode: 'assist',
       chatInput: 'Write the minutes of this morning meeting',
     });
 
     render(<CoachPanel />);
-    await act(async () => {
-      fireEvent.click(
-        screen.getByRole('button', { name: 'Help me with this prompt' }),
-      );
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'More details' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Suggest several versions' }),
+    );
 
     expect(await screen.findByText('Version courte')).toBeInTheDocument();
     expect(screen.getAllByText('Meeting minutes').length).toBeGreaterThan(0);
+  });
+
+  it('gives hints without rewriting', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              choices: [
+                {
+                  message: {
+                    content: JSON.stringify({
+                      hint: 'Dites pour qui est ce compte rendu.',
+                      why: 'Le niveau de détail en dépend.',
+                    }),
+                  },
+                },
+              ],
+            }),
+          ),
+        ),
+      ),
+    );
+    usePromptToolkitStore.setState({
+      chatInput: 'Write the minutes of this morning meeting',
+    });
+
+    render(<CoachPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'More details' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /Guide me without rewriting/ }),
+    );
+    expect(
+      await screen.findByText(/Dites pour qui est ce compte rendu./),
+    ).toBeInTheDocument();
   });
 });
 
@@ -125,7 +170,7 @@ describe('embedding batches', () => {
     vi.stubGlobal('fetch', fetchMock);
     await searchPhrases('minutes', 'fr');
     fetchMock.mock.calls.forEach(([, init]) => {
-      const { input } = JSON.parse(String(init.body)) as { input: string[] };
+      const { input } = JSON.parse(init.body as string) as { input: string[] };
       expect(input.length).toBeLessThanOrEqual(64);
     });
     expect(fetchMock.mock.calls.length).toBeGreaterThan(2);

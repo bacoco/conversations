@@ -9,10 +9,12 @@ import type { ChatMessage } from '@/features/chat/types';
 import { useConversationRouteId } from '@/utils';
 
 import { SessionReview, reviewSession } from '../coach/coachApi';
+import { levelColor, wordLevel } from '../coach/levels';
 import { useReward } from '../rewards/useReward';
 import { useSectionReset } from '../stores/usePromptToolkitStore';
 
 import { CoachFeedback } from './CoachFeedback';
+import { Disclosure } from './CoachParts';
 import { CoachStatus } from './CoachStatus';
 import { SessionDashboard } from './SessionDashboard';
 
@@ -69,7 +71,17 @@ const List = ({
 const SESSION_IMAGE_URL = '/assets/nestor-bilan.webp';
 
 /** Coach of the whole session: how the user prompted, not one prompt. */
-export const SessionReviewPanel = ({ language }: { language: string }) => {
+export const SessionReviewPanel = ({
+  language,
+  autoStart = false,
+  onBack,
+}: {
+  language: string;
+  /** Opened on purpose: the review starts at once. */
+  autoStart?: boolean;
+  /** Back to the coach, which opened the review. */
+  onBack?: () => void;
+}) => {
   const { t } = useTranslation();
   const conversationId = useConversationRouteId();
   const reward = useReward();
@@ -119,6 +131,30 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
     }
   };
 
+  const hasStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStart && conversationId && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      void runReview();
+    }
+    // Only once, when the review is opened.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, conversationId]);
+
+  const backLink = onBack && (
+    <Box $direction="row" $css="padding: 12px 16px 0;">
+      <Button
+        size="small"
+        color="neutral"
+        variant="tertiary"
+        onClick={onBack}
+        icon={<Icon iconName="arrow_back" $size="18px" />}
+      >
+        {t('Back to the coach')}
+      </Button>
+    </Box>
+  );
+
   const button = (
     <Button
       fullWidth
@@ -139,101 +175,112 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
   // Before the first review: a page that says what you will get.
   if (!review || !conversationId) {
     return (
-      <Box
-        $align="center"
-        $justify="center"
-        $gap="20px"
-        $css={css`
-          flex: 1;
-          padding: 24px 24px 120px;
-          text-align: center;
-        `}
-      >
+      <>
+        {backLink}
         <Box
+          $align="center"
+          $justify="center"
+          $gap="20px"
           $css={css`
-            width: min(260px, 70%);
-            aspect-ratio: 1;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #f7f8fd;
+            flex: 1;
+            padding: 24px 24px 120px;
+            text-align: center;
           `}
         >
-          <img
-            src={SESSION_IMAGE_URL}
-            alt=""
-            style={{
-              display: 'block',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
+          <Box
+            $css={css`
+              width: min(260px, 70%);
+              aspect-ratio: 1;
+              border-radius: 50%;
+              overflow: hidden;
+              background: #f7f8fd;
+            `}
+          >
+            <img
+              src={SESSION_IMAGE_URL}
+              alt=""
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          </Box>
+          <Box $gap="6px" $align="center">
+            <Text as="h3" $size="h4" $weight="800" $margin="0">
+              {t('Session review')}
+            </Text>
+            <Text $variation="secondary" $css="max-width: 34ch;">
+              {t(
+                'Nestor reads all the prompts of this conversation and tells you how you prompt.',
+              )}
+            </Text>
+          </Box>
+          <Box
+            as="ul"
+            $gap="10px"
+            $css={css`
+              margin: 0;
+              padding: 0;
+              list-style: none;
+              text-align: left;
+            `}
+          >
+            {[
+              { icon: 'check_circle', label: t('What you already do well') },
+              { icon: 'trending_up', label: t('The habits to build') },
+              { icon: 'lightbulb', label: t('Three tips for next time') },
+            ].map((item) => (
+              <Box
+                as="li"
+                key={item.icon}
+                $direction="row"
+                $align="center"
+                $gap="10px"
+              >
+                <Icon iconName={item.icon} $size="20px" $theme="brand" />
+                <Text $weight="600">{item.label}</Text>
+              </Box>
+            ))}
+          </Box>
+          {conversationId ? (
+            <Box $css="width: min(320px, 100%);">{button}</Box>
+          ) : (
+            <Text $size="sm" $weight="600" $theme="brand">
+              {t('Open a conversation to review it')}
+            </Text>
+          )}
+          {status === 'loading' && (
+            <Text $size="sm" $variation="secondary" role="status">
+              {t('The coach is reading your conversation…')}
+            </Text>
+          )}
+          {status === 'empty' && (
+            <Text $size="sm" role="status">
+              {t('Send a few prompts in this conversation first.')}
+            </Text>
+          )}
+          {status === 'error' && (
+            <Text $size="sm" $theme="danger" role="alert">
+              {t('The coach could not review this session. Please retry.')}
+            </Text>
+          )}
         </Box>
-        <Box $gap="6px" $align="center">
-          <Text as="h3" $size="h4" $weight="800" $margin="0">
-            {t('Session review')}
-          </Text>
-          <Text $variation="secondary" $css="max-width: 34ch;">
-            {t(
-              'Nestor reads all the prompts of this conversation and tells you how you prompt.',
-            )}
-          </Text>
-        </Box>
-        <Box
-          as="ul"
-          $gap="10px"
-          $css={css`
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            text-align: left;
-          `}
-        >
-          {[
-            { icon: 'check_circle', label: t('What you already do well') },
-            { icon: 'trending_up', label: t('The habits to build') },
-            { icon: 'lightbulb', label: t('Three tips for next time') },
-          ].map((item) => (
-            <Box
-              as="li"
-              key={item.icon}
-              $direction="row"
-              $align="center"
-              $gap="10px"
-            >
-              <Icon iconName={item.icon} $size="20px" $theme="brand" />
-              <Text $weight="600">{item.label}</Text>
-            </Box>
-          ))}
-        </Box>
-        {conversationId ? (
-          <Box $css="width: min(320px, 100%);">{button}</Box>
-        ) : (
-          <Text $size="sm" $weight="600" $theme="brand">
-            {t('Open a conversation to review it')}
-          </Text>
-        )}
-        {status === 'loading' && (
-          <Text $size="sm" $variation="secondary" role="status">
-            {t('The coach is reading your conversation…')}
-          </Text>
-        )}
-        {status === 'empty' && (
-          <Text $size="sm" role="status">
-            {t('Send a few prompts in this conversation first.')}
-          </Text>
-        )}
-        {status === 'error' && (
-          <Text $size="sm" $theme="danger" role="alert">
-            {t('The coach could not review this session. Please retry.')}
-          </Text>
-        )}
-      </Box>
+      </>
     );
   }
 
+  const average = review.grades.length
+    ? Math.round(
+        review.grades.reduce((sum, grade) => sum + grade.score, 0) /
+          review.grades.length,
+      )
+    : null;
+
   return (
     <Box $direction="column">
+      {backLink}
       <CoachStatus
         isLoading={status === 'loading'}
         loadingLabel={t('The coach is reading your conversation…')}
@@ -261,13 +308,18 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
             <Text $size="xs" $variation="secondary">
               {t('{{count}} prompts reviewed', { count: promptCount })}
             </Text>
+            {average !== null && (
+              <Text
+                $weight="700"
+                $css={css`
+                  color: ${levelColor(average)};
+                `}
+              >
+                {wordLevel(average, t)}
+              </Text>
+            )}
             {review.summary && <Text $size="sm">{review.summary}</Text>}
           </Box>
-          {review.grades.length > 0 && (
-            <Box $css={sectionCss}>
-              <SessionDashboard grades={review.grades} />
-            </Box>
-          )}
           <Box $gap="16px" $css={sectionCss}>
             <List
               title={t('What you already do well')}
@@ -288,6 +340,17 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
               theme="info"
             />
           </Box>
+          {/* The figures, for those who want them: words come first. */}
+          {review.grades.length > 0 && (
+            <Box $css={sectionCss}>
+              <Disclosure
+                label={t('The details, request by request')}
+                icon="bar_chart"
+              >
+                <SessionDashboard grades={review.grades} />
+              </Disclosure>
+            </Box>
+          )}
           <Box $direction="row" $justify="flex-end" $css="padding: 8px 16px;">
             <CoachFeedback target="session" />
           </Box>

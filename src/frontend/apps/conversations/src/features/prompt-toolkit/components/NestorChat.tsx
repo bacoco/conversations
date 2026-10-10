@@ -1,19 +1,31 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  KeyboardEvent,
+  PointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
+import { getConversation } from '@/features/chat/api/useConversation';
+import { getMessageText } from '@/features/chat/utils/getMessageText';
+import { useConversationRouteId } from '@/utils';
 
-import { NestorTurn, answerPrompt, chatWithNestor } from '../coach/coachApi';
+import {
+  ConversationContextTurn,
+  NestorTurn,
+  answerPrompt,
+  chatWithNestor,
+} from '../coach/coachApi';
 import { NestorBubble, bubbleCss } from '../fill/PromptFillView';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
-import {
-  CoachMode,
-  usePromptToolkitStore,
-} from '../stores/usePromptToolkitStore';
 
 import { NESTOR_AVATAR_URL } from './PanelHome';
 import { PanelTextArea } from './PanelTextArea';
@@ -92,13 +104,6 @@ const CompletedTask = ({ text }: { text: string }) => {
   );
 };
 
-const SCREEN_NAMES: Record<CoachMode, string> = {
-  manual: 'the Coach, Analysis mode',
-  assist: 'the Coach, Prompt help mode',
-  instant: 'the Coach, As you type mode',
-  session: 'the Coach, Session review',
-};
-
 /** Where the user is, in words Nestor understands. */
 const useCurrentScreen = () => {
   const state = usePromptToolkitStore();
@@ -112,7 +117,9 @@ const useCurrentScreen = () => {
     return 'the home page with the cards: Record and transcribe, Coach, Course, Everyday tools';
   }
   if (state.mode === 'coach') {
-    return SCREEN_NAMES[state.coachMode];
+    return state.chatInput.trim()
+      ? 'the Coach, with a request in the message field ("Read my request")'
+      : 'the Coach';
   }
   return state.mode === 'learn' ? 'the prompting Course' : 'the Everyday tools';
 };
@@ -129,8 +136,15 @@ const threadCss = css`
 export const NestorDock = ({ language }: { language: string }) => {
   const { t } = useTranslation();
   const where = useCurrentScreen();
+  const conversationId = useConversationRouteId();
   const turns = usePromptToolkitStore((state) => state.nestorChat);
   const setTurns = usePromptToolkitStore((state) => state.setNestorChat);
+  const nestorDockPosition = usePromptToolkitStore(
+    (state) => state.nestorDockPosition,
+  );
+  const setNestorDockPosition = usePromptToolkitStore(
+    (state) => state.setNestorDockPosition,
+  );
   const nestorTask = usePromptToolkitStore((state) => state.nestorTask);
   const clearNestorTask = usePromptToolkitStore(
     (state) => state.clearNestorTask,
@@ -147,6 +161,27 @@ export const NestorDock = ({ language }: { language: string }) => {
   const controllerRef = useRef<AbortController | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const [launcherDragX, setLauncherDragX] = useState<number | null>(null);
+  const ignoreLauncherClickRef = useRef(false);
+
+  const readConversationContext = useCallback(async () => {
+    if (!conversationId) return [] as ConversationContextTurn[];
+    try {
+      const conversation = await getConversation({ id: conversationId });
+      return conversation.messages
+        .filter(
+          (message) => message.role === 'user' || message.role === 'assistant',
+        )
+        .map((message) => ({
+          role: message.role as ConversationContextTurn['role'],
+          text: getMessageText(message),
+        }))
+        .filter((turn) => turn.text.trim());
+    } catch {
+      // Coaching stays available even if the main conversation is unavailable.
+      return [] as ConversationContextTurn[];
+    }
+  }, [conversationId]);
 
   const send = async (text: string, history = turns) => {
     const message = text.trim();
@@ -164,11 +199,13 @@ export const NestorDock = ({ language }: { language: string }) => {
     setFailedTask(null);
     setIsLoading(true);
     try {
+      const conversation = await readConversationContext();
       const answer = await chatWithNestor(
         next,
         language,
         where,
         controller.signal,
+        conversation,
       );
       setTurns([...next, answer]);
     } catch {
@@ -259,6 +296,43 @@ export const NestorDock = ({ language }: { language: string }) => {
     }
   };
 
+  /** Dragging only changes the horizontal resting place of the round launcher. */
+  const onLauncherPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const panel = event.currentTarget.parentElement;
+    if (!panel) return;
+    const bounds = panel.getBoundingClientRect();
+    let moved = false;
+    const leftOf = (clientX: number) =>
+      Math.min(Math.max(clientX - bounds.left - 26, 12), bounds.width - 64);
+    const onMove = (moveEvent: globalThis.PointerEvent) => {
+      if (Math.abs(moveEvent.clientX - event.clientX) > 4) moved = true;
+      setLauncherDragX(leftOf(moveEvent.clientX));
+    };
+    const onUp = (upEvent: globalThis.PointerEvent) => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      if (moved) {
+        ignoreLauncherClickRef.current = true;
+        const ratio = (upEvent.clientX - bounds.left) / bounds.width;
+        setNestorDockPosition(
+          ratio < 1 / 3 ? 'left' : ratio > 2 / 3 ? 'right' : 'center',
+        );
+      }
+      setLauncherDragX(null);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
+  const openFromLauncher = () => {
+    if (ignoreLauncherClickRef.current) {
+      ignoreLauncherClickRef.current = false;
+      return;
+    }
+    setIsOpen(true);
+  };
+
   const lastUser = [...turns].reverse().find((turn) => turn.role === 'user');
 
   // Folded: a small round Nestor button, level with the panel's action bar.
@@ -267,38 +341,51 @@ export const NestorDock = ({ language }: { language: string }) => {
       <Box
         as="button"
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={openFromLauncher}
+        onPointerDown={onLauncherPointerDown}
         aria-label={t('Ask Nestor')}
-        title={t('Ask Nestor')}
+        title={t('Drag horizontally to move Nestor')}
         $css={css`
           position: absolute;
-          right: 16px;
+          ${
+            launcherDragX !== null
+              ? `left: ${launcherDragX}px;`
+              : nestorDockPosition === 'left'
+                ? 'left: 16px;'
+                : nestorDockPosition === 'center'
+                  ? 'left: 50%;'
+                  : 'right: 16px;'
+          }
           bottom: 16px;
           z-index: 3;
           width: 52px;
           height: 52px;
           padding: 0;
           border-radius: 50%;
-          cursor: pointer;
+          cursor: grab;
+          touch-action: none;
           overflow: hidden;
           pointer-events: auto;
           border: 2px solid
             var(--c--contextuals--border--semantic--brand--primary);
           background: var(--c--contextuals--background--surface--primary);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          ${
+            launcherDragX === null && nestorDockPosition === 'center'
+              ? 'transform: translateX(-50%);'
+              : ''
+          }
           /* A gentle pulse, so Nestor gets noticed without getting in the way. */
           animation: nestor-pulse 2.4s ease-in-out infinite;
           @keyframes nestor-pulse {
             0%,
             70%,
             100% {
-              transform: scale(1);
               box-shadow:
                 0 2px 8px rgba(0, 0, 0, 0.15),
                 0 0 0 0 rgba(0, 0, 145, 0.35);
             }
             35% {
-              transform: scale(1.08);
               box-shadow:
                 0 2px 8px rgba(0, 0, 0, 0.15),
                 0 0 0 10px rgba(0, 0, 145, 0);
@@ -306,6 +393,9 @@ export const NestorDock = ({ language }: { language: string }) => {
           }
           &:hover {
             animation-play-state: paused;
+          }
+          &:active {
+            cursor: grabbing;
           }
           @media (prefers-reduced-motion: reduce) {
             animation: none;

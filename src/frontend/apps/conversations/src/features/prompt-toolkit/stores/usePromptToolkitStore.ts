@@ -7,13 +7,8 @@ import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
 export type RightPanelMode = 'coach' | 'learn' | 'tools';
-/**
- * manual: analysis on button press; assist: versions and library matches on
- * button press; instant: library matches as you type (no model);
- * session: a review of the whole conversation.
- * Opening the coach is enough to use it: there is no "off" mode.
- */
-export type CoachMode = 'manual' | 'assist' | 'instant' | 'session';
+/** Horizontal resting place of the collapsed Nestor coach launcher. */
+export type NestorDockPosition = 'left' | 'center' | 'right';
 
 export const PANEL_MIN_WIDTH_PX = 340;
 export const PANEL_DEFAULT_WIDTH_PX = 400;
@@ -34,7 +29,6 @@ interface PromptToolkitState {
   width: number;
   isExpanded: boolean;
   isResizing: boolean;
-  coachMode: CoachMode;
   /** The cards home, shown on first opening and after a reset. */
   showHome: boolean;
   /** False while Nestor's welcome is shown: first opening, and each Home. */
@@ -51,9 +45,8 @@ interface PromptToolkitState {
   toggle: () => void;
   close: () => void;
   setMode: (mode: RightPanelMode) => void;
-  setCoachMode: (coachMode: CoachMode) => void;
-  /** Pick a module from the home cards. */
-  startCoach: (coachMode: CoachMode) => void;
+  /** Open the coach from the home cards: one screen, following the moment. */
+  startCoach: () => void;
   /** Open a section of the panel, leaving the home cards. */
   openSection: (mode: RightPanelMode) => void;
   goHome: () => void;
@@ -83,6 +76,9 @@ interface PromptToolkitState {
   /** The conversation with Nestor, kept while the page is open. */
   nestorChat: NestorTurn[];
   setNestorChat: (turns: NestorTurn[]) => void;
+  /** The launcher can be dragged along the bottom of the right panel. */
+  nestorDockPosition: NestorDockPosition;
+  setNestorDockPosition: (position: NestorDockPosition) => void;
   /** A task requested from a panel tool: Nestor executes it in the panel. */
   nestorTask: { prompt: string; label: string } | null;
   openNestorTask: (prompt: string, label: string) => void;
@@ -119,8 +115,6 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       width: PANEL_DEFAULT_WIDTH_PX,
       isExpanded: false,
       isResizing: false,
-      // On demand by default: the model is only called when asked.
-      coachMode: 'manual',
       isCoachOptionsOpen: false,
       showHome: true,
       hasSeenWelcome: false,
@@ -131,10 +125,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       toggle: () => set((state) => ({ isOpen: !state.isOpen })),
       close: () => set({ isOpen: false }),
       setMode: (mode) => set({ mode }),
-      setCoachMode: (coachMode) => set({ coachMode }),
       setCoachOptionsOpen: (isCoachOptionsOpen) => set({ isCoachOptionsOpen }),
-      startCoach: (coachMode) =>
-        set({ coachMode, mode: 'coach', showHome: false, fill: null }),
+      startCoach: () => set({ mode: 'coach', showHome: false, fill: null }),
       openSection: (mode) => set({ mode, showHome: false, fill: null }),
       fill: null,
       startFill: (template, title, context, mode) =>
@@ -144,6 +136,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       clearSharedPrompt: () => set({ sharedPrompt: null }),
       nestorChat: [],
       setNestorChat: (nestorChat) => set({ nestorChat }),
+      nestorDockPosition: 'right',
+      setNestorDockPosition: (nestorDockPosition) =>
+        set({ nestorDockPosition }),
       nestorTask: null,
       openNestorTask: (prompt, label) =>
         set({ nestorTask: { prompt, label }, isOpen: true }),
@@ -198,24 +193,22 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
     }),
     {
       name: 'prompt-toolkit',
-      // v2 removed the live coach, v3 the "off" mode: both become on demand.
-      version: 3,
+      // v2 removed the live coach, v3 the "off" mode, v4 the coach's six
+      // modes: the coach is now one screen that follows the moment.
+      version: 4,
       migrate: (persisted) => {
         const state = {
           isOpen: false,
           width: PANEL_DEFAULT_WIDTH_PX,
-          coachMode: 'manual' as CoachMode,
           showHome: true,
           hasSeenWelcome: false,
           mode: 'coach' as RightPanelMode,
-          ...(persisted as Partial<PromptToolkitState>),
+          ...(persisted as Partial<PromptToolkitState> & {
+            coachMode?: string;
+          }),
         };
-        return {
-          ...state,
-          coachMode: ['live', 'off'].includes(state.coachMode)
-            ? 'manual'
-            : state.coachMode,
-        };
+        delete state.coachMode;
+        return state;
       },
       // A panel left open stays closed if the deployment turned it off.
       // On the very first visit (nothing stored), it opens on Nestor's
@@ -233,7 +226,6 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         isOpen: state.isOpen,
         mode: state.mode,
         width: state.width,
-        coachMode: state.coachMode,
         showHome: state.showHome,
         hasSeenWelcome: state.hasSeenWelcome,
       }),

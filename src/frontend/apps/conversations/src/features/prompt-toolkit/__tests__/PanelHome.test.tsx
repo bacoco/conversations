@@ -8,19 +8,18 @@ describe('<PanelHome />', () => {
   beforeEach(() =>
     usePromptToolkitStore.setState({
       showHome: true,
-      coachMode: 'session',
+      mode: 'learn',
       hasSeenWelcome: true,
     }),
   );
 
-  it('opens the coach in the mode of the chosen card', () => {
+  it('opens the coach from its card', () => {
     render(<PanelHome />);
 
     fireEvent.click(screen.getByRole('button', { name: /Prompt coach/ }));
 
     expect(usePromptToolkitStore.getState()).toMatchObject({
       showHome: false,
-      coachMode: 'manual',
       mode: 'coach',
     });
   });

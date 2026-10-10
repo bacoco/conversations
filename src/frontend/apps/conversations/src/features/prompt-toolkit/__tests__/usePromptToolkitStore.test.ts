@@ -48,14 +48,37 @@ describe('usePromptToolkitStore', () => {
     expect(usePromptToolkitStore.getState().setChatInput).toBe(newer);
   });
 
-  it('is on demand by default and remembers the coaching mode', () => {
-    expect(usePromptToolkitStore.getInitialState().coachMode).toBe('manual');
-    usePromptToolkitStore.getState().setCoachMode('session');
-    expect(usePromptToolkitStore.getState().coachMode).toBe('session');
+  it('opens the coach, a single screen without modes', () => {
+    usePromptToolkitStore.setState({ mode: 'learn', showHome: true });
+    usePromptToolkitStore.getState().startCoach();
+    expect(usePromptToolkitStore.getState()).toMatchObject({
+      mode: 'coach',
+      showHome: false,
+      fill: null,
+    });
+    expect(usePromptToolkitStore.getState()).not.toHaveProperty('coachMode');
+  });
+
+  it('forgets the coach modes of a panel stored before the single screen', () => {
+    const { migrate } = usePromptToolkitStore.persist.getOptions();
+    const migrated = migrate?.(
+      { coachMode: 'session', mode: 'coach', width: 420 },
+      3,
+    ) as Record<string, unknown>;
+    expect(migrated).toMatchObject({ mode: 'coach', width: 420 });
+    expect(migrated).not.toHaveProperty('coachMode');
+  });
+
+  it('remembers the horizontal position chosen for Nestor', () => {
+    expect(usePromptToolkitStore.getInitialState().nestorDockPosition).toBe(
+      'right',
+    );
+    usePromptToolkitStore.getState().setNestorDockPosition('center');
+    expect(usePromptToolkitStore.getState().nestorDockPosition).toBe('center');
   });
 
   it('clears the open section without leaving it', () => {
-    usePromptToolkitStore.getState().startCoach('manual');
+    usePromptToolkitStore.getState().startCoach();
     const before = usePromptToolkitStore.getState().resetCount;
 
     usePromptToolkitStore.getState().resetSection();
