@@ -17,7 +17,22 @@ const course = COURSE_EN;
 describe('course content', () => {
   it('has the same structure in French and English', () => {
     const shape = (c: typeof COURSE_FR) => ({
-      lessons: c.lessons.map((l) => [l.id, l.slides.length]),
+      lessons: c.lessons.map((l) => [
+        l.id,
+        l.skills,
+        l.slides.map((s) => [
+          s.kind,
+          s.skill,
+          s.choices?.length,
+          s.better,
+          s.reasons?.map((r) => r.isRight),
+          s.parts?.map((p) => p.label !== undefined),
+          s.blank,
+          s.options?.length,
+          Boolean(s.example),
+          Boolean(s.keyTakeaway),
+        ]),
+      ]),
       quiz: c.quiz.map((q) => [
         q.id,
         q.lessonId,
@@ -25,20 +40,67 @@ describe('course content', () => {
         q.correctIndex,
         q.correctAnswer,
         q.options?.length,
+        q.pieces?.length,
+        q.items?.map((i) => i.helps),
+        Boolean(q.hint),
+        q.placement,
+        Boolean(q.prompt),
       ]),
       flashcards: c.flashcards.map((f) => [f.id, f.lessonId]),
     });
     expect(shape(COURSE_EN)).toEqual(shape(COURSE_FR));
   });
 
-  it('has valid answers for every question', () => {
-    for (const question of COURSE_FR.quiz) {
+  it.each([
+    ['fr', COURSE_FR],
+    ['en', COURSE_EN],
+  ])('has valid answers and screens (%s)', (_, content) => {
+    for (const question of content.quiz) {
       const isValid =
-        question.type === 'mcq'
-          ? question.options?.[question.correctIndex ?? -1] !== undefined
-          : typeof question.correctAnswer === 'boolean';
+        question.type === 'true-false'
+          ? typeof question.correctAnswer === 'boolean'
+          : question.type === 'order'
+            ? (question.pieces?.length ?? 0) >= 2
+            : question.type === 'sort'
+              ? (question.items?.length ?? 0) >= 2
+              : question.options?.[question.correctIndex ?? -1] !== undefined;
       expect(isValid).toBe(true);
     }
+    // A hint never gives the answer away.
+    const giveaways = content.quiz.filter(
+      (q) =>
+        q.hint &&
+        q.options &&
+        q.correctIndex !== undefined &&
+        q.hint.includes(q.options[q.correctIndex]),
+    );
+    expect(giveaways).toEqual([]);
+
+    const slides = content.lessons.flatMap((lesson) => lesson.slides);
+    const brokenChoices = slides.filter(
+      (slide) =>
+        slide.kind === 'choose' &&
+        (!slide.choices?.[slide.better ?? -1] ||
+          !slide.reasons?.some((r) => r.isRight)),
+    );
+    expect(brokenChoices).toEqual([]);
+    const brokenFills = slides.filter((slide) => {
+      if (slide.kind !== 'fill') {
+        return false;
+      }
+      const hidden = slide.parts?.[slide.blank ?? -1];
+      return !hidden?.label || !slide.options?.includes(hidden.text);
+    });
+    expect(brokenFills).toEqual([]);
+    // Short screens: 60 words at most.
+    const longScreens = slides.filter(
+      (slide) => slide.content.split(/\s+/).length > 60,
+    );
+    expect(longScreens).toEqual([]);
+    // One question per lesson for the level test.
+    expect(content.quiz.filter((q) => q.placement)).toHaveLength(
+      content.lessons.length,
+    );
   });
 });
 
@@ -50,11 +112,11 @@ const answerQuizRight = (questions: typeof course.quiz) => {
     // The answers are the last list on screen, after the bar of the step.
     const list = screen.getAllByRole('list').at(-1)!;
     const label =
-      question.type === 'mcq'
-        ? question.options![question.correctIndex!]
-        : question.correctAnswer
+      question.type === 'true-false'
+        ? question.correctAnswer
           ? 'True'
-          : 'False';
+          : 'False'
+        : question.options![question.correctIndex!];
     fireEvent.click(
       within(list).getByRole('button', {
         name: new RegExp(`${escape(label)}$`),
@@ -283,7 +345,7 @@ describe('<LearnPanel />', () => {
       screen.getByRole('heading', { name: 'Step {{number}} · {{title}}' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: course.lessons[4].slides[0].title }),
+      screen.getByRole('heading', { name: course.lessons[4].slides[1].title }),
     ).toBeInTheDocument();
   });
 

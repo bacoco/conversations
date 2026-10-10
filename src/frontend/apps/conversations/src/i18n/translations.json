@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "In green, what makes the difference; dotted, what you had not ticked.": "En vert, ce qui fait la différence ; en pointillés, ce que vous n’aviez pas coché.",
       "{{count}} a week_one": "{{count}} par semaine",
       "{{count}} a week_many": "{{count}} par semaine",
       "{{count}} a week_other": "{{count}} par semaine",
@@ -96,7 +97,6 @@
       "Well spotted! Look at the two answers: that is the gap.": "Bien vu ! Regardez les deux réponses : tout l'écart est là.",
       "The other one does better: compare the two answers.": "L'autre fait mieux : comparez les deux réponses.",
       "What makes it better? Several possible.": "Qu'est-ce qui la rend meilleure ? Plusieurs choix possibles.",
-      "In green, what makes the difference.": "En vert, ce qui fait la différence.",
       "Exactly: the request is complete.": "Exactement : la demande est complète.",
       "Not this one: the right piece is in green.": "Pas celle-ci : le bon morceau est en vert.",
       "Kept in my memo": "Gardé dans mon mémo",

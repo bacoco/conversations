@@ -45,7 +45,17 @@ describe('the course path', () => {
     expect(steps[0].practiseWithCoach).toBe(true);
     expect(steps[0].stages).toEqual(['read', 'cards', 'quiz', 'practice']);
     // Steps without cards skip "remember".
-    expect(steps[5].stages).toEqual(['read', 'quiz', 'practice']);
+    const withoutCards = buildSteps(
+      {
+        ...COURSE_FR,
+        flashcards: COURSE_FR.flashcards.filter(
+          (card) => card.lessonId !== 'lesson-6',
+        ),
+      },
+      getChallenges('fr'),
+      true,
+    );
+    expect(withoutCards[5].stages).toEqual(['read', 'quiz', 'practice']);
   });
 
   it('has no practice without the coach', () => {

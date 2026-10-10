@@ -291,7 +291,7 @@ export const AnnotatedRequest = ({
   );
 };
 
-const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong') => css`
+const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong' | 'missed') => css`
   padding: 6px 12px;
   border-radius: 999px;
   cursor: ${state === 'idle' || state === 'on' ? 'pointer' : 'default'};
@@ -299,7 +299,7 @@ const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong') => css`
   font-size: 0.875rem;
   text-align: left;
   color: ${
-    state === 'right'
+    state === 'right' || state === 'missed'
       ? 'var(--c--contextuals--content--semantic--success--primary)'
       : state === 'wrong'
         ? 'var(--c--contextuals--content--semantic--error--primary)'
@@ -307,7 +307,7 @@ const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong') => css`
   };
   border: 1px solid
     ${
-      state === 'right'
+      state === 'right' || state === 'missed'
         ? 'var(--c--contextuals--border--semantic--success--primary)'
         : state === 'wrong'
           ? 'var(--c--contextuals--border--semantic--error--primary)'
@@ -324,6 +324,7 @@ const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong') => css`
           ? 'var(--c--contextuals--background--semantic--brand--tertiary)'
           : 'var(--c--contextuals--background--surface--primary)'
   };
+  ${state === 'missed' ? 'border-style: dashed;' : ''}
   &:focus-visible {
     outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
     outline-offset: 2px;
@@ -461,7 +462,9 @@ const ChooseSlide = ({ slide }: { slide: Slide }) => {
                   ? 'on'
                   : 'idle'
                 : reason.isRight
-                  ? 'right'
+                  ? isOn
+                    ? 'right'
+                    : 'missed'
                   : isOn
                     ? 'wrong'
                     : 'idle';
@@ -500,7 +503,9 @@ const ChooseSlide = ({ slide }: { slide: Slide }) => {
             </Box>
           ) : (
             <Text $size="xs" $variation="secondary">
-              {t('In green, what makes the difference.')}
+              {t(
+                'In green, what makes the difference; dotted, what you had not ticked.',
+              )}
             </Text>
           )}
         </Box>
@@ -526,7 +531,7 @@ const FillSlide = ({ slide }: { slide: Slide }) => {
       <AnnotatedRequest
         parts={parts}
         hidden={hidden}
-        filled={picked !== null ? options[picked] : undefined}
+        filled={picked !== null ? parts[hidden]?.text : undefined}
       />
       <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
         {options.map((option, index) => (
