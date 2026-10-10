@@ -7,6 +7,7 @@ import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
+import { useRecorderStore } from '../speech/useRecorderStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
@@ -52,6 +53,12 @@ const cardCss = (tone: Tone) => css`
 const centeredCss = css`
   min-height: 100%;
   justify-content: center;
+`;
+
+/** The cards page keeps room at the bottom for Nestor's round button. */
+const homeCss = css`
+  ${centeredCss}
+  padding-bottom: 84px;
 `;
 
 export const NESTOR_IMAGE_URL = '/assets/nestor.webp';
@@ -101,7 +108,7 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
       icon: 'lightbulb',
       color: 'var(--c--globals--colors--success-450)',
       title: t('Improves'),
-      text: t('your prompts'),
+      text: t('your requests'),
     },
     {
       icon: 'description',
@@ -129,7 +136,7 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
             Nestor
           </Text>
           <Text $size="md" $variation="secondary" $weight="600">
-            {t('Your prompt copilot')}
+            {t('Your coach for asking AI well')}
           </Text>
         </Box>
         <Box $gap="6px" $css="text-align: right; max-width: 40%;">
@@ -164,7 +171,7 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
         <img
           src={NESTOR_IMAGE_URL}
           alt={t(
-            'Nestor, a cartoon orange fox with a purple scarf and a golden compass star, says: a better prompt, more impact!',
+            'Nestor, a cartoon orange fox with a purple scarf and a golden compass star, waves at you.',
           )}
           style={{ display: 'block', width: '100%', height: 'auto' }}
         />
@@ -266,9 +273,67 @@ const NestorHeader = () => {
           {t('How can I help you write?')}
         </Text>
         <Text $size="sm" $variation="secondary">
-          {t('Nestor, your prompt copilot')}
+          {t('Nestor, your coach for asking AI well')}
         </Text>
       </Box>
+    </Box>
+  );
+};
+
+const resumeCss = css`
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+  background: var(--c--contextuals--background--semantic--brand--tertiary);
+`;
+
+/**
+ * A transcription is waiting (kept across a reload of the page): one line on
+ * the home page to get back to it.
+ */
+const ResumeTranscript = ({ onResume }: { onResume: () => void }) => {
+  const { t, i18n } = useTranslation();
+  const text = useRecorderStore((state) => state.text);
+  const updatedAt = useRecorderStore((state) => state.updatedAt);
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  if (words === 0) {
+    return null;
+  }
+  const details = [
+    updatedAt
+      ? t('Transcription from {{time}}', {
+          time: new Intl.DateTimeFormat(i18n.language, {
+            hour: '2-digit',
+            minute: '2-digit',
+          }).format(updatedAt),
+        })
+      : t('Transcription'),
+    t('{{count}} words', { count: words }),
+  ].join(' · ');
+  return (
+    <Box
+      role="region"
+      aria-label={t('Resume')}
+      $direction="row"
+      $align="center"
+      $gap="10px"
+      $css={resumeCss}
+    >
+      <Icon iconName="mic" $size="22px" $theme="brand" />
+      <Box $gap="2px" $css="flex: 1; min-width: 0;">
+        <Text
+          $size="xs"
+          $weight="700"
+          $theme="brand"
+          $css="text-transform: uppercase; letter-spacing: 0.04em;"
+        >
+          {t('Resume')}
+        </Text>
+        <Text $size="sm">{details}</Text>
+      </Box>
+      <Button size="small" onClick={onResume}>
+        {t('Resume')}
+      </Button>
     </Box>
   );
 };
@@ -301,8 +366,8 @@ export const PanelHome = () => {
       image: NESTOR_ANALYSIS_URL,
       icon: 'touch_app',
       tone: 'brand',
-      title: t('Prompt coach'),
-      description: t('Analyses and improves your prompt.'),
+      title: t('Coach'),
+      description: t('Improves your requests, before and after the answer.'),
       onSelect: startCoach,
     },
     {
@@ -310,8 +375,8 @@ export const PanelHome = () => {
       image: NESTOR_COURSE_URL,
       icon: 'school',
       tone: 'brand',
-      title: t('Prompting course'),
-      description: t('Lessons, cards and quizzes.'),
+      title: t('Course'),
+      description: t('Learning to ask well: lessons, cards, quizzes.'),
       onSelect: () => openSection('learn'),
     },
     {
@@ -320,7 +385,7 @@ export const PanelHome = () => {
       icon: 'apps',
       tone: 'success',
       title: t('Everyday tools'),
-      description: t('Emails, summaries, ready-made prompts.'),
+      description: t('Emails, summaries, ready-made templates.'),
       onSelect: () => openSection('tools'),
     },
   ];
@@ -334,8 +399,11 @@ export const PanelHome = () => {
   ).filter((card) => !isAiUnavailable || card.id !== 'coach-manual');
 
   return (
-    <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
+    <Box $gap="12px" $padding={{ all: 'base' }} $css={homeCss}>
       <NestorHeader />
+      {isAiAvailable && TRANSCRIPTION_URL && (
+        <ResumeTranscript onResume={() => openTool('minutes')} />
+      )}
       <Box
         as="ul"
         $css={css`

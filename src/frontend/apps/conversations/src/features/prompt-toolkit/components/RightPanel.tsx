@@ -211,7 +211,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           icon: 'apps',
           label: '',
         });
-  const title = showHome ? t('Prompt help') : current.label;
+  const title = showHome ? 'Nestor' : current.label;
 
   return (
     <Box

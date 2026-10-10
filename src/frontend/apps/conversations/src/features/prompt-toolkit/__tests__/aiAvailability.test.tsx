@@ -20,8 +20,12 @@ describe('without the Albert relay', () => {
 
   it('offers the course and the tools, not the coach', () => {
     render(<PanelHome />);
-    expect(screen.queryByText('Prompt coach')).not.toBeInTheDocument();
-    expect(screen.getByText('Prompting course')).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'Improves your requests, before and after the answer.',
+      ),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('Course')).toBeInTheDocument();
     expect(screen.getByText('Everyday tools')).toBeInTheDocument();
   });
 

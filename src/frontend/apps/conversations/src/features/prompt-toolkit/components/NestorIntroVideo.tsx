@@ -55,7 +55,9 @@ export const NestorIntroVideo = ({
         <video
           ref={videoRef}
           src={introVideoUrl(i18n.language)}
-          aria-label={t('Presentation of Nestor, your prompt copilot')}
+          aria-label={t(
+            'Presentation of Nestor, your coach for asking AI well',
+          )}
           autoPlay
           muted
           playsInline

@@ -69,6 +69,20 @@ describe('usePromptToolkitStore', () => {
     expect(migrated).not.toHaveProperty('coachMode');
   });
 
+  it('shows the conversation first on a phone, even if the panel was open', () => {
+    const { merge } = usePromptToolkitStore.persist.getOptions();
+    const width = window.innerWidth;
+    const current = usePromptToolkitStore.getState();
+    try {
+      window.innerWidth = 390;
+      expect(merge?.({ isOpen: true }, current).isOpen).toBe(false);
+      window.innerWidth = 1280;
+      expect(merge?.({ isOpen: true }, current).isOpen).toBe(true);
+    } finally {
+      window.innerWidth = width;
+    }
+  });
+
   it('remembers the horizontal position chosen for Nestor', () => {
     expect(usePromptToolkitStore.getInitialState().nestorDockPosition).toBe(
       'right',

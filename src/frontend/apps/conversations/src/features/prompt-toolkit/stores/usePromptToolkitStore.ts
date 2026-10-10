@@ -98,14 +98,16 @@ interface PromptToolkitState {
   registerChatInput: (setter: (value: string) => void) => () => void;
 }
 
+/** Same breakpoint as the app's desktop layout. */
+const isDesktopWindow = () =>
+  typeof window !== 'undefined' && window.innerWidth >= 1024;
+
 /**
- * Same breakpoint as the app's desktop layout. Not in unit tests, where the
- * app is rendered on a desktop-sized window without the panel's providers.
+ * Not in unit tests, where the app is rendered on a desktop-sized window
+ * without the panel's providers.
  */
 const isFirstVisitOnDesktop = () =>
-  import.meta.env.MODE !== 'test' &&
-  typeof window !== 'undefined' &&
-  window.innerWidth >= 1024;
+  import.meta.env.MODE !== 'test' && isDesktopWindow();
 
 export const usePromptToolkitStore = create<PromptToolkitState>()(
   persist(
@@ -212,14 +214,16 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       },
       // A panel left open stays closed if the deployment turned it off.
       // On the very first visit (nothing stored), it opens on Nestor's
-      // welcome, on desktop only: on a phone it would cover the chat.
+      // welcome, on desktop only. On a phone it would cover the chat: there
+      // the conversation always comes first and the panel opens on demand.
       merge: (persisted, current) => ({
         ...current,
         ...(persisted as Partial<PromptToolkitState>),
         isOpen:
           PROMPT_TOOLKIT_ENABLED &&
           (persisted
-            ? Boolean((persisted as Partial<PromptToolkitState>).isOpen)
+            ? Boolean((persisted as Partial<PromptToolkitState>).isOpen) &&
+              isDesktopWindow()
             : isFirstVisitOnDesktop()),
       }),
       partialize: (state) => ({

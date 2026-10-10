@@ -1,27 +1,62 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PanelHome } from '../components/PanelHome';
+import { useRecorderStore } from '../speech/useRecorderStore';
 import { profileRules, useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 describe('<PanelHome />', () => {
-  beforeEach(() =>
+  beforeEach(() => {
     usePromptToolkitStore.setState({
       showHome: true,
       mode: 'learn',
       hasSeenWelcome: true,
-    }),
-  );
+    });
+    useRecorderStore.setState({ text: '', updatedAt: 0 });
+  });
 
   it('opens the coach from its card', () => {
     render(<PanelHome />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Prompt coach/ }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /Improves your requests/ }),
+    );
 
     expect(usePromptToolkitStore.getState()).toMatchObject({
       showHome: false,
       mode: 'coach',
     });
+  });
+
+  it('speaks of requests, never of prompts, on first contact', () => {
+    render(<PanelHome />);
+
+    expect(
+      screen.getByText('Nestor, your coach for asking AI well'),
+    ).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/prompt/i);
+  });
+
+  it('offers to resume a transcription that is waiting', () => {
+    useRecorderStore
+      .getState()
+      .setText('Réunion du lundi : horaires élargis le jeudi soir.');
+    render(<PanelHome />);
+
+    const resume = screen.getByRole('region', { name: 'Resume' });
+    expect(resume).toHaveTextContent('{{count}} words');
+    fireEvent.click(screen.getByRole('button', { name: 'Resume' }));
+    expect(usePromptToolkitStore.getState()).toMatchObject({
+      mode: 'tools',
+      toolRequest: 'minutes',
+    });
+  });
+
+  it('says nothing about a transcription when there is none', () => {
+    render(<PanelHome />);
+    expect(
+      screen.queryByRole('region', { name: 'Resume' }),
+    ).not.toBeInTheDocument();
   });
 
   it('offers no card to switch the coach off', () => {
@@ -67,7 +102,7 @@ describe('<PanelHome />', () => {
 
     rerender(<PanelHome />);
     expect(
-      screen.getByRole('button', { name: /Prompt coach/ }),
+      screen.getByRole('button', { name: /Improves your requests/ }),
     ).toBeInTheDocument();
   });
 
