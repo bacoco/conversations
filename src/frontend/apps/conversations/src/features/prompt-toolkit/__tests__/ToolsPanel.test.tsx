@@ -1,9 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { TFunction } from 'i18next';
 
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 import { buildToolPrompt, getDailyTools } from '../tools/tools';
+import { useToolsUsageStore } from '../tools/useToolsUsageStore';
 
 const mockShowToast = vi.fn();
 vi.mock('@/components/ToastProvider', () => ({
@@ -51,12 +52,14 @@ describe('<ToolsPanel />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     usePromptToolkitStore.setState({ setChatInput });
+    useToolsUsageStore.setState({ recent: [], favorites: [] });
   });
 
   it('prepares the prompt of a tool in the chat input', () => {
     render(<ToolsPanel />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Translate/ }));
+    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.click(screen.getByRole('radio', { name: 'German' }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
       target: { value: 'Bonjour à tous' },
@@ -74,5 +77,61 @@ describe('<ToolsPanel />', () => {
       undefined,
       4000,
     );
+  });
+
+  it('asks one question, with the most used tools and the rest one click away', () => {
+    render(<ToolsPanel />);
+    expect(
+      screen.getByRole('heading', { name: 'What do you want to do?' }),
+    ).toBeInTheDocument();
+    // No row of families on top.
+    expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
+    const first = screen.getByRole('list', { name: 'The most used' });
+    expect(within(first).getAllByRole('listitem').length).toBeLessThanOrEqual(
+      4,
+    );
+  });
+
+  it('finds tools from the words of the need, accents aside', () => {
+    render(<ToolsPanel />);
+    fireEvent.change(screen.getByRole('searchbox'), {
+      target: { value: 'traduire en anglais' },
+    });
+    const found = screen.getByRole('list', { name: 'Tools for your need' });
+    expect(
+      within(found).getByRole('button', { name: /^Translate/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'Search the templates for this need',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('puts pinned and recent tools first', () => {
+    useToolsUsageStore.setState({
+      recent: ['summary'],
+      favorites: ['translate'],
+    });
+    render(<ToolsPanel />);
+    const mine = screen.getByRole('list', { name: 'My tools' });
+    const names = within(mine)
+      .getAllByRole('listitem')
+      .map((item) => item.textContent ?? '');
+    expect(names[0]).toContain('Translate');
+    expect(names[1]).toContain('Summar');
+    fireEvent.click(
+      within(mine).getByRole('button', {
+        name: 'Remove {{title}} from my tools',
+      }),
+    );
+    expect(useToolsUsageStore.getState().favorites).toEqual([]);
+  });
+
+  it('remembers the tools opened', () => {
+    render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
+    expect(useToolsUsageStore.getState().recent).toEqual(['translate']);
   });
 });

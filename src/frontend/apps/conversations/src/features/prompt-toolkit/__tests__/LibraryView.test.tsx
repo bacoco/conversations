@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { LibraryView, normalize } from '../library/LibraryView';
 import { LIBRARY_EN } from '../library/content/en';
 import { LIBRARY_FR } from '../library/content/fr';
-import { LibraryView, normalize } from '../library/LibraryView';
 import { useLibraryStore } from '../library/useLibraryStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 

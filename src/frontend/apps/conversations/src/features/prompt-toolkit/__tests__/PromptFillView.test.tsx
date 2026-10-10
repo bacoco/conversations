@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { hasPlaceholders, parseFillStep } from '../coach/coachApi';
 import { PromptFillView } from '../fill/PromptFillView';
@@ -58,19 +58,17 @@ describe('guided prompt filling', () => {
 
     expect(await screen.findByText('Who is it for?')).toBeInTheDocument();
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(String(init.body)).toContain('[recipient]');
+    expect(init.body as string).toContain('[recipient]');
     // Nestor talks with the stronger chat model.
-    expect(String(init.body)).toContain('mistral-medium');
+    expect(init.body as string).toContain('mistral-medium');
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'My team' }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'My team' }));
 
     expect(
       await screen.findByText('Write an email to my team about the move.'),
     ).toBeInTheDocument();
     const [, second] = fetchMock.mock.calls[1] as [string, RequestInit];
-    expect(String(second.body)).toContain('My team');
+    expect(second.body as string).toContain('My team');
 
     fireEvent.click(screen.getByRole('button', { name: 'Use this prompt' }));
     expect(setChatInput).toHaveBeenCalledWith(
@@ -105,18 +103,16 @@ describe('guided prompt filling', () => {
       screen.getByText('Bravo, the deadline makes it clear!'),
     ).toBeInTheDocument();
     const [, first] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(String(first.body)).toContain('<draft>');
+    expect(first.body as string).toContain('<draft>');
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Shorter' }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'Shorter' }));
     expect(await screen.findByText('Short prompt.')).toBeInTheDocument();
     // The congratulation stays after a change.
     expect(
       screen.getByText('Bravo, the deadline makes it clear!'),
     ).toBeInTheDocument();
     const [, second] = fetchMock.mock.calls[1] as [string, RequestInit];
-    expect(String(second.body)).toContain('Long prompt.');
-    expect(String(second.body)).toContain('mistral-medium');
+    expect(second.body as string).toContain('Long prompt.');
+    expect(second.body as string).toContain('mistral-medium');
   });
 });

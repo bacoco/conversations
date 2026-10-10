@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { FollowUpCard, lastMessageText } from '../components/FollowUpCard';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
@@ -63,16 +63,13 @@ describe('<FollowUpCard />', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     render(<FollowUpCard />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Too long' }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'Too long' }));
 
     expect(
       await screen.findByText('Your answer is too long: keep 5 bullet points.'),
     ).toBeInTheDocument();
-    const body = String(
-      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body,
-    );
+    const body = (fetchMock.mock.calls[0] as [string, RequestInit])[1]
+      .body as string;
     expect(body).toContain('Summarise the report');
     expect(body).toContain('A very long answer');
     expect(body).toContain('Too long');

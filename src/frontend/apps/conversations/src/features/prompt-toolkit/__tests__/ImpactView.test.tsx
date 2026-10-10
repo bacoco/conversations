@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ImpactView } from '../components/ImpactView';
 
@@ -20,14 +20,12 @@ describe('<ImpactView />', () => {
     render(
       <ImpactView original="Summarise" improved="Summarise in 5 points" />,
     );
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /See the impact/ }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: /See the impact/ }));
 
     expect(await screen.findByText('A precise answer.')).toBeInTheDocument();
     expect(screen.getByText('A vague answer.')).toBeInTheDocument();
-    const bodies = fetchMock.mock.calls.map((call) =>
-      String((call as [string, RequestInit])[1].body),
+    const bodies = fetchMock.mock.calls.map(
+      (call) => (call as [string, RequestInit])[1].body as string,
     );
     expect(bodies[0]).toContain('"content":"Summarise"');
     expect(bodies[1]).toContain('Summarise in 5 points');

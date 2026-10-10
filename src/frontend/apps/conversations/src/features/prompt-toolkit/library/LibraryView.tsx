@@ -354,7 +354,14 @@ const badgeCss = (isFavorite: boolean) => css`
 `;
 
 /** Ready-to-use prompts, by kind of work, with search and favorites. */
-export const LibraryView = ({ onBack }: { onBack: () => void }) => {
+export const LibraryView = ({
+  onBack,
+  initialQuery = '',
+}: {
+  onBack: () => void;
+  /** A search typed elsewhere, to start from. */
+  initialQuery?: string;
+}) => {
   const { t, i18n } = useTranslation();
   const library = useMemo(
     () => getPromptLibrary(i18n.language),
@@ -407,7 +414,7 @@ export const LibraryView = ({ onBack }: { onBack: () => void }) => {
       })),
     [myPrompts, t, i18n.language],
   );
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 

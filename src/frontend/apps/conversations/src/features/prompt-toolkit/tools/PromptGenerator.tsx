@@ -62,12 +62,19 @@ const choiceCss = (isSelected: boolean) => css`
 `;
 
 /** Describe a need, get two or three ready-to-send prompts. */
-export const PromptGenerator = ({ onBack }: { onBack: () => void }) => {
+export const PromptGenerator = ({
+  onBack,
+  initialNeed = '',
+}: {
+  onBack: () => void;
+  /** The need typed in the tools search, to start from. */
+  initialNeed?: string;
+}) => {
   const offerPrompt = useOfferPrompt();
   const { t, i18n } = useTranslation();
   const { showToast } = useToast();
   const [mode, setMode] = useState<'need' | 'merge'>('need');
-  const [need, setNeed] = useState('');
+  const [need, setNeed] = useState(initialNeed);
   const [detail, setDetail] = useState<GenerationDetail>('detailed');
   const [results, setResults] = useState<(GeneratedPrompt | MergedPrompt)[]>(
     [],

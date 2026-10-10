@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { LIBRARY_EN } from '../library/content/en';
 import { RecommendationBar } from '../library/RecommendationBar';
+import { LIBRARY_EN } from '../library/content/en';
 import { libraryToSuggestions, toCatalog } from '../library/useRecommendations';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 

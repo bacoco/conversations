@@ -34,6 +34,7 @@ import { ToolsPanel } from '../tools/ToolsPanel';
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
 import { PanelHome } from './PanelHome';
+import { PlacementChoice } from './PlacementChoice';
 import { SharedPromptBanner } from './SharedPromptBanner';
 
 const KEYBOARD_STEP_PX = 24;
@@ -353,6 +354,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
         `}
       >
         <SharedPromptBanner />
+        <PlacementChoice />
         {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
         {showHome && <PanelHome />}
         {!showHome && fill && (

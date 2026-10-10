@@ -416,7 +416,7 @@ export const PLACEHOLDER_PATTERN = /\[[^\]\n]{2,120}\]/;
 export const hasPlaceholders = (prompt: string) =>
   PLACEHOLDER_PATTERN.test(prompt);
 
-const placeholdersOf = (prompt: string) =>
+export const placeholdersOf = (prompt: string) =>
   prompt.match(new RegExp(PLACEHOLDER_PATTERN.source, 'g')) ?? [];
 
 export type FillStep =
@@ -618,9 +618,13 @@ export const matchCatalog = async (
 /** Kept short: the point is to compare, not to read a full answer. */
 const IMPACT_MAX_TOKENS = 450;
 
+/** Room for a written piece of work (minutes, translation, a note). */
+export const TASK_MAX_TOKENS = 4000;
+
 export const answerPrompt = async (
   prompt: string,
   signal?: AbortSignal,
+  maxTokens = IMPACT_MAX_TOKENS,
 ): Promise<string> => {
   const response = await fetch(COACH_COMPLETIONS_URL, {
     method: 'POST',
@@ -630,7 +634,7 @@ export const answerPrompt = async (
     body: JSON.stringify({
       model: COACH_MODEL,
       temperature: 0.3,
-      max_tokens: IMPACT_MAX_TOKENS,
+      max_tokens: maxTokens,
       messages: [{ role: 'user', content: prompt }],
     }),
   });

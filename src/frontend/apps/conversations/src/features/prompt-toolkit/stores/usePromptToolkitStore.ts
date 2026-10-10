@@ -90,6 +90,12 @@ interface PromptToolkitState {
    */
   coachWaitsForAnswer: boolean;
   setCoachWaitsForAnswer: (waits: boolean) => void;
+  /**
+   * A request to put in a message field that already holds a text: the
+   * user chooses to replace it, add after it, or cancel.
+   */
+  pendingPlacement: string | null;
+  setPendingPlacement: (prompt: string | null) => void;
   /** A lesson asked from elsewhere, on one of its screens if given. */
   lessonRequest: { lessonId: string; slide?: number } | null;
   openLesson: (lessonId: string, slide?: number) => void;
@@ -153,6 +159,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         set({ nestorTask: { prompt, label }, isOpen: true }),
       clearNestorTask: () => set({ nestorTask: null }),
       coachWaitsForAnswer: false,
+      pendingPlacement: null,
+      setPendingPlacement: (pendingPlacement) => set({ pendingPlacement }),
       setCoachWaitsForAnswer: (coachWaitsForAnswer) =>
         set({ coachWaitsForAnswer }),
       lessonRequest: null,
@@ -248,7 +256,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
 );
 
 /**
- * A link shared by a colleague (#nestor-prompt=…, or the older #nestor-prompt=…)
+ * A link shared by a colleague (#nestor-prompt=…, or the older #robin-prompt=…)
  * opens the panel with an offer to import the prompt; the address is then
  * cleaned.
  */

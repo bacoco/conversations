@@ -6,18 +6,16 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable } from '../coach/aiAvailability';
-import { optionCss } from '../components/CoachModes';
 import {
   NESTOR_ORGANIZE_URL,
-  NESTOR_PROMPTS_URL,
   NESTOR_SUMMARIZE_URL,
   NESTOR_WRITE_URL,
 } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
-import { SpaceIntro } from '../components/SpaceIntro';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
-import { LibraryView } from '../library/LibraryView';
+import { LibraryView, normalize } from '../library/LibraryView';
 import { RecorderView } from '../speech/RecorderView';
+import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import {
   usePromptToolkitStore,
   useSectionReset,
@@ -27,6 +25,11 @@ import { MyStyleView } from './MyStyleView';
 import { FollowUpView, ImproveTextView } from './NestorToolViews';
 import { PromptGenerator } from './PromptGenerator';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
+import {
+  RECENT_TOOLS,
+  TOOL_KEYWORDS,
+  useToolsUsageStore,
+} from './useToolsUsageStore';
 
 const iconBadgeCss = (size: number) => css`
   flex: none;
@@ -74,6 +77,22 @@ const choiceCss = (isSelected: boolean) => css`
   &:focus-visible {
     outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
     outline-offset: 2px;
+  }
+`;
+
+const searchCss = css`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: inherit;
+  border: 1px solid var(--c--contextuals--border--surface--primary);
+  background: var(--c--contextuals--background--surface--primary);
+  &:focus-visible {
+    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
+    outline-offset: 1px;
   }
 `;
 
@@ -336,8 +355,16 @@ export const ToolsPanel = () => {
   const openTool = tools.find((tool) => tool.id === openId);
   // The trash button empties the open tool by mounting it afresh.
   const [resetKey, setResetKey] = useState(0);
-  useSectionReset('tools', () => setResetKey((key) => key + 1));
-  const [categoryId, setCategoryId] = useState('write');
+  const [query, setQuery] = useState('');
+  const [showAll, setShowAll] = useState(false);
+  useSectionReset('tools', () => {
+    setResetKey((key) => key + 1);
+    setQuery('');
+  });
+  const recent = useToolsUsageStore((state) => state.recent);
+  const favorites = useToolsUsageStore((state) => state.favorites);
+  const markUsed = useToolsUsageStore((state) => state.markUsed);
+  const toggleFavorite = useToolsUsageStore((state) => state.toggleFavorite);
   // Tools that open their own view rather than a form.
   const extraTools: Record<string, ToolEntry> = {
     // Replaces the meeting minutes form: record, import or paste, then choose.
@@ -384,18 +411,12 @@ export const ToolsPanel = () => {
       ),
     },
   };
-  const finish = t(
-    'The prompt goes into the message field: complete it, then send it.',
-  );
+  // The families, shown as sections once the user asks for every tool.
   const categories = [
     {
       id: 'write',
       icon: 'edit',
       label: t('Write'),
-      image: NESTOR_WRITE_URL,
-      text: t(
-        'Reply to an email, write a letter, rewrite or translate a text.',
-      ),
       tools: [
         'email-reply',
         'letter',
@@ -404,83 +425,58 @@ export const ToolsPanel = () => {
         'improve',
         'my-style',
       ],
-      steps: [
-        t('Choose what you want to write below.'),
-        t('Answer a few simple choices: tone, length, recipient.'),
-        finish,
-      ],
     },
     {
       id: 'summarize',
       icon: 'summarize',
       label: t('Summarise'),
-      image: NESTOR_SUMMARIZE_URL,
-      text: t('Turn notes or a long document into something short and clear.'),
       tools: ['minutes', 'summary', 'actions'],
-      steps: [
-        t('Choose the kind of summary below.'),
-        t('Paste your notes or attach the document when asked.'),
-        finish,
-      ],
     },
     {
       id: 'organize',
       icon: 'checklist',
       label: t('Organise'),
-      image: NESTOR_ORGANIZE_URL,
-      text: t('Plan a project or find ideas on a subject.'),
       tools: ['plan', 'brainstorm'],
-      steps: [
-        t('Choose a plan or a brainstorming session below.'),
-        t('Describe your project or your subject in a few words.'),
-        finish,
-      ],
     },
     {
       id: 'prompts',
       icon: 'auto_awesome',
       label: t('Prompts'),
-      image: NESTOR_PROMPTS_URL,
-      text: isAiAvailable
-        ? t('Start from a ready-made prompt, or have one written for you.')
-        : t('Start from a ready-made prompt.'),
       tools: ['library', 'generator', 'follow-up'],
-      steps: isAiAvailable
-        ? [
-            t('The library: prompts ready to use, sorted by theme.'),
-            t('The generator: describe your need, get prompts.'),
-            t('Follow up: improve an answer that does not suit you.'),
-          ]
-        : [
-            t('Open the library: prompts ready to use, sorted by theme.'),
-            t('Pick a prompt and put it in the message field.'),
-            t('Replace the parts in brackets with your own information.'),
-          ],
     },
   ];
 
+  const open = (toolId: string) => {
+    markUsed(toolId);
+    setOpenId(toolId);
+  };
+  const back = () => {
+    setOpenId(null);
+    setQuery('');
+  };
+
   if (openId === 'generator') {
-    return <PromptGenerator key={resetKey} onBack={() => setOpenId(null)} />;
+    return <PromptGenerator key={resetKey} onBack={back} initialNeed={query} />;
   }
 
   if (openId === 'improve') {
-    return <ImproveTextView key={resetKey} onBack={() => setOpenId(null)} />;
+    return <ImproveTextView key={resetKey} onBack={back} />;
   }
 
   if (openId === 'follow-up') {
-    return <FollowUpView key={resetKey} onBack={() => setOpenId(null)} />;
+    return <FollowUpView key={resetKey} onBack={back} />;
   }
 
   if (openId === 'my-style') {
-    return <MyStyleView key={resetKey} onBack={() => setOpenId(null)} />;
+    return <MyStyleView key={resetKey} onBack={back} />;
   }
 
   if (openId === 'minutes') {
-    return <RecorderView key={resetKey} onBack={() => setOpenId(null)} />;
+    return <RecorderView key={resetKey} onBack={back} />;
   }
 
   if (openId === 'library') {
-    return <LibraryView key={resetKey} onBack={() => setOpenId(null)} />;
+    return <LibraryView key={resetKey} onBack={back} initialQuery={query} />;
   }
 
   if (openTool) {
@@ -488,86 +484,225 @@ export const ToolsPanel = () => {
       <ToolForm
         key={`${openTool.id}-${resetKey}`}
         tool={openTool}
-        onBack={() => setOpenId(null)}
+        onBack={back}
       />
     );
   }
 
-  const category =
-    categories.find((item) => item.id === categoryId) ?? categories[0];
-  const entries = category.tools
-    .filter((id) => isAiAvailable || !AI_TOOLS.includes(id))
-    .map((id) => extraTools[id] ?? tools.find((tool) => tool.id === id))
-    .filter((tool): tool is ToolEntry => Boolean(tool));
+  const toEntry = (id: string) =>
+    extraTools[id] ?? tools.find((tool) => tool.id === id);
+  const isOffered = (id: string) =>
+    (isAiAvailable || !AI_TOOLS.includes(id)) &&
+    (id !== 'minutes' || (isAiAvailable && Boolean(TRANSCRIPTION_URL)));
+  const offered = (ids: string[]) =>
+    ids
+      .filter(isOffered)
+      .map(toEntry)
+      .filter((tool): tool is ToolEntry => Boolean(tool));
+  const allIds = categories.flatMap((item) => item.tools);
+
+  // What to show first: the user's pinned tools, else the last ones used,
+  // else the most common needs.
+  const mine = offered(
+    [...favorites, ...recent.filter((id) => !favorites.includes(id))].slice(
+      0,
+      RECENT_TOOLS,
+    ),
+  );
+  const firstTools = mine.length
+    ? mine
+    : offered(['email-reply', 'summary', 'rewrite', 'minutes', 'letter']).slice(
+        0,
+        RECENT_TOOLS,
+      );
+  const words = normalize(query).split(/\s+/).filter(Boolean);
+  const found = words.length
+    ? offered(allIds).filter((tool) => {
+        const haystack = normalize(
+          [
+            tool.title,
+            tool.description,
+            ...(TOOL_KEYWORDS[tool.id] ?? []),
+          ].join(' '),
+        );
+        return words.some((word) => word.length > 2 && haystack.includes(word));
+      })
+    : [];
+
+  const toolRow = (tool: ToolEntry) => {
+    const isFavorite = favorites.includes(tool.id);
+    return (
+      <Box as="li" key={tool.id} $direction="row" $align="center" $gap="4px">
+        <Box
+          as="button"
+          type="button"
+          onClick={() => open(tool.id)}
+          $direction="row"
+          $align="center"
+          $gap="12px"
+          $css={rowCss}
+        >
+          <Box $align="center" $justify="center" $css={iconBadgeCss(36)}>
+            <Icon iconName={tool.icon} $size="20px" $withThemeInherited />
+          </Box>
+          <Box $gap="2px" $css="flex: 1; min-width: 0;">
+            <Text $weight="700">{tool.title}</Text>
+            <Text $size="sm" $variation="secondary">
+              {tool.description}
+            </Text>
+          </Box>
+        </Box>
+        <Button
+          size="small"
+          color={isFavorite ? 'brand' : 'neutral'}
+          variant="tertiary"
+          aria-pressed={isFavorite}
+          aria-label={
+            isFavorite
+              ? t('Remove {{title}} from my tools', { title: tool.title })
+              : t('Pin {{title}} to my tools', { title: tool.title })
+          }
+          title={isFavorite ? t('Pinned') : t('Pin to my tools')}
+          onClick={() => toggleFavorite(tool.id)}
+          icon={
+            <Icon
+              iconName="star"
+              variant={isFavorite ? 'filled' : 'outlined'}
+              $size="20px"
+              $withThemeInherited
+            />
+          }
+        />
+      </Box>
+    );
+  };
+  const list = (items: ToolEntry[], label: string) => (
+    <Box
+      as="ul"
+      aria-label={label}
+      $gap="8px"
+      $css="margin: 0; padding: 0; list-style: none;"
+    >
+      {items.map(toolRow)}
+    </Box>
+  );
 
   return (
     <Box $gap="16px" $padding={{ all: 'base' }}>
-      {/* Like the coach: families on top, then the steps and the tools. */}
-      <Box
-        role="radiogroup"
-        aria-label={t('Everyday tools')}
-        $css={css`
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 4px;
-          padding: 4px;
-          border-radius: 8px;
-          border: 1px solid var(--c--contextuals--border--surface--primary);
-        `}
-      >
-        {categories.map((item) => (
-          <Box
-            key={item.id}
-            as="button"
-            type="button"
-            role="radio"
-            aria-checked={item.id === category.id}
-            onClick={() => setCategoryId(item.id)}
-            $direction="row"
-            $css={optionCss(item.id === category.id)}
-          >
-            <Icon iconName={item.icon} $size="16px" $withThemeInherited />
-            {item.label}
-          </Box>
-        ))}
+      <Box $direction="row" $align="center" $gap="12px">
+        <img
+          src={NESTOR_WRITE_URL}
+          alt=""
+          width={56}
+          height={56}
+          style={{ flex: 'none', borderRadius: '50%', background: '#f7f8fd' }}
+        />
+        <Text as="h2" $size="lg" $weight="800" $margin="0">
+          {t('What do you want to do?')}
+        </Text>
       </Box>
-      <SpaceIntro
-        key={category.id}
-        image={category.image}
-        title={category.label}
-        text={category.text}
-        steps={category.steps}
-      />
-      <Box as="ul" $gap="8px" $css="margin: 0; padding: 0; list-style: none;">
-        {entries.map((tool) => (
-          <li key={tool.id}>
-            <Box
-              as="button"
-              type="button"
-              onClick={() => setOpenId(tool.id)}
-              $direction="row"
-              $align="center"
-              $gap="12px"
-              $css={rowCss}
+      <Box $gap="4px">
+        <label htmlFor="nestor-tools-search">
+          <Text $size="sm" $variation="secondary">
+            {t('Say it in your words, or pick below.')}
+          </Text>
+        </label>
+        <Box
+          as="input"
+          id="nestor-tools-search"
+          type="search"
+          value={query}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setQuery(event.target.value)
+          }
+          placeholder={t(
+            'For example: reply to an unhappy member of the public',
+          )}
+          $css={searchCss}
+        />
+      </Box>
+
+      {words.length > 0 ? (
+        <Box $gap="10px" aria-live="polite">
+          {found.length > 0 ? (
+            list(found, t('Tools for your need'))
+          ) : (
+            <Text $size="sm" $variation="secondary">
+              {t('No tool has this name. Nestor can still help:')}
+            </Text>
+          )}
+          <Box $gap="4px" $align="flex-start">
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={() => open('library')}
+              icon={<Icon iconName="menu_book" $size="18px" />}
             >
-              <Box $align="center" $justify="center" $css={iconBadgeCss(36)}>
-                <Icon iconName={tool.icon} $size="20px" $withThemeInherited />
+              {t('Search the templates for this need')}
+            </Button>
+            {isAiAvailable && (
+              <Button
+                size="small"
+                color="neutral"
+                variant="tertiary"
+                onClick={() => open('generator')}
+                icon={<Icon iconName="auto_fix_high" $size="18px" />}
+              >
+                {t('Nestor writes the request for this need')}
+              </Button>
+            )}
+          </Box>
+        </Box>
+      ) : showAll ? (
+        <Box $gap="18px">
+          {categories.map((item) => {
+            const items = offered(item.tools);
+            return items.length ? (
+              <Box key={item.id} $gap="8px">
+                <Box $direction="row" $align="center" $gap="8px">
+                  <Icon iconName={item.icon} $size="18px" $theme="brand" />
+                  <Text as="h3" $size="md" $weight="700" $margin="0">
+                    {item.label}
+                  </Text>
+                </Box>
+                {list(items, item.label)}
               </Box>
-              <Box $gap="2px" $css="flex: 1; min-width: 0;">
-                <Text $weight="700">{tool.title}</Text>
-                <Text $size="sm" $variation="secondary">
-                  {tool.description}
-                </Text>
-              </Box>
-              <Icon
-                iconName="chevron_right"
-                $size="20px"
-                $variation="secondary"
-              />
-            </Box>
-          </li>
-        ))}
-      </Box>
+            ) : null;
+          })}
+          <Box $direction="row">
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={() => setShowAll(false)}
+              icon={<Icon iconName="expand_less" $size="18px" />}
+            >
+              {t('Show fewer tools')}
+            </Button>
+          </Box>
+        </Box>
+      ) : (
+        <Box $gap="10px">
+          <Text as="h3" $size="sm" $weight="700" $margin="0">
+            {mine.length ? t('My tools') : t('The most used')}
+          </Text>
+          {list(firstTools, mine.length ? t('My tools') : t('The most used'))}
+          <Box $direction="row">
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={() => setShowAll(true)}
+              icon={<Icon iconName="apps" $size="18px" />}
+            >
+              {t('See all the tools ({{count}})', {
+                count: offered(allIds).length,
+              })}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -1,7 +1,7 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import { getChallenges } from '../learn/challenges';
 import { ChallengeView } from '../learn/ChallengeView';
+import { getChallenges } from '../learn/challenges';
 import { useLearnProgressStore } from '../learn/useLearnProgressStore';
 import { useRewardsStore } from '../rewards/useRewardsStore';
 
@@ -54,15 +54,11 @@ describe('<ChallengeView />', () => {
     );
     render(<ChallengeView challenge={challenge} onBack={vi.fn()} />);
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Have it graded/ }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: /Have it graded/ }));
     expect(await screen.findByText(/Almost there/)).toBeInTheDocument();
     expect(useLearnProgressStore.getState().completedChallenges).toEqual([]);
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Have it graded/ }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: /Have it graded/ }));
     expect(await screen.findByText(/Challenge succeeded/)).toBeInTheDocument();
     expect(useLearnProgressStore.getState().completedChallenges).toEqual([
       challenge.id,

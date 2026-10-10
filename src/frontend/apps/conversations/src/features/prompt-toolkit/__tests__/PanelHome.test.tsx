@@ -5,6 +5,8 @@ import { useRecorderStore } from '../speech/useRecorderStore';
 import { profileRules, useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
+const VIDEO = 'Presentation of Nestor, your coach for asking AI well';
+
 describe('<PanelHome />', () => {
   beforeEach(() => {
     usePromptToolkitStore.setState({
@@ -124,9 +126,9 @@ describe('<PanelHome />', () => {
 
   it('greets with the presentation video once, then shows the cards', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    const { container, rerender } = render(<PanelHome />);
+    const { rerender } = render(<PanelHome />);
 
-    expect(container.querySelector('video')).toHaveAttribute(
+    expect(screen.getByLabelText(VIDEO)).toHaveAttribute(
       'src',
       '/assets/nestor-intro-en.mp4',
     );
@@ -141,12 +143,12 @@ describe('<PanelHome />', () => {
 
   it('offers to watch again once the video has ended', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    const { container } = render(<PanelHome />);
+    render(<PanelHome />);
 
     expect(
       screen.queryByRole('button', { name: /Watch again/ }),
     ).not.toBeInTheDocument();
-    fireEvent.ended(container.querySelector('video') as HTMLVideoElement);
+    fireEvent.ended(screen.getByLabelText(VIDEO));
     expect(
       screen.getByRole('button', { name: /Watch again/ }),
     ).toBeInTheDocument();
@@ -154,9 +156,9 @@ describe('<PanelHome />', () => {
 
   it('greets without motion when the video cannot play', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    const { container } = render(<PanelHome />);
+    render(<PanelHome />);
 
-    fireEvent.error(container.querySelector('video') as HTMLVideoElement);
+    fireEvent.error(screen.getByLabelText(VIDEO));
 
     expect(screen.getByRole('heading', { name: 'Nestor' })).toBeInTheDocument();
     expect(
@@ -165,18 +167,20 @@ describe('<PanelHome />', () => {
   });
 
   it('greets without motion when reduced motion is preferred', () => {
-    const matchMedia = window.matchMedia;
-    window.matchMedia = ((query: string) => ({
-      matches: query.includes('reduce'),
-    })) as unknown as typeof window.matchMedia;
+    const spy = vi
+      .spyOn(window, 'matchMedia')
+      .mockImplementation(
+        (query: string) =>
+          ({ matches: query.includes('reduce') }) as MediaQueryList,
+      );
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    const { container } = render(<PanelHome />);
-    window.matchMedia = matchMedia;
+    render(<PanelHome />);
+    spy.mockRestore();
 
-    expect(container.querySelector('video')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(VIDEO)).not.toBeInTheDocument();
     fireEvent.click(
       screen.getByRole('button', { name: /Watch the presentation/ }),
     );
-    expect(container.querySelector('video')).toBeInTheDocument();
+    expect(screen.getByLabelText(VIDEO)).toBeInTheDocument();
   });
 });

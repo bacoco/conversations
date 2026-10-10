@@ -146,8 +146,9 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     setResetKey((key) => key + 1);
   });
 
+  // The coach's versions replace the draft they come from.
   const place = (text: string) => {
-    placePrompt(text);
+    placePrompt(text, { replaceDraft: true });
     setPlaced(text.trim());
     setIsWriting(false);
     analysis.reset();

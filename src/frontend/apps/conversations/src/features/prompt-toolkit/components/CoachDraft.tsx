@@ -6,6 +6,7 @@ import { css } from 'styled-components';
 import { Box, Icon, Text, useToast } from '@/components';
 import { useResponsiveStore } from '@/stores';
 
+import { placeholdersOf } from '../coach/coachApi';
 import type { PromptAnalysis } from '../coach/coachApi';
 import { FOCUS_SKILLS } from '../coach/coachInsights';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
@@ -85,6 +86,37 @@ const useTipFor = (result: PromptAnalysis | null) => {
     // `tipFor` and `why` follow the language, read with the result.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, dismissed]);
+};
+
+/** Parts left in brackets: to fill in before sending, as a reminder. */
+const ToComplete = ({ text }: { text: string }) => {
+  const { t } = useTranslation();
+  const parts = [...new Set(placeholdersOf(text))];
+  if (parts.length === 0) {
+    return null;
+  }
+  return (
+    <Box
+      role="note"
+      $direction="row"
+      $gap="8px"
+      $css={css`
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(
+          --c--contextuals--background--semantic--warning--tertiary
+        );
+      `}
+    >
+      <Icon iconName="edit_note" $size="20px" $theme="warning" />
+      <Box $gap="2px">
+        <Text $size="sm" $weight="700">
+          {t('To complete before sending')}
+        </Text>
+        <Text $size="sm">{parts.slice(0, 5).join(' · ')}</Text>
+      </Box>
+    </Box>
+  );
 };
 
 const SensitiveWarning = ({ text }: { text: string }) => {
@@ -227,6 +259,7 @@ export const CoachDraft = ({
       />
       <Box $gap="14px" $padding={{ all: 'base' }}>
         <SensitiveWarning text={draft} />
+        <ToComplete text={draft} />
 
         {isPlaced && (
           <Box $gap="12px">

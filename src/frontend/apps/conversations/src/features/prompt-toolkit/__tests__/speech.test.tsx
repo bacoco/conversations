@@ -1,10 +1,4 @@
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { RecorderView } from '../speech/RecorderView';
 import {
@@ -196,9 +190,7 @@ describe('<RecorderView />', () => {
     );
 
     render(<RecorderView onBack={vi.fn()} />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Start recording' }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'Start recording' }));
     fireEvent.click(
       await screen.findByRole('button', { name: 'Finish the recording' }),
     );

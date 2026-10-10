@@ -18,6 +18,7 @@ import { useConversationRouteId } from '@/utils';
 import {
   ConversationContextTurn,
   NestorTurn,
+  TASK_MAX_TOKENS,
   answerPrompt,
   chatWithNestor,
 } from '../coach/coachApi';
@@ -236,7 +237,11 @@ export const NestorDock = ({ language }: { language: string }) => {
       setFailedTask(null);
       setIsLoading(true);
       try {
-        const answer = await answerPrompt(task.prompt, controller.signal);
+        const answer = await answerPrompt(
+          task.prompt,
+          controller.signal,
+          TASK_MAX_TOKENS,
+        );
         setTurns([
           ...next,
           { role: 'nestor', text: answer, sendToChat: answer },

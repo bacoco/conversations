@@ -71,9 +71,8 @@ describe('<PromptGenerator />', () => {
     fireEvent.click(screen.getByRole('button', { name: /Suggest prompts/ }));
 
     expect(await screen.findByText('Note à l’équipe')).toBeInTheDocument();
-    const body = String(
-      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body,
-    );
+    const body = (fetchMock.mock.calls[0] as [string, RequestInit])[1]
+      .body as string;
     expect(body).toContain('Expliquer les règles de télétravail');
     expect(body).toContain('two short');
 
@@ -116,10 +115,10 @@ describe('<PromptGenerator />', () => {
       await screen.findByText('1. Résume. 2. Traduis.'),
     ).toBeInTheDocument();
     expect(
-      String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
+      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body as string,
     ).toContain('<prompt n=\\"2\\">');
     expect(
-      String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
+      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body as string,
     ).toContain('mistral-medium');
   });
 });

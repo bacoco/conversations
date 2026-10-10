@@ -456,7 +456,31 @@ export const Chat = ({
   const latestMainMessage = messages.at(-1);
   const isAssistantResponding =
     status === 'submitted' || status === 'streaming';
+  // An answer counts once it was written in this session: opening an older
+  // conversation is not an answer arriving.
+  const [hasAnsweredHere, setHasAnsweredHere] = useState(false);
+  const wasRespondingRef = useRef(false);
+  // Another conversation opened: start again. A new conversation getting
+  // its id during its first answer is the same one.
+  const answeredConversationRef = useRef(conversationId);
+  useEffect(() => {
+    const previous = answeredConversationRef.current;
+    answeredConversationRef.current = conversationId;
+    if (previous && previous !== conversationId) {
+      setHasAnsweredHere(false);
+      wasRespondingRef.current = false;
+    }
+  }, [conversationId]);
+  useEffect(() => {
+    if (isAssistantResponding) {
+      wasRespondingRef.current = true;
+    } else if (wasRespondingRef.current && status === 'ready') {
+      wasRespondingRef.current = false;
+      setHasAnsweredHere(true);
+    }
+  }, [isAssistantResponding, status]);
   const latestCompletedAssistantMessageId =
+    hasAnsweredHere &&
     !isAssistantResponding &&
     status === 'ready' &&
     latestMainMessage?.role === 'assistant' &&
