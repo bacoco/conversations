@@ -13,7 +13,7 @@ audio: silent (autoplays muted in the browser)
 
 ## Intent
 Shown when the prompt-help right panel opens on Nestor's welcome. Fills the panel.
-Two renders: `robin-intro-fr.mp4`, `robin-intro-en.mp4`.
+Two renders: `nestor-intro-fr.mp4`, `nestor-intro-en.mp4`.
 
 ## Notes
 - No live capture: the dev realm has no usable test account, so the panel screens are

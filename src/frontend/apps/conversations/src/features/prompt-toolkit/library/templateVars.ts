@@ -29,7 +29,7 @@ export const fillTemplate = (text: string, values: Record<string, string>) =>
 
 export const SHARE_PREFIX = '#nestor-prompt=';
 /** Links shared before the mascot was renamed keep working. */
-const LEGACY_SHARE_PREFIXES = ['#robin-prompt='];
+const LEGACY_SHARE_PREFIXES = ['#nestor-prompt='];
 
 const toBase64Url = (text: string) => {
   const bytes = new TextEncoder().encode(text);

@@ -7,10 +7,10 @@ import { Box, Icon } from '@/components';
 
 /**
  * Nestor's presentation, one render per language. Source and render steps:
- * `videos/robin-intro/` (HyperFrames) at the repository root.
+ * `videos/nestor-intro/` (HyperFrames) at the repository root.
  */
 const introVideoUrl = (language?: string) =>
-  `/assets/robin-intro-${language?.startsWith('fr') ? 'fr' : 'en'}.mp4`;
+  `/assets/nestor-intro-${language?.startsWith('fr') ? 'fr' : 'en'}.mp4`;
 /** The video's own background, so its letterboxing blends into the panel. */
 const VIDEO_CANVAS = '#f6f8fc';
 

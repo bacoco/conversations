@@ -58,7 +58,7 @@ describe('<PanelHome />', () => {
 
     expect(container.querySelector('video')).toHaveAttribute(
       'src',
-      '/assets/robin-intro-en.mp4',
+      '/assets/nestor-intro-en.mp4',
     );
     fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
     expect(usePromptToolkitStore.getState().hasSeenWelcome).toBe(true);

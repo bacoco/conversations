@@ -30,7 +30,7 @@ describe('sharing a prompt as a link', () => {
 
   it('ignores other addresses', () => {
     expect(readSharedPrompt('#something-else')).toBeNull();
-    expect(readSharedPrompt('#robin-prompt=@@@')).toBeNull();
+    expect(readSharedPrompt('#nestor-prompt=@@@')).toBeNull();
     expect(readSharedPrompt('#nestor-prompt=@@@')).toBeNull();
   });
 
@@ -39,11 +39,11 @@ describe('sharing a prompt as a link', () => {
     expect(link).toContain('/#nestor-prompt=');
   });
 
-  it('still opens links shared with the former Robin prefix', () => {
+  it('still opens links shared with the former Nestor prefix', () => {
     const link = shareLink('Relance', 'Rédige une relance à {{nom}} !');
     const legacy = link
       .slice(link.indexOf('#'))
-      .replace('#nestor-prompt=', '#robin-prompt=');
+      .replace('#nestor-prompt=', '#nestor-prompt=');
     expect(readSharedPrompt(legacy)).toEqual({
       title: 'Relance',
       prompt: 'Rédige une relance à {{nom}} !',

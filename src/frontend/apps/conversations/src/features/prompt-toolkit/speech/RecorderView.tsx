@@ -27,6 +27,7 @@ import { useSpeechCapture } from './useSpeechCapture';
 const CHUNK_SECONDS = 30;
 const RECORD_RED = '#d0342c';
 const WAVE_BARS = 28;
+const NESTOR_TRANSCRIPTION_URL = '/assets/nestor-transcription.webp';
 
 const pulse = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(208, 52, 44, 0.45); }
@@ -350,6 +351,19 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
       {canTranscribe && (
         <Box $gap="16px">
           <Box $align="center" $gap="12px" $css={cardCss}>
+            {!isActive && !isWorking && (
+              <img
+                src={NESTOR_TRANSCRIPTION_URL}
+                alt=""
+                width={128}
+                height={128}
+                style={{
+                  borderRadius: '16px',
+                  objectFit: 'cover',
+                  background: '#f7f8fd',
+                }}
+              />
+            )}
             {canUseMicrophone && (
               <Box
                 as="button"

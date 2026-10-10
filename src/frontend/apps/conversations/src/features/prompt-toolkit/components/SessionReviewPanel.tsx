@@ -66,7 +66,7 @@ const List = ({
   );
 
 /** Nestor reviewing the session; replaced by a dedicated illustration later. */
-const SESSION_IMAGE_URL = '/assets/robin-bilan.webp';
+const SESSION_IMAGE_URL = '/assets/nestor-bilan.webp';
 
 /** Coach of the whole session: how the user prompted, not one prompt. */
 export const SessionReviewPanel = ({ language }: { language: string }) => {

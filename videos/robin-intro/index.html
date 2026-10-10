@@ -1,13 +1,10 @@
-<!doctype html>
-<html
-  lang="fr"
-  data-composition-variables='[
-    {"id":"lang","type":"enum","label":"Language","default":"fr","options":[{"value":"fr","label":"Français"},{"value":"en","label":"English"}]}
-  ]'
->
+<!DOCTYPE html>
+<html lang="fr" data-composition-variables="[
+    {&quot;id&quot;:&quot;lang&quot;,&quot;type&quot;:&quot;enum&quot;,&quot;label&quot;:&quot;Language&quot;,&quot;default&quot;:&quot;fr&quot;,&quot;options&quot;:[{&quot;value&quot;:&quot;fr&quot;,&quot;label&quot;:&quot;Français&quot;},{&quot;value&quot;:&quot;en&quot;,&quot;label&quot;:&quot;English&quot;}]}
+  ]">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1080, height=1920" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
     <title>Nestor — présentation</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
@@ -471,188 +468,180 @@
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      data-composition-id="main"
-      data-start="0"
-      data-duration="40"
-      data-width="1080"
-      data-height="1920"
-      data-fps="30"
-    >
-      <div id="ground" class="clip" data-start="0" data-duration="40" data-track-index="0">
-        <div class="bg"></div>
-        <div class="flag" id="flag"></div>
+    <div data-hf-id="hf-sw58" id="root" data-composition-id="main" data-start="0" data-duration="40" data-width="1080" data-height="1920" data-fps="30">
+      <div data-hf-id="hf-kvid" id="ground" class="clip" data-start="0" data-duration="40" data-track-index="0">
+        <div data-hf-id="hf-m7dd" class="bg"></div>
+        <div data-hf-id="hf-vz0a" class="flag" id="flag"></div>
       </div>
 
       <!-- 1 · Nestor, the copilot -->
-      <section id="s1" class="scene clip" data-start="0" data-duration="5.8" data-track-index="1">
-        <div class="wrap center" id="s1-in">
-          <div id="s1-title">Nestor</div>
-          <div id="s1-sub" data-t="copilot"></div>
-          <div id="s1-art" data-layout-allow-overflow><img src="assets/robin.webp" alt="" /></div>
-          <div id="s1-serve" data-t="serve"></div>
+      <section data-hf-id="hf-n76u" id="s1" class="scene clip" data-start="0" data-duration="5.8" data-track-index="1">
+        <div data-hf-id="hf-iajr" class="wrap center" id="s1-in">
+          <div data-hf-id="hf-t61j" id="s1-title">Nestor</div>
+          <div data-hf-id="hf-xqr0" id="s1-sub" data-t="copilot"></div>
+          <div data-hf-id="hf-lyyc" id="s1-art" data-layout-allow-overflow=""><img data-hf-id="hf-zjx3" src="assets/nestor.webp" alt=""></div>
+          <div data-hf-id="hf-41ty" id="s1-serve" data-t="serve"></div>
         </div>
       </section>
 
       <!-- 2 · What Nestor does -->
-      <section id="s2" class="scene clip" data-start="5.4" data-duration="6" data-track-index="2">
-        <div class="wrap" id="s2-in" style="justify-content: center">
-          <div class="head" id="s2-head">
-            <img class="round" src="assets/robin-avatar.webp" alt="" style="width: 190px; height: 190px" />
-            <div class="txt">
-              <span class="eyebrow" data-t="eyebrow2"></span>
-              <div class="h2" data-t="intro2"></div>
+      <section data-hf-id="hf-hnw2" id="s2" class="scene clip" data-start="5.4" data-duration="6" data-track-index="2">
+        <div data-hf-id="hf-g6ne" class="wrap" id="s2-in" style="justify-content: center">
+          <div data-hf-id="hf-2hty" class="head" id="s2-head">
+            <img data-hf-id="hf-mio8" class="round" src="assets/nestor-avatar.webp" alt="" style="width: 190px; height: 190px">
+            <div data-hf-id="hf-kvio" class="txt">
+              <span data-hf-id="hf-05m1" class="eyebrow" data-t="eyebrow2"></span>
+              <div data-hf-id="hf-36h0" class="h2" data-t="intro2"></div>
             </div>
           </div>
-          <div class="card value" id="v1">
-            <div class="badge" style="background: var(--info)">
-              <svg viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z" /></svg>
+          <div data-hf-id="hf-lq78" class="card value" id="v1">
+            <div data-hf-id="hf-9hov" class="badge" style="background: var(--info)">
+              <svg data-hf-id="hf-i4bo" viewBox="0 0 24 24" fill="#fff"><path data-hf-id="hf-bpzs" d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z" /></svg>
             </div>
-            <div><span class="v-title" data-t="clarifies"></span><span class="v-text" data-t="request"></span></div>
+            <div data-hf-id="hf-yeow"><span data-hf-id="hf-jsmo" class="v-title" data-t="clarifies"></span><span data-hf-id="hf-51ac" class="v-text" data-t="request"></span></div>
           </div>
-          <div class="card value" id="v2">
-            <div class="badge" style="background: var(--success)">
-              <svg viewBox="0 0 24 24" fill="#fff"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z" /></svg>
+          <div data-hf-id="hf-wlov" class="card value" id="v2">
+            <div data-hf-id="hf-lhqg" class="badge" style="background: var(--success)">
+              <svg data-hf-id="hf-zsws" viewBox="0 0 24 24" fill="#fff"><path data-hf-id="hf-2j3w" d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z" /></svg>
             </div>
-            <div><span class="v-title" data-t="improves"></span><span class="v-text" data-t="prompts"></span></div>
+            <div data-hf-id="hf-y7yw"><span data-hf-id="hf-g51t" class="v-title" data-t="improves"></span><span data-hf-id="hf-cid6" class="v-text" data-t="prompts"></span></div>
           </div>
-          <div class="card value" id="v3">
-            <div class="badge" style="background: var(--navy)">
-              <svg viewBox="0 0 24 24" fill="#fff"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM7 12h10v1.6H7V12zm0 4h10v1.6H7V16z" /></svg>
+          <div data-hf-id="hf-snku" class="card value" id="v3">
+            <div data-hf-id="hf-ccn7" class="badge" style="background: var(--navy)">
+              <svg data-hf-id="hf-ylzp" viewBox="0 0 24 24" fill="#fff"><path data-hf-id="hf-3uin" d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM7 12h10v1.6H7V12zm0 4h10v1.6H7V16z" /></svg>
             </div>
-            <div><span class="v-title" data-t="structures"></span><span class="v-text" data-t="ideas"></span></div>
+            <div data-hf-id="hf-x11t"><span data-hf-id="hf-07tc" class="v-title" data-t="structures"></span><span data-hf-id="hf-tohv" class="v-text" data-t="ideas"></span></div>
           </div>
         </div>
       </section>
 
       <!-- 3 · The home cards: three spaces -->
-      <section id="s3" class="scene clip" data-start="11" data-duration="6.6" data-track-index="3">
-        <div class="wrap center" id="s3-in" style="gap: 36px">
-          <img class="round" id="s3-nestor" src="assets/robin-accueil.webp" alt="" style="width: 340px; height: 340px" />
-          <div class="h2" data-t="help" style="max-width: 860px"></div>
-          <div id="s3-cards" style="display: flex; flex-direction: column; gap: 26px; width: 100%; text-align: left">
-            <div class="card home-card" id="c1">
-              <img class="round" src="assets/robin-analyse.webp" alt="" style="width: 150px; height: 150px; flex: none" />
-              <div style="flex: 1; min-width: 0"><span class="t" data-t="coach"></span><span class="d" data-t="coachD"></span></div>
-              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+      <section data-hf-id="hf-in8p" id="s3" class="scene clip" data-start="11" data-duration="6.6" data-track-index="3">
+        <div data-hf-id="hf-c4ug" class="wrap center" id="s3-in" style="gap: 36px">
+          <img data-hf-id="hf-2vp3" class="round" id="s3-nestor" src="assets/nestor-accueil.webp" alt="" style="width: 340px; height: 340px">
+          <div data-hf-id="hf-dk80" class="h2" data-t="help" style="max-width: 860px"></div>
+          <div data-hf-id="hf-4dy1" id="s3-cards" style="display: flex; flex-direction: column; gap: 26px; width: 100%; text-align: left">
+            <div data-hf-id="hf-q368" class="card home-card" id="c1">
+              <img data-hf-id="hf-h2wq" class="round" src="assets/nestor-analyse.webp" alt="" style="width: 150px; height: 150px; flex: none">
+              <div data-hf-id="hf-0scp" style="flex: 1; min-width: 0"><span data-hf-id="hf-six9" class="t" data-t="coach"></span><span data-hf-id="hf-58dn" class="d" data-t="coachD"></span></div>
+              <svg data-hf-id="hf-9lfu" class="chev" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-bvmx" d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
             </div>
-            <div class="card home-card" id="c2">
-              <img class="round" src="assets/robin-cours.webp" alt="" style="width: 150px; height: 150px; flex: none" />
-              <div style="flex: 1; min-width: 0"><span class="t" data-t="course"></span><span class="d" data-t="courseD"></span></div>
-              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+            <div data-hf-id="hf-0ynv" class="card home-card" id="c2">
+              <img data-hf-id="hf-190d" class="round" src="assets/nestor-cours.webp" alt="" style="width: 150px; height: 150px; flex: none">
+              <div data-hf-id="hf-ibnh" style="flex: 1; min-width: 0"><span data-hf-id="hf-flde" class="t" data-t="course"></span><span data-hf-id="hf-1i76" class="d" data-t="courseD"></span></div>
+              <svg data-hf-id="hf-858u" class="chev" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-e02l" d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
             </div>
-            <div class="card home-card" id="c3">
-              <img class="round" src="assets/robin-outils.webp" alt="" style="width: 150px; height: 150px; flex: none" />
-              <div style="flex: 1; min-width: 0"><span class="t" data-t="tools"></span><span class="d" data-t="toolsD"></span></div>
-              <svg class="chev" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
+            <div data-hf-id="hf-usy2" class="card home-card" id="c3">
+              <img data-hf-id="hf-sp8v" class="round" src="assets/nestor-outils.webp" alt="" style="width: 150px; height: 150px; flex: none">
+              <div data-hf-id="hf-jikk" style="flex: 1; min-width: 0"><span data-hf-id="hf-54rq" class="t" data-t="tools"></span><span data-hf-id="hf-jz9i" class="d" data-t="toolsD"></span></div>
+              <svg data-hf-id="hf-8jjv" class="chev" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-f6zo" d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z" /></svg>
             </div>
           </div>
         </div>
       </section>
 
       <!-- 4 · Prompt coach: a weak prompt becomes a strong one -->
-      <section id="s4" class="scene clip" data-start="17.2" data-duration="8.6" data-track-index="4">
-        <div class="wrap" id="s4-in" style="gap: 36px; justify-content: center">
-          <div class="head" id="s4-head">
-            <img class="round" src="assets/robin-analyse.webp" alt="" style="width: 200px; height: 200px" />
-            <div class="txt">
-              <span class="eyebrow" data-t="num1"></span>
-              <div class="h2" data-t="coach"></div>
+      <section data-hf-id="hf-rb05" id="s4" class="scene clip" data-start="17.2" data-duration="8.6" data-track-index="4">
+        <div data-hf-id="hf-jqxa" class="wrap" id="s4-in" style="gap: 36px; justify-content: center">
+          <div data-hf-id="hf-6j10" class="head" id="s4-head">
+            <img data-hf-id="hf-8qt2" class="round" src="assets/nestor-analyse.webp" alt="" style="width: 200px; height: 200px">
+            <div data-hf-id="hf-gju0" class="txt">
+              <span data-hf-id="hf-4vrd" class="eyebrow" data-t="num1"></span>
+              <div data-hf-id="hf-x1t6" class="h2" data-t="coach"></div>
             </div>
           </div>
-          <div class="chips" id="s4-chips">
-            <span class="chip on" data-t="analysis"></span>
-            <span class="chip" data-t="versions"></span>
-            <span class="chip" data-t="asYouType"></span>
+          <div data-hf-id="hf-l61s" class="chips" id="s4-chips">
+            <span data-hf-id="hf-m0ke" class="chip on" data-t="analysis"></span>
+            <span data-hf-id="hf-ad6a" class="chip" data-t="versions"></span>
+            <span data-hf-id="hf-7fpq" class="chip" data-t="asYouType"></span>
           </div>
-          <div class="card" id="s4-input">
-            <span class="lbl" data-t="yourPrompt"></span>
-            <span id="s4-typed"></span>
-            <div id="s4-analyse">
-              <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.9 5.6L19.5 9.5 13.9 11.4 12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" /></svg>
+          <div data-hf-id="hf-9t7q" class="card" id="s4-input">
+            <span data-hf-id="hf-smwc" class="lbl" data-t="yourPrompt"></span>
+            <span data-hf-id="hf-udj8" id="s4-typed"></span>
+            <div data-hf-id="hf-hdys" id="s4-analyse">
+              <svg data-hf-id="hf-z0aq" viewBox="0 0 24 24" fill="#fff"><path data-hf-id="hf-xlrt" d="M12 2l1.9 5.6L19.5 9.5 13.9 11.4 12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" /></svg>
             </div>
           </div>
-          <div id="s4-scores">
-            <div class="card score" id="s4-before">
-              <div class="ring">
-                <svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="58" fill="none" stroke="#f3dada" stroke-width="14" /><circle id="s4-arc1" cx="70" cy="70" r="58" fill="none" stroke="#ce0500" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
-                <div class="num" id="s4-n1" style="color: #ce0500">0</div>
+          <div data-hf-id="hf-m5y0" id="s4-scores">
+            <div data-hf-id="hf-1m1l" class="card score" id="s4-before">
+              <div data-hf-id="hf-0qcu" class="ring">
+                <svg data-hf-id="hf-xpmh" viewBox="0 0 140 140"><circle data-hf-id="hf-b8oh" cx="70" cy="70" r="58" fill="none" stroke="#f3dada" stroke-width="14" /><circle data-hf-id="hf-kk7h" id="s4-arc1" cx="70" cy="70" r="58" fill="none" stroke="#ce0500" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
+                <div data-hf-id="hf-diqe" class="num" id="s4-n1" style="color: #ce0500">0</div>
               </div>
-              <div class="s-lbl" data-t="before"></div>
+              <div data-hf-id="hf-pk5h" class="s-lbl" data-t="before"></div>
             </div>
-            <div class="card score" id="s4-after">
-              <div class="ring">
-                <svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="58" fill="none" stroke="#d4f0dc" stroke-width="14" /><circle id="s4-arc2" cx="70" cy="70" r="58" fill="none" stroke="#18753c" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
-                <div class="num" id="s4-n2" style="color: #18753c">0</div>
+            <div data-hf-id="hf-ucmu" class="card score" id="s4-after">
+              <div data-hf-id="hf-ul4i" class="ring">
+                <svg data-hf-id="hf-zt8t" viewBox="0 0 140 140"><circle data-hf-id="hf-g3ud" cx="70" cy="70" r="58" fill="none" stroke="#d4f0dc" stroke-width="14" /><circle data-hf-id="hf-9vge" id="s4-arc2" cx="70" cy="70" r="58" fill="none" stroke="#18753c" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 70 70)" /></svg>
+                <div data-hf-id="hf-zgml" class="num" id="s4-n2" style="color: #18753c">0</div>
               </div>
-              <div class="s-lbl" data-t="after"></div>
+              <div data-hf-id="hf-8zoy" class="s-lbl" data-t="after"></div>
             </div>
           </div>
-          <div class="card" id="s4-better">
-            <span class="lbl" data-t="suggested"></span>
-            <div id="s4-better-text"></div>
+          <div data-hf-id="hf-pg5c" class="card" id="s4-better">
+            <span data-hf-id="hf-jp4g" class="lbl" data-t="suggested"></span>
+            <div data-hf-id="hf-fuzd" id="s4-better-text"></div>
           </div>
         </div>
       </section>
 
       <!-- 5 · Prompting course -->
-      <section id="s5" class="scene clip" data-start="25.4" data-duration="6.4" data-track-index="5">
-        <div class="wrap" id="s5-in" style="gap: 34px; justify-content: center">
-          <div class="head" id="s5-head">
-            <img class="round" src="assets/robin-cours.webp" alt="" style="width: 200px; height: 200px" />
-            <div class="txt">
-              <span class="eyebrow" data-t="num2"></span>
-              <div class="h2" data-t="course"></div>
+      <section data-hf-id="hf-g84q" id="s5" class="scene clip" data-start="25.4" data-duration="6.4" data-track-index="5">
+        <div data-hf-id="hf-48jt" class="wrap" id="s5-in" style="gap: 34px; justify-content: center">
+          <div data-hf-id="hf-5r9r" class="head" id="s5-head">
+            <img data-hf-id="hf-h9u9" class="round" src="assets/nestor-cours.webp" alt="" style="width: 200px; height: 200px">
+            <div data-hf-id="hf-fcwx" class="txt">
+              <span data-hf-id="hf-8tve" class="eyebrow" data-t="num2"></span>
+              <div data-hf-id="hf-f6wr" class="h2" data-t="course"></div>
             </div>
           </div>
-          <div class="lead" data-t="courseD" id="s5-lead"></div>
-          <div class="grid2">
-            <div class="card tile" id="t1"><img class="round" src="assets/robin-lecons.webp" alt="" /><span class="t" data-t="lessons"></span><span class="d" data-t="lessonsD"></span></div>
-            <div class="card tile" id="t2"><img class="round" src="assets/robin-fiches.webp" alt="" /><span class="t" data-t="cards"></span><span class="d" data-t="cardsD"></span></div>
-            <div class="card tile" id="t3"><img class="round" src="assets/robin-quiz.webp" alt="" /><span class="t" data-t="quiz"></span><span class="d" data-t="quizD"></span></div>
-            <div class="card tile" id="t4"><img class="round" src="assets/robin-defis.webp" alt="" /><span class="t" data-t="challenges"></span><span class="d" data-t="challengesD"></span></div>
+          <div data-hf-id="hf-13zm" class="lead" data-t="courseD" id="s5-lead"></div>
+          <div data-hf-id="hf-6ldu" class="grid2">
+            <div data-hf-id="hf-8q7h" class="card tile" id="t1"><img data-hf-id="hf-56rr" class="round" src="assets/nestor-lecons.webp" alt=""><span data-hf-id="hf-s6n0" class="t" data-t="lessons"></span><span data-hf-id="hf-zv94" class="d" data-t="lessonsD"></span></div>
+            <div data-hf-id="hf-cobi" class="card tile" id="t2"><img data-hf-id="hf-2x1n" class="round" src="assets/nestor-fiches.webp" alt=""><span data-hf-id="hf-9kiu" class="t" data-t="cards"></span><span data-hf-id="hf-f4li" class="d" data-t="cardsD"></span></div>
+            <div data-hf-id="hf-gmfj" class="card tile" id="t3"><img data-hf-id="hf-574s" class="round" src="assets/nestor-quiz.webp" alt=""><span data-hf-id="hf-agre" class="t" data-t="quiz"></span><span data-hf-id="hf-s17e" class="d" data-t="quizD"></span></div>
+            <div data-hf-id="hf-kkjk" class="card tile" id="t4"><img data-hf-id="hf-t57w" class="round" src="assets/nestor-defis.webp" alt=""><span data-hf-id="hf-b78f" class="t" data-t="challenges"></span><span data-hf-id="hf-dzqp" class="d" data-t="challengesD"></span></div>
           </div>
-          <div class="card" id="s5-progress">
-            <div class="top"><span data-t="progress"></span><span id="s5-pct">0 %</span></div>
-            <div class="bar"><div id="s5-fill"></div></div>
+          <div data-hf-id="hf-hv4c" class="card" id="s5-progress">
+            <div data-hf-id="hf-sijt" class="top"><span data-hf-id="hf-g637" data-t="progress"></span><span data-hf-id="hf-26pr" id="s5-pct">0 %</span></div>
+            <div data-hf-id="hf-ufsv" class="bar"><div data-hf-id="hf-5l9h" id="s5-fill"></div></div>
           </div>
         </div>
       </section>
 
       <!-- 6 · Everyday tools -->
-      <section id="s6" class="scene clip" data-start="31.4" data-duration="6" data-track-index="6">
-        <div class="wrap" id="s6-in" style="gap: 30px; justify-content: center">
-          <div class="head" id="s6-head">
-            <img class="round" src="assets/robin-outils.webp" alt="" style="width: 200px; height: 200px" />
-            <div class="txt">
-              <span class="eyebrow" data-t="num3"></span>
-              <div class="h2" data-t="tools"></div>
+      <section data-hf-id="hf-o1yl" id="s6" class="scene clip" data-start="31.4" data-duration="6" data-track-index="6">
+        <div data-hf-id="hf-ziay" class="wrap" id="s6-in" style="gap: 30px; justify-content: center">
+          <div data-hf-id="hf-7d1e" class="head" id="s6-head">
+            <img data-hf-id="hf-r1ib" class="round" src="assets/nestor-outils.webp" alt="" style="width: 200px; height: 200px">
+            <div data-hf-id="hf-fr7y" class="txt">
+              <span data-hf-id="hf-crzf" class="eyebrow" data-t="num3"></span>
+              <div data-hf-id="hf-daol" class="h2" data-t="tools"></div>
             </div>
           </div>
-          <div class="lead" data-t="toolsD" id="s6-lead"></div>
-          <div class="grid2" style="gap: 24px">
-            <div class="card tool" id="o1"><img class="round" src="assets/robin-ecrire.webp" alt="" /><span class="t" data-t="write"></span></div>
-            <div class="card tool" id="o2"><img class="round" src="assets/robin-resumer.webp" alt="" /><span class="t" data-t="summarise"></span></div>
-            <div class="card tool" id="o3"><img class="round" src="assets/robin-organiser.webp" alt="" /><span class="t" data-t="organise"></span></div>
-            <div class="card tool" id="o4"><img class="round" src="assets/robin-prompts.webp" alt="" /><span class="t" data-t="library"></span></div>
-            <div class="card tool small" id="o5">
-              <div class="ico"><svg viewBox="0 0 24 24" fill="#18753c"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></div>
-              <span class="t" data-t="improve"></span>
+          <div data-hf-id="hf-e7jd" class="lead" data-t="toolsD" id="s6-lead"></div>
+          <div data-hf-id="hf-jnvi" class="grid2" style="gap: 24px">
+            <div data-hf-id="hf-xv7m" class="card tool" id="o1"><img data-hf-id="hf-t01x" class="round" src="assets/nestor-ecrire.webp" alt=""><span data-hf-id="hf-yyey" class="t" data-t="write"></span></div>
+            <div data-hf-id="hf-rpht" class="card tool" id="o2"><img data-hf-id="hf-5t4w" class="round" src="assets/nestor-resumer.webp" alt=""><span data-hf-id="hf-e8lz" class="t" data-t="summarise"></span></div>
+            <div data-hf-id="hf-qxu0" class="card tool" id="o3"><img data-hf-id="hf-y55h" class="round" src="assets/nestor-organiser.webp" alt=""><span data-hf-id="hf-462h" class="t" data-t="organise"></span></div>
+            <div data-hf-id="hf-mzpz" class="card tool" id="o4"><img data-hf-id="hf-tkq8" class="round" src="assets/nestor-prompts.webp" alt=""><span data-hf-id="hf-fq9m" class="t" data-t="library"></span></div>
+            <div data-hf-id="hf-wz8v" class="card tool small" id="o5">
+              <div data-hf-id="hf-5hk7" class="ico"><svg data-hf-id="hf-dqcx" viewBox="0 0 24 24" fill="#18753c"><path data-hf-id="hf-q1tw" d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></div>
+              <span data-hf-id="hf-g0dn" class="t" data-t="improve"></span>
             </div>
-            <div class="card tool small" id="o6">
-              <div class="ico"><svg viewBox="0 0 24 24" fill="#18753c"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6a5.9 5.9 0 0 1 4.22 1.78L13 11h7V4l-2.35 2.35z" /></svg></div>
-              <span class="t" data-t="followUp"></span>
+            <div data-hf-id="hf-f3hx" class="card tool" id="o6">
+              <img data-hf-id="hf-t96f" class="round" src="assets/nestor-transcription.webp" alt="">
+              <span data-hf-id="hf-4kuk" class="t" data-t="transcribe"></span>
             </div>
           </div>
         </div>
       </section>
 
       <!-- 7 · Outro -->
-      <section id="s7" class="scene clip" data-start="37" data-duration="3" data-track-index="7">
-        <div class="wrap center" id="s7-in" style="gap: 50px">
-          <div id="s7-art"><img src="assets/robin.webp" alt="" /></div>
-          <div id="s7-tag" data-t="tagline"></div>
+      <section data-hf-id="hf-s276" id="s7" class="scene clip" data-start="37" data-duration="3" data-track-index="7">
+        <div data-hf-id="hf-38mo" class="wrap center" id="s7-in" style="gap: 50px">
+          <div data-hf-id="hf-illv" id="s7-art"><img data-hf-id="hf-zd07" src="assets/nestor.webp" alt=""></div>
+          <div data-hf-id="hf-y35q" id="s7-tag" data-t="tagline"></div>
         </div>
       </section>
     </div>
@@ -704,7 +693,7 @@
           organise: "Organiser",
           library: "Bibliothèque de prompts",
           improve: "Améliorer mon texte",
-          followUp: "Relancer une réponse",
+          transcribe: "Transcrire un audio",
           tagline: "Un meilleur prompt, plus d’impact !",
           getStarted: "Commencer",
         },
@@ -753,7 +742,7 @@
           organise: "Organise",
           library: "Prompt library",
           improve: "Improve my text",
-          followUp: "Follow up on an answer",
+          transcribe: "Transcribe audio",
           tagline: "A better prompt, more impact!",
           getStarted: "Get started",
         },

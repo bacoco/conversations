@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nestor — aperçu des illustrations</title>
+    <style>
+      :root { color-scheme: light; font-family: Marianne, Arial, sans-serif; background: #f5f6ff; color: #1e1e2f; }
+      body { margin: 0; padding: 32px; }
+      header { max-width: 1120px; margin: 0 auto 24px; }
+      h1 { margin: 0 0 8px; color: #3a2a76; }
+      p { margin: 0; color: #5e6078; }
+      .grid { max-width: 1120px; margin: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; }
+      figure { margin: 0; overflow: hidden; border: 1px solid #deddf0; border-radius: 18px; background: #fff; box-shadow: 0 5px 16px rgba(51, 42, 104, .08); }
+      .frame { aspect-ratio: 1; display: grid; place-items: center; background: radial-gradient(circle at 50% 20%, #fff 0, #f7f8fd 65%); }
+      img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
+      .pending { padding: 24px; text-align: center; color: #6957aa; font-weight: 700; }
+      figcaption { display: flex; justify-content: space-between; gap: 8px; padding: 12px 14px; border-top: 1px solid #eeedf6; font-size: 14px; }
+      .status { color: #8069d1; font-size: 12px; font-weight: 700; }
+      .ready .status { color: #277a52; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Nestor — illustrations en cours</h1>
+      <p>Le renard orange au foulard violet et à l’étoile-boussole dorée remplace progressivement Nestor dans l’application et la vidéo.</p>
+    </header>
+    <main class="grid" id="gallery"></main>
+    <script>
+      const assets = [
+        ['nestor', 'Accueil'], ['nestor-avatar', 'Avatar'], ['nestor-accueil', 'Bienvenue'],
+        ['nestor-analyse', 'Analyse'], ['nestor-cours', 'Cours'], ['nestor-outils', 'Outils'],
+        ['nestor-lecons', 'Leçons'], ['nestor-fiches', 'Fiches'], ['nestor-quiz', 'Quiz'],
+        ['nestor-defis', 'Défis'], ['nestor-ecrire', 'Écrire'], ['nestor-resumer', 'Résumer'],
+        ['nestor-organiser', 'Organiser'], ['nestor-prompts', 'Bibliothèque de prompts'],
+        ['nestor-aide', 'Aide'], ['nestor-bilan', 'Bilan'], ['nestor-volee', 'Envol'],
+        ['nestor-transcription', 'Transcription audio']
+      ];
+      document.querySelector('#gallery').innerHTML = assets.map(([file, label]) => `
+        <figure id="${file}">
+          <div class="frame"><span class="pending">Génération en cours</span><img src="${file}.webp" alt="Nestor — ${label}" hidden /></div>
+          <figcaption><span>${label}</span><span class="status">à générer</span></figcaption>
+        </figure>`).join('');
+      document.querySelectorAll('img').forEach((image) => {
+        image.addEventListener('load', () => {
+          image.hidden = false;
+          image.previousElementSibling.hidden = true;
+          const card = image.closest('figure');
+          card.classList.add('ready');
+          card.querySelector('.status').textContent = 'prêt';
+        });
+      });
+    </script>
+  </body>
+</html>

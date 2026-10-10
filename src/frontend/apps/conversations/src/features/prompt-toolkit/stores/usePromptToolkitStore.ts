@@ -234,7 +234,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
 );
 
 /**
- * A link shared by a colleague (#nestor-prompt=…, or the older #robin-prompt=…)
+ * A link shared by a colleague (#nestor-prompt=…, or the older #nestor-prompt=…)
  * opens the panel with an offer to import the prompt; the address is then
  * cleaned.
  */

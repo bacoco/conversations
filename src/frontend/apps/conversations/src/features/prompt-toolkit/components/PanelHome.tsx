@@ -57,24 +57,24 @@ const centeredCss = css`
   justify-content: center;
 `;
 
-export const NESTOR_IMAGE_URL = '/assets/robin.webp';
-export const NESTOR_AVATAR_URL = '/assets/robin-avatar.webp';
+export const NESTOR_IMAGE_URL = '/assets/nestor.webp';
+export const NESTOR_AVATAR_URL = '/assets/nestor-avatar.webp';
 /** Nestor in each space of the panel, same style as the welcome. */
-export const NESTOR_ANALYSIS_URL = '/assets/robin-analyse.webp';
-export const NESTOR_HELP_URL = '/assets/robin-aide.webp';
-export const NESTOR_HOME_URL = '/assets/robin-accueil.webp';
-export const NESTOR_INSTANT_URL = '/assets/robin-volee.webp';
-export const NESTOR_COURSE_URL = '/assets/robin-cours.webp';
-export const NESTOR_TOOLS_URL = '/assets/robin-outils.webp';
-export const NESTOR_WRITE_URL = '/assets/robin-ecrire.webp';
-export const NESTOR_SUMMARIZE_URL = '/assets/robin-resumer.webp';
-export const NESTOR_ORGANIZE_URL = '/assets/robin-organiser.webp';
-export const NESTOR_PROMPTS_URL = '/assets/robin-prompts.webp';
-export const NESTOR_LESSONS_URL = '/assets/robin-lecons.webp';
-export const NESTOR_CARDS_URL = '/assets/robin-fiches.webp';
-export const NESTOR_QUIZ_URL = '/assets/robin-quiz.webp';
-export const NESTOR_CHALLENGES_URL = '/assets/robin-defis.webp';
-const RECORD_RED = '#d0342c';
+export const NESTOR_ANALYSIS_URL = '/assets/nestor-analyse.webp';
+export const NESTOR_HELP_URL = '/assets/nestor-aide.webp';
+export const NESTOR_HOME_URL = '/assets/nestor-accueil.webp';
+export const NESTOR_INSTANT_URL = '/assets/nestor-volee.webp';
+export const NESTOR_COURSE_URL = '/assets/nestor-cours.webp';
+export const NESTOR_TOOLS_URL = '/assets/nestor-outils.webp';
+export const NESTOR_WRITE_URL = '/assets/nestor-ecrire.webp';
+export const NESTOR_SUMMARIZE_URL = '/assets/nestor-resumer.webp';
+export const NESTOR_ORGANIZE_URL = '/assets/nestor-organiser.webp';
+export const NESTOR_PROMPTS_URL = '/assets/nestor-prompts.webp';
+export const NESTOR_LESSONS_URL = '/assets/nestor-lecons.webp';
+export const NESTOR_CARDS_URL = '/assets/nestor-fiches.webp';
+export const NESTOR_QUIZ_URL = '/assets/nestor-quiz.webp';
+export const NESTOR_CHALLENGES_URL = '/assets/nestor-defis.webp';
+export const NESTOR_TRANSCRIPTION_URL = '/assets/nestor-transcription.webp';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 // Theme colour: readable in light and dark mode.
@@ -345,21 +345,18 @@ export const PanelHome = () => {
             text-align: left;
           `}
         >
-          <Box
-            $align="center"
-            $justify="center"
-            $css={css`
-              flex: none;
-              width: 52px;
-              height: 52px;
-              border-radius: 50%;
-              color: #ffffff;
-              background: ${RECORD_RED};
-              box-shadow: 0 4px 12px rgba(208, 52, 44, 0.3);
-            `}
-          >
-            <Icon iconName="mic" $size="28px" $withThemeInherited />
-          </Box>
+          <img
+            src={NESTOR_TRANSCRIPTION_URL}
+            alt=""
+            width={64}
+            height={64}
+            style={{
+              flex: 'none',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              background: ILLUSTRATION_BACKGROUND,
+            }}
+          />
           <Box $gap="2px" $css="flex: 1; min-width: 0;">
             <Text $weight="700">{t('Record and transcribe')}</Text>
             <Text $size="sm" $variation="secondary">

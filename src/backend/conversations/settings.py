@@ -1108,7 +1108,8 @@ class Development(Base):
 
     ALLOWED_HOSTS = ["*"]
     CORS_ALLOW_ALL_ORIGINS = True
-    CSRF_TRUSTED_ORIGINS = ["http://localhost:8072", "http://localhost:3000"]
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:8072", "http://localhost:3000", "https://dev.bhub.cloud"]
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     DEBUG = True
 
     SESSION_COOKIE_NAME = "conversations_sessionid"
