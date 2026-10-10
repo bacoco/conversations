@@ -1,10 +1,20 @@
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import type { Competency } from '../coach/coachApi';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 
-import { ProgressSnapshot, Step, computeSkillLevels } from './steps';
+import { getChallenges } from './challenges';
+import { getCourseContent } from './content';
+import {
+  ProgressSnapshot,
+  Step,
+  buildSteps,
+  computeSkillLevels,
+  reviewCount,
+} from './steps';
 import { SkillLevel, useLearnProgressStore } from './useLearnProgressStore';
 
 /** The course progress the path needs, re-rendering only when it changes. */
@@ -51,4 +61,26 @@ export const useSkillLevels = (steps: Step[]) => {
     }
     return levels;
   }, [current, kept]);
+};
+
+/** The steps of the course, in the UI language, as offered right now. */
+export const useCourseSteps = () => {
+  const { i18n } = useTranslation();
+  const isAiAvailable = useAiAvailable();
+  return useMemo(
+    () =>
+      buildSteps(
+        getCourseContent(i18n.language),
+        getChallenges(i18n.language),
+        isAiAvailable,
+      ),
+    [i18n.language, isAiAvailable],
+  );
+};
+
+/** How many cards and questions are due for review. */
+export const useReviewDue = () => {
+  const steps = useCourseSteps();
+  const progress = useLearnProgress();
+  return useMemo(() => reviewCount(steps, progress), [steps, progress]);
 };

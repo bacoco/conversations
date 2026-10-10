@@ -6,6 +6,8 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
+import { REVIEW_FIRST_FROM } from '../learn/steps';
+import { useReviewDue } from '../learn/useLearnProgress';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import { useRecorderStore } from '../speech/useRecorderStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
@@ -23,6 +25,8 @@ interface HomeCard {
   description: string;
   image: string;
   onSelect: () => void;
+  /** A gentle sign that something waits there, in words for readers. */
+  badge?: string;
 }
 
 const cardCss = (tone: Tone) => css`
@@ -349,6 +353,7 @@ export const PanelHome = () => {
   const isAiUnavailable = useAiUnavailable();
   const isAiAvailable = useAiAvailable();
   const openTool = usePromptToolkitStore((state) => state.openTool);
+  const reviewDue = useReviewDue();
 
   const transcriptionCard: HomeCard = {
     id: 'transcription',
@@ -380,6 +385,10 @@ export const PanelHome = () => {
       title: t('Course'),
       description: t('Learning to ask well: lessons, cards, quizzes.'),
       onSelect: () => openSection('learn'),
+      badge:
+        reviewDue >= REVIEW_FIRST_FROM
+          ? t('{{count}} items to review', { count: reviewDue })
+          : undefined,
     },
     {
       id: 'tools',
@@ -427,10 +436,30 @@ export const PanelHome = () => {
               $gap="8px"
               $css={css`
                 ${cardCss(card.tone)}
+                position: relative;
                 justify-content: flex-start;
                 text-align: center;
               `}
             >
+              {card.badge && (
+                <Box
+                  as="span"
+                  title={card.badge}
+                  $css={css`
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: var(
+                      --c--contextuals--background--semantic--brand--primary
+                    );
+                  `}
+                >
+                  <span className="sr-only">{card.badge}</span>
+                </Box>
+              )}
               <img
                 src={card.image}
                 alt=""

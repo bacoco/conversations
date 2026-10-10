@@ -5,6 +5,8 @@ export interface Challenge {
   id: string;
   level: 1 | 2 | 3;
   title: string;
+  /** The work situation the request comes from. */
+  situation: string;
   badPrompt: string;
   /** What is wrong with it, in one sentence. */
   problem: string;
@@ -20,7 +22,9 @@ const CHALLENGES_FR: Challenge[] = [
   {
     id: 'vague',
     level: 1,
-    title: 'Le prompt trop vague',
+    title: 'La demande trop vague',
+    situation:
+      'Votre chef de service vous transfère une note de 4 pages avec ce mot : « Il me faut l’essentiel pour 14 h. » Vous écrivez :',
     badPrompt: 'Fais-moi un truc avec ce texte.',
     problem: 'On ne sait ni ce qu’il faut produire, ni sous quelle forme.',
     targets: ['task', 'format'],
@@ -32,7 +36,9 @@ const CHALLENGES_FR: Challenge[] = [
   {
     id: 'no-context',
     level: 1,
-    title: 'Le prompt sans contexte',
+    title: 'La demande sans contexte',
+    situation:
+      'Un décret paru ce matin change l’accueil des usagers. Votre équipe d’accueil doit être briefée demain. Vous écrivez :',
     badPrompt: 'Résume ce décret.',
     problem:
       'Ni le public, ni l’usage, ni la longueur du résumé ne sont précisés.',
@@ -47,6 +53,8 @@ const CHALLENGES_FR: Challenge[] = [
     id: 'no-format',
     level: 2,
     title: 'Le pavé illisible',
+    situation:
+      'Votre directeur doit choisir entre trois scénarios de rénovation en comité vendredi. Vous écrivez :',
     badPrompt:
       'Donne-moi les informations importantes sur les trois scénarios de rénovation.',
     problem:
@@ -61,7 +69,9 @@ const CHALLENGES_FR: Challenge[] = [
   {
     id: 'contradictory',
     level: 2,
-    title: 'Le prompt contradictoire',
+    title: 'La demande contradictoire',
+    situation:
+      'On vous demande un résumé du dernier comité, pour l’intranet du service. Vous écrivez :',
     badPrompt:
       'Fais un résumé très détaillé en deux lignes, sur un ton formel et décontracté.',
     problem:
@@ -75,7 +85,9 @@ const CHALLENGES_FR: Challenge[] = [
   {
     id: 'hallucination',
     level: 3,
-    title: 'Le prompt qui fait inventer',
+    title: 'La demande qui fait inventer',
+    situation:
+      'Un collègue vous demande ce qui a changé pour le télétravail. Vous avez la circulaire sous la main. Vous écrivez :',
     badPrompt:
       'Quelles sont les dernières règles du télétravail dans la fonction publique ?',
     problem:
@@ -91,6 +103,8 @@ const CHALLENGES_FR: Challenge[] = [
     id: 'multi-task',
     level: 3,
     title: 'Trois tâches en une phrase',
+    situation:
+      'Un partenaire européen attend une synthèse du rapport, en anglais, avec les points clés. Vous écrivez :',
     badPrompt:
       'Résume ce texte et traduis-le en anglais et fais un tableau des points clés.',
     problem: 'Trois tâches mélangées, sans ordre ni format pour chacune.',
@@ -107,7 +121,9 @@ const CHALLENGES_EN: Challenge[] = [
   {
     id: 'vague',
     level: 1,
-    title: 'The vague prompt',
+    title: 'The vague request',
+    situation:
+      'Your head of department forwards a 4-page note saying: “I need the gist by 2 pm.” You write:',
     badPrompt: 'Do something with this text.',
     problem: 'Neither the expected result nor its form is stated.',
     targets: ['task', 'format'],
@@ -116,7 +132,9 @@ const CHALLENGES_EN: Challenge[] = [
   {
     id: 'no-context',
     level: 1,
-    title: 'The prompt without context',
+    title: 'The request without context',
+    situation:
+      'A decree out this morning changes the front desk. Your team must be briefed tomorrow. You write:',
     badPrompt: 'Summarise this decree.',
     problem:
       'The audience, the purpose and the length of the summary are missing.',
@@ -131,6 +149,8 @@ const CHALLENGES_EN: Challenge[] = [
     id: 'no-format',
     level: 2,
     title: 'The wall of text',
+    situation:
+      'Your director must choose between three renovation scenarios at Friday’s committee. You write:',
     badPrompt:
       'Give me the important information about the three renovation scenarios.',
     problem:
@@ -145,7 +165,9 @@ const CHALLENGES_EN: Challenge[] = [
   {
     id: 'contradictory',
     level: 2,
-    title: 'The contradictory prompt',
+    title: 'The contradictory request',
+    situation:
+      'You are asked for a summary of the last committee, for the department intranet. You write:',
     badPrompt:
       'Write a very detailed summary in two lines, in a formal and casual tone.',
     problem: 'Detailed or two lines? Formal or casual? You have to choose.',
@@ -155,7 +177,9 @@ const CHALLENGES_EN: Challenge[] = [
   {
     id: 'hallucination',
     level: 3,
-    title: 'The prompt that makes things up',
+    title: 'The request that makes things up',
+    situation:
+      'A colleague asks what changed for remote work. You have the circular at hand. You write:',
     badPrompt: 'What are the latest remote-work rules in the civil service?',
     problem: 'With no source and no request to check, the AI may invent rules.',
     targets: ['context', 'verification'],
@@ -169,6 +193,8 @@ const CHALLENGES_EN: Challenge[] = [
     id: 'multi-task',
     level: 3,
     title: 'Three tasks in one sentence',
+    situation:
+      'A European partner expects a summary of the report, in English, with the key points. You write:',
     badPrompt:
       'Summarise this text and translate it into English and make a table of the key points.',
     problem:

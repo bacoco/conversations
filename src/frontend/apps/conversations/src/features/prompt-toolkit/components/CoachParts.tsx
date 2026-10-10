@@ -10,6 +10,7 @@ import { NestorBubble, UserBubble } from '../fill/GuidedThread';
 import type { GuidedFill } from '../fill/useGuidedFill';
 import { SavePromptButton } from '../library/SavePromptButton';
 import { useCoachTipsStore } from '../stores/useCoachTipsStore';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { DiffView } from './DiffView';
 import { RefineBar } from './RefineBar';
@@ -60,14 +61,35 @@ export const WorksBox = ({ items }: { items: string[] }) => {
 export const TIP_MAX_SHOWS = 3;
 
 /** "To remember": one short habit, shown three times at most. */
+const linkButtonCss = css`
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--c--contextuals--content--semantic--brand--primary);
+  text-decoration: underline;
+  &:focus-visible {
+    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
+    outline-offset: 2px;
+  }
+`;
+
 export const RetainTip = ({
   tipKey,
   children,
+  lesson,
 }: {
   tipKey: string;
   children: string;
+  /** The screen of the course that teaches it, one click away. */
+  lesson?: { lessonId: string; slide: number };
 }) => {
   const { t } = useTranslation();
+  const openLesson = usePromptToolkitStore((state) => state.openLesson);
   const markShown = useCoachTipsStore((state) => state.markShown);
   // Decided once per appearance, so the tip does not vanish while read.
   const [isShown] = useState(
@@ -100,6 +122,16 @@ export const RetainTip = ({
           {t('To remember')}
         </Text>
         <Text $size="sm">{children}</Text>
+        {lesson && (
+          <Box
+            as="button"
+            type="button"
+            onClick={() => openLesson(lesson.lessonId, lesson.slide)}
+            $css={linkButtonCss}
+          >
+            {t('See the lesson · 1 min')}
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -3,6 +3,14 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "{{count}} items to review_one": "{{count}} élément à revoir",
+      "{{count}} items to review_many": "{{count}} éléments à revoir",
+      "{{count}} items to review_other": "{{count}} éléments à revoir",
+      "See the lesson · 1 min": "Voir la leçon · 1 min",
+      "You applied the step “{{title}}”.": "Vous avez appliqué l’étape « {{title}} ».",
+      "The step “{{title}}” is not there yet.": "L’étape « {{title}} » n’y est pas encore.",
+      "Still missing: {{skills}}.": "Il manque encore : {{skills}}.",
+      "The request to fix": "La demande à corriger",
       "In green, what makes the difference; dotted, what you had not ticked.": "En vert, ce qui fait la différence ; en pointillés, ce que vous n’aviez pas coché.",
       "{{count}} a week_one": "{{count}} par semaine",
       "{{count}} a week_many": "{{count}} par semaine",

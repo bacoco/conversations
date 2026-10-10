@@ -11,6 +11,7 @@ import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { GuidedThread, NestorBubble } from '../fill/GuidedThread';
 import { useGuidedFill } from '../fill/useGuidedFill';
+import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { useReward } from '../rewards/useReward';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
@@ -25,6 +26,7 @@ import {
 import { CoachStatus } from './CoachStatus';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
 import { LivePillars } from './LivePillars';
+import { PracticeCheck } from './PracticeCheck';
 
 /** Above this level, the request can go as it is: no questions by default. */
 const CLEAR_ENOUGH_SCORE = 80;
@@ -65,7 +67,11 @@ const useTipFor = (result: PromptAnalysis | null) => {
       .map((key) => ({ key, score: result.competencies[key] }))
       .sort((a, b) => a.score - b.score);
     return weakest && weakest.score < 60
-      ? { key: `rule-${weakest.key}`, text: tips[weakest.key] ?? '' }
+      ? {
+          key: `rule-${weakest.key}`,
+          text: tips[weakest.key] ?? '',
+          lesson: LESSON_FOR_COMPETENCY[weakest.key],
+        }
       : null;
   }, [result, t]);
 };
@@ -274,6 +280,7 @@ export const CoachDraft = ({
                 {result.verdict && (
                   <NestorBubble>{result.verdict}</NestorBubble>
                 )}
+                <PracticeCheck result={result} />
               </Box>
             )}
 
@@ -287,7 +294,9 @@ export const CoachDraft = ({
                   saveTitle={t('Your request')}
                 />
                 {fill.final && tip && (
-                  <RetainTip tipKey={tip.key}>{tip.text}</RetainTip>
+                  <RetainTip tipKey={tip.key} lesson={tip.lesson}>
+                    {tip.text}
+                  </RetainTip>
                 )}
               </>
             ) : (

@@ -5,7 +5,6 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { useAiAvailable } from '../coach/aiAvailability';
 import { Disclosure } from '../components/CoachParts';
 import { NESTOR_CARDS_URL, NESTOR_COURSE_URL } from '../components/PanelHome';
 import {
@@ -20,7 +19,6 @@ import { MyMemo } from './MemoViews';
 import { QuizResult, QuizView } from './QuizView';
 import { SkillsView } from './SkillsView';
 import { StepView, useStageLabels } from './StepView';
-import { getChallenges } from './challenges';
 import { getCourseContent } from './content';
 import {
   CHECKPOINTS,
@@ -28,7 +26,6 @@ import {
   STAGE_ORDER,
   Stage,
   Step,
-  buildSteps,
   cardsToReview,
   checkpointQuestions,
   dueCheckpoint,
@@ -39,7 +36,7 @@ import {
   questionsToReview,
 } from './steps';
 import type { Flashcard, QuizQuestion } from './types';
-import { useLearnProgress } from './useLearnProgress';
+import { useCourseSteps, useLearnProgress } from './useLearnProgress';
 import { FULL_QUIZ, useLearnProgressStore } from './useLearnProgressStore';
 
 type View =
@@ -378,11 +375,7 @@ export const LearnPanel = () => {
     [i18n.language],
   );
   // Practice is graded or guided by the coach: none without the Albert relay.
-  const isAiAvailable = useAiAvailable();
-  const steps = useMemo(
-    () => buildSteps(course, getChallenges(i18n.language), isAiAvailable),
-    [course, i18n.language, isAiAvailable],
-  );
+  const steps = useCourseSteps();
   const progress = useLearnProgress();
   const bestQuizScores = progress.bestQuizScores;
   const setSlidePosition = useLearnProgressStore(

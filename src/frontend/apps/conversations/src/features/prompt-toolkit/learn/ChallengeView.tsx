@@ -145,9 +145,12 @@ export const ChallengeView = ({
 
   return page(
     <>
+      <Text $size="sm" $css="line-height: 1.5;">
+        {challenge.situation}
+      </Text>
       <Box $gap="6px" $css={boxCss}>
         <Text $size="xs" $weight="700">
-          {t('The prompt to fix')}
+          {t('The request to fix')}
         </Text>
         <Text $css="font-style: italic; line-height: 1.5;">
           « {challenge.badPrompt} »
