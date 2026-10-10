@@ -25,7 +25,7 @@ describe('without the Albert relay', () => {
     expect(screen.getByText('Everyday tools')).toBeInTheDocument();
   });
 
-  it('hides the tools that need Robin', () => {
+  it('hides the tools that need Nestor', () => {
     render(<ToolsPanel />);
     expect(screen.getByText('Reply to an email')).toBeInTheDocument();
     expect(screen.queryByText('Improve my text')).not.toBeInTheDocument();

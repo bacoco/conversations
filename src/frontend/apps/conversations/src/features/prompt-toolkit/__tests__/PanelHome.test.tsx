@@ -88,7 +88,7 @@ describe('<PanelHome />', () => {
 
     fireEvent.error(container.querySelector('video') as HTMLVideoElement);
 
-    expect(screen.getByRole('heading', { name: 'Robin' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Nestor' })).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /Watch the presentation/ }),
     ).not.toBeInTheDocument();

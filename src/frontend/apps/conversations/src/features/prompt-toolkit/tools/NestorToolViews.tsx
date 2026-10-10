@@ -7,11 +7,11 @@ import { useConversationRouteId } from '@/utils';
 
 import { DetailPage } from '../components/DetailPage';
 import { FollowUpCard } from '../components/FollowUpCard';
-import { ROBIN_PROMPTS_URL, ROBIN_WRITE_URL } from '../components/PanelHome';
+import { NESTOR_PROMPTS_URL, NESTOR_WRITE_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
-/** Robin strengthens the user's own text, with two or three questions. */
+/** Nestor strengthens the user's own text, with two or three questions. */
 export const ImproveTextView = ({ onBack }: { onBack: () => void }) => {
   const { t } = useTranslation();
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
@@ -25,9 +25,9 @@ export const ImproveTextView = ({ onBack }: { onBack: () => void }) => {
       backLabel={t('Back to the tools')}
       title={t('Improve my text')}
       subtitle={t(
-        'Robin asks you two or three questions, then writes a stronger version.',
+        'Nestor asks you two or three questions, then writes a stronger version.',
       )}
-      image={ROBIN_WRITE_URL}
+      image={NESTOR_WRITE_URL}
     >
       <Box $gap="12px">
         <PanelTextArea
@@ -43,7 +43,7 @@ export const ImproveTextView = ({ onBack }: { onBack: () => void }) => {
           onClick={() => startFill(text.trim(), t('Your prompt'), '', 'draft')}
           icon={<Icon iconName="edit_note" $size="18px" />}
         >
-          {t('Start with Robin')}
+          {t('Start with Nestor')}
         </Button>
       </Box>
     </DetailPage>
@@ -61,9 +61,9 @@ export const FollowUpView = ({ onBack }: { onBack: () => void }) => {
       backLabel={t('Back to the tools')}
       title={t('Follow up on an answer')}
       subtitle={t(
-        'The answer does not suit you? Robin writes a better follow-up.',
+        'The answer does not suit you? Nestor writes a better follow-up.',
       )}
-      image={ROBIN_PROMPTS_URL}
+      image={NESTOR_PROMPTS_URL}
     >
       {conversationId ? (
         <FollowUpCard />

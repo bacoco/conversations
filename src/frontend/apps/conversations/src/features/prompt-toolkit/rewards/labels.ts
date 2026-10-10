@@ -25,7 +25,7 @@ export const badgeText = (badge: BadgeId, t: TFunction) =>
     },
     librarian: {
       title: t('Librarian'),
-      how: t('Complete 5 prompts with Robin.'),
+      how: t('Complete 5 prompts with Nestor.'),
     },
     diligent: {
       title: t('Diligent learner'),

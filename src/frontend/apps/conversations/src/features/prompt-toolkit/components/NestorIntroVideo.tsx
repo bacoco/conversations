@@ -6,7 +6,7 @@ import { css } from 'styled-components';
 import { Box, Icon } from '@/components';
 
 /**
- * Robin's presentation, one render per language. Source and render steps:
+ * Nestor's presentation, one render per language. Source and render steps:
  * `videos/robin-intro/` (HyperFrames) at the repository root.
  */
 const introVideoUrl = (language?: string) =>
@@ -19,10 +19,10 @@ export const prefersReducedMotion = () =>
   (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
 
 /**
- * Robin's welcome as a video filling the panel. "Get started" is always
+ * Nestor's welcome as a video filling the panel. "Get started" is always
  * offered, so it doubles as "skip"; "Watch again" appears at the end.
  */
-export const RobinIntroVideo = ({
+export const NestorIntroVideo = ({
   onDone,
   onError,
 }: {
@@ -55,7 +55,7 @@ export const RobinIntroVideo = ({
         <video
           ref={videoRef}
           src={introVideoUrl(i18n.language)}
-          aria-label={t('Presentation of Robin, your prompt copilot')}
+          aria-label={t('Presentation of Nestor, your prompt copilot')}
           autoPlay
           muted
           playsInline

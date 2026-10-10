@@ -21,7 +21,7 @@ export const FloatingAnalyzeButton = ({
   onClick: () => void;
   disabled: boolean;
   isLoading: boolean;
-  /** A second action at the right of the bar, e.g. "Improve with Robin". */
+  /** A second action at the right of the bar, e.g. "Improve with Nestor". */
   secondary?: ReactNode;
 }) => (
   <Box

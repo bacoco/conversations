@@ -65,7 +65,7 @@ const List = ({
     </Box>
   );
 
-/** Robin reviewing the session; replaced by a dedicated illustration later. */
+/** Nestor reviewing the session; replaced by a dedicated illustration later. */
 const SESSION_IMAGE_URL = '/assets/robin-bilan.webp';
 
 /** Coach of the whole session: how the user prompted, not one prompt. */
@@ -175,7 +175,7 @@ export const SessionReviewPanel = ({ language }: { language: string }) => {
           </Text>
           <Text $variation="secondary" $css="max-width: 34ch;">
             {t(
-              'Robin reads all the prompts of this conversation and tells you how you prompt.',
+              'Nestor reads all the prompts of this conversation and tells you how you prompt.',
             )}
           </Text>
         </Box>

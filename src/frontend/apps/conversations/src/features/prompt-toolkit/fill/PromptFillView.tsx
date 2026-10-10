@@ -14,7 +14,7 @@ import {
 } from '../coach/coachApi';
 import { languageName } from '../coach/language';
 import { CoachStatus } from '../components/CoachStatus';
-import { ROBIN_AVATAR_URL } from '../components/PanelHome';
+import { NESTOR_AVATAR_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { RefineBar } from '../components/RefineBar';
 import { SavePromptButton } from '../library/SavePromptButton';
@@ -61,10 +61,10 @@ const suggestionCss = css`
   }
 `;
 
-export const RobinBubble = ({ children }: { children: string }) => (
+export const NestorBubble = ({ children }: { children: string }) => (
   <Box $direction="row" $align="flex-end" $gap="8px">
     <img
-      src={ROBIN_AVATAR_URL}
+      src={NESTOR_AVATAR_URL}
       alt=""
       width={28}
       height={28}
@@ -181,7 +181,7 @@ export const PromptFillView = ({
     }
   };
 
-  // "Change the tone", "add a date": Robin edits the final prompt in place.
+  // "Change the tone", "add a date": Nestor edits the final prompt in place.
   const adjust = async (request: string) => {
     if (step?.kind !== 'final') {
       return;
@@ -198,7 +198,7 @@ export const PromptFillView = ({
         controller.signal,
         FILL_MODEL,
       );
-      // Keep Robin's congratulation; only the prompt changes.
+      // Keep Nestor's congratulation; only the prompt changes.
       setStep({ ...step, prompt: adjusted.improvedPrompt });
       setAdjustments((list) => [
         ...list,
@@ -215,7 +215,7 @@ export const PromptFillView = ({
       if (!controller.signal.aborted) {
         showToast(
           'error',
-          t('Robin could not change the prompt. Please retry.'),
+          t('Nestor could not change the prompt. Please retry.'),
         );
       }
     } finally {
@@ -237,10 +237,10 @@ export const PromptFillView = ({
         isLoading={status === 'loading' || isAdjusting}
         loadingLabel={
           isAdjusting
-            ? t('Robin is changing the prompt…')
+            ? t('Nestor is changing the prompt…')
             : exchanges.length === 0
-              ? t('Robin is reading the prompt…')
-              : t('Robin is preparing the next step…')
+              ? t('Nestor is reading the prompt…')
+              : t('Nestor is preparing the next step…')
         }
       />
       <Box $gap="14px" $padding={{ all: 'base' }} $css="flex: 1;">
@@ -266,10 +266,10 @@ export const PromptFillView = ({
         <Text $size="sm" $variation="secondary">
           {mode === 'draft'
             ? t(
-                'Robin asks you two or three questions, then writes a stronger version of your prompt.',
+                'Nestor asks you two or three questions, then writes a stronger version of your prompt.',
               )
             : t(
-                'Robin asks you a few questions, then writes the complete prompt for you.',
+                'Nestor asks you a few questions, then writes the complete prompt for you.',
               )}
         </Text>
 
@@ -296,7 +296,7 @@ export const PromptFillView = ({
         >
           {exchanges.map((exchange, index) => (
             <Box as="li" key={index} $gap="10px">
-              <RobinBubble>{exchange.question}</RobinBubble>
+              <NestorBubble>{exchange.question}</NestorBubble>
               <Box $direction="row" $justify="flex-end">
                 <Box $css={bubbleCss(true)}>{exchange.answer}</Box>
               </Box>
@@ -304,7 +304,7 @@ export const PromptFillView = ({
           ))}
           {question && (
             <Box as="li" $gap="8px" aria-live="polite">
-              <RobinBubble>{question.question}</RobinBubble>
+              <NestorBubble>{question.question}</NestorBubble>
               {question.suggestions.length > 0 && status === 'ready' && (
                 <Box
                   $direction="row"
@@ -331,7 +331,7 @@ export const PromptFillView = ({
         {question && (
           <Box
             $gap="8px"
-            // Right under Robin's question, in the thread: not hidden below.
+            // Right under Nestor's question, in the thread: not hidden below.
             $css="padding-left: 36px;"
           >
             <PanelTextArea
@@ -379,7 +379,7 @@ export const PromptFillView = ({
         {status === 'error' && (
           <Box role="alert" $gap="8px" $align="flex-start">
             <Text $size="sm">
-              {t('Robin could not answer. Check your connection, then retry.')}
+              {t('Nestor could not answer. Check your connection, then retry.')}
             </Text>
             <Button size="small" onClick={() => ask(exchanges)}>
               {t('Retry')}
@@ -387,8 +387,8 @@ export const PromptFillView = ({
           </Box>
         )}
 
-        {/* Robin's word on the result comes before any change asked. */}
-        {final?.message && <RobinBubble>{final.message}</RobinBubble>}
+        {/* Nestor's word on the result comes before any change asked. */}
+        {final?.message && <NestorBubble>{final.message}</NestorBubble>}
 
         {adjustments.length > 0 && (
           <Box
@@ -401,7 +401,7 @@ export const PromptFillView = ({
                 <Box $direction="row" $justify="flex-end">
                   <Box $css={bubbleCss(true)}>{item.request}</Box>
                 </Box>
-                <RobinBubble>{item.reply}</RobinBubble>
+                <NestorBubble>{item.reply}</NestorBubble>
               </Box>
             ))}
           </Box>

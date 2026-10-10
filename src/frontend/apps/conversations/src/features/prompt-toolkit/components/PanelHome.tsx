@@ -12,8 +12,8 @@ import {
   usePromptToolkitStore,
 } from '../stores/usePromptToolkitStore';
 
+import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
 import { ProfileSettings } from './ProfileSettings';
-import { RobinIntroVideo, prefersReducedMotion } from './RobinIntroVideo';
 
 type Tone = 'success' | 'brand' | 'info';
 
@@ -57,28 +57,28 @@ const centeredCss = css`
   justify-content: center;
 `;
 
-export const ROBIN_IMAGE_URL = '/assets/robin.webp';
-export const ROBIN_AVATAR_URL = '/assets/robin-avatar.webp';
-/** Robin in each space of the panel, same style as the welcome. */
-export const ROBIN_ANALYSIS_URL = '/assets/robin-analyse.webp';
-export const ROBIN_HELP_URL = '/assets/robin-aide.webp';
-export const ROBIN_HOME_URL = '/assets/robin-accueil.webp';
-export const ROBIN_INSTANT_URL = '/assets/robin-volee.webp';
-export const ROBIN_COURSE_URL = '/assets/robin-cours.webp';
-export const ROBIN_TOOLS_URL = '/assets/robin-outils.webp';
-export const ROBIN_WRITE_URL = '/assets/robin-ecrire.webp';
-export const ROBIN_SUMMARIZE_URL = '/assets/robin-resumer.webp';
-export const ROBIN_ORGANIZE_URL = '/assets/robin-organiser.webp';
-export const ROBIN_PROMPTS_URL = '/assets/robin-prompts.webp';
-export const ROBIN_LESSONS_URL = '/assets/robin-lecons.webp';
-export const ROBIN_CARDS_URL = '/assets/robin-fiches.webp';
-export const ROBIN_QUIZ_URL = '/assets/robin-quiz.webp';
-export const ROBIN_CHALLENGES_URL = '/assets/robin-defis.webp';
+export const NESTOR_IMAGE_URL = '/assets/robin.webp';
+export const NESTOR_AVATAR_URL = '/assets/robin-avatar.webp';
+/** Nestor in each space of the panel, same style as the welcome. */
+export const NESTOR_ANALYSIS_URL = '/assets/robin-analyse.webp';
+export const NESTOR_HELP_URL = '/assets/robin-aide.webp';
+export const NESTOR_HOME_URL = '/assets/robin-accueil.webp';
+export const NESTOR_INSTANT_URL = '/assets/robin-volee.webp';
+export const NESTOR_COURSE_URL = '/assets/robin-cours.webp';
+export const NESTOR_TOOLS_URL = '/assets/robin-outils.webp';
+export const NESTOR_WRITE_URL = '/assets/robin-ecrire.webp';
+export const NESTOR_SUMMARIZE_URL = '/assets/robin-resumer.webp';
+export const NESTOR_ORGANIZE_URL = '/assets/robin-organiser.webp';
+export const NESTOR_PROMPTS_URL = '/assets/robin-prompts.webp';
+export const NESTOR_LESSONS_URL = '/assets/robin-lecons.webp';
+export const NESTOR_CARDS_URL = '/assets/robin-fiches.webp';
+export const NESTOR_QUIZ_URL = '/assets/robin-quiz.webp';
+export const NESTOR_CHALLENGES_URL = '/assets/robin-defis.webp';
 const RECORD_RED = '#d0342c';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 // Theme colour: readable in light and dark mode.
-const ROBIN_NAVY = 'var(--c--contextuals--content--semantic--brand--primary)';
+const NESTOR_NAVY = 'var(--c--contextuals--content--semantic--brand--primary)';
 
 const valueBadgeCss = (color: string) => css`
   flex: none;
@@ -89,8 +89,8 @@ const valueBadgeCss = (color: string) => css`
   background: ${color};
 `;
 
-/** Robin's welcome, without motion: who Robin is and what it does. */
-const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
+/** Nestor's welcome, without motion: who Nestor is and what it does. */
+const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
   const { t } = useTranslation();
   const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const values = [
@@ -126,10 +126,10 @@ const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
               font-size: 2.5rem;
               line-height: 1;
               letter-spacing: -0.02em;
-              color: ${ROBIN_NAVY};
+              color: ${NESTOR_NAVY};
             `}
           >
-            Robin
+            Nestor
           </Text>
           <Text $size="md" $variation="secondary" $weight="600">
             {t('Your prompt copilot')}
@@ -165,9 +165,9 @@ const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
         `}
       >
         <img
-          src={ROBIN_IMAGE_URL}
+          src={NESTOR_IMAGE_URL}
           alt={t(
-            'Robin, a robin wearing glasses and headphones, says: a better prompt, more impact!',
+            'Nestor, a cartoon orange fox with a purple scarf and a golden compass star, says: a better prompt, more impact!',
           )}
           style={{ display: 'block', width: '100%', height: 'auto' }}
         />
@@ -194,7 +194,7 @@ const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
               <Icon iconName={value.icon} $size="20px" $withThemeInherited />
             </Box>
             <Box>
-              <Text $weight="700" $css={`color: ${ROBIN_NAVY};`}>
+              <Text $weight="700" $css={`color: ${NESTOR_NAVY};`}>
                 {value.title}
               </Text>
               <Text $size="sm" $variation="secondary">
@@ -229,36 +229,36 @@ const RobinWelcome = ({ onWatch }: { onWatch?: () => void }) => {
 };
 
 /**
- * Robin's welcome, shown once: the presentation video, or the still welcome
+ * Nestor's welcome, shown once: the presentation video, or the still welcome
  * when motion is reduced or the video cannot play.
  */
-const RobinIntro = () => {
+const NestorIntro = () => {
   const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const [isVideoShown, setVideoShown] = useState(() => !prefersReducedMotion());
   const [hasVideoFailed, setVideoFailed] = useState(false);
 
   if (isVideoShown && !hasVideoFailed) {
     return (
-      <RobinIntroVideo
+      <NestorIntroVideo
         onDone={dismissWelcome}
         onError={() => setVideoFailed(true)}
       />
     );
   }
   return (
-    <RobinWelcome
+    <NestorWelcome
       onWatch={hasVideoFailed ? undefined : () => setVideoShown(true)}
     />
   );
 };
 
-/** Header of the cards page: Robin, large, then the question. */
-const RobinHeader = () => {
+/** Header of the cards page: Nestor, large, then the question. */
+const NestorHeader = () => {
   const { t } = useTranslation();
   return (
     <Box $align="center" $gap="10px" $css="text-align: center;">
       <img
-        src={ROBIN_HOME_URL}
+        src={NESTOR_HOME_URL}
         alt=""
         width={140}
         height={140}
@@ -269,7 +269,7 @@ const RobinHeader = () => {
           {t('How can I help you write?')}
         </Text>
         <Text $size="sm" $variation="secondary">
-          {t('Robin, your prompt copilot')}
+          {t('Nestor, your prompt copilot')}
         </Text>
       </Box>
     </Box>
@@ -291,7 +291,7 @@ export const PanelHome = () => {
   const cards: HomeCard[] = [
     {
       id: 'coach-manual',
-      image: ROBIN_ANALYSIS_URL,
+      image: NESTOR_ANALYSIS_URL,
       icon: 'touch_app',
       tone: 'brand',
       title: t('Prompt coach'),
@@ -300,7 +300,7 @@ export const PanelHome = () => {
     },
     {
       id: 'course',
-      image: ROBIN_COURSE_URL,
+      image: NESTOR_COURSE_URL,
       icon: 'school',
       tone: 'brand',
       title: t('Prompting course'),
@@ -309,7 +309,7 @@ export const PanelHome = () => {
     },
     {
       id: 'tools',
-      image: ROBIN_TOOLS_URL,
+      image: NESTOR_TOOLS_URL,
       icon: 'apps',
       tone: 'success',
       title: t('Everyday tools'),
@@ -319,7 +319,7 @@ export const PanelHome = () => {
   ];
 
   if (!hasSeenWelcome) {
-    return <RobinIntro />;
+    return <NestorIntro />;
   }
   // Without the Albert relay, only what works without AI is offered.
   const shownCards = isAiUnavailable
@@ -328,7 +328,7 @@ export const PanelHome = () => {
 
   return (
     <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
-      <RobinHeader />
+      <NestorHeader />
       {/* Speaking instead of typing: the main entry, shown first. */}
       {isAiAvailable && TRANSCRIPTION_URL && (
         <Box

@@ -7,10 +7,10 @@ import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable } from '../coach/aiAvailability';
 import {
-  ROBIN_CARDS_URL,
-  ROBIN_CHALLENGES_URL,
-  ROBIN_LESSONS_URL,
-  ROBIN_QUIZ_URL,
+  NESTOR_CARDS_URL,
+  NESTOR_CHALLENGES_URL,
+  NESTOR_LESSONS_URL,
+  NESTOR_QUIZ_URL,
 } from '../components/PanelHome';
 import { SpaceIntro } from '../components/SpaceIntro';
 import {
@@ -240,7 +240,7 @@ export const LearnPanel = () => {
     { image: string; title: string; text: string; steps: string[] }
   > = {
     lessons: {
-      image: ROBIN_LESSONS_URL,
+      image: NESTOR_LESSONS_URL,
       title: t('Lessons'),
       text: t('Short lessons to learn how to write a good prompt.'),
       steps: [
@@ -250,7 +250,7 @@ export const LearnPanel = () => {
       ],
     },
     cards: {
-      image: ROBIN_CARDS_URL,
+      image: NESTOR_CARDS_URL,
       title: t('Cards'),
       text: t('Review the essentials in a few minutes.'),
       steps: [
@@ -260,7 +260,7 @@ export const LearnPanel = () => {
       ],
     },
     quiz: {
-      image: ROBIN_QUIZ_URL,
+      image: NESTOR_QUIZ_URL,
       title: t('Quiz'),
       text: t('Check what you remember.'),
       steps: [
@@ -270,7 +270,7 @@ export const LearnPanel = () => {
       ],
     },
     challenges: {
-      image: ROBIN_CHALLENGES_URL,
+      image: NESTOR_CHALLENGES_URL,
       title: t('Challenges'),
       text: t('Practise on real cases.'),
       steps: [

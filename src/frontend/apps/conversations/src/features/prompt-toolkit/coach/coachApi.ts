@@ -407,30 +407,30 @@ const placeholdersOf = (prompt: string) =>
 
 export type FillStep =
   | { kind: 'question'; question: string; suggestions: string[] }
-  /** `message`: Robin's word of congratulation, when he gives one. */
+  /** `message`: Nestor's word of congratulation, when he gives one. */
   | { kind: 'final'; prompt: string; message?: string };
 
 export const FILL_MAX_QUESTIONS = 6;
 
 /**
- * Robin talks with the user: a stronger model than the grading one, worth it
+ * Nestor talks with the user: a stronger model than the grading one, worth it
  * for a real conversation (same speed on Albert).
  */
 export const FILL_MODEL =
   env.VITE_PROMPT_COACH_CHAT_MODEL || 'mistral-medium-3-5';
 
-/** Robin's personality, shared by his conversations. */
-const ROBIN_VOICE = `Your voice: warm, encouraging and lively, with a light touch of humour, never childish nor flattering. Short sentences. React to what the user actually said (e.g. "Deux jours par semaine, c'est clair !") rather than a bare "Thank you".`;
+/** Nestor's personality, shared by his conversations. */
+const NESTOR_VOICE = `Your voice: warm, encouraging and lively, with a light touch of humour, never childish nor flattering. Short sentences. React to what the user actually said (e.g. "Deux jours par semaine, c'est clair !") rather than a bare "Thank you".`;
 
 const FILL_SYSTEM_PROMPT = (language: string, template: string) =>
-  `You are Robin, a warm and capable assistant who helps a public servant prepare a prompt for an AI assistant, starting from a template.
+  `You are Nestor, a warm and capable assistant who helps a public servant prepare a prompt for an AI assistant, starting from a template.
 
 Template:
 <template>
 ${template}
 </template>
 
-${ROBIN_VOICE}
+${NESTOR_VOICE}
 
 How you work:
 - You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on, then ask for what is missing.
@@ -451,14 +451,14 @@ export type FillMode = 'template' | 'draft';
 export const DRAFT_MAX_QUESTIONS = 3;
 
 const DRAFT_SYSTEM_PROMPT = (language: string, draft: string) =>
-  `You are Robin, a warm and capable assistant who helps a public servant turn their draft into a strong prompt for an AI assistant.
+  `You are Nestor, a warm and capable assistant who helps a public servant turn their draft into a strong prompt for an AI assistant.
 
 Draft:
 <draft>
 ${draft}
 </draft>
 
-${ROBIN_VOICE}
+${NESTOR_VOICE}
 
 How you work:
 - You hold a real conversation in ${language}, addressing the user formally (in French, use "vous"). React to each answer in one short, natural sentence before moving on.
@@ -805,28 +805,28 @@ export const followUpPrompt = async (
   return { prompt, why: typeof raw.why === 'string' ? raw.why.trim() : '' };
 };
 
-/* Chat with Robin: a prompt-writing helper you can talk with. */
+/* Chat with Nestor: a prompt-writing helper you can talk with. */
 
-export interface RobinTurn {
-  role: 'user' | 'robin';
+export interface NestorTurn {
+  role: 'user' | 'nestor';
   text: string;
-  /** A ready-to-send prompt Robin proposes, when he has one. */
+  /** A ready-to-send prompt Nestor proposes, when he has one. */
   prompt?: string;
 }
 
-/** What Robin knows about the panel, to answer "what can you do?". */
-const ROBIN_HELP = `The panel has three spaces, reached from its home cards. Name them with the labels shown on screen, given here as English (French):
+/** What Nestor knows about the panel, to answer "what can you do?". */
+const NESTOR_HELP = `The panel has three spaces, reached from its home cards. Name them with the labels shown on screen, given here as English (French):
 - Coach (Coach), with four modes: Analysis (Analyse): grade, advice and a better version of the prompt typed in the message field; Prompt help (Aide au prompting): written versions plus matching library prompts; As you type (À la volée): while typing, the closest ready-made requests appear, one click puts one in the message field; Session review (Bilan de séance): a review of all the prompts of the conversation.
 - Course (Cours): tabs Lessons (Leçons), Cards (Fiches), Quiz (Quiz), Challenges (Défis: fix a weak prompt, the coach grades it).
 - Everyday tools (Outils du quotidien): families Write (Écrire: reply to an email, official letter, rewrite, translate, improve my text), Summarise (Résumer: minutes, summary, actions), Organise (Organiser: action plan, brainstorming), Prompts (Prompts: library with favorites and My prompts, prompt generator, follow up on an answer). Each tool asks a few choices, then puts a prompt in the message field.
-- Robin: the round button at the bottom right, this chat.`;
+- Nestor: the round button at the bottom right, this chat.`;
 
-const ROBIN_CHAT_SYSTEM_PROMPT = (language: string, where: string) =>
-  `You are Robin, the helper of this prompt panel inside a public servants' AI assistant.
-${ROBIN_VOICE}
+const NESTOR_CHAT_SYSTEM_PROMPT = (language: string, where: string) =>
+  `You are Nestor, the helper of this prompt panel inside a public servants' AI assistant.
+${NESTOR_VOICE}
 - Talk in ${language}, addressing the user formally (in French, use "vous"). Short answers: 1 to 4 sentences.
 - Your main job: explain what the panel does and how to use it. What it offers:
-${ROBIN_HELP}
+${NESTOR_HELP}
 - When you answer in French, name screens and modes with their French labels only.
 - Plain text only: no markdown, no asterisks; put screen names between « » in French.
 - The user is currently on: ${where}. By default, answer about this screen (what it is for, what to do next) unless they ask about something else.
@@ -835,16 +835,16 @@ ${ROBIN_HELP}
 - Never invent features; respect the user's choices.
 Reply only with JSON: {"message": "<what you say>", "prompt": "<a complete, ready-to-send prompt when you propose one, else omit>"}.`;
 
-export const chatWithRobin = async (
-  history: RobinTurn[],
+export const chatWithNestor = async (
+  history: NestorTurn[],
   language: string,
-  /** The screen the user is on, so Robin helps there by default. */
+  /** The screen the user is on, so Nestor helps there by default. */
   where: string,
   signal?: AbortSignal,
-): Promise<RobinTurn> => {
+): Promise<NestorTurn> => {
   const raw = await completeMessages(
     [
-      { role: 'system', content: ROBIN_CHAT_SYSTEM_PROMPT(language, where) },
+      { role: 'system', content: NESTOR_CHAT_SYSTEM_PROMPT(language, where) },
       ...history.map((turn): ChatMessage =>
         turn.role === 'user'
           ? { role: 'user', content: turn.text }
@@ -864,9 +864,9 @@ export const chatWithRobin = async (
   const text = typeof raw.message === 'string' ? raw.message.trim() : '';
   const prompt = asPlainText(raw.prompt).trim();
   if (!text && !prompt) {
-    throw new CoachError('Robin returned no answer');
+    throw new CoachError('Nestor returned no answer');
   }
-  return { role: 'robin', text, ...(prompt ? { prompt } : {}) };
+  return { role: 'nestor', text, ...(prompt ? { prompt } : {}) };
 };
 
 /* Explaining a library prompt: what each part does and what to put in it. */

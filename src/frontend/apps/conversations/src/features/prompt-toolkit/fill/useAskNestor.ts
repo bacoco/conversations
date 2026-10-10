@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
-/** Robin strengthens what the user is typing, from anywhere in the panel. */
-export const useAskRobin = () => {
+/** Nestor strengthens what the user is typing, from anywhere in the panel. */
+export const useAskNestor = () => {
   const { t } = useTranslation();
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const startFill = usePromptToolkitStore((state) => state.startFill);

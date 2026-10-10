@@ -59,7 +59,7 @@ describe('guided prompt filling', () => {
     expect(await screen.findByText('Who is it for?')).toBeInTheDocument();
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(String(init.body)).toContain('[recipient]');
-    // Robin talks with the stronger chat model.
+    // Nestor talks with the stronger chat model.
     expect(String(init.body)).toContain('mistral-medium');
 
     await act(async () => {

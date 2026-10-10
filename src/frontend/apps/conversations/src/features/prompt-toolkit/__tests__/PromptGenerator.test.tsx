@@ -77,7 +77,7 @@ describe('<PromptGenerator />', () => {
     expect(body).toContain('Expliquer les règles de télétravail');
     expect(body).toContain('two short');
 
-    // Something is left to fill in: Robin asks for it first.
+    // Something is left to fill in: Nestor asks for it first.
     fireEvent.click(screen.getByRole('button', { name: /^Use$/ }));
     expect(setChatInput).not.toHaveBeenCalled();
     expect(usePromptToolkitStore.getState().fill?.template).toBe(

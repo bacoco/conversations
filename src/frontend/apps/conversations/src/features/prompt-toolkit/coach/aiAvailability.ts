@@ -18,7 +18,7 @@ interface AiAvailabilityState {
 }
 
 /**
- * Whether the AI features (coach, Robin, suggestions…) can be offered. The
+ * Whether the AI features (coach, Nestor, suggestions…) can be offered. The
  * course, the tool forms and the library work without them.
  * Unit tests assume the relay is there.
  */

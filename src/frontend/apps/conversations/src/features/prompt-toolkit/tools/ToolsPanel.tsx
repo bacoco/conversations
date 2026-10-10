@@ -8,10 +8,10 @@ import { Box, Icon, Text } from '@/components';
 import { useAiAvailable } from '../coach/aiAvailability';
 import { optionCss } from '../components/CoachModes';
 import {
-  ROBIN_ORGANIZE_URL,
-  ROBIN_PROMPTS_URL,
-  ROBIN_SUMMARIZE_URL,
-  ROBIN_WRITE_URL,
+  NESTOR_ORGANIZE_URL,
+  NESTOR_PROMPTS_URL,
+  NESTOR_SUMMARIZE_URL,
+  NESTOR_WRITE_URL,
 } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { SpaceIntro } from '../components/SpaceIntro';
@@ -24,8 +24,8 @@ import {
 } from '../stores/usePromptToolkitStore';
 
 import { MyStyleView } from './MyStyleView';
+import { FollowUpView, ImproveTextView } from './NestorToolViews';
 import { PromptGenerator } from './PromptGenerator';
-import { FollowUpView, ImproveTextView } from './RobinToolViews';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
 
 const iconBadgeCss = (size: number) => css`
@@ -77,17 +77,17 @@ const choiceCss = (isSelected: boolean) => css`
   }
 `;
 
-/** Robin's illustration for the family of each tool. */
+/** Nestor's illustration for the family of each tool. */
 const TOOL_IMAGES: Record<string, string> = {
-  'email-reply': ROBIN_WRITE_URL,
-  letter: ROBIN_WRITE_URL,
-  rewrite: ROBIN_WRITE_URL,
-  translate: ROBIN_WRITE_URL,
-  minutes: ROBIN_SUMMARIZE_URL,
-  summary: ROBIN_SUMMARIZE_URL,
-  actions: ROBIN_SUMMARIZE_URL,
-  plan: ROBIN_ORGANIZE_URL,
-  brainstorm: ROBIN_ORGANIZE_URL,
+  'email-reply': NESTOR_WRITE_URL,
+  letter: NESTOR_WRITE_URL,
+  rewrite: NESTOR_WRITE_URL,
+  translate: NESTOR_WRITE_URL,
+  minutes: NESTOR_SUMMARIZE_URL,
+  summary: NESTOR_SUMMARIZE_URL,
+  actions: NESTOR_SUMMARIZE_URL,
+  plan: NESTOR_ORGANIZE_URL,
+  brainstorm: NESTOR_ORGANIZE_URL,
 };
 
 const ToolForm = ({
@@ -144,7 +144,7 @@ const ToolForm = ({
           `}
         >
           <img
-            src={TOOL_IMAGES[tool.id] ?? ROBIN_WRITE_URL}
+            src={TOOL_IMAGES[tool.id] ?? NESTOR_WRITE_URL}
             alt=""
             width={112}
             height={112}
@@ -266,7 +266,7 @@ const ToolForm = ({
         $css={css`
           position: sticky;
           bottom: 0;
-          /* Room on the right for Robin's round button. */
+          /* Room on the right for Nestor's round button. */
           padding: 12px 84px 12px 16px;
           border-top: 1px solid var(--c--contextuals--border--surface--primary);
           background: var(--c--contextuals--background--surface--primary);
@@ -314,7 +314,7 @@ const rowCss = css`
   }
 `;
 
-/** Tools that need Robin, hence the Albert relay. */
+/** Tools that need Nestor, hence the Albert relay. */
 const AI_TOOLS = ['generator', 'improve', 'follow-up', 'my-style'];
 
 export const ToolsPanel = () => {
@@ -365,14 +365,14 @@ export const ToolsPanel = () => {
       id: 'improve',
       icon: 'edit_note',
       title: t('Improve my text'),
-      description: t('Robin strengthens what you wrote, in a few questions.'),
+      description: t('Nestor strengthens what you wrote, in a few questions.'),
     },
     'my-style': {
       id: 'my-style',
       icon: 'draw',
       title: t('My writing style'),
       description: t(
-        'Robin describes your style from your texts, to reuse in your prompts.',
+        'Nestor describes your style from your texts, to reuse in your prompts.',
       ),
     },
     'follow-up': {
@@ -380,7 +380,7 @@ export const ToolsPanel = () => {
       icon: 'replay',
       title: t('Follow up on an answer'),
       description: t(
-        'The answer does not suit you? Robin writes a better follow-up.',
+        'The answer does not suit you? Nestor writes a better follow-up.',
       ),
     },
   };
@@ -392,7 +392,7 @@ export const ToolsPanel = () => {
       id: 'write',
       icon: 'edit',
       label: t('Write'),
-      image: ROBIN_WRITE_URL,
+      image: NESTOR_WRITE_URL,
       text: t(
         'Reply to an email, write a letter, rewrite or translate a text.',
       ),
@@ -414,7 +414,7 @@ export const ToolsPanel = () => {
       id: 'summarize',
       icon: 'summarize',
       label: t('Summarise'),
-      image: ROBIN_SUMMARIZE_URL,
+      image: NESTOR_SUMMARIZE_URL,
       text: t('Turn notes or a long document into something short and clear.'),
       tools: ['minutes', 'summary', 'actions'],
       steps: [
@@ -427,7 +427,7 @@ export const ToolsPanel = () => {
       id: 'organize',
       icon: 'checklist',
       label: t('Organise'),
-      image: ROBIN_ORGANIZE_URL,
+      image: NESTOR_ORGANIZE_URL,
       text: t('Plan a project or find ideas on a subject.'),
       tools: ['plan', 'brainstorm'],
       steps: [
@@ -440,7 +440,7 @@ export const ToolsPanel = () => {
       id: 'prompts',
       icon: 'auto_awesome',
       label: t('Prompts'),
-      image: ROBIN_PROMPTS_URL,
+      image: NESTOR_PROMPTS_URL,
       text: isAiAvailable
         ? t('Start from a ready-made prompt, or have one written for you.')
         : t('Start from a ready-made prompt.'),

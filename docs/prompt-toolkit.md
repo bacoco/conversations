@@ -15,19 +15,19 @@ It has three spaces, reached from its home cards:
 - **Everyday tools**: forms that build a well-structured prompt (reply to an
   email, minutes, summary, translation…) and a library of ready-made prompts.
 
-**Robin**, the round button at the bottom right, answers questions about the
+**Nestor**, the round button at the bottom right, answers questions about the
 panel and helps write any prompt.
 
 ## With or without Albert
 
-The AI features (coach, Robin, suggestions, graded challenges, Robin's tools)
+The AI features (coach, Nestor, suggestions, graded challenges, Nestor's tools)
 call [Albert](https://albert.sites.beta.gouv.fr/) through a small relay served
 by the front-end container. The browser never sees the API key.
 
 | Relay | What the panel offers |
 | --- | --- |
 | Not configured (default) | Course (lessons, cards, quizzes), tool forms, prompt library, "My prompts" |
-| Configured | Everything above, plus the coach, Robin, "As you type", the graded challenges, the prompt generator, "Improve my text" and "Follow up on an answer" |
+| Configured | Everything above, plus the coach, Nestor, "As you type", the graded challenges, the prompt generator, "Improve my text" and "Follow up on an answer" |
 
 At start-up, the panel asks `/albert/status`: `204` means the relay is there,
 `404` means it is not and the AI features are hidden.
@@ -47,7 +47,7 @@ When both required variables are set, `/usr/local/bin/frontend-start` renders
 `conf/templates/albert.conf.template` before starting nginx. The relay then
 serves:
 
-- `POST /albert/v1/chat/completions` (coach, Robin, generator…)
+- `POST /albert/v1/chat/completions` (coach, Nestor, generator…)
 - `POST /albert/v1/embeddings` (suggestions and library search)
 - `GET /albert/status`
 
@@ -78,7 +78,7 @@ The front-end uses these models by default; they can be changed at build time:
 | Variable (build time) | Default | Used for |
 | --- | --- | --- |
 | `VITE_PROMPT_COACH_MODEL` | `mistral-small-3-2-24b-instruct-2506` | analysis, rewrites, explanations |
-| `VITE_PROMPT_COACH_CHAT_MODEL` | `mistral-medium-3-5` | Robin, guided completion, merge, follow-up |
+| `VITE_PROMPT_COACH_CHAT_MODEL` | `mistral-medium-3-5` | Nestor, guided completion, merge, follow-up |
 | `VITE_PROMPT_COACH_EMBEDDING_MODEL` | `bge-m3` | suggestions and library search |
 | `VITE_PROMPT_COACH_URL` | `/albert/v1/chat/completions` | relay address; set it to an empty value to hide the whole panel |
 

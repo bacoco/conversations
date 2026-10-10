@@ -8,7 +8,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
-    <title>Robin — présentation</title>
+    <title>Nestor — présentation</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       @font-face {
@@ -485,17 +485,17 @@
         <div class="flag" id="flag"></div>
       </div>
 
-      <!-- 1 · Robin, the copilot -->
+      <!-- 1 · Nestor, the copilot -->
       <section id="s1" class="scene clip" data-start="0" data-duration="5.8" data-track-index="1">
         <div class="wrap center" id="s1-in">
-          <div id="s1-title">Robin</div>
+          <div id="s1-title">Nestor</div>
           <div id="s1-sub" data-t="copilot"></div>
           <div id="s1-art" data-layout-allow-overflow><img src="assets/robin.webp" alt="" /></div>
           <div id="s1-serve" data-t="serve"></div>
         </div>
       </section>
 
-      <!-- 2 · What Robin does -->
+      <!-- 2 · What Nestor does -->
       <section id="s2" class="scene clip" data-start="5.4" data-duration="6" data-track-index="2">
         <div class="wrap" id="s2-in" style="justify-content: center">
           <div class="head" id="s2-head">
@@ -529,7 +529,7 @@
       <!-- 3 · The home cards: three spaces -->
       <section id="s3" class="scene clip" data-start="11" data-duration="6.6" data-track-index="3">
         <div class="wrap center" id="s3-in" style="gap: 36px">
-          <img class="round" id="s3-robin" src="assets/robin-accueil.webp" alt="" style="width: 340px; height: 340px" />
+          <img class="round" id="s3-nestor" src="assets/robin-accueil.webp" alt="" style="width: 340px; height: 340px" />
           <div class="h2" data-t="help" style="max-width: 860px"></div>
           <div id="s3-cards" style="display: flex; flex-direction: column; gap: 26px; width: 100%; text-align: left">
             <div class="card home-card" id="c1">
@@ -662,7 +662,7 @@
         fr: {
           copilot: "Votre copilote de prompts",
           serve: "Au service du service public",
-          eyebrow2: "Robin",
+          eyebrow2: "Nestor",
           intro2: "Un bon prompt donne une meilleure réponse.",
           clarifies: "Clarifie",
           request: "votre demande",
@@ -711,7 +711,7 @@
         en: {
           copilot: "Your prompt copilot",
           serve: "Serving the public service",
-          eyebrow2: "Robin",
+          eyebrow2: "Nestor",
           intro2: "A good prompt gets a better answer.",
           clarifies: "Clarifies",
           request: "your request",
@@ -802,7 +802,7 @@
       fadeOut("#s2-in", 10.9);
 
       // 3 · Home cards (11 – 17.6)
-      tl.fromTo("#s3-robin", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 11.2);
+      tl.fromTo("#s3-nestor", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 11.2);
       fadeIn("#s3-in .h2", 11.6);
       ["#c1", "#c2", "#c3"].forEach((sel, i) => {
         fadeIn(sel, 12.3 + i * 0.35, 60);

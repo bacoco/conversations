@@ -4,8 +4,8 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { ROBIN_AVATAR_URL } from '../components/PanelHome';
-import { useAskRobin } from '../fill/useAskRobin';
+import { NESTOR_AVATAR_URL } from '../components/PanelHome';
+import { useAskNestor } from '../fill/useAskNestor';
 import { getCourseContent } from '../learn/content';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { getDailyTools } from '../tools/tools';
@@ -42,8 +42,8 @@ const chipCss = css`
 `;
 
 /**
- * "Robin suggests": ready-made prompts that fit what the user is typing.
- * A click starts Robin's guided questions, reusing what is already written.
+ * "Nestor suggests": ready-made prompts that fit what the user is typing.
+ * A click starts Nestor's guided questions, reusing what is already written.
  */
 export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -79,7 +79,7 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
   const openLesson = usePromptToolkitStore((state) => state.openLesson);
   const [dismissedFor, setDismissedFor] = useState<string | null>(null);
   const found = useRecommendations(chatInput, suggestions, isActive);
-  const askRobin = useAskRobin();
+  const askNestor = useAskNestor();
 
   const isLongEnough = chatInput.trim().length >= RECOMMENDATION_MIN_LENGTH;
   if (!isActive || !isLongEnough || dismissedFor === chatInput.trim()) {
@@ -103,7 +103,7 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
   return (
     <Box
       role="region"
-      aria-label={t('Robin suggests')}
+      aria-label={t('Nestor suggests')}
       $gap="8px"
       $css={css`
         margin: 12px 16px 0;
@@ -118,14 +118,14 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
     >
       <Box $direction="row" $align="center" $gap="8px">
         <img
-          src={ROBIN_AVATAR_URL}
+          src={NESTOR_AVATAR_URL}
           alt=""
           width={24}
           height={24}
           style={{ flex: 'none', borderRadius: '50%' }}
         />
         <Text $size="sm" $weight="700" $css="flex: 1;">
-          {t('Robin suggests')}
+          {t('Nestor suggests')}
         </Text>
         <Box
           as="button"
@@ -138,11 +138,11 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
         </Box>
       </Box>
       <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
-        {/* Always there: Robin strengthens the user's own text. */}
+        {/* Always there: Nestor strengthens the user's own text. */}
         <Box
           as="button"
           type="button"
-          onClick={askRobin.ask}
+          onClick={askNestor.ask}
           $direction="row"
           $css={css`
             ${chipCss}
@@ -160,7 +160,7 @@ export const RecommendationBar = ({ isActive }: { isActive: boolean }) => {
           `}
         >
           <Icon iconName="edit_note" $size="16px" $withThemeInherited />
-          {t('Improve my text with Robin')}
+          {t('Improve my text with Nestor')}
         </Box>
         {found.map((suggestion) => (
           <Box

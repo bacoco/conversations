@@ -7,7 +7,7 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { DetailPage } from '../components/DetailPage';
-import { ROBIN_QUIZ_URL } from '../components/PanelHome';
+import { NESTOR_QUIZ_URL } from '../components/PanelHome';
 import { useReward } from '../rewards/useReward';
 
 import type { QuizQuestion } from './types';
@@ -155,7 +155,7 @@ export const QuizView = ({
       backLabel={t('Back to the lessons')}
       eyebrow={t('Quiz')}
       title={title}
-      image={ROBIN_QUIZ_URL}
+      image={NESTOR_QUIZ_URL}
     >
       {children}
     </DetailPage>

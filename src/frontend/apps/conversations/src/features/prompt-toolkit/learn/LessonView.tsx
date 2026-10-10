@@ -5,7 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { ROBIN_LESSONS_URL } from '../components/PanelHome';
+import { NESTOR_LESSONS_URL } from '../components/PanelHome';
 import { useReward } from '../rewards/useReward';
 
 import { RichText } from './RichText';
@@ -88,7 +88,7 @@ export const LessonView = ({
             icon={<Icon iconName="arrow_back" $size="18px" />}
           />
           <img
-            src={ROBIN_LESSONS_URL}
+            src={NESTOR_LESSONS_URL}
             alt=""
             width={52}
             height={52}
@@ -257,7 +257,7 @@ export const LessonView = ({
         $css={css`
           position: sticky;
           bottom: 0;
-          /* Room on the right for Robin's round button. */
+          /* Room on the right for Nestor's round button. */
           padding: 12px 84px 12px 16px;
           border-top: 1px solid var(--c--contextuals--border--surface--primary);
           background: var(--c--contextuals--background--surface--primary);

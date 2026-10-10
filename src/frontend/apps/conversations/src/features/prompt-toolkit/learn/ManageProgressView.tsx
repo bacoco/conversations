@@ -6,7 +6,7 @@ import { css } from 'styled-components';
 import { Box, Icon, Text, useToast } from '@/components';
 
 import { DetailPage } from '../components/DetailPage';
-import { ROBIN_COURSE_URL } from '../components/PanelHome';
+import { NESTOR_COURSE_URL } from '../components/PanelHome';
 
 import type { CourseContent } from './types';
 import { FULL_QUIZ, useLearnProgressStore } from './useLearnProgressStore';
@@ -153,7 +153,7 @@ export const ManageProgressView = ({
       subtitle={t(
         'Your progress is kept in this browser. Tick what you want to start over.',
       )}
-      image={ROBIN_COURSE_URL}
+      image={NESTOR_COURSE_URL}
     >
       <Box $direction="row" $justify="flex-end">
         <Button

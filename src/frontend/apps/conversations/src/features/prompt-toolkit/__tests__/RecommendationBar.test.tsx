@@ -29,7 +29,7 @@ describe('<RecommendationBar />', () => {
     expect(catalog[0].summary).toContain(LIBRARY_EN.prompts[0].keywords[0]);
   });
 
-  it('suggests prompts after a pause, and starts Robin with the draft', async () => {
+  it('suggests prompts after a pause, and starts Nestor with the draft', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       completion({
         ids: ['meeting-minutes', 'unknown', 'tool-translate'],
@@ -93,7 +93,7 @@ describe('<RecommendationBar />', () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 
-  it('always offers to improve the text with Robin', () => {
+  it('always offers to improve the text with Nestor', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(completion({ ids: [] })));
     usePromptToolkitStore.setState({
       chatInput: 'write something to my team about Monday',
@@ -101,7 +101,7 @@ describe('<RecommendationBar />', () => {
     render(<RecommendationBar isActive />);
 
     fireEvent.click(
-      screen.getByRole('button', { name: /Improve my text with Robin/ }),
+      screen.getByRole('button', { name: /Improve my text with Nestor/ }),
     );
     expect(usePromptToolkitStore.getState().fill).toMatchObject({
       template: 'write something to my team about Monday',

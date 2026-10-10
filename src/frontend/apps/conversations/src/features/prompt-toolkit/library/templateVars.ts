@@ -27,7 +27,9 @@ export const fillTemplate = (text: string, values: Record<string, string>) =>
 
 /* Sharing a prompt as a link: the prompt travels in the address itself. */
 
-export const SHARE_PREFIX = '#robin-prompt=';
+export const SHARE_PREFIX = '#nestor-prompt=';
+/** Links shared before the mascot was renamed keep working. */
+const LEGACY_SHARE_PREFIXES = ['#robin-prompt='];
 
 const toBase64Url = (text: string) => {
   const bytes = new TextEncoder().encode(text);
@@ -61,11 +63,14 @@ export const shareLink = (title: string, prompt: string) =>
 export const readSharedPrompt = (
   hash: string,
 ): { title: string; prompt: string } | null => {
-  if (!hash.startsWith(SHARE_PREFIX)) {
+  const prefix = [SHARE_PREFIX, ...LEGACY_SHARE_PREFIXES].find((candidate) =>
+    hash.startsWith(candidate),
+  );
+  if (!prefix) {
     return null;
   }
   try {
-    const data = JSON.parse(fromBase64Url(hash.slice(SHARE_PREFIX.length))) as {
+    const data = JSON.parse(fromBase64Url(hash.slice(prefix.length))) as {
       title?: unknown;
       prompt?: unknown;
     };
