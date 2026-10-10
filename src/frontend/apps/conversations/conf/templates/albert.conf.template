@@ -45,6 +45,21 @@ location = /albert/v1/embeddings {
     proxy_pass $albert_upstream/v1/embeddings;
 }
 
+# Speech to text (Whisper): dictation and recordings, sent in pieces of a
+# minute at most; an imported file goes whole up to 20 MB.
+location = /albert/v1/audio/transcriptions {
+    auth_request /albert/_auth;
+    limit_req zone=albert_audio burst=10 nodelay;
+    limit_req_status 429;
+    client_max_body_size 25m;
+    set $albert_upstream "${ALBERT_API_URL}";
+    proxy_set_header Authorization "Bearer ${ALBERT_API_KEY}";
+    proxy_set_header Cookie "";
+    proxy_ssl_server_name on;
+    proxy_read_timeout 300s;
+    proxy_pass $albert_upstream/v1/audio/transcriptions;
+}
+
 # 2xx when the session cookie belongs to a logged-in user.
 location = /albert/_auth {
     internal;

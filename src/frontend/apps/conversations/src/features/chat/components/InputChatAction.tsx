@@ -7,6 +7,7 @@ import DatagouvIcon from '@/assets/icons/uikit-custom/datagouv.svg?react';
 import { Box, Icon, Text } from '@/components';
 import { useCunninghamTheme } from '@/cunningham';
 import { LLMModel } from '@/features/chat/api/useLLMConfiguration';
+import { ComposerMic } from '@/features/prompt-toolkit/speech/ComposerMic';
 
 import { ModelSelector } from './ModelSelector';
 import { SendButton } from './SendButton';
@@ -256,6 +257,7 @@ export const InputChatActions = memo(
             </Box>
           )}
 
+          <ComposerMic />
           <SendButton
             status={status}
             disabled={!inputHasContent || isUploadingFiles || sendDisabled}

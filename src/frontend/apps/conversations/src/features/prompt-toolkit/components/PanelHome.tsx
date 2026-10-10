@@ -5,7 +5,8 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { useAiUnavailable } from '../coach/aiAvailability';
+import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
+import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import {
   CoachMode,
   usePromptToolkitStore,
@@ -28,7 +29,8 @@ interface HomeCard {
 
 const cardCss = (tone: Tone) => css`
   width: 100%;
-  padding: 14px;
+  height: 100%;
+  padding: 14px 10px;
   border-radius: 10px;
   cursor: pointer;
   font: inherit;
@@ -72,6 +74,7 @@ export const ROBIN_LESSONS_URL = '/assets/robin-lecons.webp';
 export const ROBIN_CARDS_URL = '/assets/robin-fiches.webp';
 export const ROBIN_QUIZ_URL = '/assets/robin-quiz.webp';
 export const ROBIN_CHALLENGES_URL = '/assets/robin-defis.webp';
+const RECORD_RED = '#d0342c';
 /** Background of the illustration, so it blends into its card. */
 const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 // Theme colour: readable in light and dark mode.
@@ -257,8 +260,8 @@ const RobinHeader = () => {
       <img
         src={ROBIN_HOME_URL}
         alt=""
-        width={180}
-        height={180}
+        width={140}
+        height={140}
         style={{ borderRadius: '50%', background: ILLUSTRATION_BACKGROUND }}
       />
       <Box $gap="2px">
@@ -281,6 +284,8 @@ export const PanelHome = () => {
   const coach = (mode: CoachMode) => () => startCoach(mode);
   const hasSeenWelcome = usePromptToolkitStore((state) => state.hasSeenWelcome);
   const isAiUnavailable = useAiUnavailable();
+  const isAiAvailable = useAiAvailable();
+  const openTool = usePromptToolkitStore((state) => state.openTool);
 
   // New modules (prompting course, everyday tools…) add a card here.
   const cards: HomeCard[] = [
@@ -290,9 +295,7 @@ export const PanelHome = () => {
       icon: 'touch_app',
       tone: 'brand',
       title: t('Prompt coach'),
-      description: t(
-        'Analysis, prompt help with versions, or suggestions as you type.',
-      ),
+      description: t('Analyses and improves your prompt.'),
       onSelect: coach('manual'),
     },
     {
@@ -301,9 +304,7 @@ export const PanelHome = () => {
       icon: 'school',
       tone: 'brand',
       title: t('Prompting course'),
-      description: t(
-        'Short lessons, review cards and quizzes to learn at your own pace.',
-      ),
+      description: t('Lessons, cards and quizzes.'),
       onSelect: () => openSection('learn'),
     },
     {
@@ -312,9 +313,7 @@ export const PanelHome = () => {
       icon: 'apps',
       tone: 'success',
       title: t('Everyday tools'),
-      description: t(
-        'Reply to an email, meeting minutes, summary, translation… prepared for you.',
-      ),
+      description: t('Emails, summaries, ready-made prompts.'),
       onSelect: () => openSection('tools'),
     },
   ];
@@ -330,23 +329,78 @@ export const PanelHome = () => {
   return (
     <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
       <RobinHeader />
-      <Box as="ul" $gap="8px" $css="margin: 0; padding: 0; list-style: none;">
+      {/* Speaking instead of typing: the main entry, shown first. */}
+      {isAiAvailable && TRANSCRIPTION_URL && (
+        <Box
+          as="button"
+          type="button"
+          onClick={() => openTool('minutes')}
+          $direction="row"
+          $align="center"
+          $gap="14px"
+          $css={css`
+            ${cardCss('brand')}
+            height: auto;
+            padding: 14px;
+            text-align: left;
+          `}
+        >
+          <Box
+            $align="center"
+            $justify="center"
+            $css={css`
+              flex: none;
+              width: 52px;
+              height: 52px;
+              border-radius: 50%;
+              color: #ffffff;
+              background: ${RECORD_RED};
+              box-shadow: 0 4px 12px rgba(208, 52, 44, 0.3);
+            `}
+          >
+            <Icon iconName="mic" $size="28px" $withThemeInherited />
+          </Box>
+          <Box $gap="2px" $css="flex: 1; min-width: 0;">
+            <Text $weight="700">{t('Record and transcribe')}</Text>
+            <Text $size="sm" $variation="secondary">
+              {t(
+                'A meeting, an idea, a voice note: the text arrives while you speak.',
+              )}
+            </Text>
+          </Box>
+          <Icon iconName="chevron_right" $size="20px" $variation="secondary" />
+        </Box>
+      )}
+      <Box
+        as="ul"
+        $css={css`
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+          gap: 8px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        `}
+      >
         {shownCards.map((card) => (
           <li key={card.id}>
             <Box
               as="button"
               type="button"
               onClick={card.onSelect}
-              $direction="row"
               $align="center"
-              $gap="12px"
-              $css={cardCss(card.tone)}
+              $gap="8px"
+              $css={css`
+                ${cardCss(card.tone)}
+                justify-content: flex-start;
+                text-align: center;
+              `}
             >
               <img
                 src={card.image}
                 alt=""
-                width={56}
-                height={56}
+                width={64}
+                height={64}
                 style={{
                   flex: 'none',
                   borderRadius: '50%',
@@ -354,17 +408,14 @@ export const PanelHome = () => {
                   background: ILLUSTRATION_BACKGROUND,
                 }}
               />
-              <Box $gap="2px" $css="flex: 1; min-width: 0;">
-                <Text $weight="700">{card.title}</Text>
-                <Text $size="sm" $variation="secondary">
+              <Box $gap="2px">
+                <Text $weight="700" $size="sm">
+                  {card.title}
+                </Text>
+                <Text $size="xs" $variation="secondary">
                   {card.description}
                 </Text>
               </Box>
-              <Icon
-                iconName="chevron_right"
-                $size="20px"
-                $variation="secondary"
-              />
             </Box>
           </li>
         ))}

@@ -17,6 +17,7 @@ import { PanelTextArea } from '../components/PanelTextArea';
 import { SpaceIntro } from '../components/SpaceIntro';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { LibraryView } from '../library/LibraryView';
+import { RecorderView } from '../speech/RecorderView';
 import {
   usePromptToolkitStore,
   useSectionReset,
@@ -339,6 +340,15 @@ export const ToolsPanel = () => {
   const [categoryId, setCategoryId] = useState('write');
   // Tools that open their own view rather than a form.
   const extraTools: Record<string, ToolEntry> = {
+    // Replaces the meeting minutes form: record, import or paste, then choose.
+    minutes: {
+      id: 'minutes',
+      icon: 'mic',
+      title: t('Record and transcribe'),
+      description: t(
+        'A meeting, an idea, a voice note or a pasted text: minutes, decisions, actions.',
+      ),
+    },
     library: {
       id: 'library',
       icon: 'menu_book',
@@ -463,6 +473,10 @@ export const ToolsPanel = () => {
 
   if (openId === 'my-style') {
     return <MyStyleView key={resetKey} onBack={() => setOpenId(null)} />;
+  }
+
+  if (openId === 'minutes') {
+    return <RecorderView key={resetKey} onBack={() => setOpenId(null)} />;
   }
 
   if (openId === 'library') {
