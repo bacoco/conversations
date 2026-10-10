@@ -295,8 +295,10 @@ const ResumeTranscript = ({ onResume }: { onResume: () => void }) => {
   const { t, i18n } = useTranslation();
   const text = useRecorderStore((state) => state.text);
   const updatedAt = useRecorderStore((state) => state.updatedAt);
+  // Only once the text is known to be the signed-in user's.
+  const isClaimed = useRecorderStore((state) => state.isClaimed);
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  if (words === 0) {
+  if (!isClaimed || words === 0) {
     return null;
   }
   const details = [

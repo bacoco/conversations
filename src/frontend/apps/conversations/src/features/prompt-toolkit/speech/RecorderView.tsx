@@ -141,7 +141,8 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   const tools = useMemo(() => getDailyTools(t), [t]);
   const formats = tools.find((tool) => tool.id === 'minutes')?.options[0];
 
-  const text = useRecorderStore((state) => state.text);
+  // Shown only once known to belong to the signed-in user.
+  const text = useRecorderStore((state) => (state.isClaimed ? state.text : ''));
   const setText = useRecorderStore((state) => state.setText);
   const append = useRecorderStore((state) => state.append);
   useSectionReset('tools', () => setText(''));

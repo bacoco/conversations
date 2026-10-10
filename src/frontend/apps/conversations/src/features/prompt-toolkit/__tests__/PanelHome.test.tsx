@@ -12,7 +12,12 @@ describe('<PanelHome />', () => {
       mode: 'learn',
       hasSeenWelcome: true,
     });
-    useRecorderStore.setState({ text: '', updatedAt: 0 });
+    useRecorderStore.setState({
+      text: '',
+      updatedAt: 0,
+      owner: '',
+      isClaimed: false,
+    });
   });
 
   it('opens the coach from its card', () => {
@@ -38,6 +43,7 @@ describe('<PanelHome />', () => {
   });
 
   it('offers to resume a transcription that is waiting', () => {
+    useRecorderStore.getState().claim('user-a');
     useRecorderStore
       .getState()
       .setText('Réunion du lundi : horaires élargis le jeudi soir.');
@@ -50,6 +56,33 @@ describe('<PanelHome />', () => {
       mode: 'tools',
       toolRequest: 'minutes',
     });
+  });
+
+  it('keeps a transcription for the same person after a reload', () => {
+    useRecorderStore.setState({
+      text: 'Réunion du lundi.',
+      updatedAt: Date.now(),
+      owner: 'user-a',
+    });
+    useRecorderStore.getState().claim('user-a');
+    render(<PanelHome />);
+    expect(screen.getByRole('region', { name: 'Resume' })).toBeInTheDocument();
+  });
+
+  it('never shows the transcription kept for someone else', () => {
+    // Someone else used this tab before: their text is still stored.
+    useRecorderStore.setState({
+      text: 'Réunion confidentielle.',
+      updatedAt: Date.now(),
+      owner: 'user-a',
+    });
+    render(<PanelHome />);
+    expect(
+      screen.queryByRole('region', { name: 'Resume' }),
+    ).not.toBeInTheDocument();
+
+    useRecorderStore.getState().claim('user-b');
+    expect(useRecorderStore.getState().text).toBe('');
   });
 
   it('says nothing about a transcription when there is none', () => {

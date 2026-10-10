@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon } from '@/components';
+import { useAuthQuery } from '@/features/auth';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
@@ -22,6 +23,7 @@ import { languageName } from '../coach/language';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
+import { useRecorderStore } from '../speech/useRecorderStore';
 import {
   RightPanelMode,
   clampPanelWidth,
@@ -200,6 +202,14 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
   useEffect(() => {
     void checkAi();
   }, [checkAi]);
+  // A transcription kept in this tab belongs to whoever was signed in.
+  const { data: user } = useAuthQuery();
+  const claimRecorder = useRecorderStore((state) => state.claim);
+  useEffect(() => {
+    if (user?.id) {
+      claimRecorder(user.id);
+    }
+  }, [user?.id, claimRecorder]);
   // Without the Albert relay there is no coach: the home cards instead.
   const showHome =
     isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);

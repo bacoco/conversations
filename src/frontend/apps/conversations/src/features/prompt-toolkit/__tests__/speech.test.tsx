@@ -98,7 +98,7 @@ describe('<RecorderView />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     usePromptToolkitStore.setState({ nestorTask: null, setChatInput });
-    useRecorderStore.setState({ text: '' });
+    useRecorderStore.setState({ text: '', isClaimed: true });
   });
 
   it('keeps a pasted text task in Nestor by default', () => {
