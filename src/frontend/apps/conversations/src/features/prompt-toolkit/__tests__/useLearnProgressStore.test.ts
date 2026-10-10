@@ -1,4 +1,5 @@
 import {
+  DAY_MS,
   FULL_QUIZ,
   useLearnProgressStore,
 } from '../learn/useLearnProgressStore';
@@ -65,5 +66,41 @@ describe('useLearnProgressStore', () => {
       doneStages: {},
       currentStep: null,
     });
+  });
+
+  it('brings a card back later and later while it is known', () => {
+    const now = 1_000_000;
+    const { reviewCard } = useLearnProgressStore.getState();
+    reviewCard('card-1', true, now);
+    expect(useLearnProgressStore.getState().cardSchedule['card-1']).toEqual({
+      box: 1,
+      due: now + DAY_MS,
+    });
+    reviewCard('card-1', true, now);
+    expect(useLearnProgressStore.getState().cardSchedule['card-1'].due).toBe(
+      now + 3 * DAY_MS,
+    );
+    // Not known: back to the start, due at once.
+    reviewCard('card-1', false, now);
+    const state = useLearnProgressStore.getState();
+    expect(state.cardSchedule['card-1']).toEqual({ box: 0, due: now });
+    expect(state.knownCards).not.toContain('card-1');
+  });
+
+  it('never lowers a skill level reached', () => {
+    const { raiseSkills } = useLearnProgressStore.getState();
+    raiseSkills({ task: 2, format: 1 });
+    raiseSkills({ task: 1, format: 3 });
+    expect(useLearnProgressStore.getState().skillLevels).toEqual({
+      task: 2,
+      format: 3,
+    });
+  });
+
+  it('asks the pace once, whatever the answer', () => {
+    useLearnProgressStore.getState().setWeeklyGoal(null);
+    const state = useLearnProgressStore.getState();
+    expect(state.goalAsked).toBe(true);
+    expect(state.weeklyGoal).toBeNull();
   });
 });

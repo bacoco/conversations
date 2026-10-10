@@ -60,7 +60,8 @@ const answerQuizRight = (questions: typeof course.quiz) => {
         name: new RegExp(`${escape(label)}$`),
       }),
     );
-    expect(screen.getByText('Right answer!')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Check my answer' }));
+    expect(screen.getByRole('status')).toHaveTextContent(question.explanation);
     fireEvent.click(
       screen.getByRole('button', {
         name: index === questions.length - 1 ? /See my score/ : /Next question/,
@@ -119,6 +120,14 @@ describe('<LearnPanel />', () => {
     expect(useLearnProgressStore.getState().completedLessons).toEqual([
       lesson.id,
     ]);
+    // A pause between two times: stop here, or go on.
+    expect(
+      screen.getByRole('heading', { name: 'Session done' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Come back later' }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /^Continue/ }));
 
     // Remember: each card once.
     cards.forEach(() => {
@@ -128,6 +137,7 @@ describe('<LearnPanel />', () => {
     expect(useLearnProgressStore.getState().knownCards).toEqual(
       cards.map((c) => c.id),
     );
+    fireEvent.click(screen.getByRole('button', { name: /^Continue/ }));
 
     // Check, then the end of the step.
     answerQuizRight(questions);
@@ -180,7 +190,7 @@ describe('<LearnPanel />', () => {
     render(<LearnPanel />);
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Review {{count}} cards' }),
+      screen.getByRole('button', { name: 'Review {{count}} items' }),
     );
     cards.forEach(() => {
       fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
@@ -213,20 +223,25 @@ describe('<LearnPanel />', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows nothing about real requests before the coach read one', () => {
+  it('shows the skills from the course before the coach read a request', () => {
     useAiAvailability.setState({ status: 'available' });
+    useLearnProgressStore.setState({ completedLessons: ['lesson-1'] });
     render(<LearnPanel />);
     fireEvent.click(
       screen.getByRole('button', { name: 'See the whole course' }),
     );
+
+    // Folded until opened.
+    expect(screen.queryByText('Discovered')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'My skills' }));
     expect(
-      screen.queryByRole('button', {
-        name: 'What the coach saw in your requests',
-      }),
-    ).not.toBeInTheDocument();
+      screen.getByText(
+        'From the course. Once the coach reads your requests, it adds what it sees.',
+      ),
+    ).toBeInTheDocument();
   });
 
-  it('shows what the coach saw in real requests, with the step to learn it', () => {
+  it('adds what the coach saw in real requests, with the step to learn it', () => {
     useAiAvailability.setState({ status: 'available' });
     const grades = {
       task: 80,
@@ -253,24 +268,78 @@ describe('<LearnPanel />', () => {
     fireEvent.click(
       screen.getByRole('button', { name: 'See the whole course' }),
     );
+    fireEvent.click(screen.getByRole('button', { name: 'My skills' }));
 
-    // Folded until opened.
-    expect(screen.queryByText('You often do it')).not.toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'What the coach saw in your requests',
-      }),
-    );
-    expect(screen.getAllByText('You often do it')).toHaveLength(1);
-    expect(screen.getAllByText('Sometimes')).toHaveLength(2);
-    expect(screen.getAllByText('To try')).toHaveLength(2);
+    // Seen at least once: discovered; never seen nor learnt: to discover.
+    expect(screen.getAllByText('Discovered')).toHaveLength(4);
+    expect(screen.getAllByText('To discover')).toHaveLength(4);
 
     // "Ask for things to be checked" is taught in step 5.
-    fireEvent.click(
-      screen.getAllByRole('button', { name: 'Step {{number}}' })[3],
-    );
+    const links = screen.getAllByRole('button', {
+      name: 'See step {{number}}',
+    });
+    fireEvent.click(links[links.length - 1]);
     expect(
       screen.getByRole('heading', { name: 'Step {{number}} · {{title}}' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: course.lessons[4].slides[0].title }),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps a level reached, even when the requests slip', () => {
+    useLearnProgressStore.setState({ skillLevels: { task: 3 } });
+    render(<LearnPanel />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'See the whole course' }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'My skills' }));
+    expect(screen.getByText('Mastered')).toBeInTheDocument();
+  });
+
+  it('puts the review first when enough is due', () => {
+    useLearnProgressStore.setState({
+      completedLessons: ['lesson-1', 'lesson-2', 'lesson-3'],
+    });
+    render(<LearnPanel />);
+    expect(
+      screen.getByRole('heading', { name: 'Your review' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Review' })).toBeInTheDocument();
+  });
+
+  it('offers a checkpoint once its steps are done', () => {
+    const steps = ['lesson-1', 'lesson-2', 'lesson-3'];
+    const stages = ['read', 'cards', 'quiz'] as const;
+    useLearnProgressStore.setState({
+      doneStages: Object.fromEntries(steps.map((id) => [id, [...stages]])),
+      knownCards: course.flashcards.map((card) => card.id),
+      cardSchedule: Object.fromEntries(
+        course.flashcards.map((card) => [
+          card.id,
+          { box: 2, due: Date.now() + 1e9 },
+        ]),
+      ),
+    });
+    render(<LearnPanel />);
+    expect(
+      screen.getByRole('heading', { name: 'Check what stuck' }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    expect(
+      screen.getByText('Question {{current}} of {{total}}'),
+    ).toBeInTheDocument();
+  });
+
+  it('offers the level test on a first visit only', () => {
+    render(<LearnPanel />);
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'I have already used an AI: test my level',
+      }),
+    );
+    expect(
+      screen.getByRole('heading', { name: 'Test my level' }),
     ).toBeInTheDocument();
   });
 });

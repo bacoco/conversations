@@ -7,16 +7,9 @@ import { Box, Icon, Text } from '@/components';
 
 import { useReward } from '../rewards/useReward';
 
-import { RichText } from './RichText';
+import { SlideView } from './SlideView';
 import type { Lesson } from './types';
 import { useLearnProgressStore } from './useLearnProgressStore';
-
-const exampleCss = (tone: 'error' | 'success') => css`
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--c--contextuals--border--semantic--${tone}--secondary);
-  background: var(--c--contextuals--background--semantic--${tone}--tertiary);
-`;
 
 /**
  * "Read", the first time of a step: one screen at a time; reaching the last
@@ -112,90 +105,12 @@ export const LessonView = ({
           </Box>
         </Box>
 
-        <Box $direction="row" $align="center" $gap="12px">
-          <Box
-            aria-hidden="true"
-            $align="center"
-            $justify="center"
-            $css={css`
-              flex: none;
-              width: 44px;
-              height: 44px;
-              border-radius: 12px;
-              font-size: 1.5rem;
-              background: var(
-                --c--contextuals--background--semantic--brand--tertiary
-              );
-            `}
-          >
-            {slide.icon}
-          </Box>
-          <Text as="h3" $size="lg" $weight="700" $margin="0">
-            {slide.title}
-          </Text>
-        </Box>
-
-        <RichText text={slide.content} />
-
-        {(slide.example?.bad || slide.example?.good) && (
-          <Box $gap="8px">
-            {slide.example?.bad && (
-              <Box $gap="6px" $css={exampleCss('error')}>
-                <Box $direction="row" $align="center" $gap="6px">
-                  <Icon iconName="close" $size="16px" $theme="error" />
-                  <Text $size="xs" $weight="700" $theme="error">
-                    {t('To avoid')}
-                  </Text>
-                </Box>
-                <Text $size="sm" $css="font-style: italic;">
-                  « {slide.example.bad} »
-                </Text>
-              </Box>
-            )}
-            {slide.example?.good && (
-              <Box $gap="6px" $css={exampleCss('success')}>
-                <Box $direction="row" $align="center" $gap="6px">
-                  <Icon iconName="check" $size="16px" $theme="success" />
-                  <Text $size="xs" $weight="700" $theme="success">
-                    {t('Better')}
-                  </Text>
-                </Box>
-                <Text $size="sm" $css="font-style: italic;">
-                  « {slide.example.good} »
-                </Text>
-              </Box>
-            )}
-            {slide.example?.note && (
-              <Text $size="xs" $variation="secondary">
-                {slide.example.note}
-              </Text>
-            )}
-          </Box>
-        )}
-
-        {slide.keyTakeaway && (
-          <Box
-            $direction="row"
-            $gap="10px"
-            $css={css`
-              padding: 12px 14px;
-              border-radius: 10px;
-              background: var(
-                --c--contextuals--background--semantic--brand--tertiary
-              );
-            `}
-          >
-            <Icon iconName="lightbulb" $size="20px" $theme="brand" />
-            <Box $gap="2px">
-              <Text $size="xs" $weight="700" $theme="brand">
-                {t('Key takeaway')}
-              </Text>
-              <Text $size="sm" $weight="600">
-                {slide.keyTakeaway}
-              </Text>
-            </Box>
-          </Box>
-        )}
+        <SlideView
+          key={index}
+          slide={slide}
+          lessonId={lesson.id}
+          index={index}
+        />
       </Box>
 
       <Box

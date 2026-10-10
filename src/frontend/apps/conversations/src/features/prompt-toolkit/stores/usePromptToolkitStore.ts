@@ -84,8 +84,9 @@ interface PromptToolkitState {
   openNestorTask: (prompt: string, label: string) => void;
   clearNestorTask: () => void;
   /** A lesson to open in the course, asked from another section. */
-  lessonRequest: string | null;
-  openLesson: (lessonId: string) => void;
+  /** A lesson asked from elsewhere, on one of its screens if given. */
+  lessonRequest: { lessonId: string; slide?: number } | null;
+  openLesson: (lessonId: string, slide?: number) => void;
   clearLessonRequest: () => void;
   /** A tool to open in the tools section, asked from a suggestion. */
   toolRequest: string | null;
@@ -146,9 +147,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         set({ nestorTask: { prompt, label }, isOpen: true }),
       clearNestorTask: () => set({ nestorTask: null }),
       lessonRequest: null,
-      openLesson: (lessonId) =>
+      openLesson: (lessonId, slide) =>
         set({
-          lessonRequest: lessonId,
+          lessonRequest: { lessonId, slide },
           mode: 'learn',
           showHome: false,
           fill: null,

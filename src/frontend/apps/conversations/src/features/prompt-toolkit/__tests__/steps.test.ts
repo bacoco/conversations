@@ -1,9 +1,13 @@
 import { getChallenges } from '../learn/challenges';
 import { COURSE_FR } from '../learn/content/fr';
 import {
+  CHECKPOINTS,
   ProgressSnapshot,
   buildSteps,
   cardsToReview,
+  checkpointQuestions,
+  computeSkillLevels,
+  dueCheckpoint,
   isStageDone,
   isStepDone,
   nextStage,
@@ -87,5 +91,65 @@ describe('the course path', () => {
       knownCards: [first.cards[0].id],
     };
     expect(cardsToReview(steps, progress)).toEqual(first.cards.slice(1));
+  });
+
+  it('brings a card back when its time has come', () => {
+    const lesson1 = steps[0];
+    const [first, second] = lesson1.cards;
+    const now = 10_000;
+    const progress: ProgressSnapshot = {
+      ...empty,
+      completedLessons: ['lesson-1'],
+      knownCards: [first.id, second.id],
+      cardSchedule: {
+        [first.id]: { box: 1, due: now - 1 },
+        [second.id]: { box: 2, due: now + 1 },
+      },
+    };
+    const due = cardsToReview(steps, progress, now).map((card) => card.id);
+    expect(due).toContain(first.id);
+    expect(due).not.toContain(second.id);
+  });
+
+  it('offers a checkpoint once its steps are done, and only once', () => {
+    const done = Object.fromEntries(
+      steps.slice(0, 3).map((step) => [step.lesson.id, step.stages]),
+    );
+    const progress: ProgressSnapshot = { ...empty, doneStages: done };
+    expect(dueCheckpoint(steps, progress)?.id).toBe('checkpoint-1');
+    expect(
+      dueCheckpoint(steps, { ...progress, checkpointsDone: ['checkpoint-1'] }),
+    ).toBeNull();
+    expect(checkpointQuestions(steps, CHECKPOINTS[0]).length).toBeGreaterThan(
+      2,
+    );
+  });
+
+  it('says a skill is mastered only when most recent requests show it', () => {
+    const entry = (task: number) => ({
+      excerpt: '…',
+      score: 50,
+      sentAt: 1,
+      competencies: {
+        task,
+        context: 0,
+        audience: 0,
+        format: 0,
+        constraints: 0,
+        sources: 0,
+        examples: 0,
+        verification: 0,
+      },
+    });
+    const twice = computeSkillLevels(steps, empty, [entry(80), entry(80)]);
+    expect(twice.task).toBe(1);
+    const often = computeSkillLevels(steps, empty, [
+      entry(80),
+      entry(80),
+      entry(30),
+      entry(90),
+    ]);
+    expect(often.task).toBe(3);
+    expect(often.verification).toBe(0);
   });
 });

@@ -49,7 +49,8 @@ export const FlashcardsView = ({
 }) => {
   const { t } = useTranslation();
   const knownCards = useLearnProgressStore((state) => state.knownCards);
-  const setCardKnown = useLearnProgressStore((state) => state.setCardKnown);
+  // Known: back in 1, 3, 7, then 21 days; to review: at the next review.
+  const reviewCard = useLearnProgressStore((state) => state.reviewCard);
   const [index, setIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [result, setResult] = useState<CardsResult>({ known: 0, toReview: 0 });
@@ -62,7 +63,7 @@ export const FlashcardsView = ({
   };
 
   const answer = (known: boolean) => {
-    setCardKnown(card.id, known);
+    reviewCard(card.id, known);
     const next = {
       known: result.known + (known ? 1 : 0),
       toReview: result.toReview + (known ? 0 : 1),

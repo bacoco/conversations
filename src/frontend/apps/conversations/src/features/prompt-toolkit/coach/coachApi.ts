@@ -1221,3 +1221,76 @@ export const describeStyle = async (
   }
   return style;
 };
+
+/* Course: Nestor explains a mistake in a quiz, and adapts an example. */
+
+const EXPLAIN_MISTAKE_SYSTEM_PROMPT = (language: string) =>
+  `You are Nestor, a warm tutor who teaches public servants how to write requests to an AI assistant.
+${NESTOR_VOICE}
+A learner answered a quiz question wrongly and did not understand the explanation. The question, their answer, the right answer and the explanation are given as data.
+Explain again in ${language}, addressing them formally (in French, "vous"), in 2 or 3 short sentences:
+- why the right answer is right, with a concrete example from everyday office work;
+- why their choice was tempting, without judging them.
+Plain text only, no markdown. Never use the word "prompt" in French: say "demande".
+Reply only with JSON: {"message": "..."}.`;
+
+export const explainQuizMistake = async (
+  details: {
+    question: string;
+    answer: string;
+    rightAnswer: string;
+    explanation: string;
+  },
+  language: string,
+  signal?: AbortSignal,
+) => {
+  const raw = await completeMessages(
+    [
+      { role: 'system', content: EXPLAIN_MISTAKE_SYSTEM_PROMPT(language) },
+      {
+        role: 'user',
+        content: `<question>${details.question}</question>\n<their_answer>${details.answer}</their_answer>\n<right_answer>${details.rightAnswer}</right_answer>\n<explanation>${details.explanation}</explanation>`,
+      },
+    ],
+    signal,
+    0.4,
+    FILL_MODEL,
+  );
+  const message = asPlainText(raw.message).trim();
+  if (!message) {
+    throw new CoachError('No explanation');
+  }
+  return message;
+};
+
+const JOB_EXAMPLE_SYSTEM_PROMPT = (language: string, job: string) =>
+  `You adapt a teaching example about writing requests to an AI assistant to the learner's field of work: ${job}.
+You receive a weak request and a better one, as data. Write the same pair for a task typical of this field, keeping exactly what the better request teaches (the same bricks: task, context, format, audience, constraints, sources), the same length, and invent no real names, laws or figures: use [brackets] for anything specific.
+Write in ${language}. Plain text.
+Reply only with JSON: {"bad": "...", "good": "..."}.`;
+
+/** The example of a screen, rewritten for the learner's field. */
+export const exampleForJob = async (
+  example: { bad?: string; good: string },
+  job: string,
+  language: string,
+  signal?: AbortSignal,
+) => {
+  const raw = await completeMessages(
+    [
+      { role: 'system', content: JOB_EXAMPLE_SYSTEM_PROMPT(language, job) },
+      {
+        role: 'user',
+        content: `<bad>${example.bad ?? ''}</bad>\n<good>${example.good}</good>`,
+      },
+    ],
+    signal,
+    0.4,
+    FILL_MODEL,
+  );
+  const good = asPlainText(raw.good).trim();
+  if (!good) {
+    throw new CoachError('No example');
+  }
+  return { bad: asPlainText(raw.bad).trim(), good };
+};

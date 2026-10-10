@@ -33,10 +33,13 @@ export const ChallengeView = ({
   challenge,
   onBack,
   inStep,
+  allowHints = true,
 }: {
   challenge: Challenge;
   onBack: () => void;
   inStep?: { doneLabel: string; onDone: (passed: boolean) => void };
+  /** False to do it again without help. */
+  allowHints?: boolean;
 }) => {
   const { t, i18n } = useTranslation();
   const reward = useReward();
@@ -165,16 +168,20 @@ export const ChallengeView = ({
           minRows={6}
         />
         <Box $direction="row" $justify="space-between" $align="center">
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            aria-expanded={showHints}
-            onClick={() => setShowHints((value) => !value)}
-            icon={<Icon iconName="lightbulb" $size="16px" />}
-          >
-            {showHints ? t('Hide the hints') : t('Need a hint?')}
-          </Button>
+          {allowHints ? (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-expanded={showHints}
+              onClick={() => setShowHints((value) => !value)}
+              icon={<Icon iconName="lightbulb" $size="16px" />}
+            >
+              {showHints ? t('Hide the hints') : t('Need a hint?')}
+            </Button>
+          ) : (
+            <span />
+          )}
           <Button
             size="small"
             disabled={status === 'loading' || !draft.trim()}
@@ -184,7 +191,7 @@ export const ChallengeView = ({
             {t('Have it graded')}
           </Button>
         </Box>
-        {showHints && (
+        {allowHints && showHints && (
           <Box as="ul" $gap="4px" $css="margin: 0; padding-left: 18px;">
             {challenge.hints.map((hint) => (
               <Text as="li" key={hint} $size="sm" $css="display: list-item;">
