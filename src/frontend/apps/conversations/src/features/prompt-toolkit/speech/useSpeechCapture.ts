@@ -7,6 +7,9 @@ export type CaptureStatus =
 
 export type CaptureError = 'microphone' | 'transcription' | null;
 
+/** How often the live text is refreshed. */
+const LIVE_SECONDS = 3;
+
 const preferredType = () => {
   const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
   return types.find((type) => MediaRecorder.isTypeSupported?.(type)) ?? '';
@@ -21,16 +24,24 @@ export const useSpeechCapture = ({
   language,
   chunkSeconds,
   onText,
+  live = false,
 }: {
   language: SpeechLanguage;
   chunkSeconds: number;
   /** Called with each transcribed piece, in recording order. */
   onText: (text: string) => void;
+  /**
+   * Also transcribe the piece being recorded every few seconds, so the
+   * text shows while the person speaks (`liveText`), until the piece's
+   * final text replaces it.
+   */
+  live?: boolean;
 }) => {
   const [status, setStatus] = useState<CaptureStatus>('idle');
   const [error, setError] = useState<CaptureError>(null);
   const [seconds, setSeconds] = useState(0);
   const [pending, setPending] = useState(0);
+  const [liveText, setLiveText] = useState('');
 
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -50,6 +61,14 @@ export const useSpeechCapture = ({
   const languageRef = useRef(language);
   languageRef.current = language;
   const mountedRef = useRef(true);
+  /** The piece being recorded: its parts so far, for the live text. */
+  const pieceRef = useRef<{ id: number; parts: Blob[]; type: string } | null>(
+    null,
+  );
+  const pieceCountRef = useRef(0);
+  /** Which piece the live text shows. */
+  const livePieceRef = useRef(-1);
+  const isLiveBusyRef = useRef(false);
 
   const release = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -75,8 +94,17 @@ export const useSpeechCapture = ({
   }, [release]);
 
   /** Transcribes the pieces one after the other, keeping their order. */
-  const enqueue = useCallback((blob: Blob) => {
-    if (blob.size < 1000) return;
+  const enqueue = useCallback((blob: Blob, pieceId: number) => {
+    const clearLive = () => {
+      if (livePieceRef.current === pieceId && mountedRef.current) {
+        livePieceRef.current = -1;
+        setLiveText('');
+      }
+    };
+    if (blob.size < 1000) {
+      clearLive();
+      return;
+    }
     setPending((count) => count + 1);
     queueRef.current = queueRef.current.then(async () => {
       try {
@@ -89,7 +117,9 @@ export const useSpeechCapture = ({
           previousRef.current = `${previousRef.current} ${text}`.slice(-400);
           onTextRef.current(text);
         }
+        clearLive();
       } catch {
+        clearLive();
         if (mountedRef.current) setError('transcription');
       } finally {
         if (mountedRef.current) setPending((count) => count - 1);
@@ -106,22 +136,48 @@ export const useSpeechCapture = ({
         type ? { mimeType: type } : {},
       );
       const parts: Blob[] = [];
+      const piece = { id: pieceCountRef.current++, parts, type };
+      pieceRef.current = piece;
       recorder.ondataavailable = (event) => {
         if (event.data.size) parts.push(event.data);
       };
       recorder.onstop = () => {
-        enqueue(new Blob(parts, { type: recorder.mimeType || type }));
+        if (pieceRef.current === piece) pieceRef.current = null;
+        enqueue(new Blob(parts, { type: recorder.mimeType || type }), piece.id);
         if (!stoppingRef.current && streamRef.current) {
           startPiece(streamRef.current);
         }
       };
-      recorder.start();
+      // Live: the data comes every second, so a piece can be read early.
+      recorder.start(live ? 1000 : undefined);
       if (pausedRef.current) recorder.pause();
       recorderRef.current = recorder;
       chunkElapsedRef.current = 0;
     },
-    [enqueue],
+    [enqueue, live],
   );
+
+  /** Reads the piece being recorded so far (a webm cut short decodes fine). */
+  const transcribeLive = useCallback(() => {
+    const piece = pieceRef.current;
+    if (!piece || !piece.parts.length || isLiveBusyRef.current) return;
+    isLiveBusyRef.current = true;
+    const blob = new Blob(piece.parts, {
+      type: piece.parts[0].type || piece.type,
+    });
+    transcribe(blob, languageRef.current, { previous: previousRef.current })
+      .then((text) => {
+        // Too late if this piece's final text is already there.
+        if (pieceRef.current === piece && mountedRef.current && text) {
+          livePieceRef.current = piece.id;
+          setLiveText(text);
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        isLiveBusyRef.current = false;
+      });
+  }, []);
 
   const start = useCallback(async () => {
     if (busyRef.current) return;
@@ -168,9 +224,11 @@ export const useSpeechCapture = ({
       chunkElapsedRef.current += 1;
       if (chunkElapsedRef.current >= chunkSeconds) {
         recorder.stop();
+      } else if (live && chunkElapsedRef.current % LIVE_SECONDS === 0) {
+        transcribeLive();
       }
     }, 1000);
-  }, [chunkSeconds, startPiece]);
+  }, [chunkSeconds, live, startPiece, transcribeLive]);
 
   const pause = useCallback(() => {
     if (!recorderRef.current || stoppingRef.current) return;
@@ -227,6 +285,8 @@ export const useSpeechCapture = ({
     seconds,
     /** Pieces recorded but not transcribed yet. */
     pending,
+    /** What is being said, before its final text (live mode). */
+    liveText,
     start,
     pause,
     resume,

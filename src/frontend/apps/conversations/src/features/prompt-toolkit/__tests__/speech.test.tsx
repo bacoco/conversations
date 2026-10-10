@@ -101,7 +101,15 @@ describe('<RecorderView />', () => {
     useRecorderStore.setState({ text: '' });
   });
 
-  it('turns a pasted text into minutes in the message field', () => {
+  const answer = (content: string) =>
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ choices: [{ message: { content } }] }),
+    });
+
+  it('writes the minutes of a pasted text right in the panel', async () => {
+    const fetchMock = answer('## Compte rendu\n\n- Budget validé');
+    vi.stubGlobal('fetch', fetchMock);
     render(<RecorderView onBack={vi.fn()} />);
 
     expect(
@@ -113,23 +121,42 @@ describe('<RecorderView />', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Flash' }));
     fireEvent.click(screen.getByRole('button', { name: /Meeting minutes/ }));
 
-    const prompt = setChatInput.mock.calls[0][0] as string;
-    // The test translation mock does not fill in {{format}}.
-    expect(prompt).toContain('From the meeting notes below');
-    expect(prompt).toContain('Claire valide le budget formation.');
+    expect(await screen.findByText('Budget validé')).toBeInTheDocument();
+    const body = JSON.parse(
+      (fetchMock.mock.calls[0] as [string, RequestInit])[1].body as string,
+    ) as { messages: { content: string }[] };
+    expect(body.messages[0].content).toContain('From the text below, write');
+    // Nothing left to fill in by hand in the result.
+    expect(body.messages[0].content).toContain('Never write placeholders');
+    expect(body.messages[0].content).toContain(
+      'Claire valide le budget formation.',
+    );
+    expect(setChatInput).not.toHaveBeenCalled();
+
+    // The result can still go to the conversation.
+    fireEvent.click(
+      screen.getByRole('button', { name: /Put in the conversation/ }),
+    );
+    expect(setChatInput).toHaveBeenCalledWith(
+      '## Compte rendu\n\n- Budget validé',
+    );
+    vi.unstubAllGlobals();
   });
 
-  it('offers the decision log, the actions, a summary and a translation', () => {
+  it('writes a decision log or a translation, sends the raw text to the chat', async () => {
+    const fetchMock = answer('Résultat');
+    vi.stubGlobal('fetch', fetchMock);
     useRecorderStore.setState({ text: 'Karim rédige le cahier des charges.' });
     render(<RecorderView onBack={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /Decision log/ }));
-    expect(setChatInput.mock.calls[0][0]).toContain('decision log');
+    expect(await screen.findByText('Résultat')).toBeInTheDocument();
+    expect(String(fetchMock.mock.calls[0][1].body)).toContain('decision log');
 
     fireEvent.click(screen.getByRole('button', { name: /Translate/ }));
-    expect(setChatInput.mock.calls[1][0]).toContain('Translate the text below');
-    expect(setChatInput.mock.calls[1][0]).toContain(
-      'Karim rédige le cahier des charges.',
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(String(fetchMock.mock.calls[1][1].body)).toContain(
+      'Translate the text below',
     );
 
     fireEvent.click(
@@ -138,6 +165,7 @@ describe('<RecorderView />', () => {
     expect(setChatInput).toHaveBeenLastCalledWith(
       'Karim rédige le cahier des charges.',
     );
+    vi.unstubAllGlobals();
   });
 
   it('keeps the text when the screen is left and comes back', () => {

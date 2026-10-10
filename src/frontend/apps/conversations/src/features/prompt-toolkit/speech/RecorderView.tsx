@@ -1,6 +1,8 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { css, keyframes } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
@@ -14,6 +16,7 @@ import { getDailyTools } from '../tools/tools';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
+import { generateFromText } from './generate';
 import {
   TRANSCRIPTION_URL,
   canRecord,
@@ -133,11 +136,10 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   const { showToast } = useToast();
   const isAiAvailable = useAiAvailable();
   // The text is complete: the prompt goes straight to the message field
-  // (its "[to be defined]" instructions are not blanks to fill in).
+  // (no Nestor questions: the prompts have no blanks to fill in).
   const placePrompt = usePlacePrompt();
   const tools = useMemo(() => getDailyTools(t), [t]);
-  const minutesTool = tools.find((tool) => tool.id === 'minutes');
-  const formats = minutesTool?.options[0];
+  const formats = tools.find((tool) => tool.id === 'minutes')?.options[0];
 
   const text = useRecorderStore((state) => state.text);
   const setText = useRecorderStore((state) => state.setText);
@@ -152,11 +154,21 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     total: number;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [result, setResult] = useState<{
+    title: string;
+    prompt: string;
+    text: string;
+    status: 'loading' | 'done' | 'error';
+  } | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
+  const resultAbortRef = useRef<AbortController | null>(null);
+  useEffect(() => () => resultAbortRef.current?.abort(), []);
 
   const capture = useSpeechCapture({
     language,
     chunkSeconds: CHUNK_SECONDS,
     onText: append,
+    live: true,
   });
   const { error, clearError } = capture;
   useEffect(() => {
@@ -227,17 +239,26 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
 
   const content = text.trim();
   const block = `\n\n"""\n${content}\n"""`;
+  // The result is read as it is: no "[to be defined]" left to fill in.
+  const noBlanks = ` ${t(
+    'Never write placeholders in square brackets: when the text does not say something (a person, a date), write a dash.',
+  )}`;
   const actions = [
     {
       id: 'minutes',
       title: t('Meeting minutes'),
       description: t('Decisions and actions, in the format chosen above.'),
-      run: () => {
+      prompt: () => {
         const instruction =
           formats?.choices.find((choice) => choice.id === format)
             ?.instruction ?? '';
-        placePrompt(
-          minutesTool?.build({ format: instruction }, content) ?? content,
+        return (
+          t(
+            'From the text below, write {{format}}. End with a table of decisions and a table of actions (who, what, by when). Only use the text.',
+            { format: instruction },
+          ) +
+          noBlanks +
+          block
         );
       },
     },
@@ -245,29 +266,31 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
       id: 'decisions',
       title: t('Decision log'),
       description: t('Who decides what, by when.'),
-      run: () =>
-        placePrompt(
-          t(
-            'From the text below, write a decision log. For each decision: the decision in one sentence, the person in charge, the deadline. Format: a table, without the discussion. If a person in charge or a deadline is missing, write [to be defined].',
-          ) + block,
-        ),
+      prompt: () =>
+        t(
+          'From the text below, write a decision log. For each decision: the decision in one sentence, the person in charge, the deadline. Format: a table, without the discussion. Only use the text.',
+        ) +
+        noBlanks +
+        block,
     },
     {
       id: 'actions',
       title: t('Extract the actions'),
       description: t('A who / what / when table.'),
-      run: () => {
-        const tool = tools.find((item) => item.id === 'actions');
-        if (tool) placePrompt(tool.build({}, content));
-      },
+      prompt: () =>
+        t(
+          'List every action to take in the text below, as a table: action, person in charge, deadline. Do not invent anything.',
+        ) +
+        noBlanks +
+        block,
     },
     {
       id: 'summary',
       title: t('Summarise'),
       description: t('The key points, on one page.'),
-      run: () => {
+      prompt: () => {
         const tool = tools.find((item) => item.id === 'summary');
-        if (!tool) return;
+        if (!tool) return '';
         const choices = Object.fromEntries(
           tool.options.map((group) => [
             group.id,
@@ -277,34 +300,68 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               : group.choices[0].instruction,
           ]),
         );
-        placePrompt(tool.build(choices, content));
+        return tool.build(choices, content);
       },
     },
     {
       id: 'translate',
       title: t('Translate'),
       description: language === 'fr' ? t('Into English.') : t('Into French.'),
-      run: () => {
+      prompt: () => {
         const tool = tools.find((item) => item.id === 'translate');
         const target = tool?.options[0].choices.find(
           (choice) => choice.id === (language === 'fr' ? 'en' : 'fr'),
         );
-        if (tool && target) {
-          placePrompt(tool.build({ language: target.instruction }, content));
-        }
+        return tool && target
+          ? tool.build({ language: target.instruction }, content)
+          : '';
       },
     },
     {
       id: 'raw',
       title: t('Send to the assistant'),
       description: t('The text as it is, in the message field.'),
-      run: () => placePrompt(content),
+      prompt: () => content,
     },
   ];
 
-  const copy = async () => {
+  /** Written here in the panel; the raw text goes to the conversation. */
+  const runAction = (action: (typeof actions)[number]) => {
+    const prompt = action.prompt();
+    if (!prompt) return;
+    if (action.id === 'raw' || !isAiAvailable) {
+      placePrompt(prompt);
+      return;
+    }
+    resultAbortRef.current?.abort();
+    const controller = new AbortController();
+    resultAbortRef.current = controller;
+    setResult({ title: action.title, prompt, text: '', status: 'loading' });
+    generateFromText(prompt, controller.signal)
+      .then((generated) =>
+        setResult({
+          title: action.title,
+          prompt,
+          text: generated,
+          status: 'done',
+        }),
+      )
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setResult({ title: action.title, prompt, text: '', status: 'error' });
+        }
+      });
+    requestAnimationFrame(() =>
+      resultRef.current?.scrollIntoView?.({
+        behavior: 'smooth',
+        block: 'start',
+      }),
+    );
+  };
+
+  const copy = async (value = content) => {
     try {
-      await navigator.clipboard.writeText(content);
+      await navigator.clipboard.writeText(value);
       showToast('success', t('Text copied.'), undefined, 3000);
     } catch {
       showToast('error', t('Copying was refused by the browser.'));
@@ -314,10 +371,7 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   const stateText = (() => {
     if (capture.status === 'starting') return t('Opening the microphone…');
     if (isPaused) return t('Paused');
-    if (isRecording)
-      return t('Recording. The text arrives every {{count}} seconds.', {
-        count: CHUNK_SECONDS,
-      });
+    if (isRecording) return t('Recording. The text appears as you speak.');
     if (importing)
       return importing.total > 1
         ? t('Transcribing the file: part {{done}} of {{total}}…', {
@@ -447,8 +501,19 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               </Box>
             )}
             {!isActive && !importing && (
-              <Text $size="sm" $variation="secondary">
-                {canUseMicrophone ? `${t('or')} ` : ''}
+              // One line: "or import an audio file".
+              <Box
+                $direction="row"
+                $align="baseline"
+                $justify="center"
+                $gap="4px"
+                $css="flex-wrap: wrap; font-size: 0.875rem;"
+              >
+                {canUseMicrophone && (
+                  <Text $size="sm" $variation="secondary">
+                    {t('or')}
+                  </Text>
+                )}
                 <Box
                   as="button"
                   type="button"
@@ -468,7 +533,7 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 >
                   {t('import an audio file')}
                 </Box>
-              </Text>
+              </Box>
             )}
             <input
               ref={fileInputRef}
@@ -499,6 +564,43 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               : t('Paste a text or your notes here.')
           }
         />
+        {/* What is being said, before its final text replaces it. */}
+        {capture.liveText && (
+          <Box
+            aria-live="polite"
+            $direction="row"
+            $gap="8px"
+            $align="flex-start"
+            $css={css`
+              padding: 8px 10px;
+              border-radius: 8px;
+              background: var(--c--contextuals--background--surface--secondary);
+            `}
+          >
+            <Box
+              aria-hidden="true"
+              $css={css`
+                flex: none;
+                width: 8px;
+                height: 8px;
+                margin-top: 6px;
+                border-radius: 50%;
+                background: ${RECORD_RED};
+                animation: ${pulse} 1.4s infinite;
+                @media (prefers-reduced-motion: reduce) {
+                  animation: none;
+                }
+              `}
+            />
+            <Text
+              $size="sm"
+              $variation="secondary"
+              $css="font-style: italic; min-width: 0; overflow-wrap: anywhere;"
+            >
+              {capture.liveText}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {content && !isActive && (
@@ -546,7 +648,7 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 key={action.id}
                 as="button"
                 type="button"
-                onClick={action.run}
+                onClick={() => runAction(action)}
                 // Six actions: the first and the last take the whole row.
                 $css={actionCss(
                   index === 0,
@@ -583,6 +685,116 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               {t('Clear')}
             </Button>
           </Box>
+        </Box>
+      )}
+
+      {result && (
+        <Box ref={resultRef} $gap="10px" $css={cardCss}>
+          <Box $direction="row" $align="center" $justify="space-between">
+            <Text as="h3" $size="sm" $weight="700" $margin="0">
+              {result.title}
+            </Text>
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              aria-label={t('Close')}
+              onClick={() => {
+                resultAbortRef.current?.abort();
+                setResult(null);
+              }}
+              icon={<Icon iconName="close" $size="18px" />}
+            />
+          </Box>
+          {result.status === 'loading' && (
+            <Text role="status" $size="sm" $variation="secondary">
+              {t('Writing…')}
+            </Text>
+          )}
+          {result.status === 'error' && (
+            <Text role="alert" $size="sm" $variation="secondary">
+              {t('This could not be written. Try again.')}
+            </Text>
+          )}
+          {result.status === 'done' && (
+            <Box
+              $css={css`
+                font-size: 0.875rem;
+                line-height: 1.55;
+                overflow-wrap: anywhere;
+                & table {
+                  display: block;
+                  overflow-x: auto;
+                  border-collapse: collapse;
+                }
+                & th {
+                  overflow-wrap: normal;
+                  white-space: nowrap;
+                }
+                & th,
+                & td {
+                  padding: 4px 8px;
+                  border: 1px solid
+                    var(--c--contextuals--border--surface--primary);
+                  text-align: left;
+                  vertical-align: top;
+                }
+                & h1,
+                & h2,
+                & h3 {
+                  font-size: 1rem;
+                  margin: 12px 0 4px;
+                }
+                & p,
+                & ul,
+                & ol {
+                  margin: 4px 0;
+                }
+              `}
+            >
+              <Markdown remarkPlugins={[remarkGfm]}>{result.text}</Markdown>
+            </Box>
+          )}
+          {result.status !== 'loading' && (
+            <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
+              {result.status === 'done' && (
+                <>
+                  <Button
+                    size="small"
+                    color="neutral"
+                    variant="bordered"
+                    onClick={() => void copy(result.text)}
+                    icon={<Icon iconName="content_copy" $size="18px" />}
+                  >
+                    {t('Copy')}
+                  </Button>
+                  <Button
+                    size="small"
+                    color="neutral"
+                    variant="bordered"
+                    onClick={() => placePrompt(result.text)}
+                    icon={<Icon iconName="arrow_upward" $size="18px" />}
+                  >
+                    {t('Put in the conversation')}
+                  </Button>
+                </>
+              )}
+              <Button
+                size="small"
+                color="neutral"
+                variant="tertiary"
+                onClick={() => {
+                  const action = actions.find(
+                    (item) => item.title === result.title,
+                  );
+                  if (action) runAction(action);
+                }}
+                icon={<Icon iconName="refresh" $size="18px" />}
+              >
+                {t('Try again')}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
     </DetailPage>

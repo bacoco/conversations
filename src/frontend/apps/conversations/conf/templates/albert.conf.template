@@ -46,10 +46,11 @@ location = /albert/v1/embeddings {
 }
 
 # Speech to text (Whisper): dictation and recordings, sent in pieces of a
-# minute at most; an imported file goes whole up to 20 MB.
+# minute at most; an imported file goes whole up to 20 MB. While recording,
+# the piece in progress is also read every 3 seconds to show the text live.
 location = /albert/v1/audio/transcriptions {
     auth_request /albert/_auth;
-    limit_req zone=albert_audio burst=10 nodelay;
+    limit_req zone=albert_audio burst=20 nodelay;
     limit_req_status 429;
     client_max_body_size 25m;
     set $albert_upstream "${ALBERT_API_URL}";
