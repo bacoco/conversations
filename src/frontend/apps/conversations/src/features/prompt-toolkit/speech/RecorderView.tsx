@@ -1,8 +1,6 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { css, keyframes } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
@@ -16,7 +14,6 @@ import { getDailyTools } from '../tools/tools';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
-import { generateFromText } from './generate';
 import {
   TRANSCRIPTION_URL,
   canRecord,
@@ -154,15 +151,6 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     total: number;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [result, setResult] = useState<{
-    title: string;
-    prompt: string;
-    text: string;
-    status: 'loading' | 'done' | 'error';
-  } | null>(null);
-  const resultRef = useRef<HTMLDivElement | null>(null);
-  const resultAbortRef = useRef<AbortController | null>(null);
-  useEffect(() => () => resultAbortRef.current?.abort(), []);
 
   const capture = useSpeechCapture({
     language,
@@ -325,43 +313,9 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     },
   ];
 
-  /** Written here in the panel; the raw text goes to the conversation. */
-  const runAction = (action: (typeof actions)[number]) => {
-    const prompt = action.prompt();
-    if (!prompt) return;
-    if (action.id === 'raw' || !isAiAvailable) {
-      placePrompt(prompt);
-      return;
-    }
-    resultAbortRef.current?.abort();
-    const controller = new AbortController();
-    resultAbortRef.current = controller;
-    setResult({ title: action.title, prompt, text: '', status: 'loading' });
-    generateFromText(prompt, controller.signal)
-      .then((generated) =>
-        setResult({
-          title: action.title,
-          prompt,
-          text: generated,
-          status: 'done',
-        }),
-      )
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setResult({ title: action.title, prompt, text: '', status: 'error' });
-        }
-      });
-    requestAnimationFrame(() =>
-      resultRef.current?.scrollIntoView?.({
-        behavior: 'smooth',
-        block: 'start',
-      }),
-    );
-  };
-
-  const copy = async (value = content) => {
+  const copy = async () => {
     try {
-      await navigator.clipboard.writeText(value);
+      await navigator.clipboard.writeText(content);
       showToast('success', t('Text copied.'), undefined, 3000);
     } catch {
       showToast('error', t('Copying was refused by the browser.'));
@@ -648,7 +602,10 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 key={action.id}
                 as="button"
                 type="button"
-                onClick={() => runAction(action)}
+                onClick={() => {
+                  const prompt = action.prompt();
+                  if (prompt) placePrompt(prompt);
+                }}
                 // Six actions: the first and the last take the whole row.
                 $css={actionCss(
                   index === 0,
@@ -685,116 +642,6 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               {t('Clear')}
             </Button>
           </Box>
-        </Box>
-      )}
-
-      {result && (
-        <Box ref={resultRef} $gap="10px" $css={cardCss}>
-          <Box $direction="row" $align="center" $justify="space-between">
-            <Text as="h3" $size="sm" $weight="700" $margin="0">
-              {result.title}
-            </Text>
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              aria-label={t('Close')}
-              onClick={() => {
-                resultAbortRef.current?.abort();
-                setResult(null);
-              }}
-              icon={<Icon iconName="close" $size="18px" />}
-            />
-          </Box>
-          {result.status === 'loading' && (
-            <Text role="status" $size="sm" $variation="secondary">
-              {t('Writing…')}
-            </Text>
-          )}
-          {result.status === 'error' && (
-            <Text role="alert" $size="sm" $variation="secondary">
-              {t('This could not be written. Try again.')}
-            </Text>
-          )}
-          {result.status === 'done' && (
-            <Box
-              $css={css`
-                font-size: 0.875rem;
-                line-height: 1.55;
-                overflow-wrap: anywhere;
-                & table {
-                  display: block;
-                  overflow-x: auto;
-                  border-collapse: collapse;
-                }
-                & th {
-                  overflow-wrap: normal;
-                  white-space: nowrap;
-                }
-                & th,
-                & td {
-                  padding: 4px 8px;
-                  border: 1px solid
-                    var(--c--contextuals--border--surface--primary);
-                  text-align: left;
-                  vertical-align: top;
-                }
-                & h1,
-                & h2,
-                & h3 {
-                  font-size: 1rem;
-                  margin: 12px 0 4px;
-                }
-                & p,
-                & ul,
-                & ol {
-                  margin: 4px 0;
-                }
-              `}
-            >
-              <Markdown remarkPlugins={[remarkGfm]}>{result.text}</Markdown>
-            </Box>
-          )}
-          {result.status !== 'loading' && (
-            <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
-              {result.status === 'done' && (
-                <>
-                  <Button
-                    size="small"
-                    color="neutral"
-                    variant="bordered"
-                    onClick={() => void copy(result.text)}
-                    icon={<Icon iconName="content_copy" $size="18px" />}
-                  >
-                    {t('Copy')}
-                  </Button>
-                  <Button
-                    size="small"
-                    color="neutral"
-                    variant="bordered"
-                    onClick={() => placePrompt(result.text)}
-                    icon={<Icon iconName="arrow_upward" $size="18px" />}
-                  >
-                    {t('Put in the conversation')}
-                  </Button>
-                </>
-              )}
-              <Button
-                size="small"
-                color="neutral"
-                variant="tertiary"
-                onClick={() => {
-                  const action = actions.find(
-                    (item) => item.title === result.title,
-                  );
-                  if (action) runAction(action);
-                }}
-                icon={<Icon iconName="refresh" $size="18px" />}
-              >
-                {t('Try again')}
-              </Button>
-            </Box>
-          )}
         </Box>
       )}
     </DetailPage>
