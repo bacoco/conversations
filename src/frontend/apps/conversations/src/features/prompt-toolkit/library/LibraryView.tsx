@@ -5,13 +5,13 @@ import styled, { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { PromptActions } from './PromptActions';
 import { useProfileStore } from '../stores/useProfileStore';
 
+import { PromptActions } from './PromptActions';
 import { getPromptLibrary } from './content';
+import { shareLink } from './templateVars';
 import type { LibraryPrompt } from './types';
 import { useLibraryStore } from './useLibraryStore';
-import { shareLink } from './templateVars';
 import {
   exportMyPrompts,
   parseMyPromptsFile,
