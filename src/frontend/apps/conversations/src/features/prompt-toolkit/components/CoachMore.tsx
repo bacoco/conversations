@@ -10,12 +10,15 @@ import {
   GeneratedPrompt,
   PromptAnalysis,
   PromptImprovement,
+  annotateRequest,
   generatePrompts,
   hasPlaceholders,
   improvePrompt,
 } from '../coach/coachApi';
 import { levelColor, wordLevel } from '../coach/levels';
 import { wordDiff } from '../coach/wordDiff';
+import { AnnotatedRequest } from '../learn/SlideView';
+import type { PromptPart } from '../learn/types';
 import { SavePromptButton } from '../library/SavePromptButton';
 import { searchLibrary } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
@@ -421,6 +424,90 @@ const Versions = ({
 };
 
 /** Requests close in meaning, already well written: no model, as you type. */
+/** The user's own request, each brick in its colour, as in the course. */
+const ColouredRequest = ({
+  prompt,
+  language,
+}: {
+  prompt: string;
+  language: string;
+}) => {
+  const { t } = useTranslation();
+  const [state, setState] = useState<
+    | { status: 'idle' | 'loading' | 'error' }
+    | { status: 'done'; parts: PromptPart[]; text: string }
+  >({ status: 'idle' });
+  const controllerRef = useRef<AbortController | null>(null);
+  useEffect(() => () => controllerRef.current?.abort(), []);
+  const labels = [
+    t('Task'),
+    t('Context'),
+    t('Audience'),
+    t('Format'),
+    t('Constraints'),
+    t('Source'),
+    t('Example'),
+    t('Verification'),
+  ];
+  const run = async () => {
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    setState({ status: 'loading' });
+    try {
+      const parts = await annotateRequest(
+        prompt,
+        labels,
+        language,
+        controller.signal,
+      );
+      setState({ status: 'done', parts, text: prompt });
+    } catch {
+      if (!controller.signal.aborted) {
+        setState({ status: 'error' });
+      }
+    }
+  };
+  if (!prompt.trim()) {
+    return null;
+  }
+  if (state.status === 'done' && state.text === prompt) {
+    return (
+      <Box $gap="6px">
+        <Text $size="sm" $weight="700">
+          {t('Your request, brick by brick')}
+        </Text>
+        <AnnotatedRequest parts={state.parts} />
+      </Box>
+    );
+  }
+  return (
+    <Box $gap="4px" $align="flex-start">
+      <Button
+        size="small"
+        color="neutral"
+        variant="tertiary"
+        disabled={state.status === 'loading'}
+        onClick={() => void run()}
+        icon={
+          state.status === 'loading' ? (
+            <Loader size="small" />
+          ) : (
+            <Icon iconName="palette" $size="16px" />
+          )
+        }
+      >
+        {t('See my request in colour')}
+      </Button>
+      {state.status === 'error' && (
+        <Text $size="xs" role="alert">
+          {t('Nestor could not cut your request. Please retry.')}
+        </Text>
+      )}
+    </Box>
+  );
+};
+
 const CloseRequests = ({ text }: { text: string }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -475,6 +562,7 @@ export const CoachMore = ({
           isBeginner={isBeginner}
           onPlace={onPlace}
         />
+        <ColouredRequest prompt={prompt} language={language} />
         {/* Learning by oneself: hints instead of a ready version. */}
         <TutorHints prompt={prompt} language={language} />
         <Versions prompt={prompt} language={language} />

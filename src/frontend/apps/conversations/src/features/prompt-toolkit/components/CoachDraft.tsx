@@ -6,13 +6,15 @@ import { css } from 'styled-components';
 import { Box, Icon, Text, useToast } from '@/components';
 import { useResponsiveStore } from '@/stores';
 
-import type { Competency, PromptAnalysis } from '../coach/coachApi';
+import type { PromptAnalysis } from '../coach/coachApi';
+import { FOCUS_SKILLS } from '../coach/coachInsights';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { GuidedThread, NestorBubble } from '../fill/GuidedThread';
 import { useGuidedFill } from '../fill/useGuidedFill';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { useReward } from '../rewards/useReward';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { CoachMore } from './CoachMore';
@@ -23,10 +25,17 @@ import {
   RetainTip,
   WorksBox,
 } from './CoachParts';
+import {
+  AskFirst,
+  FeltCheck,
+  ProgressNote,
+  SendChecklist,
+  useKindTips,
+  useWhyTexts,
+} from './CoachProgress';
 import { CoachStatus } from './CoachStatus';
 import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
 import { LivePillars } from './LivePillars';
-import { PracticeCheck } from './PracticeCheck';
 
 /** Above this level, the request can go as it is: no questions by default. */
 const CLEAR_ENOUGH_SCORE = 80;
@@ -46,34 +55,36 @@ const submitComposer = () => {
   return true;
 };
 
-/** One habit per rule, for the rule this request needed most. */
+/**
+ * One habit per rule, for the rule this request needed most, said as fits
+ * its kind of request; never one the user said is not needed for it.
+ */
 const useTipFor = (result: PromptAnalysis | null) => {
-  const { t } = useTranslation();
+  const tipFor = useKindTips();
+  const why = useWhyTexts();
+  const dismissed = useCoachPrefsStore((state) => state.dismissedTips);
   return useMemo(() => {
     if (!result) {
       return null;
     }
-    const tips: Partial<Record<Competency, string>> = {
-      task: t('Say exactly what you expect: write, summarise, list…'),
-      context: t(
-        'Give the situation and the purpose: the Assistant cannot guess them.',
-      ),
-      audience: t('Say who it is for: the tone and the level change with it.'),
-      format: t('Say the expected form: length, list, table, tone.'),
-      sources: t('Give the text or document to rely on.'),
-      constraints: t('Say what to avoid, and what must not be made up.'),
-    };
-    const [weakest] = (Object.keys(tips) as Competency[])
+    const kind = result.kind ?? 'other';
+    const skipped = dismissed[kind] ?? [];
+    const [weakest] = FOCUS_SKILLS.filter((key) => !skipped.includes(key))
       .map((key) => ({ key, score: result.competencies[key] }))
       .sort((a, b) => a.score - b.score);
     return weakest && weakest.score < 60
       ? {
           key: `rule-${weakest.key}`,
-          text: tips[weakest.key] ?? '',
+          skill: weakest.key,
+          kind,
+          text: tipFor(weakest.key, result.kind),
+          why: why[weakest.key],
           lesson: LESSON_FOR_COMPETENCY[weakest.key],
         }
       : null;
-  }, [result, t]);
+    // `tipFor` and `why` follow the language, read with the result.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, dismissed]);
 };
 
 const SensitiveWarning = ({ text }: { text: string }) => {
@@ -154,6 +165,11 @@ export const CoachDraft = ({
   });
   const result = readText !== null ? analysis.analysis : null;
   const tip = useTipFor(result);
+  const askFirst = useCoachPrefsStore((state) => state.askFirst);
+  const checklist = useCoachPrefsStore((state) => state.checklist);
+  const dismissTip = useCoachPrefsStore((state) => state.dismissTip);
+  /** The reading the user already gave their opinion on. */
+  const [guessedFor, setGuessedFor] = useState<string | null>(null);
 
   // What the coach put in the message field starts a new reading.
   useEffect(() => {
@@ -232,6 +248,7 @@ export const CoachDraft = ({
                 <LivePillars text={draft} />
               </Box>
             )}
+            {checklist && <SendChecklist />}
             <Icon iconName="grading" $size="40px" $theme="brand" />
             <Text $textAlign="center" $weight="700">
               {t('Your request is ready to be read')}
@@ -267,7 +284,13 @@ export const CoachDraft = ({
                 </Button>
               </Box>
             )}
-            {result && (
+            {result && askFirst && guessedFor !== readText && (
+              <AskFirst
+                result={result}
+                onDone={() => setGuessedFor(readText)}
+              />
+            )}
+            {result && (!askFirst || guessedFor === readText) && (
               <Box
                 $gap="12px"
                 aria-busy={analysis.status === 'loading'}
@@ -280,11 +303,13 @@ export const CoachDraft = ({
                 {result.verdict && (
                   <NestorBubble>{result.verdict}</NestorBubble>
                 )}
-                <PracticeCheck result={result} />
+                <ProgressNote result={result} />
               </Box>
             )}
 
-            {showQuestions ? (
+            {askFirst &&
+            result &&
+            guessedFor !== readText ? null : showQuestions ? (
               <>
                 <GuidedThread fill={fill} extraAction={sendAsIsLink} />
                 <FinalRequest
@@ -294,10 +319,16 @@ export const CoachDraft = ({
                   saveTitle={t('Your request')}
                 />
                 {fill.final && tip && (
-                  <RetainTip tipKey={tip.key} lesson={tip.lesson}>
+                  <RetainTip
+                    tipKey={tip.key}
+                    lesson={tip.lesson}
+                    why={tip.why}
+                    onDismiss={() => dismissTip(tip.kind, tip.skill)}
+                  >
                     {tip.text}
                   </RetainTip>
                 )}
+                {fill.final && <FeltCheck />}
               </>
             ) : (
               <Box

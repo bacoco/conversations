@@ -84,6 +84,12 @@ interface PromptToolkitState {
   openNestorTask: (prompt: string, label: string) => void;
   clearNestorTask: () => void;
   /** A lesson to open in the course, asked from another section. */
+  /**
+   * The coach read the request just sent: once the answer is there, the
+   * closed panel shows a gentle dot instead of opening itself.
+   */
+  coachWaitsForAnswer: boolean;
+  setCoachWaitsForAnswer: (waits: boolean) => void;
   /** A lesson asked from elsewhere, on one of its screens if given. */
   lessonRequest: { lessonId: string; slide?: number } | null;
   openLesson: (lessonId: string, slide?: number) => void;
@@ -146,6 +152,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       openNestorTask: (prompt, label) =>
         set({ nestorTask: { prompt, label }, isOpen: true }),
       clearNestorTask: () => set({ nestorTask: null }),
+      coachWaitsForAnswer: false,
+      setCoachWaitsForAnswer: (coachWaitsForAnswer) =>
+        set({ coachWaitsForAnswer }),
       lessonRequest: null,
       openLesson: (lessonId, slide) =>
         set({

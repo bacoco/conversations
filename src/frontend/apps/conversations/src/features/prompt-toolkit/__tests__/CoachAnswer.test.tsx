@@ -267,4 +267,20 @@ describe('the coach after an answer', () => {
       screen.getByRole('button', { name: 'Too long' }),
     ).toBeInTheDocument();
   });
+
+  it('offers to redo the request itself, with the coach', () => {
+    const setChatInput = vi.fn();
+    usePromptToolkitStore.setState({ chatInput: '', setChatInput });
+    vi.stubGlobal('fetch', vi.fn());
+    render(<CoachPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'Too long' }));
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Or redo my request, with the coach',
+      }),
+    );
+    expect(setChatInput).toHaveBeenCalledWith(
+      'Prépare une note sur le budget.',
+    );
+  });
 });

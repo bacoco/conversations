@@ -85,15 +85,34 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
 
   // Record the grade when the analysed prompt is sent (the input empties).
   const recordInHistory = useCoachHistoryStore((state) => state.record);
+  const setCoachWaitsForAnswer = usePromptToolkitStore(
+    (state) => state.setCoachWaitsForAnswer,
+  );
   const previousInputRef = useRef(chatInput);
   useEffect(() => {
     const previous = previousInputRef.current.trim();
     previousInputRef.current = chatInput;
     const sent = analysis.analysis;
     if (chatInput.trim() === '' && sent && previous === analysis.analyzedText) {
-      recordInHistory(previous, sent.score, sent.competencies);
+      // Its rank in the conversation: the request may already be there.
+      const userTurns = useMainConversationStore
+        .getState()
+        .turns.filter((turn) => turn.role === 'user');
+      const isListed = userTurns.at(-1)?.text.trim() === previous;
+      recordInHistory(previous, sent.score, sent.competencies, {
+        kind: sent.kind,
+        turn: userTurns.length + (isListed ? 0 : 1),
+      });
+      // The coach will have something to say about the answer.
+      setCoachWaitsForAnswer(true);
     }
-  }, [chatInput, analysis.analysis, analysis.analyzedText, recordInHistory]);
+  }, [
+    chatInput,
+    analysis.analysis,
+    analysis.analyzedText,
+    recordInHistory,
+    setCoachWaitsForAnswer,
+  ]);
 
   // Each new reading earns points; a very clear request, a bit more.
   const result = analysis.analysis;

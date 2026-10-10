@@ -69,6 +69,8 @@ const List = ({
 
 /** Nestor reviewing the session; replaced by a dedicated illustration later. */
 const SESSION_IMAGE_URL = '/assets/nestor-bilan.webp';
+/** A request that gains this much on the one before is a key moment. */
+const KEY_MOMENT_JUMP = 15;
 
 /** Coach of the whole session: how the user prompted, not one prompt. */
 export const SessionReviewPanel = ({
@@ -271,6 +273,15 @@ export const SessionReviewPanel = ({
     );
   }
 
+  // The key moment: the request that improved most on the one before.
+  const keyMoment = review.grades
+    .map((grade, index) => ({
+      number: index + 1,
+      jump: index > 0 ? grade.score - review.grades[index - 1].score : 0,
+      change: grade.change,
+    }))
+    .filter((moment) => moment.jump >= KEY_MOMENT_JUMP && moment.change)
+    .sort((a, b) => b.jump - a.jump)[0];
   const average = review.grades.length
     ? Math.round(
         review.grades.reduce((sum, grade) => sum + grade.score, 0) /
@@ -319,6 +330,28 @@ export const SessionReviewPanel = ({
               </Text>
             )}
             {review.summary && <Text $size="sm">{review.summary}</Text>}
+            {keyMoment && (
+              <Box
+                $direction="row"
+                $gap="8px"
+                $css={css`
+                  margin-top: 4px;
+                  padding: 10px 12px;
+                  border-radius: 10px;
+                  background: var(
+                    --c--contextuals--background--semantic--success--tertiary
+                  );
+                `}
+              >
+                <Icon iconName="star" $size="18px" $theme="success" />
+                <Text $size="sm">
+                  {t(
+                    'Key moment: your request no. {{number}} changed everything, you added {{change}}.',
+                    { number: keyMoment.number, change: keyMoment.change },
+                  )}
+                </Text>
+              </Box>
+            )}
           </Box>
           <Box $gap="16px" $css={sectionCss}>
             <List

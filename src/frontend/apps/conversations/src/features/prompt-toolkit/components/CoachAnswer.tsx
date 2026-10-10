@@ -493,6 +493,8 @@ export const CoachAnswer = ({
     label?: string;
   } | null>(null);
   const [isSent, setIsSent] = useState(false);
+  // "Redo my request": back in the message field, read again by the coach.
+  const placePrompt = usePlacePrompt();
   const [followUp, setFollowUp] = useState<'idle' | 'loading' | 'error'>(
     'idle',
   );
@@ -758,6 +760,16 @@ export const CoachAnswer = ({
           <NestorBubble>
             {t('Sent. I will be here when the answer arrives.')}
           </NestorBubble>
+        )}
+        {issue && issue.value !== 'yes' && !isSent && (
+          <Box $direction="row" $css="padding-left: 36px;">
+            <CoachLink
+              icon="replay"
+              onClick={() => placePrompt(lastText(turns, 'user'))}
+            >
+              {t('Or redo my request, with the coach')}
+            </CoachLink>
+          </Box>
         )}
       </Box>
 

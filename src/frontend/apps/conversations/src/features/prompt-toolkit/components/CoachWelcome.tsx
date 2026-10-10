@@ -15,6 +15,7 @@ import { useGuidedFill } from '../fill/useGuidedFill';
 import { useReward } from '../rewards/useReward';
 
 import { FinalRequest } from './CoachParts';
+import { CoachSettings, WeekRecapView, WeeklyFocusBox } from './CoachProgress';
 import { CoachStatus } from './CoachStatus';
 import { NESTOR_ANALYSIS_URL, NESTOR_AVATAR_URL } from './PanelHome';
 import { PanelTextArea } from './PanelTextArea';
@@ -120,6 +121,11 @@ export const CoachWelcome = ({
           {t('Start from an example')}
         </Button>
       </Box>
+      <Box $gap="10px" $css="width: 100%; max-width: 360px;">
+        <WeeklyFocusBox />
+        <WeekRecapView />
+        <CoachSettings />
+      </Box>
     </Box>
   );
 };
@@ -155,6 +161,12 @@ export const CoachWrite = ({
     {
       label: t('A reply to a member of the public'),
       seed: t('Write a reply to a member of the public.'),
+    },
+    {
+      label: t('A complex request'),
+      seed: t(
+        'Goal: [what I want to get in the end]\nWhere things stand: [the situation today, the documents I have]\nPaths considered: [the options, if any]\nWhat I expect from the AI now: [the next step]',
+      ),
     },
   ];
   const somethingElse = t('Something else');

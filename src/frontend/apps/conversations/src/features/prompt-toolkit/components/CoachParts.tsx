@@ -82,14 +82,22 @@ export const RetainTip = ({
   tipKey,
   children,
   lesson,
+  why,
+  onDismiss,
 }: {
   tipKey: string;
   children: string;
   /** The screen of the course that teaches it, one click away. */
   lesson?: { lessonId: string; slide: number };
+  /** Why it matters, shown on demand. */
+  why?: string;
+  /** "Not needed here": the coach stops giving it for such requests. */
+  onDismiss?: () => void;
 }) => {
   const { t } = useTranslation();
   const openLesson = usePromptToolkitStore((state) => state.openLesson);
+  const [showWhy, setShowWhy] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
   const markShown = useCoachTipsStore((state) => state.markShown);
   // Decided once per appearance, so the tip does not vanish while read.
   const [isShown] = useState(
@@ -105,6 +113,13 @@ export const RetainTip = ({
 
   if (!isShown) {
     return null;
+  }
+  if (isDismissed) {
+    return (
+      <Text $size="xs" $variation="secondary" role="status">
+        {t('Noted: I will not say it again for this kind of request.')}
+      </Text>
+    );
   }
   return (
     <Box
@@ -122,14 +137,47 @@ export const RetainTip = ({
           {t('To remember')}
         </Text>
         <Text $size="sm">{children}</Text>
-        {lesson && (
-          <Box
-            as="button"
-            type="button"
-            onClick={() => openLesson(lesson.lessonId, lesson.slide)}
-            $css={linkButtonCss}
-          >
-            {t('See the lesson · 1 min')}
+        {why && showWhy && (
+          <Text $size="sm" $variation="secondary" $css="margin-top: 4px;">
+            {why}
+          </Text>
+        )}
+        {(why || lesson || onDismiss) && (
+          <Box $direction="row" $gap="14px" $css="flex-wrap: wrap;">
+            {why && (
+              <Box
+                as="button"
+                type="button"
+                aria-expanded={showWhy}
+                onClick={() => setShowWhy((value) => !value)}
+                $css={linkButtonCss}
+              >
+                {t('Why?')}
+              </Box>
+            )}
+            {lesson && (
+              <Box
+                as="button"
+                type="button"
+                onClick={() => openLesson(lesson.lessonId, lesson.slide)}
+                $css={linkButtonCss}
+              >
+                {t('See the lesson · 1 min')}
+              </Box>
+            )}
+            {onDismiss && (
+              <Box
+                as="button"
+                type="button"
+                onClick={() => {
+                  onDismiss();
+                  setIsDismissed(true);
+                }}
+                $css={linkButtonCss}
+              >
+                {t('Not needed here')}
+              </Box>
+            )}
           </Box>
         )}
       </Box>

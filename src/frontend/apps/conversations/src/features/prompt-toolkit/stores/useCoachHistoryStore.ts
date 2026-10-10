@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { Competency } from '../coach/coachApi';
+import type { Competency, RequestKind } from '../coach/coachApi';
 
-/** Small on purpose: enough to show progress, not a prompt archive. */
-export const HISTORY_MAX_ENTRIES = 10;
+/** Enough for a few weeks of progress, not a prompt archive. */
+export const HISTORY_MAX_ENTRIES = 60;
 export const HISTORY_EXCERPT_LENGTH = 80;
 
 export interface CoachHistoryEntry {
@@ -12,6 +12,9 @@ export interface CoachHistoryEntry {
   score: number;
   competencies: Record<Competency, number>;
   sentAt: number;
+  kind?: RequestKind;
+  /** The rank of this request in its conversation: 1 for the first. */
+  turn?: number;
 }
 
 interface CoachHistoryState {
@@ -20,6 +23,7 @@ interface CoachHistoryState {
     prompt: string,
     score: number,
     competencies: Record<Competency, number>,
+    details?: { kind?: RequestKind; turn?: number },
   ) => void;
   clear: () => void;
 }
@@ -36,7 +40,7 @@ export const useCoachHistoryStore = create<CoachHistoryState>()(
   persist(
     (set) => ({
       entries: [],
-      record: (prompt, score, competencies) =>
+      record: (prompt, score, competencies, details) =>
         set((state) => ({
           entries: [
             {
@@ -44,6 +48,7 @@ export const useCoachHistoryStore = create<CoachHistoryState>()(
               score,
               competencies,
               sentAt: Date.now(),
+              ...details,
             },
             ...state.entries,
           ].slice(0, HISTORY_MAX_ENTRIES),
