@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import type { Stage } from './steps';
+
 /** Quiz scope: one lesson id, or every question of the course. */
 export const FULL_QUIZ = 'all';
-
-export type LearnTab = 'lessons' | 'cards' | 'quiz' | 'challenges';
 
 interface LearnProgressState {
   completedLessons: string[];
@@ -17,10 +17,14 @@ interface LearnProgressState {
   /** Where the user left off, to resume instead of starting over. */
   slidePositions: Record<string, number>;
   cardIndex: number;
-  lastTab: LearnTab;
+  /** Stages of a step finished or passed on purpose, per lesson id. */
+  doneStages: Record<string, Stage[]>;
+  markStage: (lessonId: string, stage: Stage) => void;
+  /** The step the user is doing, to resume it from the path. */
+  currentStep: string | null;
+  setCurrentStep: (lessonId: string | null) => void;
   setSlidePosition: (lessonId: string, index: number) => void;
   setCardIndex: (index: number) => void;
-  setLastTab: (tab: LearnTab) => void;
   completeLesson: (lessonId: string) => void;
   recordQuiz: (scope: string, score: number) => void;
   setCardKnown: (cardId: string, isKnown: boolean) => void;
@@ -47,13 +51,25 @@ export const useLearnProgressStore = create<LearnProgressState>()(
         })),
       slidePositions: {},
       cardIndex: 0,
-      lastTab: 'lessons',
+      doneStages: {},
+      markStage: (lessonId, stage) =>
+        set((state) =>
+          state.doneStages[lessonId]?.includes(stage)
+            ? state
+            : {
+                doneStages: {
+                  ...state.doneStages,
+                  [lessonId]: [...(state.doneStages[lessonId] ?? []), stage],
+                },
+              },
+        ),
+      currentStep: null,
+      setCurrentStep: (currentStep) => set({ currentStep }),
       setSlidePosition: (lessonId, index) =>
         set((state) => ({
           slidePositions: { ...state.slidePositions, [lessonId]: index },
         })),
       setCardIndex: (cardIndex) => set({ cardIndex }),
-      setLastTab: (lastTab) => set({ lastTab }),
       completeLesson: (lessonId) =>
         set((state) =>
           state.completedLessons.includes(lessonId)
@@ -77,14 +93,19 @@ export const useLearnProgressStore = create<LearnProgressState>()(
         set((state) => {
           const slidePositions = { ...state.slidePositions };
           const bestQuizScores = { ...state.bestQuizScores };
+          const doneStages = { ...state.doneStages };
           delete slidePositions[lessonId];
           delete bestQuizScores[lessonId];
+          delete doneStages[lessonId];
           return {
             completedLessons: state.completedLessons.filter(
               (id) => id !== lessonId,
             ),
             slidePositions,
             bestQuizScores,
+            doneStages,
+            currentStep:
+              state.currentStep === lessonId ? null : state.currentStep,
           };
         }),
       resetFullQuiz: () =>
@@ -93,7 +114,18 @@ export const useLearnProgressStore = create<LearnProgressState>()(
           delete bestQuizScores[FULL_QUIZ];
           return { bestQuizScores };
         }),
-      resetCards: () => set({ knownCards: [], cardIndex: 0 }),
+      // The cards are to learn again: their stage in each step too.
+      resetCards: () =>
+        set((state) => ({
+          knownCards: [],
+          cardIndex: 0,
+          doneStages: Object.fromEntries(
+            Object.entries(state.doneStages).map(([lessonId, stages]) => [
+              lessonId,
+              stages.filter((stage) => stage !== 'cards'),
+            ]),
+          ),
+        })),
       reset: () =>
         set({
           completedLessons: [],
@@ -102,7 +134,8 @@ export const useLearnProgressStore = create<LearnProgressState>()(
           completedChallenges: [],
           slidePositions: {},
           cardIndex: 0,
-          lastTab: 'lessons',
+          doneStages: {},
+          currentStep: null,
         }),
     }),
     { name: 'prompt-course-progress' },

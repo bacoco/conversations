@@ -44,4 +44,26 @@ describe('useLearnProgressStore', () => {
       90,
     );
   });
+
+  it('records a time of a step once, and forgets it with its lesson', () => {
+    const store = useLearnProgressStore.getState();
+    store.markStage('lesson-1', 'read');
+    store.markStage('lesson-1', 'read');
+    store.markStage('lesson-1', 'cards');
+    store.setCurrentStep('lesson-1');
+    expect(useLearnProgressStore.getState().doneStages).toEqual({
+      'lesson-1': ['read', 'cards'],
+    });
+
+    useLearnProgressStore.getState().resetCards();
+    expect(useLearnProgressStore.getState().doneStages).toEqual({
+      'lesson-1': ['read'],
+    });
+
+    useLearnProgressStore.getState().resetLesson('lesson-1');
+    expect(useLearnProgressStore.getState()).toMatchObject({
+      doneStages: {},
+      currentStep: null,
+    });
+  });
 });

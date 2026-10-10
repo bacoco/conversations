@@ -148,7 +148,7 @@ export const ManageProgressView = ({
   return (
     <DetailPage
       onBack={onBack}
-      backLabel={t('Back to the lessons')}
+      backLabel={t('Back to the course')}
       title={t('Manage my progress')}
       subtitle={t(
         'Your progress is kept in this browser. Tick what you want to start over.',

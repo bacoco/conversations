@@ -1,5 +1,5 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -7,7 +7,7 @@ import { Box, Icon, Text } from '@/components';
 
 import { Competency, PromptAnalysis, analyzePrompt } from '../coach/coachApi';
 import { languageName } from '../coach/language';
-import { levelColor } from '../coach/levels';
+import { levelColor, wordLevel } from '../coach/levels';
 import { CoachStatus } from '../components/CoachStatus';
 import { DetailPage } from '../components/DetailPage';
 import { ImpactView } from '../components/ImpactView';
@@ -25,13 +25,18 @@ const boxCss = css`
   background: var(--c--contextuals--background--surface--secondary);
 `;
 
-/** One challenge: fix the weak prompt, the coach grades the fix. */
+/**
+ * One challenge: fix the weak request, the coach grades the fix. Inside a
+ * step (`inStep`) it is the "practise" time, and leads to the step's end.
+ */
 export const ChallengeView = ({
   challenge,
   onBack,
+  inStep,
 }: {
   challenge: Challenge;
   onBack: () => void;
+  inStep?: { doneLabel: string; onDone: (passed: boolean) => void };
 }) => {
   const { t, i18n } = useTranslation();
   const reward = useReward();
@@ -93,20 +98,50 @@ export const ChallengeView = ({
     }
   };
 
-  return (
-    <DetailPage
-      onBack={onBack}
-      backLabel={t('Back to the challenges')}
-      eyebrow={t('Challenge · level {{level}}', { level: challenge.level })}
-      title={challenge.title}
-      image={NESTOR_CHALLENGES_URL}
-      status={
-        <CoachStatus
-          isLoading={status === 'loading'}
-          loadingLabel={t('The coach is grading your fix…')}
-        />
-      }
-    >
+  const loading = (
+    <CoachStatus
+      isLoading={status === 'loading'}
+      loadingLabel={t('The coach is grading your fix…')}
+    />
+  );
+  const page = (children: ReactNode) =>
+    inStep ? (
+      <Box $gap="16px">
+        {loading}
+        <Box $direction="row" $align="center" $gap="12px">
+          <img
+            src={NESTOR_CHALLENGES_URL}
+            alt=""
+            width={56}
+            height={56}
+            style={{ flex: 'none', borderRadius: '50%', background: '#f7f8fd' }}
+          />
+          <Box $gap="2px">
+            <Text as="h3" $size="md" $weight="700" $margin="0">
+              {t('Your turn: fix this request')}
+            </Text>
+            <Text $size="sm" $variation="secondary">
+              {t('The coach reads your version and tells you if it holds.')}
+            </Text>
+          </Box>
+        </Box>
+        {children}
+      </Box>
+    ) : (
+      <DetailPage
+        onBack={onBack}
+        backLabel={t('Back to the course')}
+        eyebrow={t('Challenge · level {{level}}', { level: challenge.level })}
+        title={challenge.title}
+        image={NESTOR_CHALLENGES_URL}
+        status={loading}
+      >
+        {children}
+      </DetailPage>
+    );
+
+  return page(
+    <>
       <Box $gap="6px" $css={boxCss}>
         <Text $size="xs" $weight="700">
           {t('The prompt to fix')}
@@ -221,7 +256,7 @@ export const ChallengeView = ({
                     $weight="700"
                     $css={`color: ${levelColor(value)};`}
                   >
-                    {value}/100
+                    {wordLevel(value, t)}
                   </Text>
                 </Box>
               );
@@ -245,6 +280,21 @@ export const ChallengeView = ({
           }}
         />
       )}
-    </DetailPage>
+
+      {inStep && (
+        <Box $gap="8px">
+          <Button
+            fullWidth
+            color={passed ? 'brand' : 'neutral'}
+            variant={passed ? 'primary' : 'secondary'}
+            onClick={() => inStep.onDone(passed)}
+            iconPosition="right"
+            icon={<Icon iconName="arrow_forward" $size="18px" />}
+          >
+            {passed ? inStep.doneLabel : t('Finish the step without it')}
+          </Button>
+        </Box>
+      )}
+    </>,
   );
 };

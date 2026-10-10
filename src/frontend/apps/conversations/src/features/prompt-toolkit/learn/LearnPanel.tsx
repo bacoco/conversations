@@ -6,86 +6,62 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable } from '../coach/aiAvailability';
-import {
-  NESTOR_CARDS_URL,
-  NESTOR_CHALLENGES_URL,
-  NESTOR_LESSONS_URL,
-  NESTOR_QUIZ_URL,
-} from '../components/PanelHome';
-import { SpaceIntro } from '../components/SpaceIntro';
+import { NESTOR_CARDS_URL, NESTOR_COURSE_URL } from '../components/PanelHome';
 import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
-import { ChallengeView } from './ChallengeView';
-import { FlashcardsView } from './FlashcardsView';
-import { LessonView } from './LessonView';
+import { CoachHabits } from './CoachHabits';
+import { CardsResult, FlashcardsView } from './FlashcardsView';
 import { ManageProgressView } from './ManageProgressView';
 import { QuizView } from './QuizView';
+import { StepView, useStageLabels } from './StepView';
 import { getChallenges } from './challenges';
 import { getCourseContent } from './content';
 import {
-  FULL_QUIZ,
-  LearnTab,
-  useLearnProgressStore,
-} from './useLearnProgressStore';
+  Step,
+  buildSteps,
+  cardsToReview,
+  isStepDone,
+  isStepStarted,
+  nextStage,
+  nextStep,
+} from './steps';
+import type { Flashcard } from './types';
+import { useLearnProgress } from './useLearnProgress';
+import { FULL_QUIZ, useLearnProgressStore } from './useLearnProgressStore';
 
-type Detail =
-  | { name: 'lesson'; lessonId: string }
-  | { name: 'quiz'; scope: string }
-  | { name: 'manage' }
-  | { name: 'challenge'; id: string };
+type View =
+  | { name: 'path' }
+  | { name: 'all' }
+  | { name: 'step'; lessonId: string }
+  | { name: 'review'; cards: Flashcard[] }
+  | { name: 'quiz' }
+  | { name: 'manage' };
 
-const RING_SIZE = 64;
-const RING_STROKE = 6;
-const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
-const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
+const ILLUSTRATION_BACKGROUND = '#f7f8fd';
 
-const tabCss = (isActive: boolean) => css`
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 34px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: ${isActive ? 600 : 400};
-  color: ${
-    isActive
-      ? 'var(--c--contextuals--content--semantic--brand--primary)'
-      : 'var(--c--contextuals--content--semantic--neutral--secondary)'
-  };
-  background: ${
-    isActive
-      ? 'var(--c--contextuals--background--semantic--brand--tertiary)'
-      : 'transparent'
-  };
-  &:hover {
-    color: var(--c--contextuals--content--semantic--brand--primary);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
-    outline-offset: 1px;
-  }
-`;
-
-const rowCss = css`
+const rowCss = (isCurrent: boolean) => css`
   width: 100%;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   font: inherit;
   color: inherit;
   text-align: left;
-  border: 1px solid transparent;
-  background: transparent;
+  border: 1px solid
+    ${
+      isCurrent
+        ? 'var(--c--contextuals--border--semantic--brand--secondary)'
+        : 'transparent'
+    };
+  background: ${
+    isCurrent
+      ? 'var(--c--contextuals--background--semantic--brand--tertiary)'
+      : 'transparent'
+  };
   &:hover {
-    border-color: var(--c--contextuals--border--surface--primary);
     background: var(--c--contextuals--background--surface--secondary);
   }
   &:focus-visible {
@@ -94,371 +70,269 @@ const rowCss = css`
   }
 `;
 
-/** A vertical path joining numbered steps. */
-const pathCss = css`
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  &::before {
-    content: '';
-    position: absolute;
-    top: 24px;
-    bottom: 24px;
-    left: 26px;
-    width: 2px;
-    background: var(--c--contextuals--border--surface--primary);
-  }
-`;
-
-const stepCss = (state: 'done' | 'next' | 'todo') => css`
-  position: relative;
-  z-index: 1;
+const badgeCss = (state: 'done' | 'current' | 'todo') => css`
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  font-size: 0.8125rem;
+  box-sizing: border-box;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: ${
-    state === 'done'
-      ? 'var(--c--contextuals--content--semantic--success--on-success)'
-      : state === 'next'
-        ? 'var(--c--contextuals--content--semantic--brand--on-brand)'
-        : 'var(--c--contextuals--content--semantic--neutral--secondary)'
-  };
-  background: ${
-    state === 'done'
-      ? 'var(--c--contextuals--background--semantic--success--primary)'
-      : state === 'next'
-        ? 'var(--c--contextuals--background--semantic--brand--primary)'
-        : 'var(--c--contextuals--background--surface--primary)'
-  };
   border: 2px solid
     ${
       state === 'todo'
         ? 'var(--c--contextuals--border--surface--primary)'
         : 'transparent'
     };
+  color: ${
+    state === 'done'
+      ? 'var(--c--contextuals--content--semantic--success--primary)'
+      : state === 'current'
+        ? 'var(--c--contextuals--content--semantic--brand--on-brand)'
+        : 'var(--c--contextuals--content--semantic--neutral--secondary)'
+  };
+  background: ${
+    state === 'done'
+      ? 'var(--c--contextuals--background--semantic--success--tertiary)'
+      : state === 'current'
+        ? 'var(--c--contextuals--background--semantic--brand--primary)'
+        : 'var(--c--contextuals--background--surface--primary)'
+  };
 `;
 
-/** The prompting course: a learning path, review cards and quizzes. */
+/**
+ * About how long a step takes, in minutes: a screen read, a card turned, a
+ * question answered, an exercise. An order of magnitude, shown as such.
+ */
+export const stepMinutes = (step: Step) =>
+  Math.max(
+    2,
+    Math.round(
+      step.lesson.slides.length * 0.7 +
+        (step.stages.includes('cards') ? step.cards.length * 0.3 : 0) +
+        (step.stages.includes('quiz') ? step.quiz.length * 0.4 : 0) +
+        (step.challenge ? 2 : step.practiseWithCoach ? 1 : 0),
+    ),
+  );
+
+/**
+ * The prompting course, one thing at a time: the step to do now, and one
+ * button. The whole course (the eight steps, what the coach saw, the full
+ * quiz, the progress) is one click away, never in the way.
+ */
 export const LearnPanel = () => {
   const { t, i18n } = useTranslation();
   const course = useMemo(
     () => getCourseContent(i18n.language),
     [i18n.language],
   );
-  const {
-    completedLessons,
-    bestQuizScores,
-    lastTab,
-    setLastTab: setTab,
-  } = useLearnProgressStore();
-  // The challenges are graded by the coach: hidden without the Albert relay.
+  // Practice is graded or guided by the coach: none without the Albert relay.
   const isAiAvailable = useAiAvailable();
-  const tab = !isAiAvailable && lastTab === 'challenges' ? 'lessons' : lastTab;
-  const [detail, setDetail] = useState<Detail | null>(null);
-  const challenges = useMemo(
-    () => getChallenges(i18n.language),
-    [i18n.language],
+  const steps = useMemo(
+    () => buildSteps(course, getChallenges(i18n.language), isAiAvailable),
+    [course, i18n.language, isAiAvailable],
   );
-  const completedChallenges = useLearnProgressStore(
-    (state) => state.completedChallenges,
+  const progress = useLearnProgress();
+  const bestQuizScores = progress.bestQuizScores;
+  const setSlidePosition = useLearnProgressStore(
+    (state) => state.setSlidePosition,
   );
-  const back = () => setDetail(null);
+  const labels = useStageLabels();
+  const [view, setView] = useState<View>({ name: 'path' });
+  const [reviewResult, setReviewResult] = useState<CardsResult | null>(null);
+  const back = () => setView({ name: 'path' });
+  const openStep = (lessonId: string) => setView({ name: 'step', lessonId });
   // Progress is reset item by item, with a confirmation.
-  useSectionReset('learn', () => setDetail({ name: 'manage' }));
+  useSectionReset('learn', () => setView({ name: 'manage' }));
 
-  // A lesson asked from the coach ("to make progress in…").
+  // A lesson asked from elsewhere in the panel opens its step.
   const lessonRequest = usePromptToolkitStore((state) => state.lessonRequest);
   const clearLessonRequest = usePromptToolkitStore(
     (state) => state.clearLessonRequest,
   );
   useEffect(() => {
     if (lessonRequest) {
-      setDetail({ name: 'lesson', lessonId: lessonRequest });
+      setView({ name: 'step', lessonId: lessonRequest });
       clearLessonRequest();
     }
   }, [lessonRequest, clearLessonRequest]);
 
-  if (detail?.name === 'lesson') {
-    const position = course.lessons.findIndex((l) => l.id === detail.lessonId);
-    const lesson = course.lessons[position];
-    return (
-      <LessonView
-        key={lesson.id}
-        lesson={lesson}
-        lessonNumber={position + 1}
-        onBack={back}
-        hasQuiz={course.quiz.some((q) => q.lessonId === lesson.id)}
-        onQuiz={() => setDetail({ name: 'quiz', scope: lesson.id })}
-      />
-    );
-  }
-
-  if (detail?.name === 'challenge') {
-    const challenge = challenges.find((c) => c.id === detail.id);
-    if (challenge) {
+  if (view.name === 'step') {
+    const step = steps.find((s) => s.lesson.id === view.lessonId);
+    if (step) {
       return (
-        <ChallengeView key={challenge.id} challenge={challenge} onBack={back} />
+        <StepView
+          key={step.lesson.id}
+          step={step}
+          steps={steps}
+          onBack={back}
+          onOpenStep={openStep}
+          onFullQuiz={() => setView({ name: 'quiz' })}
+        />
       );
     }
   }
 
-  if (detail?.name === 'manage') {
-    return <ManageProgressView course={course} onBack={back} />;
-  }
-
-  if (detail?.name === 'quiz') {
-    const lesson = course.lessons.find((l) => l.id === detail.scope);
+  if (view.name === 'quiz') {
     return (
       <QuizView
-        key={detail.scope}
-        scope={detail.scope}
-        title={lesson ? lesson.title : t('The whole course')}
-        questions={
-          lesson
-            ? course.quiz.filter((q) => q.lessonId === lesson.id)
-            : course.quiz
-        }
+        scope={FULL_QUIZ}
+        title={t('The whole course')}
+        questions={course.quiz}
         onBack={back}
       />
     );
   }
 
-  const doneCount = course.lessons.filter((l) =>
-    completedLessons.includes(l.id),
-  ).length;
-  const nextIndex = course.lessons.findIndex(
-    (l) => !completedLessons.includes(l.id),
-  );
-  const nextLesson = nextIndex === -1 ? null : course.lessons[nextIndex];
-  const ratio = doneCount / course.lessons.length;
-  const intros: Record<
-    LearnTab,
-    { image: string; title: string; text: string; steps: string[] }
-  > = {
-    lessons: {
-      image: NESTOR_LESSONS_URL,
-      title: t('Lessons'),
-      text: t('Short lessons to learn how to write a good prompt.'),
-      steps: [
-        t('Start with lesson 1: they follow on from each other.'),
-        t('Each lesson takes a few slides.'),
-        t('Your progress updates with each lesson completed.'),
-      ],
-    },
-    cards: {
-      image: NESTOR_CARDS_URL,
-      title: t('Cards'),
-      text: t('Review the essentials in a few minutes.'),
-      steps: [
-        t('Read the question on the card.'),
-        t('Click the card to see the answer.'),
-        t('Say whether you knew it or whether to review it.'),
-      ],
-    },
-    quiz: {
-      image: NESTOR_QUIZ_URL,
-      title: t('Quiz'),
-      text: t('Check what you remember.'),
-      steps: [
-        t('Take the full quiz or the quiz of one lesson.'),
-        t('Answer the questions.'),
-        t('See the right answer after each question.'),
-      ],
-    },
-    challenges: {
-      image: NESTOR_CHALLENGES_URL,
-      title: t('Challenges'),
-      text: t('Practise on real cases.'),
-      steps: [
-        t('Choose a challenge.'),
-        t('Fix the weak prompt it gives you.'),
-        t('The coach grades your version and gives you advice.'),
-      ],
-    },
-  };
-  const tabs: { id: LearnTab; icon: string; label: string }[] = [
-    { id: 'lessons', icon: 'menu_book', label: t('Lessons') },
-    { id: 'cards', icon: 'style', label: t('Cards') },
-    { id: 'quiz', icon: 'quiz', label: t('Quiz') },
-    ...(isAiAvailable
-      ? [
-          {
-            id: 'challenges' as const,
-            icon: 'sports_score',
-            label: t('Challenges'),
-          },
-        ]
-      : []),
-  ];
+  if (view.name === 'manage') {
+    return <ManageProgressView course={course} onBack={back} />;
+  }
 
-  return (
-    <Box $gap="16px" $padding={{ all: 'base' }}>
-      <Box
-        role="tablist"
-        aria-label={t('Prompting course')}
-        $direction="row"
-        $gap="4px"
-        $css={css`
-          padding: 4px;
-          border-radius: 8px;
-          border: 1px solid var(--c--contextuals--border--surface--primary);
-        `}
-      >
-        {tabs.map((item) => (
-          <Box
-            key={item.id}
-            as="button"
-            type="button"
-            role="tab"
-            aria-selected={tab === item.id}
-            onClick={() => setTab(item.id)}
-            $direction="row"
-            $css={tabCss(tab === item.id)}
+  if (view.name === 'review') {
+    return (
+      <Box $gap="16px" $css="padding: 12px 16px 96px;">
+        <Box $direction="row">
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={back}
+            icon={<Icon iconName="arrow_back" $size="18px" />}
           >
-            <Icon iconName={item.icon} $size="18px" $withThemeInherited />
-            {item.label}
-          </Box>
-        ))}
-      </Box>
-
-      {/* Like the coach: the intro follows the selected tab. */}
-      <SpaceIntro key={tab} {...intros[tab]} />
-
-      {/* Lesson progress and the next step, at the top of the lessons. */}
-      {tab === 'lessons' && (
-        <Box
-          $direction="row"
-          $align="center"
-          $gap="14px"
-          $css={css`
-            padding: 14px;
-            border-radius: 12px;
-            background: var(
-              --c--contextuals--background--semantic--brand--tertiary
-            );
-          `}
-        >
-          <Box
-            role="img"
-            aria-label={t('{{done}} of {{total}} lessons completed', {
-              done: doneCount,
-              total: course.lessons.length,
-            })}
-            $css={`position: relative; flex: none; width: ${RING_SIZE}px; height: ${RING_SIZE}px;`}
-          >
-            <svg width={RING_SIZE} height={RING_SIZE} aria-hidden="true">
-              <circle
-                cx={RING_SIZE / 2}
-                cy={RING_SIZE / 2}
-                r={RING_RADIUS}
-                fill="none"
-                stroke="var(--c--contextuals--border--surface--primary)"
-                strokeWidth={RING_STROKE}
-              />
-              <circle
-                cx={RING_SIZE / 2}
-                cy={RING_SIZE / 2}
-                r={RING_RADIUS}
-                fill="none"
-                stroke="var(--c--contextuals--background--semantic--success--primary)"
-                strokeWidth={RING_STROKE}
-                strokeLinecap="round"
-                strokeDasharray={RING_LENGTH}
-                strokeDashoffset={RING_LENGTH * (1 - ratio)}
-                transform={`rotate(-90 ${RING_SIZE / 2} ${RING_SIZE / 2})`}
-              />
-            </svg>
-            <Box
-              aria-hidden="true"
-              $align="center"
-              $justify="center"
-              $css="position: absolute; inset: 0; font-weight: 700;"
-            >
-              {doneCount}/{course.lessons.length}
-            </Box>
-          </Box>
-          <Box $gap="6px" $css="flex: 1; min-width: 0;">
-            <Text $weight="700">
-              {nextLesson
-                ? t('Your progress')
-                : t('Course completed, congratulations!')}
-            </Text>
-            {nextLesson ? (
-              <Button
-                size="small"
-                onClick={() =>
-                  setDetail({ name: 'lesson', lessonId: nextLesson.id })
-                }
-                icon={<Icon iconName="play_arrow" $size="18px" />}
-              >
-                {doneCount === 0
-                  ? t('Start: lesson 1')
-                  : t('Continue: lesson {{number}}', { number: nextIndex + 1 })}
-              </Button>
-            ) : (
-              <Button
-                size="small"
-                onClick={() => setDetail({ name: 'quiz', scope: FULL_QUIZ })}
-                icon={<Icon iconName="quiz" $size="18px" />}
-              >
-                {t('Take the full quiz')}
-              </Button>
-            )}
-          </Box>
+            {t('Back to the course')}
+          </Button>
         </Box>
-      )}
+        <Text as="h2" $size="lg" $weight="800" $margin="0">
+          {t('Review in 2 minutes')}
+        </Text>
+        {reviewResult ? (
+          <Box $gap="14px" $align="center" $css="text-align: center;">
+            <img
+              src={NESTOR_CARDS_URL}
+              alt=""
+              width={120}
+              height={120}
+              style={{
+                borderRadius: '50%',
+                background: ILLUSTRATION_BACKGROUND,
+              }}
+            />
+            <Text $weight="700">{t('Review done')}</Text>
+            <Text $size="sm">
+              {[
+                t('{{known}} cards known out of {{total}}', {
+                  known: reviewResult.known,
+                  total: view.cards.length,
+                }),
+                reviewResult.toReview
+                  ? t('{{count}} to review later', {
+                      count: reviewResult.toReview,
+                    })
+                  : '',
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </Text>
+            <Button fullWidth onClick={back}>
+              {t('Back to the course')}
+            </Button>
+          </Box>
+        ) : (
+          <FlashcardsView cards={view.cards} onDone={setReviewResult} />
+        )}
+      </Box>
+    );
+  }
 
-      {tab === 'lessons' && (
-        <Box as="ol" aria-label={t('Lessons')} $css={pathCss}>
-          {course.lessons.map((lesson, index) => {
-            const isDone = completedLessons.includes(lesson.id);
-            const state = isDone
-              ? 'done'
-              : index === nextIndex
-                ? 'next'
-                : 'todo';
-            const best = bestQuizScores[lesson.id];
+  const next = nextStep(steps, progress);
+  const doneCount = steps.filter((step) => isStepDone(step, progress)).length;
+  const toReview = cardsToReview(steps, progress);
+  const nextStarted = next !== null && isStepStarted(next, progress);
+  const stage = next ? nextStage(next, progress) : null;
+
+  const backRow = (
+    <Box $direction="row">
+      <Button
+        size="small"
+        color="neutral"
+        variant="tertiary"
+        onClick={back}
+        icon={<Icon iconName="arrow_back" $size="18px" />}
+      >
+        {t('Back to the course')}
+      </Button>
+    </Box>
+  );
+
+  if (view.name === 'all') {
+    return (
+      <Box $gap="18px" $css="padding: 12px 16px 96px;">
+        {backRow}
+        <Box $direction="row" $align="baseline" $justify="space-between">
+          <Text as="h2" $size="lg" $weight="800" $margin="0">
+            {t('The whole course')}
+          </Text>
+          <Text $size="xs" $variation="secondary">
+            {t('{{done}} of {{total}} steps completed', {
+              done: doneCount,
+              total: steps.length,
+            })}
+          </Text>
+        </Box>
+        <Box
+          as="ol"
+          aria-label={t('The steps of the course')}
+          $gap="2px"
+          $css="margin: 0; padding: 0; list-style: none;"
+        >
+          {steps.map((step) => {
+            const isDone = isStepDone(step, progress);
+            const isCurrent = !isDone && next?.lesson.id === step.lesson.id;
+            const stepStage = nextStage(step, progress);
+            const isStarted = isStepStarted(step, progress);
             return (
-              <li key={lesson.id}>
+              <li key={step.lesson.id}>
                 <Box
                   as="button"
                   type="button"
-                  onClick={() =>
-                    setDetail({ name: 'lesson', lessonId: lesson.id })
-                  }
+                  aria-current={isCurrent ? 'step' : undefined}
+                  onClick={() => openStep(step.lesson.id)}
                   $direction="row"
                   $align="center"
                   $gap="12px"
-                  $css={rowCss}
+                  $css={rowCss(isCurrent)}
                 >
-                  <Box $align="center" $justify="center" $css={stepCss(state)}>
+                  <Box
+                    $align="center"
+                    $justify="center"
+                    $css={badgeCss(
+                      isDone ? 'done' : isCurrent ? 'current' : 'todo',
+                    )}
+                  >
                     {isDone ? (
                       <Icon iconName="check" $size="16px" $withThemeInherited />
                     ) : (
-                      index + 1
+                      step.number
                     )}
                   </Box>
                   <Box $gap="2px" $css="flex: 1; min-width: 0;">
-                    <Text $size="sm" $weight={state === 'next' ? '700' : '600'}>
-                      {lesson.title}
+                    <Text $size="sm" $weight={isCurrent ? '700' : '600'}>
+                      {step.lesson.title}
                     </Text>
-                    <Text $size="xs" $variation="secondary">
-                      {t('{{count}} slides', { count: lesson.slides.length })}
-                      {best !== undefined &&
-                        ` · ${t('quiz: {{score}}%', { score: best })}`}
-                    </Text>
+                    {(isDone || (isStarted && stepStage)) && (
+                      <Text
+                        $size="xs"
+                        $theme={isDone ? undefined : 'brand'}
+                        $variation={isDone ? 'secondary' : undefined}
+                      >
+                        {isDone
+                          ? t('Completed')
+                          : t('In progress · {{stage}}', {
+                              stage: stepStage ? labels[stepStage] : '',
+                            })}
+                      </Text>
+                    )}
                   </Box>
-                  <span className="sr-only">
-                    {isDone
-                      ? t('Completed')
-                      : state === 'next'
-                        ? t('Next lesson')
-                        : ''}
-                  </span>
                   <Icon
                     iconName="chevron_right"
                     $size="20px"
@@ -469,202 +343,177 @@ export const LearnPanel = () => {
             );
           })}
         </Box>
-      )}
 
-      {tab === 'cards' && <FlashcardsView cards={course.flashcards} />}
+        {isAiAvailable && (
+          <CoachHabits
+            steps={steps}
+            onOpenStep={(lessonId, slide) => {
+              setSlidePosition(lessonId, slide);
+              openStep(lessonId);
+            }}
+          />
+        )}
 
-      {tab === 'challenges' && (
-        <Box $gap="10px">
-          <Box as="ol" aria-label={t('Challenges')} $css={pathCss}>
-            {challenges.map((challenge, index) => {
-              const done = completedChallenges.includes(challenge.id);
-              return (
-                <li key={challenge.id}>
-                  <Box
-                    as="button"
-                    type="button"
-                    onClick={() =>
-                      setDetail({ name: 'challenge', id: challenge.id })
-                    }
-                    $direction="row"
-                    $align="center"
-                    $gap="12px"
-                    $css={rowCss}
-                  >
-                    <Box
-                      $align="center"
-                      $justify="center"
-                      $css={stepCss(done ? 'done' : 'todo')}
-                    >
-                      {done ? (
-                        <Icon
-                          iconName="check"
-                          $size="16px"
-                          $withThemeInherited
-                        />
-                      ) : (
-                        index + 1
-                      )}
-                    </Box>
-                    <Box $gap="2px" $css="flex: 1; min-width: 0;">
-                      <Text $size="sm" $weight="600">
-                        {challenge.title}
-                      </Text>
-                      <Text $size="xs" $variation="secondary">
-                        {t('Level {{level}} of 3', { level: challenge.level })}
-                      </Text>
-                    </Box>
-                    <Icon
-                      iconName="chevron_right"
-                      $size="20px"
-                      $variation="secondary"
-                    />
-                  </Box>
-                </li>
-              );
-            })}
-          </Box>
-        </Box>
-      )}
-
-      {tab === 'quiz' && (
-        <Box $gap="12px">
-          {/* The whole-course quiz, as the main challenge. */}
-          <Box
-            $direction="row"
-            $align="center"
-            $gap="14px"
-            $css={css`
-              padding: 16px;
-              border-radius: 12px;
-              border: 1px solid
-                var(--c--contextuals--border--semantic--brand--secondary);
-              background: var(
-                --c--contextuals--background--semantic--brand--tertiary
-              );
-            `}
+        <Box
+          $direction="row"
+          $justify="space-between"
+          $gap="12px"
+          $css="flex-wrap: wrap;"
+        >
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={() => setView({ name: 'quiz' })}
+            icon={<Icon iconName="emoji_events" $size="18px" />}
           >
-            <Box
-              $align="center"
-              $justify="center"
-              $css={css`
-                flex: none;
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                color: var(
-                  --c--contextuals--content--semantic--brand--on-brand
-                );
-                background: var(
-                  --c--contextuals--background--semantic--brand--primary
-                );
-              `}
-            >
-              <Icon iconName="emoji_events" $size="26px" $withThemeInherited />
-            </Box>
-            <Box $gap="4px" $css="flex: 1; min-width: 0;">
-              <Text $weight="700">{t('Full quiz')}</Text>
-              <Text $size="xs" $variation="secondary">
-                {t('{{count}} questions on the whole course', {
+            {bestQuizScores[FULL_QUIZ] === undefined
+              ? t('The full quiz · {{count}} questions', {
                   count: course.quiz.length,
+                })
+              : t('The full quiz · best: {{score}}%', {
+                  score: bestQuizScores[FULL_QUIZ],
                 })}
-                {bestQuizScores[FULL_QUIZ] !== undefined &&
-                  ` · ${t('best: {{score}}%', { score: bestQuizScores[FULL_QUIZ] })}`}
-              </Text>
-            </Box>
-            <Button
-              size="small"
-              onClick={() => setDetail({ name: 'quiz', scope: FULL_QUIZ })}
+          </Button>
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={() => setView({ name: 'manage' })}
+            icon={<Icon iconName="tune" $size="18px" />}
+          >
+            {t('Manage my progress')}
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      $align="center"
+      $gap="16px"
+      $css={css`
+        min-height: 100%;
+        justify-content: center;
+        padding: 24px 20px 96px;
+        text-align: center;
+      `}
+    >
+      <img
+        src={NESTOR_COURSE_URL}
+        alt=""
+        width={140}
+        height={140}
+        style={{ borderRadius: '50%', background: ILLUSTRATION_BACKGROUND }}
+      />
+      {next ? (
+        <>
+          <Box $gap="6px" $align="center">
+            <Text
+              $size="xs"
+              $weight="700"
+              $theme="brand"
+              $css="text-transform: uppercase; letter-spacing: 0.06em;"
             >
-              {bestQuizScores[FULL_QUIZ] === undefined
-                ? t('Start')
-                : t('Play again')}
+              {nextStarted ? t('To resume') : t('Your next lesson')}
+            </Text>
+            <Text as="h2" $size="h4" $weight="800" $margin="0">
+              {next.lesson.title}
+            </Text>
+            <Text $variation="secondary">
+              {nextStarted && stage
+                ? t('About {{count}} min · you are at: {{stage}}', {
+                    count: stepMinutes(next),
+                    stage: labels[stage].toLocaleLowerCase(),
+                  })
+                : t('About {{count}} min', { count: stepMinutes(next) })}
+            </Text>
+          </Box>
+          <Box $css="width: 100%; max-width: 320px;">
+            <Button
+              fullWidth
+              onClick={() => openStep(next.lesson.id)}
+              icon={<Icon iconName="play_arrow" $size="20px" />}
+            >
+              {nextStarted ? t('Resume') : t('Start')}
             </Button>
           </Box>
-
-          <Text as="h3" $size="sm" $weight="700" $margin="0">
-            {t('One quiz per lesson')}
+        </>
+      ) : (
+        <Box $gap="10px" $align="center">
+          <Text as="h2" $size="h4" $weight="800" $margin="0">
+            {t('Path completed, congratulations!')}
           </Text>
-          <Box as="ol" aria-label={t('One quiz per lesson')} $css={pathCss}>
-            {course.lessons.map((lesson, index) => {
-              const count = course.quiz.filter(
-                (q) => q.lessonId === lesson.id,
-              ).length;
-              if (count === 0) {
-                return null;
-              }
-              const best = bestQuizScores[lesson.id];
-              const done = best !== undefined;
-              return (
-                <li key={lesson.id}>
-                  <Box
-                    as="button"
-                    type="button"
-                    onClick={() =>
-                      setDetail({ name: 'quiz', scope: lesson.id })
-                    }
-                    $direction="row"
-                    $align="center"
-                    $gap="12px"
-                    $css={rowCss}
-                  >
-                    <Box
-                      $align="center"
-                      $justify="center"
-                      $css={stepCss(done ? 'done' : 'todo')}
-                    >
-                      {done ? (
-                        <Icon
-                          iconName="check"
-                          $size="16px"
-                          $withThemeInherited
-                        />
-                      ) : (
-                        index + 1
-                      )}
-                    </Box>
-                    <Box $gap="2px" $css="flex: 1; min-width: 0;">
-                      <Text $size="sm" $weight="600">
-                        {lesson.title}
-                      </Text>
-                      <Text $size="xs" $variation="secondary">
-                        {t('{{count}} questions', { count })}
-                      </Text>
-                    </Box>
-                    {done && (
-                      <Text
-                        $size="xs"
-                        $weight="700"
-                        $css={css`
-                          padding: 2px 8px;
-                          border-radius: 999px;
-                          color: var(
-                            --c--contextuals--content--semantic--${
-                                best >= 80 ? 'success' : 'brand'
-                              }--primary
-                          );
-                          background: var(
-                            --c--contextuals--background--semantic--${
-                                best >= 80 ? 'success' : 'brand'
-                              }--tertiary
-                          );
-                        `}
-                      >
-                        {best} %
-                      </Text>
-                    )}
-                    <Icon
-                      iconName="chevron_right"
-                      $size="20px"
-                      $variation="secondary"
-                    />
-                  </Box>
-                </li>
-              );
-            })}
-          </Box>
+          <Button onClick={() => setView({ name: 'quiz' })}>
+            {t('Take the full quiz')}
+          </Button>
         </Box>
       )}
+
+      {/* Where the user is, without a list: one dot per step. */}
+      <Box
+        role="img"
+        aria-label={t('{{done}} of {{total}} steps completed', {
+          done: doneCount,
+          total: steps.length,
+        })}
+        $direction="row"
+        $gap="6px"
+      >
+        {steps.map((step) => {
+          const isDone = isStepDone(step, progress);
+          const isNext = next?.lesson.id === step.lesson.id;
+          return (
+            <Box
+              key={step.lesson.id}
+              $css={css`
+                width: ${isNext ? 18 : 8}px;
+                height: 8px;
+                border-radius: 4px;
+                background: ${
+                  isDone
+                    ? 'var(--c--contextuals--background--semantic--success--primary)'
+                    : isNext
+                      ? 'var(--c--contextuals--background--semantic--brand--primary)'
+                      : 'var(--c--contextuals--border--surface--primary)'
+                };
+              `}
+            />
+          );
+        })}
+      </Box>
+
+      <Box
+        $direction="row"
+        $gap="8px"
+        $justify="center"
+        $css="flex-wrap: wrap;"
+      >
+        {toReview.length > 0 && (
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={() => {
+              setReviewResult(null);
+              setView({ name: 'review', cards: toReview });
+            }}
+            icon={<Icon iconName="style" $size="18px" />}
+          >
+            {t('Review {{count}} cards', { count: toReview.length })}
+          </Button>
+        )}
+        <Button
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={() => setView({ name: 'all' })}
+          icon={<Icon iconName="list" $size="18px" />}
+        >
+          {t('See the whole course')}
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -30,28 +30,48 @@ const faceCss = (isBack: boolean) => css`
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 `;
 
+export interface CardsResult {
+  known: number;
+  toReview: number;
+}
+
 /**
- * Review cards: a card turns over to show the answer, then the user says
- * whether they knew it. Keyboard: Space or Enter turns, arrows move.
+ * Cards to remember, each seen once: a card turns over to show the answer,
+ * then the user says whether they knew it; after the last one, `onDone`.
+ * Keyboard: Space or Enter turns, arrows move.
  */
-export const FlashcardsView = ({ cards }: { cards: Flashcard[] }) => {
+export const FlashcardsView = ({
+  cards,
+  onDone,
+}: {
+  cards: Flashcard[];
+  onDone: (result: CardsResult) => void;
+}) => {
   const { t } = useTranslation();
-  const { knownCards, setCardKnown, cardIndex, setCardIndex } =
-    useLearnProgressStore();
-  // The current card is remembered between visits.
-  const index = cardIndex < cards.length ? cardIndex : 0;
+  const knownCards = useLearnProgressStore((state) => state.knownCards);
+  const setCardKnown = useLearnProgressStore((state) => state.setCardKnown);
+  const [index, setIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [result, setResult] = useState<CardsResult>({ known: 0, toReview: 0 });
   const card = cards[index];
-  const knownCount = cards.filter((c) => knownCards.includes(c.id)).length;
   const isKnown = knownCards.includes(card.id);
 
   const goTo = (next: number) => {
-    setCardIndex((next + cards.length) % cards.length);
+    setIndex(Math.min(Math.max(next, 0), cards.length - 1));
     setIsRevealed(false);
   };
 
   const answer = (known: boolean) => {
     setCardKnown(card.id, known);
+    const next = {
+      known: result.known + (known ? 1 : 0),
+      toReview: result.toReview + (known ? 0 : 1),
+    };
+    setResult(next);
+    if (index === cards.length - 1) {
+      onDone(next);
+      return;
+    }
     goTo(index + 1);
   };
 
@@ -66,25 +86,18 @@ export const FlashcardsView = ({ cards }: { cards: Flashcard[] }) => {
   };
 
   return (
-    <Box $gap="14px" $css="width: 100%; max-width: 360px; margin-inline: auto;">
-      <Box $direction="row" $justify="space-between" $align="center">
-        <Text $size="sm" $weight="700">
-          {t('Card {{current}} of {{total}}', {
-            current: index + 1,
-            total: cards.length,
-          })}
-        </Text>
-        <Text
-          $size="xs"
-          $weight="600"
-          $color="var(--c--contextuals--content--semantic--success--primary)"
-        >
-          {t('{{known}}/{{total}} known', {
-            known: knownCount,
-            total: cards.length,
-          })}
-        </Text>
-      </Box>
+    <Box $gap="14px" $css="width: 100%;">
+      <Text $size="sm" $variation="secondary">
+        {t(
+          'Read the question, look for the answer in your head, then turn the card over.',
+        )}
+      </Text>
+      <Text $size="sm" $weight="700" $theme="brand">
+        {t('Card {{current}} of {{total}}', {
+          current: index + 1,
+          total: cards.length,
+        })}
+      </Text>
 
       <Box
         as="button"
@@ -165,7 +178,7 @@ export const FlashcardsView = ({ cards }: { cards: Flashcard[] }) => {
             onClick={() => answer(false)}
             icon={<Icon iconName="replay" $size="18px" />}
           >
-            {t('To review')}
+            {t('To review later')}
           </Button>
           <Button
             fullWidth

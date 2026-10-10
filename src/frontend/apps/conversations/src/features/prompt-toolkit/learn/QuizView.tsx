@@ -96,17 +96,28 @@ const letterCss = (state: OptionState) => {
   `;
 };
 
-/** One question at a time, with the explanation right after answering. */
+export interface QuizResult {
+  right: number;
+  total: number;
+}
+
+/**
+ * One question at a time, with the explanation right after answering. On
+ * its own page (the full quiz), or inside a step (`inStep`), where its end
+ * leads to the next time of the step.
+ */
 export const QuizView = ({
   title,
   scope,
   questions,
   onBack,
+  inStep,
 }: {
   title: string;
   scope: string;
   questions: QuizQuestion[];
   onBack: () => void;
+  inStep?: { doneLabel: string; onDone: (result: QuizResult) => void };
 }) => {
   const { t } = useTranslation();
   const recordQuiz = useLearnProgressStore((state) => state.recordQuiz);
@@ -149,17 +160,20 @@ export const QuizView = ({
     setIsFinished(false);
   };
 
-  const page = (children: ReactNode) => (
-    <DetailPage
-      onBack={onBack}
-      backLabel={t('Back to the lessons')}
-      eyebrow={t('Quiz')}
-      title={title}
-      image={NESTOR_QUIZ_URL}
-    >
-      {children}
-    </DetailPage>
-  );
+  const page = (children: ReactNode) =>
+    inStep ? (
+      <Box $gap="16px">{children}</Box>
+    ) : (
+      <DetailPage
+        onBack={onBack}
+        backLabel={t('Back to the course')}
+        eyebrow={t('Quiz')}
+        title={title}
+        image={NESTOR_QUIZ_URL}
+      >
+        {children}
+      </DetailPage>
+    );
 
   if (isFinished) {
     const share = Math.round((rightCount / questions.length) * 100);
@@ -210,9 +224,22 @@ export const QuizView = ({
           >
             {t('Try again')}
           </Button>
-          <Button fullWidth onClick={onBack}>
-            {t('Back to the lessons')}
-          </Button>
+          {inStep ? (
+            <Button
+              fullWidth
+              onClick={() =>
+                inStep.onDone({ right: rightCount, total: questions.length })
+              }
+              iconPosition="right"
+              icon={<Icon iconName="arrow_forward" $size="18px" />}
+            >
+              {inStep.doneLabel}
+            </Button>
+          ) : (
+            <Button fullWidth onClick={onBack}>
+              {t('Back to the course')}
+            </Button>
+          )}
         </Box>
       </>,
     );

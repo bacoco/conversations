@@ -1,9 +1,11 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { useAiAvailability } from '../coach/aiAvailability';
+import { LearnPanel } from '../learn/LearnPanel';
 import { COURSE_EN } from '../learn/content/en';
 import { COURSE_FR } from '../learn/content/fr';
-import { LearnPanel } from '../learn/LearnPanel';
 import { useLearnProgressStore } from '../learn/useLearnProgressStore';
+import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -31,87 +33,244 @@ describe('course content', () => {
 
   it('has valid answers for every question', () => {
     for (const question of COURSE_FR.quiz) {
-      if (question.type === 'mcq') {
-        expect(question.options?.[question.correctIndex ?? -1]).toBeDefined();
-      } else {
-        expect(typeof question.correctAnswer).toBe('boolean');
-      }
+      const isValid =
+        question.type === 'mcq'
+          ? question.options?.[question.correctIndex ?? -1] !== undefined
+          : typeof question.correctAnswer === 'boolean';
+      expect(isValid).toBe(true);
     }
   });
 });
 
-describe('<LearnPanel />', () => {
-  beforeEach(() => useLearnProgressStore.getState().reset());
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  it('walks through a lesson and marks it completed at the end', () => {
-    const lesson = course.lessons[0];
+/** Answers every question of the quiz on screen right. */
+const answerQuizRight = (questions: typeof course.quiz) => {
+  questions.forEach((question, index) => {
+    // The answers are the last list on screen, after the bar of the step.
+    const list = screen.getAllByRole('list').at(-1)!;
+    const label =
+      question.type === 'mcq'
+        ? question.options![question.correctIndex!]
+        : question.correctAnswer
+          ? 'True'
+          : 'False';
+    fireEvent.click(
+      within(list).getByRole('button', {
+        name: new RegExp(`${escape(label)}$`),
+      }),
+    );
+    expect(screen.getByText('Right answer!')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: index === questions.length - 1 ? /See my score/ : /Next question/,
+      }),
+    );
+  });
+};
+
+describe('<LearnPanel />', () => {
+  beforeEach(() => {
+    useLearnProgressStore.getState().reset();
+    useCoachHistoryStore.setState({ entries: [] });
+    // Without the coach: no practice time, to walk the other times.
+    useAiAvailability.setState({ status: 'unavailable' });
+  });
+  afterEach(() => useAiAvailability.setState({ status: 'available' }));
+
+  it('shows the lesson to do now and one button, the rest one click away', () => {
     render(<LearnPanel />);
 
-    fireEvent.click(
-      screen.getByRole('button', { name: new RegExp(lesson.title) }),
-    );
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: lesson.slides[0].title }),
+      screen.getByRole('heading', { name: course.lessons[0].title }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    // No list of steps on the first screen.
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
 
-    for (let index = 1; index < lesson.slides.length; index++) {
-      fireEvent.click(screen.getByRole('button', { name: /Next/ }));
-    }
-    expect(useLearnProgressStore.getState().completedLessons).toEqual([
-      lesson.id,
-    ]);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'See the whole course' }),
+    );
+    const steps = screen.getByRole('list', {
+      name: 'The steps of the course',
+    });
+    expect(within(steps).getAllByRole('listitem')).toHaveLength(
+      course.lessons.length,
+    );
   });
 
-  it('scores the lesson quiz and keeps the best score', () => {
+  // A whole step, screen by screen: longer than most tests.
+  it('walks a step in order: read, remember, check', () => {
     const lesson = course.lessons[0];
+    const cards = course.flashcards.filter((c) => c.lessonId === lesson.id);
     const questions = course.quiz.filter((q) => q.lessonId === lesson.id);
     render(<LearnPanel />);
 
-    fireEvent.click(
-      screen.getByRole('button', { name: new RegExp(lesson.title) }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    // Read.
+    expect(
+      screen.getByRole('heading', { name: lesson.slides[0].title }),
+    ).toBeInTheDocument();
     for (let index = 1; index < lesson.slides.length; index++) {
-      fireEvent.click(screen.getByRole('button', { name: /Next/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Next$/ }));
     }
-    fireEvent.click(screen.getByRole('button', { name: /^Quiz$/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
+    expect(useLearnProgressStore.getState().completedLessons).toEqual([
+      lesson.id,
+    ]);
 
-    // Answer every question right.
-    questions.forEach((question, index) => {
-      const list = screen.getByRole('list');
-      const label =
-        question.type === 'mcq'
-          ? question.options![question.correctIndex!]
-          : question.correctAnswer
-            ? 'True'
-            : 'False';
-      // Each option starts with its letter (A, B…).
-      const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      fireEvent.click(
-        within(list).getByRole('button', { name: new RegExp(`${escaped}$`) }),
-      );
-      expect(screen.getByText('Right answer!')).toBeInTheDocument();
-      fireEvent.click(
-        screen.getByRole('button', {
-          name:
-            index === questions.length - 1 ? /See my score/ : /Next question/,
-        }),
-      );
+    // Remember: each card once.
+    cards.forEach(() => {
+      fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
+      fireEvent.click(screen.getByRole('button', { name: /I knew it/ }));
     });
+    expect(useLearnProgressStore.getState().knownCards).toEqual(
+      cards.map((c) => c.id),
+    );
 
+    // Check, then the end of the step.
+    answerQuizRight(questions);
+    fireEvent.click(screen.getByRole('button', { name: 'Finish the step' }));
     expect(useLearnProgressStore.getState().bestQuizScores[lesson.id]).toBe(
       100,
     );
+    expect(
+      screen.getByRole('heading', { name: 'Step {{number}} completed' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Next step: {{number}} · {{title}}' }),
+    ).toBeInTheDocument();
+    expect(useLearnProgressStore.getState().currentStep).toBeNull();
+  }, 20000);
+
+  it('lets the user pass a time they already know', () => {
+    render(<LearnPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'I already know: go to {{stage}}' }),
+    );
+
+    expect(useLearnProgressStore.getState().doneStages['lesson-1']).toEqual([
+      'read',
+    ]);
+    expect(
+      screen.getByRole('button', { name: /Show the answer/ }),
+    ).toBeInTheDocument();
   });
 
-  it('records review cards the user knew', () => {
+  it('resumes the step in progress from the path', () => {
+    useLearnProgressStore.setState({
+      completedLessons: ['lesson-1'],
+      currentStep: 'lesson-3',
+      slidePositions: { 'lesson-3': 2 },
+    });
     render(<LearnPanel />);
 
-    fireEvent.click(screen.getByRole('tab', { name: /Cards/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
-    fireEvent.click(screen.getByRole('button', { name: /I knew it/ }));
+    expect(screen.getByText('To resume')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Resume' }));
+    expect(
+      screen.getByRole('heading', { name: course.lessons[2].slides[2].title }),
+    ).toBeInTheDocument();
+  });
 
-    expect(useLearnProgressStore.getState().knownCards).toEqual([
-      course.flashcards[0].id,
-    ]);
+  it('brings back the cards of the steps read, to review', () => {
+    const cards = course.flashcards.filter((c) => c.lessonId === 'lesson-1');
+    useLearnProgressStore.setState({ completedLessons: ['lesson-1'] });
+    render(<LearnPanel />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Review {{count}} cards' }),
+    );
+    cards.forEach(() => {
+      fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
+      fireEvent.click(screen.getByRole('button', { name: /I knew it/ }));
+    });
+
+    expect(screen.getByText('Review done')).toBeInTheDocument();
+    expect(useLearnProgressStore.getState().knownCards).toEqual(
+      cards.map((c) => c.id),
+    );
+  });
+
+  it('practises with the coach: a challenge, graded by it', () => {
+    useAiAvailability.setState({ status: 'available' });
+    render(<LearnPanel />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'See the whole course' }),
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: new RegExp(course.lessons[1].title) }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Practise/ }));
+
+    expect(
+      screen.getByRole('heading', { name: 'Your turn: fix this request' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Have it graded/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows nothing about real requests before the coach read one', () => {
+    useAiAvailability.setState({ status: 'available' });
+    render(<LearnPanel />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'See the whole course' }),
+    );
+    expect(
+      screen.queryByRole('button', {
+        name: 'What the coach saw in your requests',
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows what the coach saw in real requests, with the step to learn it', () => {
+    useAiAvailability.setState({ status: 'available' });
+    const grades = {
+      task: 80,
+      context: 70,
+      sources: 0,
+      format: 20,
+      audience: 70,
+      examples: 0,
+      constraints: 50,
+      verification: 0,
+    };
+    useCoachHistoryStore.setState({
+      entries: [
+        { excerpt: 'Résume…', score: 60, competencies: grades, sentAt: 1 },
+        {
+          excerpt: 'Rédige…',
+          score: 50,
+          competencies: { ...grades, format: 70, audience: 20 },
+          sentAt: 2,
+        },
+      ],
+    });
+    render(<LearnPanel />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'See the whole course' }),
+    );
+
+    // Folded until opened.
+    expect(screen.queryByText('You often do it')).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'What the coach saw in your requests',
+      }),
+    );
+    expect(screen.getAllByText('You often do it')).toHaveLength(1);
+    expect(screen.getAllByText('Sometimes')).toHaveLength(2);
+    expect(screen.getAllByText('To try')).toHaveLength(2);
+
+    // "Ask for things to be checked" is taught in step 5.
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Step {{number}}' })[3],
+    );
+    expect(
+      screen.getByRole('heading', { name: 'Step {{number}} · {{title}}' }),
+    ).toBeInTheDocument();
   });
 });
