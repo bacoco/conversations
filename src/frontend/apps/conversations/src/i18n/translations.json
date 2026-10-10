@@ -27,6 +27,8 @@
       "A who / what / when table.": "Un tableau qui / quoi / quand.",
       "The key points, on one page.": "Les points clés, sur une page.",
       "Send to the assistant": "Envoyer à l'assistant",
+      "Send to the conversation": "Envoyer dans la conversation",
+      "Nestor processes the text here; you can send the result to the conversation afterwards.": "Nestor traite le texte ici ; vous pourrez ensuite envoyer le résultat dans la conversation.",
       "The text as it is, in the message field.": "Le texte tel quel, dans la zone de message.",
       "Text copied.": "Texte copié.",
       "Copying was refused by the browser.": "Le navigateur a refusé la copie.",

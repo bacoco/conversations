@@ -287,6 +287,17 @@ export const PanelHome = () => {
   const isAiAvailable = useAiAvailable();
   const openTool = usePromptToolkitStore((state) => state.openTool);
 
+  const transcriptionCard: HomeCard = {
+    id: 'transcription',
+    image: NESTOR_TRANSCRIPTION_URL,
+    icon: 'mic',
+    tone: 'brand',
+    title: t('Record and transcribe'),
+    description: t(
+      'A meeting, an idea, a voice note: the text arrives while you speak.',
+    ),
+    onSelect: () => openTool('minutes'),
+  };
   // New modules (prompting course, everyday tools…) add a card here.
   const cards: HomeCard[] = [
     {
@@ -322,57 +333,18 @@ export const PanelHome = () => {
     return <NestorIntro />;
   }
   // Without the Albert relay, only what works without AI is offered.
-  const shownCards = isAiUnavailable
-    ? cards.filter((card) => card.id !== 'coach-manual')
-    : cards;
+  const shownCards = (
+    isAiAvailable && TRANSCRIPTION_URL ? [transcriptionCard, ...cards] : cards
+  ).filter((card) => !isAiUnavailable || card.id !== 'coach-manual');
 
   return (
     <Box $gap="12px" $padding={{ all: 'base' }} $css={centeredCss}>
       <NestorHeader />
-      {/* Speaking instead of typing: the main entry, shown first. */}
-      {isAiAvailable && TRANSCRIPTION_URL && (
-        <Box
-          as="button"
-          type="button"
-          onClick={() => openTool('minutes')}
-          $direction="row"
-          $align="center"
-          $gap="14px"
-          $css={css`
-            ${cardCss('brand')}
-            height: auto;
-            padding: 14px;
-            text-align: left;
-          `}
-        >
-          <img
-            src={NESTOR_TRANSCRIPTION_URL}
-            alt=""
-            width={64}
-            height={64}
-            style={{
-              flex: 'none',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              background: ILLUSTRATION_BACKGROUND,
-            }}
-          />
-          <Box $gap="2px" $css="flex: 1; min-width: 0;">
-            <Text $weight="700">{t('Record and transcribe')}</Text>
-            <Text $size="sm" $variation="secondary">
-              {t(
-                'A meeting, an idea, a voice note: the text arrives while you speak.',
-              )}
-            </Text>
-          </Box>
-          <Icon iconName="chevron_right" $size="20px" $variation="secondary" />
-        </Box>
-      )}
       <Box
         as="ul"
         $css={css`
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 8px;
           margin: 0;
           padding: 0;

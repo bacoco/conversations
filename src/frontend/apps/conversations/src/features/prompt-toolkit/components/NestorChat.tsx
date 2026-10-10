@@ -1,14 +1,15 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { NestorTurn, chatWithNestor } from '../coach/coachApi';
+import { NestorTurn, answerPrompt, chatWithNestor } from '../coach/coachApi';
 import { NestorBubble, bubbleCss } from '../fill/PromptFillView';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { SavePromptButton } from '../library/SavePromptButton';
+import { usePlacePrompt } from '../tools/usePlacePrompt';
 import {
   CoachMode,
   usePromptToolkitStore,
@@ -72,6 +73,25 @@ const ProposedPrompt = ({ prompt }: { prompt: string }) => {
   );
 };
 
+/** A completed tool task remains in Nestor until the person sends it. */
+const CompletedTask = ({ text }: { text: string }) => {
+  const { t } = useTranslation();
+  const placePrompt = usePlacePrompt();
+  return (
+    <Box $direction="row" $justify="flex-end">
+      <Button
+        size="small"
+        color="neutral"
+        variant="tertiary"
+        onClick={() => placePrompt(text)}
+        icon={<Icon iconName="north_west" $size="16px" />}
+      >
+        {t('Send to the conversation')}
+      </Button>
+    </Box>
+  );
+};
+
 const SCREEN_NAMES: Record<CoachMode, string> = {
   manual: 'the Coach, Analysis mode',
   assist: 'the Coach, Prompt help mode',
@@ -89,7 +109,7 @@ const useCurrentScreen = () => {
     return "the panel's welcome page, presenting Nestor";
   }
   if (state.showHome) {
-    return 'the home page with the cards: Coach, Course, Everyday tools';
+    return 'the home page with the cards: Record and transcribe, Coach, Course, Everyday tools';
   }
   if (state.mode === 'coach') {
     return SCREEN_NAMES[state.coachMode];
@@ -111,11 +131,19 @@ export const NestorDock = ({ language }: { language: string }) => {
   const where = useCurrentScreen();
   const turns = usePromptToolkitStore((state) => state.nestorChat);
   const setTurns = usePromptToolkitStore((state) => state.setNestorChat);
+  const nestorTask = usePromptToolkitStore((state) => state.nestorTask);
+  const clearNestorTask = usePromptToolkitStore(
+    (state) => state.clearNestorTask,
+  );
   const [draft, setDraft] = useState('');
   // Folded by default: a small animated button invites the user to ask.
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [failedTask, setFailedTask] = useState<{
+    prompt: string;
+    label: string;
+  } | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -133,6 +161,7 @@ export const NestorDock = ({ language }: { language: string }) => {
     setDraft('');
     setIsOpen(true);
     setHasError(false);
+    setFailedTask(null);
     setIsLoading(true);
     try {
       const answer = await chatWithNestor(
@@ -152,6 +181,46 @@ export const NestorDock = ({ language }: { language: string }) => {
       }
     }
   };
+
+  /** Runs a tool result in Nestor; the main conversation remains untouched. */
+  const runTask = useCallback(
+    async (task: { prompt: string; label: string }, history: NestorTurn[]) => {
+      if (isLoading) return;
+      controllerRef.current?.abort();
+      const controller = new AbortController();
+      controllerRef.current = controller;
+      const next: NestorTurn[] = [
+        ...history,
+        { role: 'user', text: task.label },
+      ];
+      setTurns(next);
+      setIsOpen(true);
+      setHasError(false);
+      setFailedTask(null);
+      setIsLoading(true);
+      try {
+        const answer = await answerPrompt(task.prompt, controller.signal);
+        setTurns([
+          ...next,
+          { role: 'nestor', text: answer, sendToChat: answer },
+        ]);
+      } catch {
+        if (!controller.signal.aborted) {
+          setFailedTask(task);
+          setHasError(true);
+        }
+      } finally {
+        if (controllerRef.current === controller) setIsLoading(false);
+      }
+    },
+    [isLoading, setTurns],
+  );
+
+  useEffect(() => {
+    if (!nestorTask || isLoading) return;
+    clearNestorTask();
+    void runTask(nestorTask, turns);
+  }, [clearNestorTask, isLoading, nestorTask, runTask, turns]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ block: 'end' });
@@ -178,6 +247,7 @@ export const NestorDock = ({ language }: { language: string }) => {
     controllerRef.current?.abort();
     setIsLoading(false);
     setHasError(false);
+    setFailedTask(null);
     setTurns([]);
     setIsOpen(false);
   };
@@ -345,6 +415,7 @@ export const NestorDock = ({ language }: { language: string }) => {
               <>
                 {turn.text && <NestorBubble>{turn.text}</NestorBubble>}
                 {turn.prompt && <ProposedPrompt prompt={turn.prompt} />}
+                {turn.sendToChat && <CompletedTask text={turn.sendToChat} />}
               </>
             )}
           </Box>
@@ -364,7 +435,11 @@ export const NestorDock = ({ language }: { language: string }) => {
                 size="small"
                 color="neutral"
                 variant="secondary"
-                onClick={() => void send(lastUser.text, turns.slice(0, -1))}
+                onClick={() =>
+                  failedTask
+                    ? void runTask(failedTask, turns.slice(0, -1))
+                    : void send(lastUser.text, turns.slice(0, -1))
+                }
               >
                 {t('Retry')}
               </Button>

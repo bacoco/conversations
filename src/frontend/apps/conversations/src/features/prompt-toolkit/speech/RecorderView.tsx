@@ -9,9 +9,11 @@ import { useAiAvailable } from '../coach/aiAvailability';
 import { optionCss } from '../components/CoachModes';
 import { DetailPage } from '../components/DetailPage';
 import { PanelTextArea } from '../components/PanelTextArea';
-import { useSectionReset } from '../stores/usePromptToolkitStore';
+import {
+  usePromptToolkitStore,
+  useSectionReset,
+} from '../stores/usePromptToolkitStore';
 import { getDailyTools } from '../tools/tools';
-import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
 import {
@@ -133,9 +135,9 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   const { t, i18n } = useTranslation();
   const { showToast } = useToast();
   const isAiAvailable = useAiAvailable();
-  // The text is complete: the prompt goes straight to the message field
-  // (no Nestor questions: the prompts have no blanks to fill in).
-  const placePrompt = usePlacePrompt();
+  // The transcription stays in Nestor. The person can explicitly send the
+  // resulting text to the main conversation afterwards.
+  const openNestorTask = usePromptToolkitStore((state) => state.openNestorTask);
   const tools = useMemo(() => getDailyTools(t), [t]);
   const formats = tools.find((tool) => tool.id === 'minutes')?.options[0];
 
@@ -227,6 +229,9 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   };
 
   const content = text.trim();
+  // Once text is ready, keep only a small control to start another recording:
+  // the useful space belongs to the transcription and Nestor's result.
+  const isCompact = Boolean(content) && !isActive && !isWorking;
   const block = `\n\n"""\n${content}\n"""`;
   // The result is read as it is: no "[to be defined]" left to fill in.
   const noBlanks = ` ${t(
@@ -308,8 +313,10 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     },
     {
       id: 'raw',
-      title: t('Send to the assistant'),
-      description: t('The text as it is, in the message field.'),
+      title: t('Ask Nestor'),
+      description: t(
+        'Nestor processes the text here; you can send the result to the conversation afterwards.',
+      ),
       prompt: () => content,
     },
   ];
@@ -350,8 +357,22 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     >
       {canTranscribe && (
         <Box $gap="16px">
-          <Box $align="center" $gap="12px" $css={cardCss}>
-            {!isActive && !isWorking && (
+          <Box
+            $align="center"
+            $gap={isCompact ? '0' : '12px'}
+            $css={css`
+              ${cardCss}
+              ${
+                isCompact &&
+                css`
+                  width: fit-content;
+                  padding: 6px;
+                  align-self: flex-end;
+                `
+              }
+            `}
+          >
+            {!isCompact && !isActive && !isWorking && (
               <img
                 src={NESTOR_TRANSCRIPTION_URL}
                 alt=""
@@ -378,8 +399,8 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 $align="center"
                 $justify="center"
                 $css={css`
-                  width: 104px;
-                  height: 104px;
+                  width: ${isCompact ? '48px' : '104px'};
+                  height: ${isCompact ? '48px' : '104px'};
                   border-radius: 50%;
                   border: none;
                   cursor: pointer;
@@ -416,11 +437,46 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                     $css="width: 32px; height: 32px; border-radius: 6px; background: #ffffff;"
                   />
                 ) : (
-                  <Icon iconName="mic" $size="44px" $withThemeInherited />
+                  <Icon
+                    iconName="mic"
+                    $size={isCompact ? '24px' : '44px'}
+                    $withThemeInherited
+                  />
                 )}
               </Box>
             )}
-            {(isActive || capture.seconds > 0) && (
+            {isCompact && (
+              <Box
+                as="button"
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                aria-label={t('import an audio file')}
+                title={t('import an audio file')}
+                $align="center"
+                $justify="center"
+                $css={css`
+                  width: 48px;
+                  height: 48px;
+                  border: none;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  color: var(
+                    --c--contextuals--content--semantic--brand--primary
+                  );
+                  background: var(
+                    --c--contextuals--background--semantic--brand--tertiary
+                  );
+                  &:focus-visible {
+                    outline: 3px solid
+                      var(--c--contextuals--border--semantic--brand--primary);
+                    outline-offset: 3px;
+                  }
+                `}
+              >
+                <Icon iconName="upload_file" $size="24px" $withThemeInherited />
+              </Box>
+            )}
+            {!isCompact && (isActive || capture.seconds > 0) && (
               <Text
                 aria-live="off"
                 $css={css`
@@ -433,14 +489,16 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
               </Text>
             )}
             {isRecording && <Wave readLevel={capture.readLevel} />}
-            <Text
-              role="status"
-              $size="sm"
-              $variation="secondary"
-              $textAlign="center"
-            >
-              {stateText}
-            </Text>
+            {!isCompact && (
+              <Text
+                role="status"
+                $size="sm"
+                $variation="secondary"
+                $textAlign="center"
+              >
+                {stateText}
+              </Text>
+            )}
             {isActive && (
               <Box $direction="row" $gap="8px">
                 <Button
@@ -468,7 +526,7 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 </Button>
               </Box>
             )}
-            {!isActive && !importing && (
+            {!isCompact && !isActive && !importing && (
               // One line: "or import an audio file".
               <Box
                 $direction="row"
@@ -618,7 +676,7 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 type="button"
                 onClick={() => {
                   const prompt = action.prompt();
-                  if (prompt) placePrompt(prompt);
+                  if (prompt) openNestorTask(prompt, action.title);
                 }}
                 // Six actions: the first and the last take the whole row.
                 $css={actionCss(

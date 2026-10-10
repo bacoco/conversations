@@ -83,6 +83,10 @@ interface PromptToolkitState {
   /** The conversation with Nestor, kept while the page is open. */
   nestorChat: NestorTurn[];
   setNestorChat: (turns: NestorTurn[]) => void;
+  /** A task requested from a panel tool: Nestor executes it in the panel. */
+  nestorTask: { prompt: string; label: string } | null;
+  openNestorTask: (prompt: string, label: string) => void;
+  clearNestorTask: () => void;
   /** A lesson to open in the course, asked from another section. */
   lessonRequest: string | null;
   openLesson: (lessonId: string) => void;
@@ -140,6 +144,10 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       clearSharedPrompt: () => set({ sharedPrompt: null }),
       nestorChat: [],
       setNestorChat: (nestorChat) => set({ nestorChat }),
+      nestorTask: null,
+      openNestorTask: (prompt, label) =>
+        set({ nestorTask: { prompt, label }, isOpen: true }),
+      clearNestorTask: () => set({ nestorTask: null }),
       lessonRequest: null,
       openLesson: (lessonId) =>
         set({

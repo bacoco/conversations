@@ -812,13 +812,16 @@ export interface NestorTurn {
   text: string;
   /** A ready-to-send prompt Nestor proposes, when he has one. */
   prompt?: string;
+  /** A completed task which can be explicitly sent to the main conversation. */
+  sendToChat?: string;
 }
 
 /** What Nestor knows about the panel, to answer "what can you do?". */
-const NESTOR_HELP = `The panel has three spaces, reached from its home cards. Name them with the labels shown on screen, given here as English (French):
+const NESTOR_HELP = `The home page has four entry cards. Name them with the labels shown on screen, given here as English (French):
+- Record and transcribe (Enregistrer et transcrire): record a meeting, an idea or a voice note, import an audio file, or paste text. The transcript stays in Nestor, which can create minutes, a decision log, an action list, a summary or a translation. The person can explicitly send the completed result to the main conversation afterwards.
 - Coach (Coach), with four modes: Analysis (Analyse): grade, advice and a better version of the prompt typed in the message field; Prompt help (Aide au prompting): written versions plus matching library prompts; As you type (À la volée): while typing, the closest ready-made requests appear, one click puts one in the message field; Session review (Bilan de séance): a review of all the prompts of the conversation.
 - Course (Cours): tabs Lessons (Leçons), Cards (Fiches), Quiz (Quiz), Challenges (Défis: fix a weak prompt, the coach grades it).
-- Everyday tools (Outils du quotidien): families Write (Écrire: reply to an email, official letter, rewrite, translate, improve my text), Summarise (Résumer: minutes, summary, actions), Organise (Organiser: action plan, brainstorming), Prompts (Prompts: library with favorites and My prompts, prompt generator, follow up on an answer). Each tool asks a few choices, then puts a prompt in the message field.
+- Everyday tools (Outils du quotidien): families Write (Écrire: reply to an email, official letter, rewrite, translate, improve my text), Summarise (Résumer: minutes, summary, actions), Organise (Organiser: action plan, brainstorming), Prompts (Prompts: library with favorites and My prompts, prompt generator, follow up on an answer).
 - Nestor: the round button at the bottom right, this chat.`;
 
 const NESTOR_CHAT_SYSTEM_PROMPT = (language: string, where: string) =>

@@ -97,11 +97,11 @@ describe('<RecorderView />', () => {
   const setChatInput = vi.fn();
   beforeEach(() => {
     vi.clearAllMocks();
-    usePromptToolkitStore.setState({ setChatInput });
+    usePromptToolkitStore.setState({ nestorTask: null, setChatInput });
     useRecorderStore.setState({ text: '' });
   });
 
-  it('turns a pasted text into minutes in the message field', () => {
+  it('keeps a pasted text task in Nestor by default', () => {
     render(<RecorderView onBack={vi.fn()} />);
 
     expect(
@@ -113,29 +113,33 @@ describe('<RecorderView />', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Flash' }));
     fireEvent.click(screen.getByRole('button', { name: /Meeting minutes/ }));
 
-    const prompt = setChatInput.mock.calls[0][0] as string;
-    expect(prompt).toContain('From the text below, write');
-    expect(prompt).toContain('Claire valide le budget formation.');
+    const task = usePromptToolkitStore.getState().nestorTask;
+    expect(task?.prompt).toContain('From the text below, write');
+    expect(task?.prompt).toContain('Claire valide le budget formation.');
     // Nothing left to fill in by hand in the answer.
-    expect(prompt).toContain('Never write placeholders');
+    expect(task?.prompt).toContain('Never write placeholders');
+    expect(setChatInput).not.toHaveBeenCalled();
   });
 
-  it('sends the decision log, a translation or the raw text to the chat', () => {
+  it('keeps decisions, translation and raw text in Nestor', () => {
     useRecorderStore.setState({ text: 'Karim rédige le cahier des charges.' });
     render(<RecorderView onBack={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /Decision log/ }));
-    expect(setChatInput.mock.calls[0][0]).toContain('decision log');
+    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toContain(
+      'decision log',
+    );
 
     fireEvent.click(screen.getByRole('button', { name: /Translate/ }));
-    expect(setChatInput.mock.calls[1][0]).toContain('Translate the text below');
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /Send to the assistant/ }),
+    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toContain(
+      'Translate the text below',
     );
-    expect(setChatInput).toHaveBeenLastCalledWith(
+
+    fireEvent.click(screen.getByRole('button', { name: /Ask Nestor/ }));
+    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toBe(
       'Karim rédige le cahier des charges.',
     );
+    expect(setChatInput).not.toHaveBeenCalled();
   });
 
   it('keeps the text when the screen is left and comes back', () => {

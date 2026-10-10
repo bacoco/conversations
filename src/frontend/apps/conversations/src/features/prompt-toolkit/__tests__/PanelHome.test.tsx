@@ -28,7 +28,10 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    expect(
+      screen.getByRole('button', { name: /Record and transcribe/i }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /off/i }),
     ).not.toBeInTheDocument();
