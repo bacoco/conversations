@@ -295,7 +295,11 @@ export const NestorDock = ({ language }: { language: string }) => {
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (
+      event.key === 'Enter' &&
+      !event.shiftKey &&
+      !event.nativeEvent.isComposing
+    ) {
       event.preventDefault();
       void send(draft);
     }

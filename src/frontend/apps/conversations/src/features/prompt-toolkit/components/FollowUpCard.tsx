@@ -164,7 +164,12 @@ export const FollowUpCard = () => {
           setCustom(event.target.value)
         }
         onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-          if (event.key === 'Enter' && custom.trim() && !isLoading) {
+          if (
+            event.key === 'Enter' &&
+            !event.nativeEvent.isComposing &&
+            custom.trim() &&
+            !isLoading
+          ) {
             event.preventDefault();
             void ask(custom.trim());
           }

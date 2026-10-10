@@ -508,7 +508,14 @@ const ColouredRequest = ({
   );
 };
 
-const CloseRequests = ({ text }: { text: string }) => {
+/** Close requests are looked for as one types: never while hidden. */
+const CloseRequests = ({
+  text,
+  isActive,
+}: {
+  text: string;
+  isActive: boolean;
+}) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   if (!isOpen) {
@@ -523,6 +530,9 @@ const CloseRequests = ({ text }: { text: string }) => {
         {t('Show close requests, already well written')}
       </Button>
     );
+  }
+  if (!isActive) {
+    return null;
   }
   return (
     <Box $css="margin: 0 -16px;">
@@ -541,6 +551,7 @@ export const CoachMore = ({
   language,
   isBeginner,
   onPlace,
+  isActive = true,
 }: {
   prompt: string;
   /** The reading, once the user asked for it. */
@@ -548,6 +559,8 @@ export const CoachMore = ({
   language: string;
   isBeginner: boolean;
   onPlace: (text: string) => void;
+  /** False while the panel is hidden: nothing runs on typing then. */
+  isActive?: boolean;
 }) => {
   const { t } = useTranslation();
   return (
@@ -566,7 +579,7 @@ export const CoachMore = ({
         {/* Learning by oneself: hints instead of a ready version. */}
         <TutorHints prompt={prompt} language={language} />
         <Versions prompt={prompt} language={language} />
-        <CloseRequests text={prompt} />
+        <CloseRequests text={prompt} isActive={isActive} />
       </Box>
     </>
   );

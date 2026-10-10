@@ -392,6 +392,7 @@ export const CoachDraft = ({
 
         <Disclosure label={t('More details')} icon="tune">
           <CoachMore
+            isActive={isActive}
             prompt={readText ?? draft}
             result={result}
             language={language}
