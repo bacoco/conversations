@@ -28,7 +28,6 @@ import { SuggestionCarousel } from '@/features/chat/components/SuggestionCarouse
 import { WelcomeMessage } from '@/features/chat/components/WelcomeMessage';
 import { useFileDragDrop } from '@/features/chat/hooks/useFileDragDrop';
 import { useFileUrls } from '@/features/chat/hooks/useFileUrls';
-import { RoomCoachHint } from '@/features/prompt-toolkit/components/RoomCoachHint';
 import { useResponsiveStore } from '@/stores';
 
 import FilesIcon from '../assets/files.svg?react';
@@ -540,8 +539,6 @@ export const InputChat = ({
                 )}
               />
             )}
-            {/* Nestor, the coach in the room: one line, at a pause. */}
-            <RoomCoachHint />
             <Box
               $flex={1}
               $radius="12px"

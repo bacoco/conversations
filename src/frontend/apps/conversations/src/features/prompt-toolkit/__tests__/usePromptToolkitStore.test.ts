@@ -48,25 +48,31 @@ describe('usePromptToolkitStore', () => {
     expect(usePromptToolkitStore.getState().setChatInput).toBe(newer);
   });
 
-  it('opens the coach, a single screen without modes', () => {
-    usePromptToolkitStore.setState({ mode: 'learn', showHome: true });
+  it('opens the coach on its analysis, or on the screen asked for', () => {
+    usePromptToolkitStore.setState({
+      mode: 'learn',
+      showHome: true,
+      coachMode: 'manual',
+    });
     usePromptToolkitStore.getState().startCoach();
     expect(usePromptToolkitStore.getState()).toMatchObject({
       mode: 'coach',
       showHome: false,
       fill: null,
+      coachMode: 'manual',
     });
-    expect(usePromptToolkitStore.getState()).not.toHaveProperty('coachMode');
+    usePromptToolkitStore.getState().startCoach('instant');
+    expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
   });
 
-  it('forgets the coach modes of a panel stored before the single screen', () => {
+  it('keeps a known coach screen of a stored panel, else the analysis', () => {
     const { migrate } = usePromptToolkitStore.persist.getOptions();
-    const migrated = migrate?.(
-      { coachMode: 'session', mode: 'coach', width: 420 },
-      3,
-    ) as Record<string, unknown>;
-    expect(migrated).toMatchObject({ mode: 'coach', width: 420 });
-    expect(migrated).not.toHaveProperty('coachMode');
+    expect(
+      migrate?.({ coachMode: 'session', mode: 'coach', width: 420 }, 4),
+    ).toMatchObject({ mode: 'coach', width: 420, coachMode: 'session' });
+    expect(migrate?.({ coachMode: 'live', mode: 'coach' }, 3)).toMatchObject({
+      coachMode: 'manual',
+    });
   });
 
   it('shows the conversation first on a phone, even if the panel was open', () => {

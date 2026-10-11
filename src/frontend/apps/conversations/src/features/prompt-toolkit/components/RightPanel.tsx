@@ -31,7 +31,6 @@ import {
 } from '../stores/usePromptToolkitStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 
-import { AnswerHelpBanner } from './AnswerHelpBanner';
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
 import { PanelHome } from './PanelHome';
@@ -180,7 +179,11 @@ const useAccountToolsWidth = () => {
 };
 
 /** Both sections stay mounted so switching tabs keeps their content. */
-export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
+export const RightPanel = ({
+  isVisible: _isVisible = true,
+}: {
+  isVisible?: boolean;
+}) => {
   const { t, i18n } = useTranslation();
   const { isDesktop } = useResponsiveStore();
   const accountToolsWidth = useAccountToolsWidth();
@@ -356,9 +359,6 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
       >
         <SharedPromptBanner />
         <PlacementChoice />
-        <AnswerHelpBanner
-          isCoachShown={!showHome && !fill && mode === 'coach'}
-        />
         {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
         {showHome && <PanelHome />}
         {!showHome && fill && (
@@ -374,9 +374,7 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
           $display={!showHome && !fill && mode === 'coach' ? undefined : 'none'}
           $css="flex: 1 0 auto;"
         >
-          <CoachPanel
-            isActive={isVisible && !showHome && !fill && mode === 'coach'}
-          />
+          <CoachPanel />
         </Box>
         <Box
           $display={!showHome && !fill && mode === 'learn' ? undefined : 'none'}
