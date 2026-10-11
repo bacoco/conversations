@@ -284,3 +284,18 @@ describe('the coach after an answer', () => {
     );
   });
 });
+
+describe('gaps left in an answer', () => {
+  it('lists the brackets and counts the places to complete', async () => {
+    const { answerGaps } = await import('../components/CoachAnswer');
+    expect(
+      answerGaps(
+        'Nous ne pouvons pas donner de date À COMPLÉTER.\nCordialement,\n[Votre nom] [Votre service]',
+      ),
+    ).toEqual({ brackets: ['[Votre nom]', '[Votre service]'], marks: 1 });
+    expect(answerGaps('Bonjour, voici la réponse.')).toEqual({
+      brackets: [],
+      marks: 0,
+    });
+  });
+});

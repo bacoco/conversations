@@ -31,6 +31,7 @@ export const usePlacePrompt = () => {
       return;
     }
     setChatInput(prompt);
+    usePromptToolkitStore.getState().setOfferAnswerHelp(true);
     showToast(
       'success',
       t('Added to the message field: review it, then send it.'),

@@ -3,6 +3,13 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "The Assistant has answered. I can help you adjust the answer.": "L’Assistant a répondu. Je peux vous aider à ajuster la réponse.",
+      "See": "Voir",
+      "Close": "Fermer",
+      "Before using this answer, complete it": "Avant d’utiliser cette réponse, complétez-la",
+      "{{count}} places marked “TO COMPLETE”_one": "{{count}} endroit marqué « À COMPLÉTER »",
+      "{{count}} places marked “TO COMPLETE”_many": "{{count}} endroits marqués « À COMPLÉTER »",
+      "{{count}} places marked “TO COMPLETE”_other": "{{count}} endroits marqués « À COMPLÉTER »",
       "Your message field already holds a text.": "Votre zone de message contient déjà un texte.",
       "Replace it": "Le remplacer",
       "Add after it": "Ajouter à la suite",

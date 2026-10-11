@@ -96,6 +96,12 @@ interface PromptToolkitState {
    */
   pendingPlacement: string | null;
   setPendingPlacement: (prompt: string | null) => void;
+  /**
+   * Nestor helped with the request just sent: when its answer arrives
+   * elsewhere in the panel, offer the coach's help with it, once.
+   */
+  offerAnswerHelp: boolean;
+  setOfferAnswerHelp: (offer: boolean) => void;
   /** A lesson asked from elsewhere, on one of its screens if given. */
   lessonRequest: { lessonId: string; slide?: number } | null;
   openLesson: (lessonId: string, slide?: number) => void;
@@ -161,6 +167,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       coachWaitsForAnswer: false,
       pendingPlacement: null,
       setPendingPlacement: (pendingPlacement) => set({ pendingPlacement }),
+      offerAnswerHelp: false,
+      setOfferAnswerHelp: (offerAnswerHelp) => set({ offerAnswerHelp }),
       setCoachWaitsForAnswer: (coachWaitsForAnswer) =>
         set({ coachWaitsForAnswer }),
       lessonRequest: null,

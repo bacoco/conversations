@@ -105,6 +105,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       });
       // The coach will have something to say about the answer.
       setCoachWaitsForAnswer(true);
+      usePromptToolkitStore.getState().setOfferAnswerHelp(true);
     }
   }, [
     chatInput,
@@ -156,6 +157,12 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
 
   const hasAnswer =
     !isResponding && answerId !== null && turns.at(-1)?.role === 'assistant';
+  // The coach shows the answer itself: no need to point to it elsewhere.
+  useEffect(() => {
+    if (isActive && hasAnswer) {
+      usePromptToolkitStore.getState().setOfferAnswerHelp(false);
+    }
+  }, [isActive, hasAnswer]);
   const requestCount = turns.filter((turn) => turn.role === 'user').length;
   const moment = isReviewing
     ? 'review'

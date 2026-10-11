@@ -33,6 +33,7 @@ export const PlacementChoice = () => {
   const put = (text: string) => {
     setChatInput(text);
     setPending(null);
+    usePromptToolkitStore.getState().setOfferAnswerHelp(true);
     showToast(
       'success',
       t('Added to the message field: review it, then send it.'),

@@ -11,6 +11,7 @@ import {
   chatWithConversationCoach,
   coachConversationTurn,
   followUpPrompt,
+  placeholdersOf,
   suggestNextQuestions,
 } from '../coach/coachApi';
 import {
@@ -37,6 +38,51 @@ const lastText = (
 ) => [...turns].reverse().find((turn) => turn.role === role)?.text ?? '';
 
 /** Enter sends; Shift+Enter and an input method composing do not. */
+/** What the answer leaves to fill in: brackets, "TO COMPLETE". */
+export const answerGaps = (text: string) => {
+  const brackets = [...new Set(placeholdersOf(text))];
+  const marks = (text.match(/À COMPLÉTER|TO COMPLETE/g) ?? []).length;
+  return { brackets, marks };
+};
+
+/** Before using the answer: the parts the Assistant left for the user. */
+const AnswerGaps = ({ text }: { text: string }) => {
+  const { t } = useTranslation();
+  const { brackets, marks } = answerGaps(text);
+  if (brackets.length === 0 && marks === 0) {
+    return null;
+  }
+  return (
+    <Box
+      role="note"
+      $direction="row"
+      $gap="8px"
+      $css={css`
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(
+          --c--contextuals--background--semantic--warning--tertiary
+        );
+      `}
+    >
+      <Icon iconName="edit_note" $size="20px" $theme="warning" />
+      <Box $gap="2px">
+        <Text $size="sm" $weight="700">
+          {t('Before using this answer, complete it')}
+        </Text>
+        {brackets.length > 0 && (
+          <Text $size="sm">{brackets.slice(0, 6).join(' · ')}</Text>
+        )}
+        {marks > 0 && (
+          <Text $size="sm">
+            {t('{{count}} places marked “TO COMPLETE”', { count: marks })}
+          </Text>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
 const isSendKey = (event: KeyboardEvent) =>
   event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing;
 
@@ -627,6 +673,7 @@ export const CoachAnswer = ({
           )}
         </RetainTip>
       )}
+      <AnswerGaps text={lastText(turns, 'assistant')} />
       <Box $gap="10px" aria-live="polite">
         <NestorBubble>
           {t('The Assistant has answered. Does it suit you?')}
