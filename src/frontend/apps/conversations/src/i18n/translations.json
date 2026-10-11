@@ -3,6 +3,8 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "This answer is not ready to be sent: {{count}} parts to complete": "Cette réponse n’est pas prête à être envoyée : {{count}} éléments à compléter",
+      "Send a request: once the Assistant has answered, I can help with what comes next.": "Envoyez une demande : une fois que l’Assistant aura répondu, je vous aiderai pour la suite.",
       "Go on": "Suite",
       "Wrap-up": "Bilan",
       "Help": "Aide",

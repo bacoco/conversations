@@ -1093,6 +1093,8 @@ export const coachConversationTurn = async (
   conversation: ConversationContextTurn[],
   language: string,
   signal?: AbortSignal,
+  /** Parts the latest answer leaves in brackets, to fill before use. */
+  gaps: string[] = [],
 ): Promise<NestorTurn> => {
   const context = formatConversationContext(conversation);
   if (!context) {
@@ -1103,7 +1105,11 @@ export const coachConversationTurn = async (
       { role: 'system', content: CONVERSATION_COACH_SYSTEM_PROMPT(language) },
       {
         role: 'user',
-        content: `<conversation>\n${context}\n</conversation>\n\nThe main assistant has just finished its latest reply. Give the user one concise coaching note now.`,
+        content: `<conversation>\n${context}\n</conversation>\n\nThe main assistant has just finished its latest reply. Give the user one concise coaching note now.${
+          gaps.length
+            ? ` The reply leaves these parts in brackets, to be filled in before it can be used: ${gaps.join(', ')}. Start with them: say plainly that the reply is not ready as it is, name each part, and suggest giving the real information to the assistant in the next request (e.g. "the meeting is on Thursday 10 at 10 a.m., room 204"). Never fill them in yourself.`
+            : ''
+        }`,
       },
     ],
     signal,

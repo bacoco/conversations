@@ -67,6 +67,18 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
 
   const analysis = usePromptAnalysis(chatInput, language);
   const after = useAfterAnswer(isActive, language);
+  // "Advice" shown for an answer it has not read yet: it reads it now,
+  // instead of waiting on nothing.
+  useEffect(() => {
+    if (
+      isActive &&
+      coachMode === 'advice' &&
+      after.hasAnswer &&
+      after.advice.status === 'idle'
+    ) {
+      after.askAdvice();
+    }
+  }, [isActive, coachMode, after.hasAnswer, after.advice.status, after]);
   const sensitive = useMemo(() => detectSensitiveData(chatInput), [chatInput]);
 
   const [improvement, setImprovement] = useState<
@@ -398,6 +410,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
 
       {coachMode === 'next' && (
         <NextQuestionsView
+          hasAnswer={after.hasAnswer}
           status={after.next.status}
           questions={after.next.questions}
           onRetry={after.prepareNext}
@@ -407,6 +420,8 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         <AdviceView
           status={after.advice.status}
           text={after.advice.text}
+          gaps={after.gaps}
+          hasAnswer={after.hasAnswer}
           onRetry={after.askAdvice}
         />
       )}

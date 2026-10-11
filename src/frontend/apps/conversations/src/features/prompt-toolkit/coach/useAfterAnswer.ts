@@ -2,7 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 
-import { coachConversationTurn, suggestNextQuestions } from './coachApi';
+import {
+  coachConversationTurn,
+  placeholdersOf,
+  suggestNextQuestions,
+} from './coachApi';
+
+/** The parts the latest answer leaves in brackets, each once. */
+export const answerGaps = (text: string) => [
+  ...new Set(placeholdersOf(text).map((part) => part.trim())),
+];
 
 export type AfterStatus = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -79,10 +88,15 @@ export const useAfterAnswer = (enabled: boolean, language: string) => {
     const controller = new AbortController();
     adviceControllerRef.current = controller;
     setAdvice({ answerId: id, status: 'loading', text: '' });
+    const { turns } = useMainConversationStore.getState();
+    const answer =
+      [...turns].reverse().find((turn) => turn.role === 'assistant')?.text ??
+      '';
     coachConversationTurn(
-      useMainConversationStore.getState().turns,
+      turns,
       language,
       controller.signal,
+      answerGaps(answer),
     )
       .then((turn) =>
         setAdvice({ answerId: id, status: 'ready', text: turn.text }),
@@ -95,8 +109,13 @@ export const useAfterAnswer = (enabled: boolean, language: string) => {
   }, [language]);
 
   const isCurrent = (id: string | null) => !!answerId && id === answerId;
+  const turns = useMainConversationStore((state) => state.turns);
+  const lastAnswer =
+    [...turns].reverse().find((turn) => turn.role === 'assistant')?.text ?? '';
   return {
     hasAnswer: !!answerId && !isResponding,
+    /** Parts of the latest answer to fill in before using it. */
+    gaps: answerId && !isResponding ? answerGaps(lastAnswer) : [],
     next: isCurrent(next.answerId)
       ? next
       : { answerId: null, status: 'idle' as AfterStatus, questions: [] },

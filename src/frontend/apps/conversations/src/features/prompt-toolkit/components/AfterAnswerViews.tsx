@@ -28,6 +28,19 @@ const Waiting = ({ label }: { label: string }) => (
   </Box>
 );
 
+const NoAnswer = () => {
+  const { t } = useTranslation();
+  return (
+    <Box $padding={{ all: 'lg' }} $align="center">
+      <Text $textAlign="center" $size="sm" $variation="secondary">
+        {t(
+          'Send a request: once the Assistant has answered, I can help with what comes next.',
+        )}
+      </Text>
+    </Box>
+  );
+};
+
 const Failed = ({ onRetry }: { onRetry: () => void }) => {
   const { t } = useTranslation();
   return (
@@ -48,16 +61,21 @@ const Failed = ({ onRetry }: { onRetry: () => void }) => {
 
 /** "Next": two questions to go on, prepared after each answer. */
 export const NextQuestionsView = ({
+  hasAnswer,
   status,
   questions,
   onRetry,
 }: {
+  hasAnswer: boolean;
   status: AfterStatus;
   questions: string[];
   onRetry: () => void;
 }) => {
   const { t } = useTranslation();
   const placePrompt = usePlacePrompt();
+  if (!hasAnswer) {
+    return <NoAnswer />;
+  }
   if (status === 'loading' || status === 'idle') {
     return <Waiting label={t('Nestor is preparing next questions…')} />;
   }
@@ -102,25 +120,60 @@ export const NextQuestionsView = ({
 export const AdviceView = ({
   status,
   text,
+  gaps,
+  hasAnswer,
   onRetry,
 }: {
   status: AfterStatus;
   text: string;
+  gaps: string[];
+  hasAnswer: boolean;
   onRetry: () => void;
 }) => {
   const { t } = useTranslation();
-  if (status === 'loading' || status === 'idle') {
-    return <Waiting label={t('Nestor is reading the exchange…')} />;
-  }
-  if (status === 'error') {
-    return <Failed onRetry={onRetry} />;
+  if (!hasAnswer) {
+    return <NoAnswer />;
   }
   return (
     <Box $gap="12px" $padding={{ all: 'base' }}>
       <Text as="h3" $size="md" $weight="700" $margin="0">
         {t('Nestor’s view on this exchange')}
       </Text>
-      <NestorBubble>{text}</NestorBubble>
+      {/* Seen without the model: the answer is not ready as it is. */}
+      {gaps.length > 0 && (
+        <Box
+          role="note"
+          $direction="row"
+          $gap="8px"
+          $css={css`
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: var(
+              --c--contextuals--background--semantic--warning--tertiary
+            );
+          `}
+        >
+          <Icon iconName="edit_note" $size="20px" $theme="warning" />
+          <Box $gap="2px">
+            <Text $size="sm" $weight="700">
+              {t(
+                'This answer is not ready to be sent: {{count}} parts to complete',
+                {
+                  count: gaps.length,
+                },
+              )}
+            </Text>
+            <Text $size="sm">{gaps.join(' · ')}</Text>
+          </Box>
+        </Box>
+      )}
+      {status === 'error' ? (
+        <Failed onRetry={onRetry} />
+      ) : status === 'ready' ? (
+        <NestorBubble>{text}</NestorBubble>
+      ) : (
+        <Waiting label={t('Nestor is reading the exchange…')} />
+      )}
     </Box>
   );
 };

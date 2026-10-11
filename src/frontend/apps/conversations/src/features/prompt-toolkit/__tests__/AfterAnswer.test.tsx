@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { CoachPanel } from '../components/CoachPanel';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
@@ -85,5 +85,41 @@ describe('the coach after an answer', () => {
       await screen.findByText('Précisez le public visé.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('names the parts the answer leaves to complete, and reads a new answer by itself', async () => {
+    const fetchMock = vi.fn((_url: string, init?: RequestInit) =>
+      Promise.resolve(
+        (init?.body as string).includes('coaching note')
+          ? completion({ message: 'Donnez la date et la salle.' })
+          : completion({ questions: [] }),
+      ),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    usePromptToolkitStore.setState({ coachMode: 'advice' });
+    render(<CoachPanel />);
+    expect(
+      await screen.findByText('Donnez la date et la salle.'),
+    ).toBeInTheDocument();
+
+    // A new answer, with gaps, while "Advice" is shown: read at once.
+    await act(async () => {
+      useMainConversationStore.setState({
+        turns: [
+          { role: 'user', text: 'Annonce la réunion.' },
+          { role: 'assistant', text: 'Réunion le [date] en salle [salle].' },
+        ],
+        latestCompletedAssistantMessageId: 'answer-2',
+      });
+      await Promise.resolve();
+    });
+    expect(await screen.findByText('[date] · [salle]')).toBeInTheDocument();
+    await vi.waitFor(() => {
+      const advice = fetchMock.mock.calls
+        .map(([, init]) => (init?.body as string) ?? '')
+        .filter((body) => body.includes('coaching note'));
+      expect(advice).toHaveLength(2);
+      expect(advice[1]).toContain('[date], [salle]');
+    });
   });
 });
