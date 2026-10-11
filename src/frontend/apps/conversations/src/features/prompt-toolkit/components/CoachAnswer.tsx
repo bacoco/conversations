@@ -67,15 +67,18 @@ const AnswerCheck = ({
   const { brackets, marks } = answerGaps(answer);
   const [claims, setClaims] = useState<string[] | null>(null);
   const [isChecking, setIsChecking] = useState(false);
-  // Straight to the workshop when the answer comes from a tool's request.
-  const [isOpen, setIsOpen] = useState(() => {
-    const store = usePromptToolkitStore.getState();
-    if (store.finishNextAnswer) {
-      store.setFinishNextAnswer(false);
-      return true;
+  const [isOpen, setIsOpen] = useState(false);
+  // Straight to the workshop when the answer comes from a tool's request,
+  // even if the coach was already showing this answer.
+  const finishNextAnswer = usePromptToolkitStore(
+    (state) => state.finishNextAnswer,
+  );
+  useEffect(() => {
+    if (finishNextAnswer) {
+      usePromptToolkitStore.getState().setFinishNextAnswer(false);
+      setIsOpen(true);
     }
-    return false;
-  });
+  }, [finishNextAnswer]);
   useEffect(() => {
     if (!isAiAvailable || !answer.trim()) {
       return;

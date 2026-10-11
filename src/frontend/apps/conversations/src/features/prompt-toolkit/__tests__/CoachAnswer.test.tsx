@@ -332,6 +332,27 @@ describe('the facts of an answer', () => {
   });
 });
 
+describe('an answer asked from a tool', () => {
+  it('opens the workshop by itself', async () => {
+    mockCheckAnswerFacts.mockResolvedValueOnce(['Un délai : « 15 jours »']);
+    vi.stubGlobal('fetch', vi.fn());
+    usePromptToolkitStore.setState({ chatInput: '', finishNextAnswer: false });
+    useMainConversationStore.setState({
+      turns: TURNS,
+      latestCompletedAssistantMessageId: 'assistant-1',
+      isAssistantResponding: false,
+    });
+    render(<CoachPanel />);
+    act(() => {
+      usePromptToolkitStore.setState({ finishNextAnswer: true });
+    });
+    expect(
+      await screen.findByText('{{count}} points to settle before sending'),
+    ).toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+});
+
 describe('gaps left in an answer', () => {
   it('lists the brackets and counts the places to complete', async () => {
     const { answerGaps } = await import('../components/CoachAnswer');
