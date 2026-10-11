@@ -298,6 +298,38 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       {coachMode === 'assist' && chatInput.trim() !== '' && assist && (
         <AssistResults variants={assist.variants} matches={assist.matches} />
       )}
+      {/* A request typed, nothing asked yet: say what happens, ask here. */}
+      {coachMode === 'assist' &&
+        chatInput.trim() !== '' &&
+        !assist &&
+        !isAssisting &&
+        !assistError && (
+          <Box $align="center" $gap="10px" $padding={{ all: 'lg' }}>
+            <Icon iconName="auto_awesome" $size="40px" $theme="brand" />
+            <Text $textAlign="center" $weight="700">
+              {t('Your request is ready')}
+            </Text>
+            <Text $textAlign="center" $size="sm" $variation="secondary">
+              {t(
+                'I write several versions and find matching prompts in the library.',
+              )}
+            </Text>
+            <Button
+              onClick={() => void runAssist()}
+              icon={<Icon iconName="auto_awesome" $size="18px" />}
+            >
+              {t('Help me with this prompt')}
+            </Button>
+          </Box>
+        )}
+      {coachMode === 'assist' && isAssisting && !assist && (
+        <Box $align="center" $gap="10px" $padding={{ all: 'lg' }} role="status">
+          <Loader size="small" />
+          <Text $textAlign="center" $size="sm">
+            {t('Nestor is writing versions of your prompt…')}
+          </Text>
+        </Box>
+      )}
       {coachMode === 'assist' && assistError && (
         <Text $size="sm" role="alert" $css="padding: 16px;">
           {t('Nestor could not write versions. Please retry.')}

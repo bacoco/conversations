@@ -103,8 +103,9 @@ describe('coach modes', () => {
     });
 
     render(<CoachPanel />);
+    // Asked from the middle of the panel (the bar at the bottom does the same).
     fireEvent.click(
-      screen.getByRole('button', { name: 'Help me with this prompt' }),
+      screen.getAllByRole('button', { name: 'Help me with this prompt' })[0],
     );
 
     expect(await screen.findByText('Version courte')).toBeInTheDocument();
