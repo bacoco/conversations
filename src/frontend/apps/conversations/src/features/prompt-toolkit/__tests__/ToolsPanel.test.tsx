@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { TFunction } from 'i18next';
 
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 import { buildToolPrompt, getDailyTools } from '../tools/tools';
@@ -65,7 +66,9 @@ describe('<ToolsPanel />', () => {
       target: { value: 'Bonjour à tous' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: /Prepare in the message field/ }),
+      screen.getByRole('button', {
+        name: 'Prepare without sending, to read it first',
+      }),
     );
 
     const prompt = setChatInput.mock.calls[0][0] as string;
@@ -133,5 +136,22 @@ describe('<ToolsPanel />', () => {
     fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     expect(useToolsUsageStore.getState().recent).toEqual(['translate']);
+  });
+
+  it('asks the Assistant in one click, leaving the message field alone', () => {
+    const sendQuestion = vi.fn();
+    useMainConversationStore.setState({ sendQuestion });
+    render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
+    fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
+      target: { value: 'Bonjour à tous' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the Assistant' }));
+    expect(sendQuestion).toHaveBeenCalledWith(
+      expect.stringContaining('Bonjour à tous'),
+    );
+    expect(setChatInput).not.toHaveBeenCalled();
+    expect(usePromptToolkitStore.getState().offerAnswerHelp).toBe(true);
   });
 });

@@ -8,6 +8,13 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }));
+// The fact check runs on each answer: answered here, without the network.
+const mockCheckAnswerFacts = vi.fn().mockResolvedValue([]);
+vi.mock('../coach/coachApi', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../coach/coachApi')>()),
+  checkAnswerFacts: (...args: unknown[]) =>
+    mockCheckAnswerFacts(...args) as Promise<string[]>,
+}));
 vi.mock('@/utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils')>()),
   useConversationRouteId: () => undefined,
@@ -282,6 +289,40 @@ describe('the coach after an answer', () => {
     expect(setChatInput).toHaveBeenCalledWith(
       'Prépare une note sur le budget.',
     );
+  });
+});
+
+describe('the facts of an answer', () => {
+  beforeEach(() => {
+    usePromptToolkitStore.setState({ chatInput: '' });
+    useMainConversationStore.setState({
+      turns: TURNS,
+      latestCompletedAssistantMessageId: 'assistant-1',
+      isAssistantResponding: false,
+      sendQuestion: vi.fn(),
+    });
+  });
+
+  it('lists what to check, and prepares their removal', async () => {
+    mockCheckAnswerFacts.mockResolvedValueOnce([
+      'La cause du retard : « afflux de demandes »',
+    ]);
+    vi.stubGlobal('fetch', vi.fn());
+    render(<CoachPanel />);
+    expect(
+      await screen.findByText('La cause du retard : « afflux de demandes »'),
+    ).toBeInTheDocument();
+    expect(mockCheckAnswerFacts).toHaveBeenCalledWith(
+      'Prépare une note sur le budget.',
+      'Voici une première trame de note.',
+      expect.any(String),
+      expect.any(AbortSignal),
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remove what I did not give' }),
+    );
+    expect(screen.getByText('Correction ready')).toBeInTheDocument();
+    vi.unstubAllGlobals();
   });
 });
 

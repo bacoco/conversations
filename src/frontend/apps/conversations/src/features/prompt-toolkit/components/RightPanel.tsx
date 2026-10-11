@@ -31,10 +31,10 @@ import {
 } from '../stores/usePromptToolkitStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 
+import { AnswerHelpBanner } from './AnswerHelpBanner';
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
 import { PanelHome } from './PanelHome';
-import { AnswerHelpBanner } from './AnswerHelpBanner';
 import { PlacementChoice } from './PlacementChoice';
 import { SharedPromptBanner } from './SharedPromptBanner';
 

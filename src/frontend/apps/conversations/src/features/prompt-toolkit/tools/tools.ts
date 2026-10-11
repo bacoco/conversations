@@ -99,7 +99,7 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       ],
       build: (c, source) =>
         t(
-          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Do not promise anything that is not in the email; write TO COMPLETE where information is missing.',
+          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing.',
           { intent: c.intent, tone: c.tone },
         ) + block(source),
     },

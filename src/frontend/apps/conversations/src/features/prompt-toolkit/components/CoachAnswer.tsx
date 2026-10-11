@@ -5,10 +5,12 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { useAiAvailable } from '../coach/aiAvailability';
 import {
   ConversationContextTurn,
   NestorTurn,
   chatWithConversationCoach,
+  checkAnswerFacts,
   coachConversationTurn,
   followUpPrompt,
   placeholdersOf,
@@ -45,12 +47,51 @@ export const answerGaps = (text: string) => {
   return { brackets, marks };
 };
 
-/** Before using the answer: the parts the Assistant left for the user. */
-const AnswerGaps = ({ text }: { text: string }) => {
+/**
+ * Before using the answer: the parts the Assistant left to complete, and
+ * the facts it states that the request did not give, to check.
+ */
+const AnswerCheck = ({
+  request,
+  answer,
+  language,
+  onFix,
+}: {
+  request: string;
+  answer: string;
+  language: string;
+  /** Prepares a correction for the Assistant, shown before it is sent. */
+  onFix: (text: string, label: string) => void;
+}) => {
   const { t } = useTranslation();
-  const { brackets, marks } = answerGaps(text);
-  if (brackets.length === 0 && marks === 0) {
-    return null;
+  const isAiAvailable = useAiAvailable();
+  const { brackets, marks } = answerGaps(answer);
+  const [claims, setClaims] = useState<string[] | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
+  useEffect(() => {
+    if (!isAiAvailable || !answer.trim()) {
+      return;
+    }
+    const controller = new AbortController();
+    setIsChecking(true);
+    checkAnswerFacts(request, answer, language, controller.signal)
+      .then(setClaims)
+      .catch(() => undefined)
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsChecking(false);
+        }
+      });
+    return () => controller.abort();
+  }, [request, answer, language, isAiAvailable]);
+
+  const toCheck = claims ?? [];
+  if (brackets.length === 0 && marks === 0 && toCheck.length === 0) {
+    return isChecking ? (
+      <Text $size="xs" $variation="secondary" role="status">
+        {t('Nestor checks the answer against your request…')}
+      </Text>
+    ) : null;
   }
   return (
     <Box
@@ -65,17 +106,66 @@ const AnswerGaps = ({ text }: { text: string }) => {
         );
       `}
     >
-      <Icon iconName="edit_note" $size="20px" $theme="warning" />
-      <Box $gap="2px">
+      <Icon iconName="fact_check" $size="20px" $theme="warning" />
+      <Box $gap="6px" $css="flex: 1; min-width: 0;">
         <Text $size="sm" $weight="700">
-          {t('Before using this answer, complete it')}
+          {t('Before using this answer')}
         </Text>
-        {brackets.length > 0 && (
-          <Text $size="sm">{brackets.slice(0, 6).join(' · ')}</Text>
+        {(brackets.length > 0 || marks > 0) && (
+          <Box $gap="2px">
+            <Text $size="sm" $weight="600">
+              {t('To complete')}
+            </Text>
+            {brackets.length > 0 && (
+              <Text $size="sm">{brackets.slice(0, 6).join(' · ')}</Text>
+            )}
+            {marks > 0 && (
+              <Text $size="sm">
+                {t('{{count}} places marked “TO COMPLETE”', { count: marks })}
+              </Text>
+            )}
+          </Box>
         )}
-        {marks > 0 && (
-          <Text $size="sm">
-            {t('{{count}} places marked “TO COMPLETE”', { count: marks })}
+        {toCheck.length > 0 && (
+          <Box $gap="2px">
+            <Text $size="sm" $weight="600">
+              {t('To check: your request did not give these facts')}
+            </Text>
+            <Box as="ul" $css="margin: 0; padding-left: 18px;">
+              {toCheck.map((claim) => (
+                <Text as="li" key={claim} $size="sm" $css="display: list-item;">
+                  {claim}
+                </Text>
+              ))}
+            </Box>
+            <Text $size="xs" $variation="secondary">
+              {t(
+                'Confirm them from your files, or ask the Assistant to remove them.',
+              )}
+            </Text>
+            <Box $direction="row">
+              <Button
+                size="small"
+                color="neutral"
+                variant="secondary"
+                onClick={() =>
+                  onFix(
+                    t(
+                      'Remove from your answer the facts I did not give you: {{claims}}. Where the answer needs them, write TO COMPLETE. Keep the rest as it is.',
+                      { claims: toCheck.join(' ; ') },
+                    ),
+                    t('Remove what I did not give'),
+                  )
+                }
+              >
+                {t('Remove what I did not give')}
+              </Button>
+            </Box>
+          </Box>
+        )}
+        {isChecking && (
+          <Text $size="xs" $variation="secondary" role="status">
+            {t('Nestor checks the answer against your request…')}
           </Text>
         )}
       </Box>
@@ -673,7 +763,15 @@ export const CoachAnswer = ({
           )}
         </RetainTip>
       )}
-      <AnswerGaps text={lastText(turns, 'assistant')} />
+      <AnswerCheck
+        request={lastText(turns, 'user')}
+        answer={lastText(turns, 'assistant')}
+        language={language}
+        onFix={(text, label) => {
+          setIssue({ value: 'unsure', label });
+          setCorrection({ text });
+        }}
+      />
       <Box $gap="10px" aria-live="polite">
         <NestorBubble>
           {t('The Assistant has answered. Does it suit you?')}

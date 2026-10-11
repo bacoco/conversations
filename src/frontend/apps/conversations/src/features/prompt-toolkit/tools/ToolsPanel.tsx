@@ -3,9 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
-import { Box, Icon, Text } from '@/components';
+import { Box, Icon, Text, useToast } from '@/components';
+import { useResponsiveStore } from '@/stores';
 
 import { useAiAvailable } from '../coach/aiAvailability';
+import { hasPlaceholders } from '../coach/coachApi';
 import {
   NESTOR_ORGANIZE_URL,
   NESTOR_SUMMARIZE_URL,
@@ -16,6 +18,7 @@ import { useOfferPrompt } from '../fill/useOfferPrompt';
 import { LibraryView, normalize } from '../library/LibraryView';
 import { RecorderView } from '../speech/RecorderView';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   usePromptToolkitStore,
   useSectionReset,
@@ -117,11 +120,38 @@ const ToolForm = ({
   onBack: () => void;
 }) => {
   const { t } = useTranslation();
+  const { showToast } = useToast();
+  const { isDesktop } = useResponsiveStore();
+  const isAiAvailable = useAiAvailable();
   const offerPrompt = useOfferPrompt();
+  const sendQuestion = useMainConversationStore((state) => state.sendQuestion);
+  const closePanel = usePromptToolkitStore((state) => state.close);
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [source, setSource] = useState('');
   const prompt = buildToolPrompt(tool, selected, source);
-  const usePrompt = () => offerPrompt(prompt, tool.title);
+  const prepare = () => offerPrompt(prompt, tool.title);
+  /**
+   * One click to the answer. Blanks to fill go through Nestor's questions
+   * first; without an open conversation, the request is prepared instead.
+   */
+  const askNow = () => {
+    if ((isAiAvailable && hasPlaceholders(prompt)) || !sendQuestion) {
+      prepare();
+      return;
+    }
+    sendQuestion(prompt);
+    usePromptToolkitStore.getState().setOfferAnswerHelp(true);
+    showToast(
+      'success',
+      t('Sent: the answer arrives in the conversation.'),
+      undefined,
+      4000,
+    );
+    // On a phone the panel covers the chat: show the answer coming.
+    if (!isDesktop) {
+      closePanel();
+    }
+  };
 
   return (
     <Box $css="min-height: 100%;">
@@ -293,14 +323,20 @@ const ToolForm = ({
       >
         <Button
           fullWidth
-          onClick={usePrompt}
-          icon={<Icon iconName="arrow_upward" $size="18px" />}
+          onClick={askNow}
+          icon={<Icon iconName="send" $size="18px" />}
         >
-          {t('Prepare in the message field')}
+          {t('Ask the Assistant')}
         </Button>
-        <Text $size="xs" $variation="secondary" $textAlign="center">
-          {t('You can still edit the prompt before sending it.')}
-        </Text>
+        <Button
+          fullWidth
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={prepare}
+        >
+          {t('Prepare without sending, to read it first')}
+        </Button>
       </Box>
     </Box>
   );
@@ -625,7 +661,21 @@ export const ToolsPanel = () => {
       {words.length > 0 ? (
         <Box $gap="10px" aria-live="polite">
           {found.length > 0 ? (
-            list(found, t('Tools for your need'))
+            <>
+              <Text as="h3" $size="sm" $weight="700" $margin="0">
+                {t('Recommended for your need')}
+              </Text>
+              {list(found.slice(0, 1), t('Tools for your need'))}
+              {found.length > 1 && (
+                <Text as="h3" $size="sm" $weight="700" $margin="0">
+                  {t('Other tools')}
+                </Text>
+              )}
+              {found.length > 1 && list(found.slice(1), t('Other tools'))}
+              <Text as="h3" $size="xs" $variation="secondary" $margin="0">
+                {t('Other possibilities')}
+              </Text>
+            </>
           ) : (
             <Text $size="sm" $variation="secondary">
               {t('No tool has this name. Nestor can still help:')}
