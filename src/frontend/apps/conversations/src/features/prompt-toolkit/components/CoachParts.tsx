@@ -216,12 +216,15 @@ export const FinalRequest = ({
   fill,
   original,
   onPlace,
+  onSend,
   saveTitle,
 }: {
   fill: GuidedFill;
   /** The user's own words, to show what Nestor added. */
   original?: string;
   onPlace: (prompt: string) => void;
+  /** Sends it to the Assistant at once, in place of the draft. */
+  onSend?: (prompt: string) => void;
   saveTitle: string;
 }) => {
   const { t } = useTranslation();
@@ -296,8 +299,20 @@ export const FinalRequest = ({
             {t('Copy')}
           </Button>
           <SavePromptButton prompt={final.prompt} title={saveTitle} />
+          {onSend && (
+            <Button
+              size="small"
+              disabled={isAdjusting}
+              onClick={() => onSend(final.prompt)}
+              icon={<Icon iconName="send" $size="16px" />}
+            >
+              {t('Send it to the Assistant')}
+            </Button>
+          )}
           <Button
             size="small"
+            color={onSend ? 'neutral' : 'brand'}
+            variant={onSend ? 'secondary' : 'primary'}
             disabled={isAdjusting}
             onClick={() => onPlace(final.prompt)}
             icon={<Icon iconName="north_west" $size="16px" />}

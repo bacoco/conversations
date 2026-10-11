@@ -110,11 +110,13 @@ describe('<RoomCoachHint />, the coach in the room', () => {
     );
   });
 
-  it('opens the coach on the request with "Fix it with me"', async () => {
+  it('opens the coach on the request with "Improve it with Nestor"', async () => {
     mockAnalyze.mockResolvedValue(reading({ audience: 10 }));
     render(<RoomCoachHint />);
     await typeAndPause(REQUEST);
-    fireEvent.click(screen.getByRole('button', { name: 'Fix it with me' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Improve it with Nestor · 1 min' }),
+    );
     const state = usePromptToolkitStore.getState();
     expect(state.isOpen).toBe(true);
     expect(state.mode).toBe('coach');

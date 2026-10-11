@@ -784,8 +784,14 @@ export const StepView = ({
     });
     startCoach();
   };
-  // Passing a time on purpose: only towards a time that follows.
-  const following = stage ? after(stage) : null;
+  // Passing a time on purpose: only towards a time that follows, and not
+  // on the last screen of the reading, where "Continue" already goes there.
+  const slidePosition = useLearnProgressStore(
+    (state) => state.slidePositions[id] ?? 0,
+  );
+  const isLastScreen =
+    stage === 'read' && slidePosition >= step.lesson.slides.length - 1;
+  const following = stage && !isLastScreen ? after(stage) : null;
 
   return (
     <Box

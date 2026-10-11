@@ -304,7 +304,7 @@ export const RoomCoachHint = () => {
                 onClick={openCoachAndRead}
                 $css={linkCss}
               >
-                {t('Fix it with me')}
+                {t('Improve it with Nestor · 1 min')}
               </Box>
             )}
           {hint.kind === 'answer' && !isCoachShown && (

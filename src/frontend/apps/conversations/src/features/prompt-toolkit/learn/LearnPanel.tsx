@@ -290,6 +290,7 @@ const PlacementView = ({
 
   if (skipped) {
     const next = steps.find((step) => !skipped.includes(step));
+    const left = steps.filter((step) => !skipped.includes(step));
     return (
       <CoursePage title={t('Your level')} onBack={onBack}>
         <Box $gap="12px">
@@ -311,6 +312,14 @@ const PlacementView = ({
                 'The question of step {{number}} (“{{title}}”) was missed: the path starts there.',
                 { number: missedStep.number, title: missedStep.lesson.title },
               )}
+            </Text>
+          )}
+          {left.length > 0 && left.length < steps.length && (
+            <Text $size="sm" $variation="secondary">
+              {t('{{count}} steps left for you, about {{minutes}} min.', {
+                count: left.length,
+                minutes: left.reduce((sum, step) => sum + stepMinutes(step), 0),
+              })}
             </Text>
           )}
           {next ? (
@@ -360,12 +369,8 @@ const PlacementView = ({
                 questions.some((q) => q.lessonId === step.lesson.id) &&
                 !missed.has(step.lesson.id),
             );
-            // Only a run of known steps from the start is skipped.
-            const firstUnknown = steps.findIndex(
-              (step) => !known.includes(step),
-            );
-            const toSkip =
-              firstUnknown === -1 ? known : steps.slice(0, firstUnknown);
+            // Every step whose question is right is marked as known.
+            const toSkip = known;
             for (const step of toSkip) {
               for (const stage of STAGE_ORDER) {
                 markStage(step.lesson.id, stage);

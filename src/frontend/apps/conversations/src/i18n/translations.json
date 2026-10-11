@@ -3,6 +3,11 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Send it to the Assistant": "L’envoyer à l’Assistant",
+      "Improve it with Nestor · 1 min": "Améliorer avec Nestor · 1 min",
+      "{{count}} steps left for you, about {{minutes}} min._one": "Il vous reste {{count}} étape, environ {{minutes}} min.",
+      "{{count}} steps left for you, about {{minutes}} min._many": "Il vous reste {{count}} étapes, environ {{minutes}} min.",
+      "{{count}} steps left for you, about {{minutes}} min._other": "Il vous reste {{count}} étapes, environ {{minutes}} min.",
       "I read your request again at each pause, to advise you; nothing is sent to the Assistant. You can turn this off.": "Je relis votre demande à chaque pause pour vous conseiller ; rien n’est envoyé à l’Assistant. Vous pouvez désactiver ceci.",
       "Understood": "Compris",
       "Turn off": "Désactiver",
@@ -84,7 +89,6 @@
       "Before using this answer: {{count}} parts to complete._many": "Avant d’utiliser cette réponse : {{count}} éléments à compléter.",
       "Before using this answer: {{count}} parts to complete._other": "Avant d’utiliser cette réponse : {{count}} éléments à compléter.",
       "Nestor, your coach": "Nestor, votre coach",
-      "Fix it with me": "Corriger avec moi",
       "See what to complete": "Voir quoi compléter",
       "{{skill}}: closed for this request": "{{skill}} : fermé pour cette demande",
       "Watch me write and tell me the essential": "Me regarder écrire et me dire l’essentiel",

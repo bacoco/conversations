@@ -16,6 +16,7 @@ import { useGuidedFill } from '../fill/useGuidedFill';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { useReward } from '../rewards/useReward';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { CoachMore } from './CoachMore';
@@ -236,6 +237,23 @@ export const CoachDraft = ({
     onPlace(text);
   };
 
+  // The ready request goes to the Assistant in place of the draft.
+  const sendQuestion = useMainConversationStore((state) => state.sendQuestion);
+  const setChatInput = usePromptToolkitStore((state) => state.setChatInput);
+  const sendNow = (text: string) => {
+    if (!sendQuestion) {
+      place(text);
+      return;
+    }
+    reward('fill');
+    sendQuestion(text);
+    setChatInput?.('');
+    usePromptToolkitStore.getState().setOfferAnswerHelp(true);
+    if (!isDesktop) {
+      closePanel();
+    }
+  };
+
   const sendAsIs = () => {
     if (!submitComposer()) {
       showToast('error', t('Open a conversation to use this prompt.'));
@@ -363,6 +381,7 @@ export const CoachDraft = ({
                   fill={fill}
                   original={readText}
                   onPlace={place}
+                  onSend={sendQuestion ? sendNow : undefined}
                   saveTitle={t('Your request')}
                 />
                 {fill.final && tip && (
