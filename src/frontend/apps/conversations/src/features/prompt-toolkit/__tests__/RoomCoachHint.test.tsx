@@ -148,7 +148,7 @@ describe('<RoomCoachHint />, the coach in the room', () => {
     });
     render(<RoomCoachHint />);
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Before using this answer: {{count}} parts to complete.',
+      'This answer is not ready to be sent yet: {{count}} parts to complete.',
     );
   });
 });

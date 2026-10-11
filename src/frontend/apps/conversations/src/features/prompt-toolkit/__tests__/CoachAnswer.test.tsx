@@ -303,14 +303,14 @@ describe('the facts of an answer', () => {
     });
   });
 
-  it('lists what to check, and prepares their removal', async () => {
+  it('says the answer is not ready, and opens the workshop', async () => {
     mockCheckAnswerFacts.mockResolvedValueOnce([
       'La cause du retard : « afflux de demandes »',
     ]);
     vi.stubGlobal('fetch', vi.fn());
     render(<CoachPanel />);
     expect(
-      await screen.findByText('La cause du retard : « afflux de demandes »'),
+      await screen.findByText('This answer is not ready to be sent yet'),
     ).toBeInTheDocument();
     expect(mockCheckAnswerFacts).toHaveBeenCalledWith(
       'Prépare une note sur le budget.',
@@ -319,9 +319,11 @@ describe('the facts of an answer', () => {
       expect.any(AbortSignal),
     );
     fireEvent.click(
-      screen.getByRole('button', { name: 'Remove what I did not give' }),
+      screen.getByRole('button', { name: 'Make it ready with Nestor' }),
     );
-    expect(screen.getByText('Correction ready')).toBeInTheDocument();
+    expect(
+      screen.getByText('La cause du retard : « afflux de demandes »'),
+    ).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 });

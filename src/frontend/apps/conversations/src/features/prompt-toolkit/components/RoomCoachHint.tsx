@@ -170,9 +170,12 @@ export const RoomCoachHint = () => {
       if (count > 0) {
         return {
           kind: 'answer',
-          text: t('Before using this answer: {{count}} parts to complete.', {
-            count,
-          }),
+          text: t(
+            'This answer is not ready to be sent yet: {{count}} parts to complete.',
+            {
+              count,
+            },
+          ),
         };
       }
     }
@@ -269,7 +272,7 @@ export const RoomCoachHint = () => {
               }}
               $css={linkCss}
             >
-              {t('See what to complete')}
+              {t('Make it ready with Nestor')}
             </Box>
           )}
           {hint.kind === 'tip' && analysis && (
