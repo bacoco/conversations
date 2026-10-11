@@ -5,7 +5,12 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
-import { GapChoice, fillGaps, findGaps } from '../coach/answerGaps';
+import {
+  GapChoice,
+  fillGaps,
+  findGaps,
+  plainAnswer,
+} from '../coach/answerGaps';
 import { removeUnsupportedFacts } from '../coach/coachApi';
 import { wordDiff } from '../coach/wordDiff';
 
@@ -76,7 +81,7 @@ export const AnswerFinisher = ({
 }) => {
   const { t } = useTranslation();
   const { showToast } = useToast();
-  const [text, setText] = useState(answer);
+  const [text, setText] = useState(() => plainAnswer(answer));
   const [removal, setRemoval] = useState<
     'todo' | 'loading' | 'done' | 'error' | 'skipped'
   >(claims.length > 0 ? 'todo' : 'skipped');

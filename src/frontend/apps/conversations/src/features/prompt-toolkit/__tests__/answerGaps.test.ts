@@ -50,3 +50,12 @@ describe('the gaps of an answer', () => {
     expect(findGaps(filled)).toHaveLength(3);
   });
 });
+
+describe('the answer to paste in an email', () => {
+  it('loses the chat formatting, not its words', async () => {
+    const { plainAnswer } = await import('../coach/answerGaps');
+    expect(
+      plainAnswer('**Objet** : Réponse\n## Détail\n- un point\n* un autre'),
+    ).toBe('Objet : Réponse\nDétail\n• un point\n• un autre');
+  });
+});

@@ -111,3 +111,15 @@ export const fillGaps = (
     remaining,
   );
 };
+
+/**
+ * The answer as text to paste in an email: without the marks of the chat's
+ * formatting (bold, titles), its words untouched.
+ */
+export const plainAnswer = (text: string) =>
+  text
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/__([^_\n]+)__/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*]\s+/gm, '• ')
+    .trim();
