@@ -71,14 +71,11 @@ describe('usePromptToolkitStore', () => {
     expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
   });
 
-  it('keeps a known coach screen of a stored panel, else the analysis', () => {
+  it('starts a stored panel on "as you type", keeping the rest', () => {
     const { migrate } = usePromptToolkitStore.persist.getOptions();
     expect(
-      migrate?.({ coachMode: 'session', mode: 'coach', width: 420 }, 4),
-    ).toMatchObject({ mode: 'coach', width: 420, coachMode: 'session' });
-    expect(migrate?.({ coachMode: 'live', mode: 'coach' }, 3)).toMatchObject({
-      coachMode: 'manual',
-    });
+      migrate?.({ coachMode: 'session', mode: 'coach', width: 420 }, 5),
+    ).toMatchObject({ mode: 'coach', width: 420, coachMode: 'instant' });
   });
 
   it('shows the conversation first on a phone, even if the panel was open', () => {

@@ -14,6 +14,7 @@ import {
 import { languageName } from '../coach/language';
 import { levelColor, wordLevel } from '../coach/levels';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
+import { useAfterAnswer } from '../coach/useAfterAnswer';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { wordDiff } from '../coach/wordDiff';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
@@ -22,20 +23,22 @@ import { searchLibrary } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
 import { useReward } from '../rewards/useReward';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
+import { AdviceView, NextQuestionsView } from './AfterAnswerViews';
+import { CoachActionBar } from './CoachActionBar';
 import { ExplainedComparison, TutorHints } from './CoachExtras';
-import { CoachIntro } from './CoachIntro';
-import { AssistResults, CoachModeTabs, InstantSuggestions } from './CoachModes';
+import { AssistResults, InstantSuggestions } from './CoachModes';
 import { CoachStatus } from './CoachStatus';
 import { DiffView } from './DiffView';
 import { DinumGrid } from './DinumGrid';
-import { FloatingAnalyzeButton } from './FloatingAnalyzeButton';
 import { LivePillars } from './LivePillars';
+import { NESTOR_AVATAR_URL } from './PanelHome';
 import { PromptAddOns } from './PromptAddOns';
 import { SessionReviewPanel } from './SessionReviewPanel';
 
@@ -56,9 +59,14 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const setChatInput = usePromptToolkitStore((state) => state.setChatInput);
   const coachMode = usePromptToolkitStore((state) => state.coachMode);
+  const setCoachMode = usePromptToolkitStore((state) => state.setCoachMode);
+  const requestCount = useMainConversationStore(
+    (state) => state.turns.filter((turn) => turn.role === 'user').length,
+  );
   const language = languageName(i18n.language);
 
   const analysis = usePromptAnalysis(chatInput, language);
+  const after = useAfterAnswer(isActive, language);
   const sensitive = useMemo(() => detectSensitiveData(chatInput), [chatInput]);
 
   const [improvement, setImprovement] = useState<
@@ -204,16 +212,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
-  if (coachMode === 'session') {
-    return (
-      <Box $direction="column" $css="flex: 1;">
-        <CoachModeTabs />
-        <SessionReviewPanel language={language} />
-      </Box>
-    );
-  }
-
-  const showAnalyzeButton = isActive && chatInput.trim() !== '';
+  const hasDraft = chatInput.trim() !== '';
 
   // "Prompt help": versions written by Nestor, plus library matches.
   const runAssist = async () => {
@@ -247,10 +246,102 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     }
   };
 
+  // The four actions at the bottom: "as you type" is a mode, the others
+  // run on the request (or the conversation) when pressed.
+  const actions = [
+    {
+      mode: 'assist' as const,
+      icon: 'auto_awesome',
+      label: t('Help'),
+      title: t('Help me with this prompt'),
+      disabled: !hasDraft,
+      isLoading: isAssisting,
+      onClick: () => {
+        setCoachMode('assist');
+        if (!isAssisting) {
+          void runAssist();
+        }
+      },
+    },
+    {
+      mode: 'manual' as const,
+      icon: 'grading',
+      label: t('Analysis'),
+      title:
+        result && !analysis.isStale
+          ? t('Analysis up to date')
+          : result
+            ? t('Update the analysis')
+            : t('Analyse my prompt'),
+      disabled: !hasDraft,
+      isLoading: analysis.status === 'loading',
+      onClick: () => {
+        setCoachMode('manual');
+        if (!result || analysis.isStale) {
+          analysis.analyzeNow();
+        }
+      },
+    },
+    {
+      mode: 'instant' as const,
+      icon: 'bolt',
+      label: t('Live'),
+      title: t('As you type'),
+      onClick: () => setCoachMode('instant'),
+    },
+    {
+      mode: 'next' as const,
+      icon: 'arrow_forward',
+      label: t('Go on'),
+      title: t('Next questions'),
+      groupStart: true,
+      disabled: !after.hasAnswer,
+      isLoading: after.next.status === 'loading' && coachMode === 'next',
+      hasNews: after.next.status === 'ready' && coachMode !== 'next',
+      onClick: () => setCoachMode('next'),
+    },
+    {
+      mode: 'advice' as const,
+      icon: 'forum',
+      label: t('Advice'),
+      title: t('Nestor’s view on this exchange'),
+      disabled: !after.hasAnswer,
+      isLoading: after.advice.status === 'loading',
+      onClick: () => {
+        setCoachMode('advice');
+        if (after.advice.status === 'idle' || after.advice.status === 'error') {
+          after.askAdvice();
+        }
+      },
+    },
+    {
+      mode: 'session' as const,
+      icon: 'insights',
+      label: t('Wrap-up'),
+      title: t('Session review'),
+      disabled: requestCount === 0,
+      onClick: () => setCoachMode('session'),
+    },
+  ];
+  /** Nothing to show yet in this mode: one line says what to do. */
+  const idleHint =
+    coachMode === 'instant'
+      ? !hasDraft &&
+        t('Start writing your request: I suggest close requests as you type.')
+      : coachMode === 'manual'
+        ? !hasDraft &&
+          !result &&
+          t('Write your request, then press “Analysis” below.')
+        : coachMode === 'assist'
+          ? !hasDraft &&
+            !assist &&
+            t('Write your request, then press “Prompt help” below.')
+          : false;
+
   return (
     <Box
       $direction="column"
-      // Fills the panel, so the analyse bar sits at its bottom.
+      // Fills the panel, so the action bar sits at its bottom.
       $css="flex: 1 0 auto;"
     >
       <CoachStatus
@@ -261,7 +352,6 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
             : undefined
         }
       />
-      <CoachModeTabs />
       {sensitive.length > 0 && (
         <Box
           role="alert"
@@ -291,8 +381,37 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         </Box>
       )}
 
-      {chatInput.trim() === '' && (coachMode !== 'manual' || !result) && (
-        <CoachIntro mode={coachMode} />
+      {idleHint && (
+        <Box $align="center" $gap="12px" $padding={{ all: 'lg' }}>
+          <img
+            src={NESTOR_AVATAR_URL}
+            alt=""
+            width={72}
+            height={72}
+            style={{ borderRadius: '50%' }}
+          />
+          <Text $textAlign="center" $size="sm">
+            {idleHint}
+          </Text>
+        </Box>
+      )}
+
+      {coachMode === 'next' && (
+        <NextQuestionsView
+          status={after.next.status}
+          questions={after.next.questions}
+          onRetry={after.prepareNext}
+        />
+      )}
+      {coachMode === 'advice' && (
+        <AdviceView
+          status={after.advice.status}
+          text={after.advice.text}
+          onRetry={after.askAdvice}
+        />
+      )}
+      {coachMode === 'session' && (
+        <SessionReviewPanel language={language} autoStart />
       )}
 
       {coachMode === 'assist' && chatInput.trim() !== '' && assist && (
@@ -353,7 +472,7 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
               </Text>
               <Text $textAlign="center" $size="sm" $variation="secondary">
                 {t(
-                  'Click the round button at the bottom of the panel when you want the coach to read it.',
+                  'Press “Analysis” below when you want the coach to read it.',
                 )}
               </Text>
             </Box>
@@ -601,31 +720,11 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
         </>
       )}
 
-      {showAnalyzeButton && coachMode === 'assist' && (
-        <FloatingAnalyzeButton
-          label={t('Help me with this prompt')}
-          onClick={() => void runAssist()}
-          isLoading={isAssisting}
-          disabled={isAssisting}
-        />
-      )}
-
-      {showAnalyzeButton && coachMode === 'manual' && (
-        <FloatingAnalyzeButton
-          label={
-            result && !analysis.isStale
-              ? t('Analysis up to date')
-              : result
-                ? t('Update the analysis')
-                : t('Analyse my prompt')
-          }
-          onClick={analysis.analyzeNow}
-          isLoading={analysis.status === 'loading'}
-          // The button is only shown with text, even a short one.
-          disabled={
-            analysis.status === 'loading' ||
-            (result !== null && !analysis.isStale)
-          }
+      {isActive && (
+        <CoachActionBar
+          actions={actions}
+          current={coachMode}
+          label={t('Coach mode')}
         />
       )}
     </Box>

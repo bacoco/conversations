@@ -7,12 +7,15 @@ import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
 /** The coach's screens: analyse, prompt help, as you type, session review. */
-export type CoachMode = 'manual' | 'assist' | 'instant' | 'session';
+export type CoachMode =
+  'manual' | 'assist' | 'instant' | 'session' | 'next' | 'advice';
 export const COACH_MODES: readonly CoachMode[] = [
   'manual',
   'assist',
   'instant',
   'session',
+  'next',
+  'advice',
 ];
 
 export type RightPanelMode = 'coach' | 'learn' | 'tools';
@@ -173,7 +176,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       isResizing: false,
       isCoachOptionsOpen: false,
       showHome: true,
-      coachMode: 'manual',
+      coachMode: 'instant',
       hasSeenWelcome: false,
       dismissWelcome: () => set({ hasSeenWelcome: true }),
       resetCount: 0,
@@ -281,9 +284,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
     }),
     {
       name: 'prompt-toolkit',
-      // v2 removed the live coach, v3 the "off" mode; v5 brings back the
-      // coach's four screens (analysis by default).
-      version: 5,
+      // v2 removed the live coach, v3 the "off" mode; v5 brought back the
+      // coach's four screens; v6 starts everyone on "as you type".
+      version: 6,
       migrate: (persisted) => {
         const stored = persisted as Partial<PromptToolkitState> & {
           coachMode?: string;
@@ -295,11 +298,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           hasSeenWelcome: false,
           mode: 'coach' as RightPanelMode,
           ...stored,
-          coachMode: (COACH_MODES as readonly string[]).includes(
-            stored.coachMode ?? '',
-          )
-            ? (stored.coachMode as CoachMode)
-            : 'manual',
+          coachMode: 'instant' as CoachMode,
         };
       },
       // A panel left open stays closed if the deployment turned it off.

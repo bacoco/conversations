@@ -3,6 +3,16 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Go on": "Suite",
+      "Wrap-up": "Bilan",
+      "Help": "Aide",
+      "Live": "Volée",
+      "Advice": "Avis",
+      "Click a question to put it in the message field.": "Cliquez sur une question pour la placer dans la zone de message.",
+      "Start writing your request: I suggest close requests as you type.": "Commencez à écrire votre demande : je vous propose des demandes proches au fil de la frappe.",
+      "Write your request, then press “Analysis” below.": "Écrivez votre demande, puis appuyez sur « Analyse » en bas.",
+      "Write your request, then press “Prompt help” below.": "Écrivez votre demande, puis appuyez sur « Aide » en bas.",
+      "Press “Analysis” below when you want the coach to read it.": "Appuyez sur « Analyse » en bas quand vous voulez que le coach la lise.",
       "I am not sure of my answer": "Je ne suis pas sûr de ma réponse",
       "Stop here, resume later": "Arrêter là, reprendre plus tard",
       "Send it to the Assistant": "L’envoyer à l’Assistant",

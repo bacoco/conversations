@@ -70,11 +70,14 @@ describe('<CoachPanel />', () => {
     expect(
       screen.queryByRole('heading', { name: 'The 4 rules of a good prompt' }),
     ).not.toBeInTheDocument();
-    // The mode explains its steps, without any call.
+    // One line says what to do, without any call; the actions wait for
+    // a request, the bar is always there.
     expect(
-      screen.getByRole('heading', { name: 'Prompt analysis' }),
+      screen.getByText('Write your request, then press “Analysis” below.'),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(
+      screen.getByRole('button', { name: 'Analyse my prompt' }),
+    ).toBeDisabled();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -237,10 +240,11 @@ describe('<CoachPanel />', () => {
       }),
     ).toBeInTheDocument();
     expect(fetchMock.mock.calls.filter(isAnalysis)).toHaveLength(1);
-    // Up to date: the button is disabled until the prompt changes.
-    expect(
+    // Up to date: pressing again reads nothing more.
+    fireEvent.click(
       screen.getByRole('button', { name: /Analysis up to date/ }),
-    ).toBeDisabled();
+    );
+    expect(fetchMock.mock.calls.filter(isAnalysis)).toHaveLength(1);
 
     // Editing the prompt makes the analysis stale, still without analysis.
     await act(async () => {

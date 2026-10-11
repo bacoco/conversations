@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 
 import { CoachPanel } from '../components/CoachPanel';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
@@ -34,10 +34,32 @@ describe('coach modes', () => {
     vi.unstubAllGlobals();
   });
 
-  it('switches mode from the selector shown at the top', () => {
+  it('switches mode from the bar at the bottom, "as you type" by default', () => {
+    usePromptToolkitStore.setState({ coachMode: 'session' });
     render(<CoachPanel />);
-    fireEvent.click(screen.getByRole('radio', { name: /As you type/ }));
+    const bar = screen.getByRole('toolbar', { name: 'Coach mode' });
+    expect(
+      within(bar)
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual([
+      'Help me with this prompt',
+      'Analyse my prompt',
+      'As you type',
+      'Next questions',
+      'Nestor’s view on this exchange',
+      'Session review',
+    ]);
+    // After the answer: nothing to go on with while there is none.
+    expect(
+      screen.getByRole('button', { name: 'Next questions' }),
+    ).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'As you type' }));
     expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
+    expect(screen.getByRole('button', { name: 'As you type' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('offers the closest ready-made requests by meaning as you type', async () => {
