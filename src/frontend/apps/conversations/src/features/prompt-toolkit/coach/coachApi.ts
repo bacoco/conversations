@@ -1434,5 +1434,8 @@ export const checkAnswerFacts = async (
     0,
     FILL_MODEL,
   );
-  return asStringList(raw.claims, 4);
+  // Parts already left to the user are not facts, whatever the model says.
+  return asStringList(raw.claims, 4).filter(
+    (claim) => !/COMPL[ÉE]TER|TO COMPLETE|\[[^\]]+\]/i.test(claim),
+  );
 };

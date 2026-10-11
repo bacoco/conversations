@@ -110,3 +110,36 @@ describe('the text the user pasted', () => {
     expect(keepPastedTexts(blank, final)).toBe(final);
   });
 });
+
+describe('the facts check of an answer', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('never counts the parts already left to complete', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    claims: [
+                      'Délai : « toujours en cours »',
+                      'Site officiel : « À COMPLÉTER »',
+                      'Signature : « [Votre nom] »',
+                    ],
+                  }),
+                },
+              },
+            ],
+          }),
+        ),
+      ),
+    );
+    const { checkAnswerFacts } = await import('../coach/coachApi');
+    expect(await checkAnswerFacts('demande', 'réponse', 'French')).toEqual([
+      'Délai : « toujours en cours »',
+    ]);
+  });
+});
