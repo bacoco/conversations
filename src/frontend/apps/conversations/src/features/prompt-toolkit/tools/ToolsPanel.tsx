@@ -10,6 +10,7 @@ import { useAiAvailable } from '../coach/aiAvailability';
 import { hasPlaceholders } from '../coach/coachApi';
 import {
   NESTOR_ORGANIZE_URL,
+  NESTOR_PROMPTS_URL,
   NESTOR_SUMMARIZE_URL,
   NESTOR_WRITE_URL,
 } from '../components/PanelHome';
@@ -28,11 +29,7 @@ import { MyStyleView } from './MyStyleView';
 import { FollowUpView, ImproveTextView } from './NestorToolViews';
 import { PromptGenerator } from './PromptGenerator';
 import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
-import {
-  RECENT_TOOLS,
-  TOOL_KEYWORDS,
-  useToolsUsageStore,
-} from './useToolsUsageStore';
+import { TOOL_KEYWORDS, useToolsUsageStore } from './useToolsUsageStore';
 
 const iconBadgeCss = (size: number) => css`
   flex: none;
@@ -96,6 +93,31 @@ const searchCss = css`
   &:focus-visible {
     outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
     outline-offset: 1px;
+  }
+`;
+
+/** A family of tools, as a big card: one click opens it. */
+const familyCardCss = css`
+  width: 100%;
+  height: 100%;
+  padding: 20px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--c--contextuals--border--surface--primary);
+  background: var(--c--contextuals--background--surface--primary);
+  &:hover {
+    border-color: var(--c--contextuals--border--semantic--brand--primary);
+    background: var(--c--contextuals--background--semantic--brand--tertiary);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
+    outline-offset: 2px;
+  }
+  & img {
+    border-radius: 50%;
+    background: #f7f8fd;
   }
 `;
 
@@ -393,11 +415,13 @@ export const ToolsPanel = () => {
   // The trash button empties the open tool by mounting it afresh.
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState('');
+  /** The family card opened: its tools, one level down. */
+  const [familyId, setFamilyId] = useState<string | null>(null);
   useSectionReset('tools', () => {
     setResetKey((key) => key + 1);
     setQuery('');
+    setFamilyId(null);
   });
-  const recent = useToolsUsageStore((state) => state.recent);
   const favorites = useToolsUsageStore((state) => state.favorites);
   const markUsed = useToolsUsageStore((state) => state.markUsed);
   const toggleFavorite = useToolsUsageStore((state) => state.toggleFavorite);
@@ -451,6 +475,8 @@ export const ToolsPanel = () => {
   const categories = [
     {
       id: 'write',
+      image: NESTOR_WRITE_URL,
+      description: t('Emails, letters, rewriting, translation.'),
       icon: 'edit',
       label: t('Write'),
       tools: [
@@ -464,18 +490,24 @@ export const ToolsPanel = () => {
     },
     {
       id: 'summarize',
+      image: NESTOR_SUMMARIZE_URL,
+      description: t('Minutes, summary notes, actions to take.'),
       icon: 'summarize',
       label: t('Summarise'),
       tools: ['minutes', 'summary', 'actions'],
     },
     {
       id: 'organize',
+      image: NESTOR_ORGANIZE_URL,
+      description: t('Action plans, ideas, agendas.'),
       icon: 'checklist',
       label: t('Organise'),
       tools: ['plan', 'brainstorm'],
     },
     {
       id: 'prompts',
+      image: NESTOR_PROMPTS_URL,
+      description: t('Ready-made examples, a better follow-up.'),
       icon: 'auto_awesome',
       label: t('Prompts'),
       tools: ['library', 'generator', 'follow-up'],
@@ -537,13 +569,6 @@ export const ToolsPanel = () => {
       .filter((tool): tool is ToolEntry => Boolean(tool));
   const allIds = categories.flatMap((item) => item.tools);
 
-  // Shown first, above the families: the user's pinned and last used tools.
-  const mine = offered(
-    [...favorites, ...recent.filter((id) => !favorites.includes(id))].slice(
-      0,
-      RECENT_TOOLS,
-    ),
-  );
   const words = normalize(query).split(/\s+/).filter(Boolean);
   const found = words.length
     ? offered(allIds).filter((tool) => {
@@ -616,8 +641,46 @@ export const ToolsPanel = () => {
     </Box>
   );
 
+  const family = categories.find((item) => item.id === familyId);
+  if (family && !query) {
+    return (
+      <Box $gap="16px" $padding={{ all: 'base' }}>
+        <Box $direction="row">
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={() => setFamilyId(null)}
+            icon={<Icon iconName="arrow_back" $size="18px" />}
+          >
+            {t('What AI can do for you')}
+          </Button>
+        </Box>
+        <Box $direction="row" $align="center" $gap="12px">
+          <img
+            src={family.image}
+            alt=""
+            width={64}
+            height={64}
+            style={{ flex: 'none', borderRadius: '50%', background: '#f7f8fd' }}
+          />
+          <Box $gap="2px">
+            <Text as="h2" $size="lg" $weight="800" $margin="0">
+              {family.label}
+            </Text>
+            <Text $size="sm" $variation="secondary">
+              {family.description}
+            </Text>
+          </Box>
+        </Box>
+        {list(offered(family.tools), family.label)}
+      </Box>
+    );
+  }
+
   return (
-    <Box $gap="16px" $padding={{ all: 'base' }}>
+    // The whole height of the panel: the cards fill it, the search at the end.
+    <Box $gap="16px" $padding={{ all: 'base' }} $css="min-height: 100%;">
       <Box $direction="row" $align="center" $gap="12px">
         <img
           src={NESTOR_WRITE_URL}
@@ -634,26 +697,6 @@ export const ToolsPanel = () => {
             {t('Pick what you want to do: Nestor prepares the request.')}
           </Text>
         </Box>
-      </Box>
-      <Box $gap="4px">
-        <label htmlFor="nestor-tools-search">
-          <Text $size="sm" $variation="secondary">
-            {t('Looking for something else? Say it in your words.')}
-          </Text>
-        </label>
-        <Box
-          as="input"
-          id="nestor-tools-search"
-          type="search"
-          value={query}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            setQuery(event.target.value)
-          }
-          placeholder={t(
-            'For example: reply to an unhappy member of the public',
-          )}
-          $css={searchCss}
-        />
       </Box>
 
       {words.length > 0 ? (
@@ -703,34 +746,62 @@ export const ToolsPanel = () => {
           </Box>
         </Box>
       ) : (
-        <Box $gap="18px">
-          {mine.length > 0 && (
-            <Box $gap="8px">
-              <Box $direction="row" $align="center" $gap="8px">
-                <Icon iconName="star" $size="18px" $theme="brand" />
-                <Text as="h3" $size="md" $weight="700" $margin="0">
-                  {t('My tools')}
+        <Box
+          as="ul"
+          aria-label={t('What AI can do for you')}
+          $css={css`
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: 190px;
+            gap: 14px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+          `}
+        >
+          {categories.map((item) => (
+            <Box as="li" key={item.id} $css="display: flex;">
+              <Box
+                as="button"
+                type="button"
+                onClick={() => setFamilyId(item.id)}
+                $align="center"
+                $justify="center"
+                $gap="10px"
+                $css={familyCardCss}
+              >
+                <img src={item.image} alt="" width={88} height={88} />
+                <Text $size="lg" $weight="800">
+                  {item.label}
+                </Text>
+                <Text $size="sm" $variation="secondary" $textAlign="center">
+                  {item.description}
                 </Text>
               </Box>
-              {list(mine, t('My tools'))}
             </Box>
-          )}
-          {categories.map((item) => {
-            const items = offered(item.tools);
-            return items.length ? (
-              <Box key={item.id} $gap="8px">
-                <Box $direction="row" $align="center" $gap="8px">
-                  <Icon iconName={item.icon} $size="18px" $theme="brand" />
-                  <Text as="h3" $size="md" $weight="700" $margin="0">
-                    {item.label}
-                  </Text>
-                </Box>
-                {list(items, item.label)}
-              </Box>
-            ) : null;
-          })}
+          ))}
         </Box>
       )}
+      <Box $gap="4px" $css="margin-top: auto;">
+        <label htmlFor="nestor-tools-search">
+          <Text $size="sm" $variation="secondary">
+            {t('Looking for something else? Say it in your words.')}
+          </Text>
+        </label>
+        <Box
+          as="input"
+          id="nestor-tools-search"
+          type="search"
+          value={query}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setQuery(event.target.value)
+          }
+          placeholder={t(
+            'For example: reply to an unhappy member of the public',
+          )}
+          $css={searchCss}
+        />
+      </Box>
     </Box>
   );
 };

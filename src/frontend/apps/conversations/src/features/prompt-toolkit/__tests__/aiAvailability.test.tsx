@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { useAiAvailability } from '../coach/aiAvailability';
 import { PanelHome } from '../components/PanelHome';
@@ -31,6 +31,7 @@ describe('without the Albert relay', () => {
 
   it('hides the tools that need Nestor', () => {
     render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     expect(screen.getByText('Reply to an email')).toBeInTheDocument();
     expect(screen.queryByText('Improve my text')).not.toBeInTheDocument();
   });

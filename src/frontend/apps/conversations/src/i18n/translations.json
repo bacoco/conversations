@@ -3,6 +3,10 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Emails, letters, rewriting, translation.": "Courriels, courriers, reformuler, traduire.",
+      "Minutes, summary notes, actions to take.": "Comptes rendus, synthèses, actions à mener.",
+      "Action plans, ideas, agendas.": "Plans d’action, idées, ordres du jour.",
+      "Ready-made examples, a better follow-up.": "Exemples prêts à l’emploi, relancer une réponse.",
       "What AI can do for you": "Ce que l’IA peut faire pour vous",
       "Pick what you want to do: Nestor prepares the request.": "Choisissez ce que vous voulez faire : Nestor prépare la demande.",
       "Looking for something else? Say it in your words.": "Vous cherchez autre chose ? Dites-le avec vos mots.",

@@ -58,6 +58,7 @@ describe('<ToolsPanel />', () => {
 
   it('prepares the prompt of a tool in the chat input', () => {
     render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.click(screen.getByRole('radio', { name: 'German' }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
@@ -80,21 +81,31 @@ describe('<ToolsPanel />', () => {
     );
   });
 
-  it('shows at once what AI can do, family by family', () => {
+  it('shows what AI can do as four cards; a card opens its tools', () => {
     render(<ToolsPanel />);
     expect(
       screen.getByRole('heading', { name: 'What AI can do for you' }),
     ).toBeInTheDocument();
-    for (const family of ['Write', 'Summarise', 'Organise']) {
-      expect(screen.getByRole('heading', { name: family })).toBeInTheDocument();
-    }
+    const cards = within(
+      screen.getByRole('list', { name: 'What AI can do for you' }),
+    ).getAllByRole('button');
+    expect(cards).toHaveLength(4);
+    // Nothing of a family's tools until its card is opened.
     expect(
-      within(screen.getByRole('list', { name: 'Write' })).getByRole('button', {
-        name: /Reply to an email/,
-      }),
+      screen.queryByRole('button', { name: /Reply to an email/ }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
+    expect(screen.getByRole('heading', { name: 'Write' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Reply to an email/ }),
     ).toBeInTheDocument();
-    // A search remains, for what one does not see.
-    expect(screen.getByRole('searchbox')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'What AI can do for you' }),
+    );
+    expect(
+      screen.getAllByRole('button', { name: /^Write/ }).length,
+    ).toBeGreaterThan(0);
   });
 
   it('finds tools from the words of the need, accents aside', () => {
@@ -113,28 +124,9 @@ describe('<ToolsPanel />', () => {
     ).toBeInTheDocument();
   });
 
-  it('puts pinned and recent tools first', () => {
-    useToolsUsageStore.setState({
-      recent: ['summary'],
-      favorites: ['translate'],
-    });
-    render(<ToolsPanel />);
-    const mine = screen.getByRole('list', { name: 'My tools' });
-    const names = within(mine)
-      .getAllByRole('listitem')
-      .map((item) => item.textContent ?? '');
-    expect(names[0]).toContain('Translate');
-    expect(names[1]).toContain('Summar');
-    fireEvent.click(
-      within(mine).getByRole('button', {
-        name: 'Remove {{title}} from my tools',
-      }),
-    );
-    expect(useToolsUsageStore.getState().favorites).toEqual([]);
-  });
-
   it('remembers the tools opened', () => {
     render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     expect(useToolsUsageStore.getState().recent).toEqual(['translate']);
   });
@@ -143,6 +135,7 @@ describe('<ToolsPanel />', () => {
     const sendQuestion = vi.fn();
     useMainConversationStore.setState({ sendQuestion });
     render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
       target: { value: 'Bonjour à tous' },
