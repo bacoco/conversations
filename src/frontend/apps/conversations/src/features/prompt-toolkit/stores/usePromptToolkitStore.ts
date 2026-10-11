@@ -182,7 +182,10 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       setCoachOptionsOpen: (isCoachOptionsOpen) => set({ isCoachOptionsOpen }),
       startCoach: (coachMode) =>
         set({
-          ...(coachMode ? { coachMode } : {}),
+          // Only a known screen: a click handler may pass its event.
+          ...(COACH_MODES.includes(coachMode as CoachMode)
+            ? { coachMode: coachMode as CoachMode }
+            : {}),
           mode: 'coach',
           showHome: false,
           fill: null,

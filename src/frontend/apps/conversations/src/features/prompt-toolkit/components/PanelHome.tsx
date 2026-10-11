@@ -375,7 +375,7 @@ export const PanelHome = () => {
       tone: 'brand',
       title: t('Coach'),
       description: t('Improves your requests, before and after the answer.'),
-      onSelect: startCoach,
+      onSelect: () => startCoach(),
     },
     {
       id: 'course',

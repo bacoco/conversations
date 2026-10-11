@@ -63,6 +63,12 @@ describe('usePromptToolkitStore', () => {
     });
     usePromptToolkitStore.getState().startCoach('instant');
     expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
+    // A click handler's event is not a screen, and must stay out of the
+    // stored state (it cannot be saved).
+    usePromptToolkitStore
+      .getState()
+      .startCoach({ target: {} } as unknown as 'manual');
+    expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
   });
 
   it('keeps a known coach screen of a stored panel, else the analysis', () => {
