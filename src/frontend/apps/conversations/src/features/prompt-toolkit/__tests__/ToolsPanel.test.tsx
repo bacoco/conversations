@@ -58,8 +58,6 @@ describe('<ToolsPanel />', () => {
 
   it('prepares the prompt of a tool in the chat input', () => {
     render(<ToolsPanel />);
-
-    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.click(screen.getByRole('radio', { name: 'German' }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
@@ -82,17 +80,21 @@ describe('<ToolsPanel />', () => {
     );
   });
 
-  it('asks one question, with the most used tools and the rest one click away', () => {
+  it('shows at once what AI can do, family by family', () => {
     render(<ToolsPanel />);
     expect(
-      screen.getByRole('heading', { name: 'What do you want to do?' }),
+      screen.getByRole('heading', { name: 'What AI can do for you' }),
     ).toBeInTheDocument();
-    // No row of families on top.
-    expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
-    const first = screen.getByRole('list', { name: 'The most used' });
-    expect(within(first).getAllByRole('listitem').length).toBeLessThanOrEqual(
-      4,
-    );
+    for (const family of ['Write', 'Summarise', 'Organise']) {
+      expect(screen.getByRole('heading', { name: family })).toBeInTheDocument();
+    }
+    expect(
+      within(screen.getByRole('list', { name: 'Write' })).getByRole('button', {
+        name: /Reply to an email/,
+      }),
+    ).toBeInTheDocument();
+    // A search remains, for what one does not see.
+    expect(screen.getByRole('searchbox')).toBeInTheDocument();
   });
 
   it('finds tools from the words of the need, accents aside', () => {
@@ -133,7 +135,6 @@ describe('<ToolsPanel />', () => {
 
   it('remembers the tools opened', () => {
     render(<ToolsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     expect(useToolsUsageStore.getState().recent).toEqual(['translate']);
   });
@@ -142,7 +143,6 @@ describe('<ToolsPanel />', () => {
     const sendQuestion = vi.fn();
     useMainConversationStore.setState({ sendQuestion });
     render(<ToolsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /See all the tools/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
       target: { value: 'Bonjour à tous' },

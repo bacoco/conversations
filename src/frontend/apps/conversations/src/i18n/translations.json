@@ -3,6 +3,9 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "What AI can do for you": "Ce que l’IA peut faire pour vous",
+      "Pick what you want to do: Nestor prepares the request.": "Choisissez ce que vous voulez faire : Nestor prépare la demande.",
+      "Looking for something else? Say it in your words.": "Vous cherchez autre chose ? Dites-le avec vos mots.",
       "Sent to the Assistant: its answer arrives in the conversation.": "Envoyé à l’Assistant : sa réponse arrive dans la conversation.",
       "My own instruction": "Ma propre consigne",
       "The text goes to the message field: add what you want, then send.": "Le texte va dans la zone de message : ajoutez ce que vous voulez, puis envoyez.",

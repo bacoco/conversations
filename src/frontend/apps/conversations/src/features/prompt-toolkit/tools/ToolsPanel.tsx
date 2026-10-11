@@ -393,7 +393,6 @@ export const ToolsPanel = () => {
   // The trash button empties the open tool by mounting it afresh.
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState('');
-  const [showAll, setShowAll] = useState(false);
   useSectionReset('tools', () => {
     setResetKey((key) => key + 1);
     setQuery('');
@@ -448,7 +447,7 @@ export const ToolsPanel = () => {
       ),
     },
   };
-  // The families, shown as sections once the user asks for every tool.
+  // What an AI can do, by family: shown at once, to discover it.
   const categories = [
     {
       id: 'write',
@@ -538,20 +537,13 @@ export const ToolsPanel = () => {
       .filter((tool): tool is ToolEntry => Boolean(tool));
   const allIds = categories.flatMap((item) => item.tools);
 
-  // What to show first: the user's pinned tools, else the last ones used,
-  // else the most common needs.
+  // Shown first, above the families: the user's pinned and last used tools.
   const mine = offered(
     [...favorites, ...recent.filter((id) => !favorites.includes(id))].slice(
       0,
       RECENT_TOOLS,
     ),
   );
-  const firstTools = mine.length
-    ? mine
-    : offered(['email-reply', 'summary', 'rewrite', 'minutes', 'letter']).slice(
-        0,
-        RECENT_TOOLS,
-      );
   const words = normalize(query).split(/\s+/).filter(Boolean);
   const found = words.length
     ? offered(allIds).filter((tool) => {
@@ -634,14 +626,19 @@ export const ToolsPanel = () => {
           height={56}
           style={{ flex: 'none', borderRadius: '50%', background: '#f7f8fd' }}
         />
-        <Text as="h2" $size="lg" $weight="800" $margin="0">
-          {t('What do you want to do?')}
-        </Text>
+        <Box $gap="2px">
+          <Text as="h2" $size="lg" $weight="800" $margin="0">
+            {t('What AI can do for you')}
+          </Text>
+          <Text $size="sm" $variation="secondary">
+            {t('Pick what you want to do: Nestor prepares the request.')}
+          </Text>
+        </Box>
       </Box>
       <Box $gap="4px">
         <label htmlFor="nestor-tools-search">
           <Text $size="sm" $variation="secondary">
-            {t('Say it in your words, or pick below.')}
+            {t('Looking for something else? Say it in your words.')}
           </Text>
         </label>
         <Box
@@ -705,8 +702,19 @@ export const ToolsPanel = () => {
             )}
           </Box>
         </Box>
-      ) : showAll ? (
+      ) : (
         <Box $gap="18px">
+          {mine.length > 0 && (
+            <Box $gap="8px">
+              <Box $direction="row" $align="center" $gap="8px">
+                <Icon iconName="star" $size="18px" $theme="brand" />
+                <Text as="h3" $size="md" $weight="700" $margin="0">
+                  {t('My tools')}
+                </Text>
+              </Box>
+              {list(mine, t('My tools'))}
+            </Box>
+          )}
           {categories.map((item) => {
             const items = offered(item.tools);
             return items.length ? (
@@ -721,37 +729,6 @@ export const ToolsPanel = () => {
               </Box>
             ) : null;
           })}
-          <Box $direction="row">
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={() => setShowAll(false)}
-              icon={<Icon iconName="expand_less" $size="18px" />}
-            >
-              {t('Show fewer tools')}
-            </Button>
-          </Box>
-        </Box>
-      ) : (
-        <Box $gap="10px">
-          <Text as="h3" $size="sm" $weight="700" $margin="0">
-            {mine.length ? t('My tools') : t('The most used')}
-          </Text>
-          {list(firstTools, mine.length ? t('My tools') : t('The most used'))}
-          <Box $direction="row">
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={() => setShowAll(true)}
-              icon={<Icon iconName="apps" $size="18px" />}
-            >
-              {t('See all the tools ({{count}})', {
-                count: offered(allIds).length,
-              })}
-            </Button>
-          </Box>
         </Box>
       )}
     </Box>
