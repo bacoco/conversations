@@ -472,4 +472,34 @@ describe('<CoachPanel />', () => {
       screen.getByText('The Assistant has answered. Does it suit you?'),
     ).toBeInTheDocument();
   });
+
+  it('reads the request when asked from the line above the message field', async () => {
+    const fetchMock = readingAlbert();
+    vi.stubGlobal('fetch', fetchMock);
+    usePromptToolkitStore.setState({ chatInput: 'Résume ce rapport.' });
+    render(<CoachPanel />);
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    act(() => {
+      usePromptToolkitStore.getState().openCoachAndRead();
+    });
+    expect(
+      await screen.findByText(
+        'Vous savez ce que vous voulez ; dites maintenant pour qui.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('reads the request asked for before the coach was there', async () => {
+    vi.stubGlobal('fetch', readingAlbert());
+    usePromptToolkitStore.setState({ chatInput: 'Résume ce rapport.' });
+    usePromptToolkitStore.getState().openCoachAndRead();
+    render(<CoachPanel />);
+    expect(
+      await screen.findByText(
+        'Vous savez ce que vous voulez ; dites maintenant pour qui.',
+      ),
+    ).toBeInTheDocument();
+    expect(usePromptToolkitStore.getState().pendingRead).toBe(false);
+  });
 });

@@ -217,6 +217,20 @@ export const CoachDraft = ({
     setWantsQuestions(false);
   };
 
+  // "Fix it with me", from the line of the coach above the message field.
+  const pendingRead = usePromptToolkitStore((state) => state.pendingRead);
+  const clearPendingRead = usePromptToolkitStore(
+    (state) => state.clearPendingRead,
+  );
+  useEffect(() => {
+    if (pendingRead && isActive && draft) {
+      clearPendingRead();
+      read();
+    }
+    // `read` follows the draft; only a new request matters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingRead, isActive, draft]);
+
   const place = (text: string) => {
     reward('fill');
     onPlace(text);

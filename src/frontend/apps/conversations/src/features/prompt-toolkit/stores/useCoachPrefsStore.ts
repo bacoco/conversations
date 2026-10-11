@@ -32,6 +32,11 @@ interface CoachPrefsState {
   askFirst: boolean;
   /** Three boxes to tick before sending, for those who want them. */
   checklist: boolean;
+  /**
+   * The coach in the room: it watches the request being written and, at a
+   * pause, says the one thing that matters, if any.
+   */
+  roomCoach: boolean;
   usualAudience: UsualAudience | null;
   /** Tips the user said are not needed, per kind of request. */
   dismissedTips: Partial<Record<RequestKind, Competency[]>>;
@@ -41,6 +46,7 @@ interface CoachPrefsState {
   setLength: (length: CoachLength) => void;
   setAskFirst: (askFirst: boolean) => void;
   setChecklist: (checklist: boolean) => void;
+  setRoomCoach: (roomCoach: boolean) => void;
   setUsualAudience: (audience: UsualAudience | null) => void;
   dismissTip: (kind: RequestKind, skill: Competency) => void;
   markFeltAsked: (now?: number) => void;
@@ -52,6 +58,7 @@ const initialPrefs = {
   length: 'short' as CoachLength,
   askFirst: false,
   checklist: false,
+  roomCoach: true,
   usualAudience: null as UsualAudience | null,
   dismissedTips: {} as Partial<Record<RequestKind, Competency[]>>,
   feltAskedAt: 0,
@@ -65,6 +72,7 @@ export const useCoachPrefsStore = create<CoachPrefsState>()(
       setLength: (length) => set({ length }),
       setAskFirst: (askFirst) => set({ askFirst }),
       setChecklist: (checklist) => set({ checklist }),
+      setRoomCoach: (roomCoach) => set({ roomCoach }),
       setUsualAudience: (usualAudience) => set({ usualAudience }),
       dismissTip: (kind, skill) =>
         set((state) => {

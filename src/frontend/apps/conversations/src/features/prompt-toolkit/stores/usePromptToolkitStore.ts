@@ -102,6 +102,13 @@ interface PromptToolkitState {
    */
   offerAnswerHelp: boolean;
   setOfferAnswerHelp: (offer: boolean) => void;
+  /**
+   * Asked from the composer: open the coach and read the request. Kept
+   * until the coach reads it, even when it is not there yet.
+   */
+  pendingRead: boolean;
+  openCoachAndRead: () => void;
+  clearPendingRead: () => void;
   /** A lesson asked from elsewhere, on one of its screens if given. */
   lessonRequest: { lessonId: string; slide?: number } | null;
   openLesson: (lessonId: string, slide?: number) => void;
@@ -169,6 +176,16 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       setPendingPlacement: (pendingPlacement) => set({ pendingPlacement }),
       offerAnswerHelp: false,
       setOfferAnswerHelp: (offerAnswerHelp) => set({ offerAnswerHelp }),
+      pendingRead: false,
+      openCoachAndRead: () =>
+        set({
+          isOpen: true,
+          mode: 'coach',
+          showHome: false,
+          fill: null,
+          pendingRead: true,
+        }),
+      clearPendingRead: () => set({ pendingRead: false }),
       setCoachWaitsForAnswer: (coachWaitsForAnswer) =>
         set({ coachWaitsForAnswer }),
       lessonRequest: null,

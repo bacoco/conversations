@@ -569,6 +569,16 @@ export const CoachSettings = () => {
         <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
             type="checkbox"
+            checked={prefs.roomCoach}
+            onChange={(event) => prefs.setRoomCoach(event.target.checked)}
+          />
+          <Text $size="sm">
+            {t('Watch me write and tell me the essential')}
+          </Text>
+        </label>
+        <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input
+            type="checkbox"
             checked={prefs.askFirst}
             onChange={(event) => prefs.setAskFirst(event.target.checked)}
           />
