@@ -3,6 +3,8 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Your next step: {{title}}": "Votre prochaine étape : {{title}}",
+      "Start at step {{number}}": "Commencer à l’étape {{number}}",
       "Steps to make the answer ready": "Les étapes pour rendre la réponse prête",
       "1. Check the facts": "1. Vérifier les faits",
       "2. Complete": "2. Compléter",
@@ -220,7 +222,6 @@
       "You already know {{count}} steps: they are marked as done. You can still open them at any time._many": "Vous connaissez déjà {{count}} étapes : elles sont marquées comme faites. Vous pouvez toujours les ouvrir.",
       "You already know {{count}} steps: they are marked as done. You can still open them at any time._other": "Vous connaissez déjà {{count}} étapes : elles sont marquées comme faites. Vous pouvez toujours les ouvrir.",
       "Starting from the beginning is the best choice for you.": "Commencer par le début est le meilleur choix pour vous.",
-      "Start at step {{number}} · {{title}}": "Commencer à l'étape {{number}} · {{title}}",
       "Test my level": "Tester mon niveau",
       "{{count}} questions, about 4 minutes. The steps you already know will be marked as done._one": "{{count}} question, environ 4 minutes. Les étapes que vous connaissez déjà seront marquées comme faites.",
       "{{count}} questions, about 4 minutes. The steps you already know will be marked as done._many": "{{count}} questions, environ 4 minutes. Les étapes que vous connaissez déjà seront marquées comme faites.",

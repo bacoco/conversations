@@ -31,6 +31,7 @@ import {
   dueCheckpoint,
   isStepDone,
   isStepStarted,
+  lessonSkills,
   nextStage,
   nextStep,
   questionsToReview,
@@ -278,6 +279,7 @@ const PlacementView = ({
   const setPlacementDone = useLearnProgressStore(
     (state) => state.setPlacementDone,
   );
+  const raiseSkills = useLearnProgressStore((state) => state.raiseSkills);
   const [questions] = useState(() => placementQuestions(steps));
   const [skipped, setSkipped] = useState<Step[] | null>(null);
 
@@ -299,17 +301,19 @@ const PlacementView = ({
             </Text>
           )}
           {next ? (
-            <Button
-              fullWidth
-              onClick={() => onOpenStep(next.lesson.id)}
-              iconPosition="right"
-              icon={<Icon iconName="arrow_forward" $size="18px" />}
-            >
-              {t('Start at step {{number}} · {{title}}', {
-                number: next.number,
-                title: next.lesson.title,
-              })}
-            </Button>
+            <Box $gap="8px">
+              <Text $size="sm" $variation="secondary">
+                {t('Your next step: {{title}}', { title: next.lesson.title })}
+              </Text>
+              <Button
+                fullWidth
+                onClick={() => onOpenStep(next.lesson.id)}
+                iconPosition="right"
+                icon={<Icon iconName="arrow_forward" $size="18px" />}
+              >
+                {t('Start at step {{number}}', { number: next.number })}
+              </Button>
+            </Box>
           ) : (
             <Button fullWidth onClick={onBack}>
               {t('Back to the course')}
@@ -354,6 +358,14 @@ const PlacementView = ({
                 markStage(step.lesson.id, stage);
               }
             }
+            // Proven in the test: what these steps teach is acquired.
+            raiseSkills(
+              Object.fromEntries(
+                toSkip.flatMap((step) =>
+                  lessonSkills(step.lesson).map((skill) => [skill, 2]),
+                ),
+              ),
+            );
             setPlacementDone();
             setSkipped(toSkip);
           },
