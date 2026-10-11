@@ -8,7 +8,7 @@ import { Box, Icon, Text } from '@/components';
 import { useReward } from '../rewards/useReward';
 
 import { Direction, ScreenActions, enterCss } from './CourseFrame';
-import { SlideView } from './SlideView';
+import { SlideGate, SlideGateContext, SlideView } from './SlideView';
 import type { Lesson } from './types';
 import { useLearnProgressStore } from './useLearnProgressStore';
 
@@ -40,6 +40,8 @@ export const LessonView = ({
   });
   const topRef = useRef<HTMLDivElement | null>(null);
   const [direction, setDirection] = useState<Direction>('forward');
+  // A screen with an exercise asks for its "Check" before going on.
+  const [gate, setGate] = useState<SlideGate | null>(null);
   const move = (step: number) => {
     setDirection(step > 0 ? 'forward' : 'back');
     setIndex((current) => current + step);
@@ -113,27 +115,42 @@ export const LessonView = ({
         </Box>
 
         <Box key={index} $css={enterCss(direction)}>
-          <SlideView slide={slide} lessonId={lesson.id} index={index} />
+          <SlideGateContext.Provider value={setGate}>
+            <SlideView slide={slide} lessonId={lesson.id} index={index} />
+          </SlideGateContext.Provider>
         </Box>
       </Box>
 
-      <ScreenActions>
-        <Button
-          color="neutral"
-          variant="secondary"
-          disabled={index === 0}
-          onClick={() => move(-1)}
-          icon={<Icon iconName="arrow_back" $size="18px" />}
-        >
-          {t('Previous')}
-        </Button>
-        <Button
-          onClick={isLast ? onDone : () => move(1)}
-          iconPosition="right"
-          icon={<Icon iconName="arrow_forward" $size="18px" />}
-        >
-          {isLast ? doneLabel : t('Next')}
-        </Button>
+      <ScreenActions
+        start={
+          <Button
+            color="neutral"
+            variant="secondary"
+            disabled={index === 0}
+            onClick={() => move(-1)}
+            icon={<Icon iconName="arrow_back" $size="18px" />}
+          >
+            {t('Previous')}
+          </Button>
+        }
+      >
+        {gate ? (
+          <Button
+            disabled={gate.disabled}
+            onClick={gate.onClick}
+            icon={<Icon iconName="check" $size="18px" />}
+          >
+            {gate.label}
+          </Button>
+        ) : (
+          <Button
+            onClick={isLast ? onDone : () => move(1)}
+            iconPosition="right"
+            icon={<Icon iconName="arrow_forward" $size="18px" />}
+          >
+            {isLast ? doneLabel : t('Next')}
+          </Button>
+        )}
       </ScreenActions>
     </Box>
   );

@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "I am not sure of my answer": "Je ne suis pas sûr de ma réponse",
       "Stop here, resume later": "Arrêter là, reprendre plus tard",
       "Send it to the Assistant": "L’envoyer à l’Assistant",
       "Improve it with Nestor · 1 min": "Améliorer avec Nestor · 1 min",

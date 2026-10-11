@@ -132,6 +132,22 @@ const answerQuizRight = (questions: typeof course.quiz) => {
   });
 };
 
+/** Does the exercise of a "which works better?" screen: the main button asks for it. */
+const doChoose = (slide: (typeof course.lessons)[number]['slides'][number]) => {
+  if (slide.kind !== 'choose') {
+    return;
+  }
+  const better = slide.choices![slide.better ?? 0];
+  fireEvent.click(
+    screen.getByRole('button', { name: new RegExp(escape(better.prompt)) }),
+  );
+  const reason = slide.reasons?.find((item) => item.isRight);
+  if (reason) {
+    fireEvent.click(screen.getByRole('button', { name: reason.label }));
+    fireEvent.click(screen.getByRole('button', { name: 'Check my answer' }));
+  }
+};
+
 describe('<LearnPanel />', () => {
   beforeEach(() => {
     useLearnProgressStore.getState().reset();
@@ -175,9 +191,13 @@ describe('<LearnPanel />', () => {
     expect(
       screen.getByRole('heading', { name: lesson.slides[0].title }),
     ).toBeInTheDocument();
-    for (let index = 1; index < lesson.slides.length; index++) {
-      fireEvent.click(screen.getByRole('button', { name: /^Next$/ }));
-    }
+    lesson.slides.forEach((slide, index) => {
+      // A screen with an exercise: its "Check" first, at the main button's place.
+      doChoose(slide);
+      if (index < lesson.slides.length - 1) {
+        fireEvent.click(screen.getByRole('button', { name: /^Next$/ }));
+      }
+    });
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
     expect(useLearnProgressStore.getState().completedLessons).toEqual([
       lesson.id,
@@ -227,8 +247,9 @@ describe('<LearnPanel />', () => {
   it('stops here and keeps the place for later', () => {
     render(<LearnPanel />);
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    doChoose(course.lessons[0].slides[0]);
     fireEvent.click(screen.getByRole('button', { name: /^Next$/ }));
-    // The main action stays in the bar at the bottom, whatever the screen.
+    // The way out stays on the top left, whatever the screen.
     expect(
       screen.getByRole('button', { name: 'Stop here, resume later' }),
     ).toBeInTheDocument();

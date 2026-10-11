@@ -111,6 +111,8 @@ export const QuizView = ({
   const [firstTries, setFirstTries] = useState<Record<number, boolean>>({});
   const [unsure, setUnsure] = useState<number[]>([]);
   const [showHint, setShowHint] = useState(false);
+  // Not sure of the answer: it will come back in a review, even if right.
+  const [isUnsure, setIsUnsure] = useState(false);
   const [explanation, setExplanation] = useState<
     | { status: 'loading' }
     | { status: 'done'; text: string }
@@ -188,6 +190,7 @@ export const QuizView = ({
     controllerRef.current?.abort();
     setExplanation(null);
     setShowHint(false);
+    setIsUnsure(false);
     setAnswer(null);
     setChecked(null);
     if (position + 1 >= queue.length) {
@@ -325,17 +328,21 @@ export const QuizView = ({
             ))}
           </Box>
         )}
-        <ScreenActions>
-          {!inStep && retryMistakes && (
-            <Button
-              color="neutral"
-              variant="secondary"
-              onClick={restart}
-              icon={<Icon iconName="replay" $size="18px" />}
-            >
-              {t('Try again')}
-            </Button>
-          )}
+        <ScreenActions
+          start={
+            !inStep &&
+            retryMistakes && (
+              <Button
+                color="neutral"
+                variant="secondary"
+                onClick={restart}
+                icon={<Icon iconName="replay" $size="18px" />}
+              >
+                {t('Try again')}
+              </Button>
+            )
+          }
+        >
           {inStep ? (
             <Button
               onClick={() => inStep.onDone(result)}
@@ -419,37 +426,57 @@ export const QuizView = ({
         />
       </Box>
 
-      {!checked && showHints && question.hint && (
-        <Box $gap="8px" $align="flex-start">
-          {showHint ? (
-            <FoxSays>{question.hint}</FoxSays>
-          ) : (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={() => setShowHint(true)}
-              icon={<Icon iconName="lightbulb" $size="16px" />}
-            >
-              {t('A hint')}
-            </Button>
-          )}
-        </Box>
+      {!checked && (
+        <label
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={isUnsure}
+            onChange={(event) => setIsUnsure(event.target.checked)}
+          />
+          <Text $size="sm">{t('I am not sure of my answer')}</Text>
+        </label>
+      )}
+
+      {!checked && showHint && question.hint && (
+        <FoxSays>{question.hint}</FoxSays>
+      )}
+
+      {checked && !checked.isRight && explanation?.status === 'done' && (
+        <FoxSays>{explanation.text}</FoxSays>
+      )}
+      {checked && explanation?.status === 'error' && (
+        <Text $size="xs" role="alert">
+          {t('Nestor could not explain. Please retry.')}
+        </Text>
       )}
 
       {!checked ? (
-        <ScreenActions>
+        <ScreenActions
+          start={
+            showHints &&
+            question.hint &&
+            !showHint && (
+              <Button
+                color="neutral"
+                variant="tertiary"
+                onClick={() => setShowHint(true)}
+                icon={<Icon iconName="lightbulb" $size="18px" />}
+              >
+                {t('A hint')}
+              </Button>
+            )
+          }
+        >
           <Button
-            color="neutral"
-            variant="tertiary"
             disabled={!isComplete(question, answer)}
-            onClick={() => check(false)}
-          >
-            {t('Check my answer, I am not sure')}
-          </Button>
-          <Button
-            disabled={!isComplete(question, answer)}
-            onClick={() => check(true)}
+            onClick={() => check(!isUnsure)}
             icon={<Icon iconName="check" $size="18px" />}
           >
             {t('Check my answer')}
@@ -457,44 +484,35 @@ export const QuizView = ({
         </ScreenActions>
       ) : (
         <>
-          <Box
-            role="status"
-            $gap="8px"
-            $css={css`
-              ${enterCss()}
-              padding: 12px 14px;
-              border-radius: 10px;
-              background: var(
-                --c--contextuals--background--semantic--${
-                    checked.isRight ? 'success' : 'warning'
-                  }--tertiary
-              );
-            `}
-          >
-            <FoxSays>
-              <strong>{reaction}</strong>
-            </FoxSays>
-            <Text $size="sm" $css="line-height: 1.5;">
-              {question.explanation}
-            </Text>
-            {checked.isRight && !checked.isSure && (
-              <Text $size="xs" $variation="secondary">
-                {t('Right! It will still come back in a review, to be sure.')}
-              </Text>
-            )}
-            {!checked.isRight && retryMistakes && (
-              <Text $size="xs" $variation="secondary">
-                {t('This question comes back at the end.')}
-              </Text>
-            )}
-          </Box>
-          {!checked.isRight && isAiAvailable && (
-            <Box $gap="8px" $align="flex-start">
-              {explanation?.status === 'done' ? (
-                <FoxSays>{explanation.text}</FoxSays>
-              ) : (
+          <ScreenActions
+            tone={checked.isRight ? 'success' : 'warning'}
+            feedback={
+              <Box role="status" $gap="4px">
+                <FoxSays>
+                  <strong>{reaction}</strong>
+                </FoxSays>
+                <Text $size="sm" $css="line-height: 1.5;">
+                  {question.explanation}
+                </Text>
+                {checked.isRight && !checked.isSure && (
+                  <Text $size="xs" $variation="secondary">
+                    {t(
+                      'Right! It will still come back in a review, to be sure.',
+                    )}
+                  </Text>
+                )}
+                {!checked.isRight && retryMistakes && (
+                  <Text $size="xs" $variation="secondary">
+                    {t('This question comes back at the end.')}
+                  </Text>
+                )}
+              </Box>
+            }
+            start={
+              !checked.isRight &&
+              isAiAvailable &&
+              explanation?.status !== 'done' && (
                 <Button
-                  size="small"
                   color="neutral"
                   variant="tertiary"
                   disabled={explanation?.status === 'loading'}
@@ -503,21 +521,15 @@ export const QuizView = ({
                     explanation?.status === 'loading' ? (
                       <Loader size="small" />
                     ) : (
-                      <Icon iconName="help" $size="16px" />
+                      <Icon iconName="help" $size="18px" />
                     )
                   }
                 >
                   {t('I did not understand')}
                 </Button>
-              )}
-              {explanation?.status === 'error' && (
-                <Text $size="xs" role="alert">
-                  {t('Nestor could not explain. Please retry.')}
-                </Text>
-              )}
-            </Box>
-          )}
-          <ScreenActions>
+              )
+            }
+          >
             <Button
               onClick={next}
               iconPosition="right"

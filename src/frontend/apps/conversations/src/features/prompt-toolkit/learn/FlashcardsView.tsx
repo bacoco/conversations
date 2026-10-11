@@ -185,17 +185,20 @@ export const FlashcardsView = ({
         </Box>
       </Box>
 
-      <ScreenActions>
-        {isRevealed && (
-          <Button
-            color="neutral"
-            variant="secondary"
-            onClick={() => answer(false)}
-            icon={<Icon iconName="replay" $size="18px" />}
-          >
-            {t('To review later')}
-          </Button>
-        )}
+      <ScreenActions
+        start={
+          isRevealed && (
+            <Button
+              color="neutral"
+              variant="secondary"
+              onClick={() => answer(false)}
+              icon={<Icon iconName="replay" $size="18px" />}
+            >
+              {t('To review later')}
+            </Button>
+          )
+        }
+      >
         {isRevealed ? (
           <Button
             onClick={() => answer(true)}

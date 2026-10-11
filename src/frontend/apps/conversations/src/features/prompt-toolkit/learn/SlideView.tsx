@@ -1,5 +1,5 @@
 import { Button, Loader } from '@gouvfr-lasuite/cunningham-react';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -372,6 +372,18 @@ const cardCss = (state: 'idle' | 'better' | 'worse' | 'picked') => css`
   }
 `;
 
+/** What a screen asks before going on: its "Check" takes the main button. */
+export interface SlideGate {
+  label: string;
+  disabled: boolean;
+  onClick: () => void;
+}
+
+/** Given by the reading: a screen with an exercise claims its main button. */
+export const SlideGateContext = createContext<
+  ((gate: SlideGate | null) => void) | null
+>(null);
+
 /**
  * A problem first: which of two requests gets the better answer? Then the
  * two answers, and "what makes it better?", answered with chips.
@@ -383,6 +395,23 @@ const ChooseSlide = ({ slide }: { slide: Slide }) => {
   const [reasonsChecked, setReasonsChecked] = useState(false);
   const choices = slide.choices ?? [];
   const better = slide.better ?? 0;
+  // In the reading, "Check" is the main button at the bottom, until done.
+  const setGate = useContext(SlideGateContext);
+  const hasReasons = (slide.reasons?.length ?? 0) > 0;
+  const isDone = hasReasons ? reasonsChecked : picked !== null;
+  const canCheck = picked !== null && reasons.length > 0;
+  useEffect(() => {
+    setGate?.(
+      isDone
+        ? null
+        : {
+            label: t('Check my answer'),
+            disabled: !canCheck,
+            onClick: () => setReasonsChecked(true),
+          },
+    );
+  }, [setGate, isDone, canCheck, t]);
+  useEffect(() => () => setGate?.(null), [setGate]);
 
   return (
     <Box $gap="12px">
@@ -511,17 +540,19 @@ const ChooseSlide = ({ slide }: { slide: Slide }) => {
             })}
           </Box>
           {!reasonsChecked ? (
-            <Box $direction="row">
-              <Button
-                size="small"
-                color="neutral"
-                variant="secondary"
-                disabled={reasons.length === 0}
-                onClick={() => setReasonsChecked(true)}
-              >
-                {t('Check my answer')}
-              </Button>
-            </Box>
+            !setGate && (
+              <Box $direction="row">
+                <Button
+                  size="small"
+                  color="neutral"
+                  variant="secondary"
+                  disabled={reasons.length === 0}
+                  onClick={() => setReasonsChecked(true)}
+                >
+                  {t('Check my answer')}
+                </Button>
+              </Box>
+            )
           ) : (
             <Text $size="xs" $variation="secondary">
               {t(

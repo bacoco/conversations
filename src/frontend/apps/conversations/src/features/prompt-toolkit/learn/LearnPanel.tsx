@@ -259,6 +259,9 @@ const ReviewView = ({
         <Text $size="xs" $variation="secondary">
           {t('What you know comes back later and later; the rest, soon.')}
         </Text>
+        <ScreenActions>
+          <Button onClick={onBack}>{t('Finish')}</Button>
+        </ScreenActions>
       </Box>
     </CoursePage>
   );

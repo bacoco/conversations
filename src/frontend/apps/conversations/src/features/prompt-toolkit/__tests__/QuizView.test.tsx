@@ -93,8 +93,9 @@ describe('<QuizView />', () => {
     render(<QuizView title="Quiz" questions={[mcq]} onBack={vi.fn()} />);
     pick('Right one');
     fireEvent.click(
-      screen.getByRole('button', { name: 'Check my answer, I am not sure' }),
+      screen.getByRole('checkbox', { name: 'I am not sure of my answer' }),
     );
+    fireEvent.click(screen.getByRole('button', { name: 'Check my answer' }));
     expect(
       screen.getByText(
         'Right! It will still come back in a review, to be sure.',

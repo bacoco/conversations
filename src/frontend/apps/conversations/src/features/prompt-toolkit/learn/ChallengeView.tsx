@@ -284,16 +284,20 @@ export const ChallengeView = ({
         />
       )}
 
-      <ScreenActions>
-        {inStep && !passed && (
-          <Button
-            color="neutral"
-            variant="secondary"
-            onClick={() => inStep.onDone(false)}
-          >
-            {t('Finish the step without it')}
-          </Button>
-        )}
+      <ScreenActions
+        start={
+          inStep &&
+          !passed && (
+            <Button
+              color="neutral"
+              variant="secondary"
+              onClick={() => inStep.onDone(false)}
+            >
+              {t('Finish the step without it')}
+            </Button>
+          )
+        }
+      >
         {inStep && passed ? (
           <Button
             onClick={() => inStep.onDone(true)}

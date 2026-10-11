@@ -19,28 +19,6 @@ const FrameBar = createContext<{ inFrame: boolean; bar: HTMLElement | null }>({
   bar: null,
 });
 
-/**
- * The actions of a screen, the main one last. In a course frame they go to
- * its bar at the bottom of the panel, at the same place from one screen to
- * the next; elsewhere they stay in the flow, on the right.
- */
-export const ScreenActions = ({ children }: { children: ReactNode }) => {
-  const { inFrame, bar } = useContext(FrameBar);
-  if (!inFrame) {
-    return (
-      <Box
-        $direction="row"
-        $gap="8px"
-        $justify="flex-end"
-        $css="flex-wrap: wrap;"
-      >
-        {children}
-      </Box>
-    );
-  }
-  return bar ? createPortal(children, bar) : null;
-};
-
 export type Direction = 'forward' | 'back';
 
 const enter = (from: number) => keyframes`
@@ -62,6 +40,17 @@ export const enterCss = (direction: Direction = 'forward') => css`
   }
 `;
 
+const rise = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+`;
+
 /** Wide enough to compare two requests, short enough to read a line. */
 const COLUMN_CSS = css`
   width: 100%;
@@ -70,35 +59,157 @@ const COLUMN_CSS = css`
   box-sizing: border-box;
 `;
 
+export type BarTone = 'neutral' | 'success' | 'warning';
+
+const barCss = (tone: BarTone) => css`
+  padding: 12px 24px;
+  border-top: 1px solid
+    ${
+      tone === 'neutral'
+        ? 'var(--c--contextuals--border--surface--primary)'
+        : `var(--c--contextuals--border--semantic--${tone}--primary)`
+    };
+  background: ${
+    tone === 'neutral'
+      ? 'var(--c--contextuals--background--surface--primary)'
+      : `var(--c--contextuals--background--semantic--${tone}--tertiary)`
+  };
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+  @media (max-width: 480px) {
+    padding-inline: 16px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
 /**
- * A screen of the course that stays put: where you are on top, the content
- * in the middle, and at the bottom of the panel a bar with the way out on
- * the left and the main action on the right. The bar does not move from one
- * screen to the next; the content, when long, scrolls above it.
+ * The actions of a screen. In a course frame they go to the bar at the
+ * bottom of the panel: going back or the other choice on the left, going on
+ * on the right, always at the same place; the correction of an answer shows
+ * in the bar, right above the button that goes on. Elsewhere, in the flow.
  */
-export const CourseFrame = ({
-  top,
-  exit,
+export const ScreenActions = ({
+  start,
+  feedback,
+  tone = 'neutral',
   children,
 }: {
+  /** On the left: going back, or the other choice. */
+  start?: ReactNode;
+  /** The correction of an answer, above the buttons. */
+  feedback?: ReactNode;
+  tone?: BarTone;
+  /** On the right: what goes on (the main button last). */
+  children?: ReactNode;
+}) => {
+  const { inFrame, bar } = useContext(FrameBar);
+  const content = (
+    <Box $gap="10px" $css={COLUMN_CSS}>
+      {feedback && (
+        <Box
+          $gap="6px"
+          $css={css`
+            animation: ${rise} 0.22s ease-out both;
+            @media (prefers-reduced-motion: reduce) {
+              animation: none;
+            }
+          `}
+        >
+          {feedback}
+        </Box>
+      )}
+      <Box
+        $direction="row"
+        $align="center"
+        $gap="8px"
+        $css="flex-wrap: wrap; min-height: 40px;"
+      >
+        <Box $direction="row" $align="center" $gap="8px">
+          {start}
+        </Box>
+        <Box
+          $direction="row"
+          $align="center"
+          $gap="8px"
+          $css={css`
+            margin-left: auto;
+            /* The button that goes on keeps its width from screen to screen. */
+            & > button:last-child {
+              min-width: min(220px, 45vw);
+              justify-content: center;
+            }
+          `}
+        >
+          {children}
+        </Box>
+      </Box>
+    </Box>
+  );
+  if (!inFrame) {
+    return tone === 'neutral' ? (
+      content
+    ) : (
+      <Box
+        $css={css`
+          ${barCss(tone)}
+          border-radius: 12px;
+        `}
+      >
+        {content}
+      </Box>
+    );
+  }
+  return bar
+    ? createPortal(<Box $css={barCss(tone)}>{content}</Box>, bar)
+    : null;
+};
+
+/**
+ * A screen of the course that stays put. On top, the way out on the left
+ * and the shortcuts on the right, then where you are; the content in the
+ * middle; at the bottom of the panel, the bar of the screen's actions. The
+ * bar does not move from one screen to the next; long content scrolls above.
+ */
+export const CourseFrame = ({
+  exit,
+  tools,
+  top,
+  children,
+}: {
+  /** The way out, on the top left: always at the same place. */
+  exit: ReactNode;
+  /** Shortcuts on the top right. */
+  tools?: ReactNode;
+  /** Where you are: title, times of the step. */
   top: ReactNode;
-  /** The way out, on the left of the bar. */
-  exit?: ReactNode;
   children: ReactNode;
 }) => {
   const [bar, setBar] = useState<HTMLElement | null>(null);
-  const setActionBarShown = usePromptToolkitStore(
-    (state) => state.setActionBarShown,
+  const setActionBarHeight = usePromptToolkitStore(
+    (state) => state.setActionBarHeight,
   );
   const isShown = useIsSpaceShown('learn');
-  // Nestor's round button moves above the bar while it is on screen.
+  // Nestor's round button stays above the bar, however tall the bar gets
+  // (a correction makes it taller).
   useEffect(() => {
-    if (!isShown) {
+    if (!isShown || !bar) {
       return;
     }
-    setActionBarShown(true);
-    return () => setActionBarShown(false);
-  }, [isShown, setActionBarShown]);
+    const measure = () => setActionBarHeight(bar.offsetHeight);
+    measure();
+    const observer =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(measure);
+    observer?.observe(bar);
+    return () => {
+      observer?.disconnect();
+      setActionBarHeight(0);
+    };
+  }, [isShown, bar, setActionBarHeight]);
 
   return (
     <Box
@@ -112,12 +223,37 @@ export const CourseFrame = ({
         $gap="12px"
         $css={css`
           ${COLUMN_CSS}
-          padding: 14px 24px 0;
+          padding: 12px 24px 0;
           @media (max-width: 480px) {
             padding-inline: 16px;
           }
         `}
       >
+        <Box
+          $direction="row"
+          $align="center"
+          $gap="4px"
+          $css={css`
+            /* The way out stays in sight when the content scrolls. */
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            min-height: 32px;
+            margin-inline: -8px;
+            padding-block: 4px;
+            background: var(--c--contextuals--background--surface--primary);
+          `}
+        >
+          {exit}
+          <Box
+            $direction="row"
+            $align="center"
+            $gap="4px"
+            $css="margin-left: auto;"
+          >
+            {tools}
+          </Box>
+        </Box>
         {top}
       </Box>
       <Box
@@ -136,44 +272,16 @@ export const CourseFrame = ({
         </Box>
       </Box>
       <Box
+        ref={setBar}
         $css={css`
           position: sticky;
           bottom: 0;
           z-index: 2;
-          padding: 12px 24px;
-          border-top: 1px solid var(--c--contextuals--border--surface--primary);
-          background: var(--c--contextuals--background--surface--primary);
-          @media (max-width: 480px) {
-            padding-inline: 16px;
+          &:empty {
+            display: none;
           }
         `}
-      >
-        <Box
-          $direction="row"
-          $align="center"
-          $gap="8px"
-          $css={css`
-            ${COLUMN_CSS}
-            min-height: 40px;
-          `}
-        >
-          {exit}
-          <Box
-            ref={setBar}
-            $direction="row"
-            $align="center"
-            $gap="8px"
-            $css={css`
-              margin-left: auto;
-              /* The main action keeps its width from one screen to the next. */
-              & > button:last-child {
-                min-width: min(220px, 45vw);
-                justify-content: center;
-              }
-            `}
-          />
-        </Box>
-      </Box>
+      />
     </Box>
   );
 };

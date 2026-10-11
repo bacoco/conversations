@@ -28,9 +28,9 @@ interface PromptToolkitState {
   mode: RightPanelMode;
   width: number;
   isExpanded: boolean;
-  /** A course screen shows its action bar at the bottom of the panel. */
-  actionBarShown: boolean;
-  setActionBarShown: (shown: boolean) => void;
+  /** The height of a course screen's action bar at the bottom; 0: none. */
+  actionBarHeight: number;
+  setActionBarHeight: (height: number) => void;
   isResizing: boolean;
   /** The cards home, shown on first opening and after a reset. */
   showHome: boolean;
@@ -154,8 +154,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       mode: 'coach',
       width: PANEL_DEFAULT_WIDTH_PX,
       isExpanded: false,
-      actionBarShown: false,
-      setActionBarShown: (actionBarShown) => set({ actionBarShown }),
+      actionBarHeight: 0,
+      setActionBarHeight: (actionBarHeight) => set({ actionBarHeight }),
       isResizing: false,
       isCoachOptionsOpen: false,
       showHome: true,

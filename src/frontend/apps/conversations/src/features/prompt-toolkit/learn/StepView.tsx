@@ -205,10 +205,13 @@ const CoachTry = ({
       <Text $size="sm" $variation="secondary">
         {t('The coach will tell you when it sees what this step taught.')}
       </Text>
-      <ScreenActions>
-        <Button color="neutral" variant="secondary" onClick={onFinish}>
-          {t('Finish the step')}
-        </Button>
+      <ScreenActions
+        start={
+          <Button color="neutral" variant="secondary" onClick={onFinish}>
+            {t('Finish the step')}
+          </Button>
+        }
+      >
         <Button
           onClick={onOpenCoach}
           icon={<Icon iconName="touch_app" $size="18px" />}
@@ -527,17 +530,20 @@ const StepDone = ({
           {t('Path completed, congratulations!')}
         </Text>
       )}
-      <ScreenActions>
-        {isAiAvailable && (
-          <Button
-            color="neutral"
-            variant="secondary"
-            onClick={onTryForReal}
-            icon={<Icon iconName="send" $size="18px" />}
-          >
-            {t('Try it on my next request')}
-          </Button>
-        )}
+      <ScreenActions
+        start={
+          isAiAvailable && (
+            <Button
+              color="neutral"
+              variant="secondary"
+              onClick={onTryForReal}
+              icon={<Icon iconName="send" $size="18px" />}
+            >
+              {t('Try it on my next request')}
+            </Button>
+          )
+        }
+      >
         {next ? (
           <Button
             onClick={() => onOpenStep(next.lesson.id)}
@@ -732,39 +738,36 @@ export const StepView = ({
     stage === 'read' && slidePosition >= step.lesson.slides.length - 1;
   const following = stage && !isLastScreen ? after(stage) : null;
 
+  const tools = (
+    <>
+      {stage && following && (
+        <Button
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={() => finish(stage, true)}
+        >
+          {t('I already know: go to {{stage}}', {
+            stage: labels[following].toLocaleLowerCase(),
+          })}
+        </Button>
+      )}
+      {view.name === 'stage' && (
+        <Button
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={() => goTo({ name: 'memo', from: view })}
+          icon={<Icon iconName="sticky_note_2" $size="18px" />}
+        >
+          {t('Memo')}
+        </Button>
+      )}
+    </>
+  );
+
   const top = (
     <>
-      <Box
-        $direction="row"
-        $align="center"
-        $justify="flex-end"
-        $gap="4px"
-        $css="min-height: 32px; flex-wrap: nowrap;"
-      >
-        {stage && following && (
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            onClick={() => finish(stage, true)}
-          >
-            {t('I already know: go to {{stage}}', {
-              stage: labels[following].toLocaleLowerCase(),
-            })}
-          </Button>
-        )}
-        {view.name === 'stage' && (
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            onClick={() => goTo({ name: 'memo', from: view })}
-            icon={<Icon iconName="sticky_note_2" $size="18px" />}
-          >
-            {t('Memo')}
-          </Button>
-        )}
-      </Box>
       <Text as="h2" $size="lg" $weight="800" $margin="0">
         {t('Step {{number}} · {{title}}', {
           number: step.number,
@@ -818,14 +821,14 @@ export const StepView = ({
         color="neutral"
         variant="tertiary"
         onClick={stop}
-        icon={<Icon iconName="pause" $size="18px" />}
+        icon={<Icon iconName="close" $size="18px" />}
       >
         {t('Stop here, resume later')}
       </Button>
     );
 
   return (
-    <CourseFrame top={top} exit={exit}>
+    <CourseFrame exit={exit} tools={tools} top={top}>
       <Box
         ref={topRef}
         key={view.name === 'stage' ? view.stage : view.name}
