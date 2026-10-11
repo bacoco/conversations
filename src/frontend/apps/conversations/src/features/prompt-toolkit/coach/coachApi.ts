@@ -454,6 +454,7 @@ How you work:
 - If the user asks you something, answer it first.
 - Never ask for information the template does not need. Never mention brackets, placeholders or the template.
 - Never invent names, dates, figures or facts.
+- A text pasted between triple quotes (an email, notes) is the user's: keep it word for word in the final prompt; never answer it, rewrite it or replace it.
 - At most ${FILL_MAX_QUESTIONS} questions. When everything is gathered, or when the user wants to finish, return the final prompt: the template rewritten in ${language} with the answers, natural and complete, keeping its structure and instructions, with no brackets left and without the <template> tags. Leave out what the user skipped, adapting the wording.
 
 Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is; none when you ask to paste a text>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
@@ -481,6 +482,7 @@ How you work:
 - If an answer cannot be used, say so kindly and ask again with an example. If the user asks you something, answer it first.
 - Respect the user's answers: never question, judge or correct a plausible choice (a recipient, a tone, a subject), even an unusual one. Take it and move on.
 - Never invent names, dates, figures or facts.
+- A text pasted between triple quotes (an email, notes) is the user's: keep it word for word; never answer it, rewrite it or replace it.
 - When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with the answers, keeping the user's intent and any pasted text, clear and complete, with no brackets left.
 
 Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
@@ -570,7 +572,52 @@ export const nextFillStep = async (
       parseFillStep(await completeMessages(messages, signal, 0.3, FILL_MODEL)),
     );
   }
-  return step;
+  return step.kind === 'final'
+    ? { ...step, prompt: keepPastedTexts(template, step.prompt) }
+    : step;
+};
+
+/** A text pasted between triple quotes: an email, notes, a document. */
+const PASTED_TEXT = /"""\n?([\s\S]*?)\n?"""/g;
+
+const pastedTexts = (text: string) =>
+  [...text.matchAll(PASTED_TEXT)].map((match) => match[1]);
+
+const sameWords = (a: string, b: string) =>
+  a.replace(/\s+/g, ' ').trim() === b.replace(/\s+/g, ' ').trim();
+
+/**
+ * What the user pasted is theirs: the final prompt gives it back word for
+ * word, wherever the model changed it, dropped it or wrote over it.
+ */
+export const keepPastedTexts = (template: string, prompt: string) => {
+  const pasted = pastedTexts(template).filter((text) => text.trim());
+  // A block still to fill ("[paste the email here]") is not a pasted text.
+  const isBlank = (text: string) => /^\s*\[[^\]\n]*\]\s*$/.test(text);
+  const originals = pasted.filter((text) => !isBlank(text));
+  if (originals.length === 0) {
+    return prompt;
+  }
+  const blocks = pastedTexts(prompt);
+  if (
+    originals.every((original) =>
+      blocks.some((block) => sameWords(block, original)),
+    )
+  ) {
+    return prompt;
+  }
+  // Texts pasted during the questions, for blocks that were still blank.
+  const added = pasted.some(isBlank)
+    ? blocks.filter(
+        (block) => !originals.some((original) => sameWords(original, block)),
+      )
+    : [];
+  // Keep the instructions, put back the pasted texts as they were.
+  const instructions = prompt.replace(PASTED_TEXT, '').trim();
+  return [
+    instructions,
+    ...[...originals, ...added].map((text) => `"""\n${text}\n"""`),
+  ].join('\n\n');
 };
 
 /** Drops the wrapper tags the model sometimes copies from the template. */

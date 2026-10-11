@@ -2,6 +2,7 @@ import {
   asPlainText,
   extractJson,
   formatConversationContext,
+  keepPastedTexts,
   numberPrompts,
   parseAnalysis,
   parseImprovement,
@@ -82,5 +83,30 @@ describe('formatConversationContext', () => {
 
     expect(context).toContain('User: Prépare une note sur le budget.');
     expect(context).toContain('Assistant: Voici un plan de note.');
+  });
+});
+
+describe('the text the user pasted', () => {
+  const template =
+    'Rédige une réponse au courriel ci-dessous.\n\n"""\nBonjour, ma carte grise ?\n"""';
+
+  it('comes back word for word when the model wrote over it', () => {
+    const final =
+      'Rédige une réponse cordiale au courriel ci-dessous.\n\n"""\nBonjour, nous avons bien reçu…\n"""';
+    expect(keepPastedTexts(template, final)).toBe(
+      'Rédige une réponse cordiale au courriel ci-dessous.\n\n"""\nBonjour, ma carte grise ?\n"""',
+    );
+  });
+
+  it('is left as is when the model kept it', () => {
+    const final =
+      'Rédige une réponse cordiale.\n\n"""\nBonjour,  ma carte grise ?\n"""';
+    expect(keepPastedTexts(template, final)).toBe(final);
+  });
+
+  it('may be pasted during the questions, for a block still blank', () => {
+    const blank = 'Résume ce texte.\n\n"""\n[collez le texte ici]\n"""';
+    const final = 'Résume ce texte en 5 lignes.\n\n"""\nLe compte rendu…\n"""';
+    expect(keepPastedTexts(blank, final)).toBe(final);
   });
 });

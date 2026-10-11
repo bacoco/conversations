@@ -99,7 +99,7 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       ],
       build: (c, source) =>
         t(
-          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Do not promise anything that is not in the email; put [to complete] where information is missing.',
+          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Do not promise anything that is not in the email; write TO COMPLETE where information is missing.',
           { intent: c.intent, tone: c.tone },
         ) + block(source),
     },
@@ -331,7 +331,7 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       ],
       build: (c, source) =>
         t(
-          'Write {{kind}} from the points below. Use the usual structure (subject, introduction, body, closing formula), plain and courteous language, and put [to complete] where information is missing.',
+          'Write {{kind}} from the points below. Use the usual structure (subject, introduction, body, closing formula), plain and courteous language, and write TO COMPLETE where information is missing.',
           { kind: c.kind },
         ) + block(source),
     },
