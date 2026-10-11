@@ -39,9 +39,14 @@ export const AnswerHelpBanner = ({
       $align="center"
       $gap="10px"
       $css={css`
+        /* Stays in sight while the section below is scrolled. */
+        position: sticky;
+        top: 8px;
+        z-index: 2;
         margin: 12px 16px 0;
         padding: 10px 12px;
         border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         background: var(
           --c--contextuals--background--semantic--brand--tertiary
         );
