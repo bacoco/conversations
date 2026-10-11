@@ -11,6 +11,7 @@ import {
   NESTOR_ANALYSIS_URL,
   NESTOR_COURSE_URL,
 } from '../components/PanelHome';
+import { useRoomyPanel } from '../hooks/useRoomyPanel';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
@@ -211,16 +212,73 @@ const CoachTry = ({
   );
 };
 
+/** The pace, asked once, at the end of a first step: never in the way. */
+const GoalQuestion = () => {
+  const { t } = useTranslation();
+  const goalAsked = useLearnProgressStore((state) => state.goalAsked);
+  const setWeeklyGoal = useLearnProgressStore((state) => state.setWeeklyGoal);
+  if (goalAsked) {
+    return null;
+  }
+  return (
+    <Box
+      $gap="8px"
+      $align="center"
+      $css={css`
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(
+          --c--contextuals--background--semantic--brand--tertiary
+        );
+      `}
+    >
+      <Text $size="sm" $weight="700">
+        {t('At what pace would you like to learn?')}
+      </Text>
+      <Box
+        $direction="row"
+        $gap="6px"
+        $justify="center"
+        $css="flex-wrap: wrap;"
+      >
+        {[1, 2, 3].map((goal) => (
+          <Button
+            key={goal}
+            size="small"
+            color="neutral"
+            variant="secondary"
+            onClick={() => setWeeklyGoal(goal)}
+          >
+            {t('{{count}} a week', { count: goal })}
+          </Button>
+        ))}
+      </Box>
+      <Button
+        size="small"
+        color="neutral"
+        variant="tertiary"
+        onClick={() => setWeeklyGoal(null)}
+      >
+        {t('Later')}
+      </Button>
+    </Box>
+  );
+};
+
 /**
- * Between two times of a step: a short pause. The learner can stop here and
- * come back later; the first sessions are celebrated, and the pace asked once.
+ * Between two times of a step: a short pause, named after what was done.
+ * The learner can stop here and come back later; the first sessions are
+ * celebrated.
  */
 const SessionDone = ({
+  done,
   next,
   minutes,
   onContinue,
   onLater,
 }: {
+  done: Stage;
   next: string;
   minutes: number;
   onContinue: () => void;
@@ -228,9 +286,13 @@ const SessionDone = ({
 }) => {
   const { t } = useTranslation();
   const sessions = useLearnProgressStore((state) => state.sessions.length);
-  const goalAsked = useLearnProgressStore((state) => state.goalAsked);
-  const setWeeklyGoal = useLearnProgressStore((state) => state.setWeeklyGoal);
   const celebration = useCelebration()(sessions);
+  const doneLabels: Record<Stage, string> = {
+    read: t('Reading done'),
+    cards: t('Cards done'),
+    quiz: t('Questions done'),
+    practice: t('Exercise done'),
+  };
 
   return (
     <Box $align="center" $gap="14px" $css="text-align: center;">
@@ -250,53 +312,15 @@ const SessionDone = ({
         <Icon iconName="check" $size="32px" $withThemeInherited />
       </Box>
       <Text as="h3" $size="lg" $weight="800" $margin="0">
-        {t('Session done')}
+        {doneLabels[done]}
+      </Text>
+      <Text $size="sm" $variation="secondary">
+        {t('Next: {{stage}}, about {{count}} min. Or come back later.', {
+          stage: next.toLocaleLowerCase(),
+          count: minutes,
+        })}
       </Text>
       {celebration && <FoxSays>{celebration}</FoxSays>}
-      {!goalAsked && (
-        <Box
-          $gap="8px"
-          $align="center"
-          $css={css`
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            background: var(
-              --c--contextuals--background--semantic--brand--tertiary
-            );
-          `}
-        >
-          <Text $size="sm" $weight="700">
-            {t('At what pace would you like to learn?')}
-          </Text>
-          <Box
-            $direction="row"
-            $gap="6px"
-            $justify="center"
-            $css="flex-wrap: wrap;"
-          >
-            {[1, 2, 3].map((goal) => (
-              <Button
-                key={goal}
-                size="small"
-                color="neutral"
-                variant="secondary"
-                onClick={() => setWeeklyGoal(goal)}
-              >
-                {t('{{count}} a week', { count: goal })}
-              </Button>
-            ))}
-          </Box>
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
-            onClick={() => setWeeklyGoal(null)}
-          >
-            {t('Later')}
-          </Button>
-        </Box>
-      )}
       <Box $gap="8px" $css="width: 100%; max-width: 320px;">
         <Button
           fullWidth
@@ -563,6 +587,7 @@ const StepDone = ({
         </Box>
       )}
 
+      <GoalQuestion />
       {next ? (
         <Button
           fullWidth
@@ -637,7 +662,7 @@ const StepDone = ({
 
 type View =
   | { name: 'stage'; stage: Stage }
-  | { name: 'pause'; next: Stage }
+  | { name: 'pause'; next: Stage; done: Stage }
   | { name: 'done' }
   | { name: 'memo'; from: View };
 
@@ -712,6 +737,8 @@ export const StepView = ({
   useEffect(() => {
     setCurrentStep(id);
   }, [id, setCurrentStep]);
+  // A step is an activity: the panel widens while it is open.
+  useRoomyPanel();
 
   // Each time of the step starts at the top.
   useEffect(() => {
@@ -737,7 +764,9 @@ export const StepView = ({
     const next = after(current);
     if (next) {
       setView(
-        isPassed ? { name: 'stage', stage: next } : { name: 'pause', next },
+        isPassed
+          ? { name: 'stage', stage: next }
+          : { name: 'pause', next, done: current },
       );
       return;
     }
@@ -812,6 +841,7 @@ export const StepView = ({
 
       {view.name === 'pause' && (
         <SessionDone
+          done={view.done}
           next={labels[view.next]}
           minutes={stageMinutes(step, view.next)}
           onContinue={() => setView({ name: 'stage', stage: view.next })}

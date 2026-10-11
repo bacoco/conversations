@@ -483,7 +483,7 @@ How you work:
 - Respect the user's answers: never question, judge or correct a plausible choice (a recipient, a tone, a subject), even an unusual one. Take it and move on.
 - Never invent names, dates, figures or facts.
 - A text pasted between triple quotes (an email, notes) is the user's: keep it word for word; never answer it, rewrite it or replace it.
-- When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with the answers, keeping the user's intent and any pasted text, clear and complete, with no brackets left.
+- When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with ALL the answers (each one must be in it), keeping the user's intent and any pasted text, clear and complete, with no brackets left.
 
 Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
 
@@ -572,9 +572,71 @@ export const nextFillStep = async (
       parseFillStep(await completeMessages(messages, signal, 0.3, FILL_MODEL)),
     );
   }
+  // Every answer the user gave must be in the final prompt: one more round
+  // when the model dropped some.
+  const dropped =
+    step.kind === 'final' ? droppedAnswers(answers, step.prompt) : [];
+  if (step.kind === 'final' && dropped.length > 0) {
+    messages.push(
+      {
+        role: 'assistant',
+        content: JSON.stringify({ final_prompt: step.prompt }),
+      },
+      {
+        role: 'user',
+        content: `You left out what I answered: ${dropped
+          .map((answer) => `"${answer}"`)
+          .join(
+            ', ',
+          )}. Return the final prompt with all of it, as JSON {"final_prompt": "..."}.`,
+      },
+    );
+    const retry = cleanFillStep(
+      parseFillStep(await completeMessages(messages, signal, 0.3, FILL_MODEL)),
+    );
+    if (retry.kind === 'final') {
+      step = { ...retry, message: retry.message ?? step.message };
+    }
+  }
   return step.kind === 'final'
     ? { ...step, prompt: keepPastedTexts(template, step.prompt) }
     : step;
+};
+
+/** Words that carry meaning: four letters or more, accents aside. */
+const meaningfulWords = (text: string) =>
+  text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word.length >= 4);
+
+/**
+ * The answers of the user that the final prompt does not carry: most of
+ * their words are missing. Skips ("I do not know") are not answers.
+ */
+export const droppedAnswers = (
+  answers: { question: string; answer: string }[],
+  prompt: string,
+) => {
+  const inPrompt = new Set(meaningfulWords(prompt));
+  return answers
+    .map(({ answer }) => answer.trim())
+    .filter((answer) => {
+      const words = meaningfulWords(answer);
+      if (words.length === 0 || /passe|skip|sais pas|know/i.test(answer)) {
+        return false;
+      }
+      const found = words.filter((word) =>
+        [...inPrompt].some(
+          (other) =>
+            other.startsWith(word.slice(0, 5)) ||
+            word.startsWith(other.slice(0, 5)),
+        ),
+      ).length;
+      return found / words.length < 0.5;
+    });
 };
 
 /** A text pasted between triple quotes: an email, notes, a document. */

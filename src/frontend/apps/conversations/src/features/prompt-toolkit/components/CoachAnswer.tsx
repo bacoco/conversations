@@ -21,6 +21,7 @@ import {
   SuggestionPills,
   UserBubble,
 } from '../fill/GuidedThread';
+import { useRoomyPanel } from '../hooks/useRoomyPanel';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
@@ -79,12 +80,8 @@ const AnswerCheck = ({
       setIsOpen(true);
     }
   }, [finishNextAnswer]);
-  // The workshop needs room: the panel widens when it opens.
-  useEffect(() => {
-    if (isOpen && !usePromptToolkitStore.getState().isExpanded) {
-      usePromptToolkitStore.setState({ isExpanded: true });
-    }
-  }, [isOpen]);
+  // The workshop needs room: the panel widens while it is open.
+  useRoomyPanel(isOpen);
   useEffect(() => {
     if (!isAiAvailable || !answer.trim()) {
       return;

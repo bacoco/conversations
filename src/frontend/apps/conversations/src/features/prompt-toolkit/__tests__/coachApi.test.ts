@@ -143,3 +143,29 @@ describe('the facts check of an answer', () => {
     ]);
   });
 });
+
+describe('the answers the user gave to Nestor', () => {
+  it('are all in the final prompt, or said missing', async () => {
+    const { droppedAnswers } = await import('../coach/coachApi');
+    const answers = [
+      { question: 'Pour qui ?', answer: 'Mon équipe de 12 agents' },
+      {
+        question: 'Quel but ?',
+        answer: 'Informer sur les nouvelles règles de télétravail',
+      },
+      { question: 'Quel délai ?', answer: 'Je ne sais pas, passe à la suite.' },
+    ];
+    expect(
+      droppedAnswers(
+        answers,
+        'Rédige une note claire sur le télétravail pour mon équipe de 12 agents.',
+      ),
+    ).toEqual(['Informer sur les nouvelles règles de télétravail']);
+    expect(
+      droppedAnswers(
+        answers,
+        'Rédige une note pour mon équipe de 12 agents, pour les informer des nouvelles règles du télétravail.',
+      ),
+    ).toEqual([]);
+  });
+});

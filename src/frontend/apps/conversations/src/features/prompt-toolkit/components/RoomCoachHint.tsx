@@ -79,6 +79,11 @@ export const RoomCoachHint = () => {
   const { t } = useTranslation();
   const isAiAvailable = useAiAvailable();
   const roomCoach = useCoachPrefsStore((state) => state.roomCoach);
+  const setRoomCoach = useCoachPrefsStore((state) => state.setRoomCoach);
+  const introSeen = useCoachPrefsStore((state) => state.roomCoachIntroSeen);
+  const setIntroSeen = useCoachPrefsStore(
+    (state) => state.setRoomCoachIntroSeen,
+  );
   const dismissedTips = useCoachPrefsStore((state) => state.dismissedTips);
   const dismissTip = useCoachPrefsStore((state) => state.dismissTip);
   const isPanelOpen = usePromptToolkitStore((state) => state.isOpen);
@@ -244,6 +249,36 @@ export const RoomCoachHint = () => {
               )
             : hint.text}
         </Text>
+        {!introSeen && hint.kind !== 'answer' && (
+          <Box $gap="2px">
+            <Text $size="xs" $variation="secondary">
+              {t(
+                'I read your request again at each pause, to advise you; nothing is sent to the Assistant. You can turn this off.',
+              )}
+            </Text>
+            <Box $direction="row" $gap="12px">
+              <Box
+                as="button"
+                type="button"
+                onClick={setIntroSeen}
+                $css={linkCss}
+              >
+                {t('Understood')}
+              </Box>
+              <Box
+                as="button"
+                type="button"
+                onClick={() => {
+                  setIntroSeen();
+                  setRoomCoach(false);
+                }}
+                $css={linkCss}
+              >
+                {t('Turn off')}
+              </Box>
+            </Box>
+          </Box>
+        )}
         {hint.kind === 'tip' && showWhy && hint.why && (
           <Text $size="xs" $variation="secondary">
             {hint.why}

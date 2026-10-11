@@ -56,6 +56,8 @@ interface LearnProgressState {
   cardSchedule: Record<string, CardSchedule>;
   /** The user says whether they knew a card: it comes back accordingly. */
   reviewCard: (cardId: string, isKnown: boolean, now?: number) => void;
+  /** Cards already known (a level test): they come back in a week. */
+  scheduleKnownCards: (cardIds: string[], now?: number) => void;
   /** Questions missed or answered without being sure: to review. */
   questionsToReview: Record<string, number>;
   markQuestionToReview: (questionId: string, now?: number) => void;
@@ -140,6 +142,19 @@ export const useLearnProgressStore = create<LearnProgressState>()(
               },
         ),
       setCurrentStep: (currentStep) => set({ currentStep }),
+      scheduleKnownCards: (cardIds, now = Date.now()) =>
+        set((state) => ({
+          knownCards: [...new Set([...state.knownCards, ...cardIds])],
+          cardSchedule: {
+            ...state.cardSchedule,
+            ...Object.fromEntries(
+              cardIds.map((id) => [
+                id,
+                { box: 3, due: now + REVIEW_INTERVALS_DAYS[3] * DAY_MS },
+              ]),
+            ),
+          },
+        })),
       reviewCard: (cardId, isKnown, now = Date.now()) =>
         set((state) => {
           const box = isKnown

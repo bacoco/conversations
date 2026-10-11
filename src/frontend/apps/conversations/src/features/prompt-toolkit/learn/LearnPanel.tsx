@@ -280,6 +280,11 @@ const PlacementView = ({
     (state) => state.setPlacementDone,
   );
   const raiseSkills = useLearnProgressStore((state) => state.raiseSkills);
+  const scheduleKnownCards = useLearnProgressStore(
+    (state) => state.scheduleKnownCards,
+  );
+  /** The first step whose question was missed: where the path starts. */
+  const [missedStep, setMissedStep] = useState<Step | null>(null);
   const [questions] = useState(() => placementQuestions(steps));
   const [skipped, setSkipped] = useState<Step[] | null>(null);
 
@@ -298,6 +303,14 @@ const PlacementView = ({
           ) : (
             <Text>
               {t('Starting from the beginning is the best choice for you.')}
+            </Text>
+          )}
+          {missedStep && (
+            <Text $size="sm">
+              {t(
+                'The question of step {{number}} (“{{title}}”) was missed: the path starts there.',
+                { number: missedStep.number, title: missedStep.lesson.title },
+              )}
             </Text>
           )}
           {next ? (
@@ -358,6 +371,13 @@ const PlacementView = ({
                 markStage(step.lesson.id, stage);
               }
             }
+            // Their cards come back later, not all at once today.
+            scheduleKnownCards(
+              toSkip.flatMap((step) => step.cards.map((card) => card.id)),
+            );
+            setMissedStep(
+              steps.find((step) => missed.has(step.lesson.id)) ?? null,
+            );
             // Proven in the test: what these steps teach is acquired.
             raiseSkills(
               Object.fromEntries(

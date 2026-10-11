@@ -184,7 +184,7 @@ describe('<LearnPanel />', () => {
     ]);
     // A pause between two times: stop here, or go on.
     expect(
-      screen.getByRole('heading', { name: 'Session done' }),
+      screen.getByRole('heading', { name: 'Reading done' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Come back later' }),

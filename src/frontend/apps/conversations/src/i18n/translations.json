@@ -3,6 +3,15 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "I read your request again at each pause, to advise you; nothing is sent to the Assistant. You can turn this off.": "Je relis votre demande à chaque pause pour vous conseiller ; rien n’est envoyé à l’Assistant. Vous pouvez désactiver ceci.",
+      "Understood": "Compris",
+      "Turn off": "Désactiver",
+      "Reading done": "Lecture terminée",
+      "Cards done": "Cartes terminées",
+      "Questions done": "Questions terminées",
+      "Exercise done": "Exercice terminé",
+      "Next: {{stage}}, about {{count}} min. Or come back later.": "Ensuite : {{stage}}, environ {{count}} min. Ou revenez plus tard.",
+      "The question of step {{number}} (“{{title}}”) was missed: the path starts there.": "La question de l’étape {{number}} (« {{title}} ») a été manquée : le parcours reprend là.",
       "Your next step: {{title}}": "Votre prochaine étape : {{title}}",
       "Start at step {{number}}": "Commencer à l’étape {{number}}",
       "Steps to make the answer ready": "Les étapes pour rendre la réponse prête",
