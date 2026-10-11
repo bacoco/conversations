@@ -3,6 +3,9 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Sent to the Assistant: its answer arrives in the conversation.": "Envoyé à l’Assistant : sa réponse arrive dans la conversation.",
+      "My own instruction": "Ma propre consigne",
+      "The text goes to the message field: add what you want, then send.": "Le texte va dans la zone de message : ajoutez ce que vous voulez, puis envoyez.",
       "This answer is not ready to be sent: {{count}} parts to complete": "Cette réponse n’est pas prête à être envoyée : {{count}} éléments à compléter",
       "Send a request: once the Assistant has answered, I can help with what comes next.": "Envoyez une demande : une fois que l’Assistant aura répondu, je vous aiderai pour la suite.",
       "Go on": "Suite",

@@ -8,6 +8,7 @@ import {
   transcribe,
 } from '../speech/transcribe';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 const mockShowToast = vi.fn();
@@ -89,13 +90,19 @@ describe('transcription helpers', () => {
 
 describe('<RecorderView />', () => {
   const setChatInput = vi.fn();
+  const sendQuestion = vi.fn();
   beforeEach(() => {
     vi.clearAllMocks();
-    usePromptToolkitStore.setState({ nestorTask: null, setChatInput });
+    usePromptToolkitStore.setState({
+      nestorTask: null,
+      setChatInput,
+      chatInput: '',
+    });
+    useMainConversationStore.setState({ sendQuestion });
     useRecorderStore.setState({ text: '', isClaimed: true });
   });
 
-  it('keeps a pasted text task in Nestor by default', () => {
+  it('sends the request, with the text, to the conversation on the left', () => {
     render(<RecorderView onBack={vi.fn()} />);
 
     expect(
@@ -107,33 +114,40 @@ describe('<RecorderView />', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Flash' }));
     fireEvent.click(screen.getByRole('button', { name: /Meeting minutes/ }));
 
-    const task = usePromptToolkitStore.getState().nestorTask;
-    expect(task?.prompt).toContain('From the text below, write');
-    expect(task?.prompt).toContain('Claire valide le budget formation.');
+    const sent = sendQuestion.mock.calls[0][0] as string;
+    expect(sent).toContain('From the text below, write');
+    expect(sent).toContain('Claire valide le budget formation.');
     // Nothing left to fill in by hand in the answer.
-    expect(task?.prompt).toContain('Never write placeholders');
-    expect(setChatInput).not.toHaveBeenCalled();
+    expect(sent).toContain('Never write placeholders');
+    // Not kept in Nestor's sheet any more.
+    expect(usePromptToolkitStore.getState().nestorTask).toBeNull();
   });
 
-  it('keeps decisions, translation and raw text in Nestor', () => {
+  it('sends decisions and translation; "my own instruction" goes to the field', () => {
     useRecorderStore.setState({ text: 'Karim rédige le cahier des charges.' });
     render(<RecorderView onBack={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /Decision log/ }));
-    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toContain(
-      'decision log',
-    );
+    expect(sendQuestion.mock.calls[0][0]).toContain('decision log');
 
     fireEvent.click(screen.getByRole('button', { name: /Translate/ }));
-    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toContain(
-      'Translate the text below',
-    );
+    expect(sendQuestion.mock.calls[1][0]).toContain('Translate the text below');
 
-    fireEvent.click(screen.getByRole('button', { name: /Ask Nestor/ }));
-    expect(usePromptToolkitStore.getState().nestorTask?.prompt).toBe(
+    fireEvent.click(screen.getByRole('button', { name: /My own instruction/ }));
+    expect(setChatInput).toHaveBeenCalledWith(
       'Karim rédige le cahier des charges.',
     );
-    expect(setChatInput).not.toHaveBeenCalled();
+    expect(sendQuestion).toHaveBeenCalledTimes(2);
+  });
+
+  it('waits in the message field when no conversation can receive it', () => {
+    useMainConversationStore.setState({ sendQuestion: null });
+    useRecorderStore.setState({ text: 'Karim rédige le cahier des charges.' });
+    render(<RecorderView onBack={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: /Decision log/ }));
+    expect(setChatInput).toHaveBeenCalledWith(
+      expect.stringContaining('decision log'),
+    );
   });
 
   it('keeps the text when the screen is left and comes back', () => {

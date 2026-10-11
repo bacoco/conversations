@@ -4,16 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { css, keyframes } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
+import { useResponsiveStore } from '@/stores';
 
 import { useAiAvailable } from '../coach/aiAvailability';
 import { optionCss } from '../components/CoachModes';
 import { DetailPage } from '../components/DetailPage';
 import { PanelTextArea } from '../components/PanelTextArea';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 import { getDailyTools } from '../tools/tools';
+import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
 import {
@@ -137,7 +140,31 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
   const isAiAvailable = useAiAvailable();
   // The transcription stays in Nestor. The person can explicitly send the
   // resulting text to the main conversation afterwards.
-  const openNestorTask = usePromptToolkitStore((state) => state.openNestorTask);
+  const sendQuestion = useMainConversationStore((state) => state.sendQuestion);
+  const placePrompt = usePlacePrompt();
+  const { isDesktop } = useResponsiveStore();
+  const closePanel = usePromptToolkitStore((state) => state.close);
+  /**
+   * The request, with the text, goes to the conversation on the left: the
+   * user sees what is asked and the Assistant answers there. Without a
+   * conversation to send to, it waits in the message field.
+   */
+  const sendToAssistant = (prompt: string) => {
+    if (sendQuestion) {
+      sendQuestion(prompt);
+      showToast(
+        'success',
+        t('Sent to the Assistant: its answer arrives in the conversation.'),
+        undefined,
+        4000,
+      );
+      if (!isDesktop) {
+        closePanel();
+      }
+    } else {
+      placePrompt(prompt);
+    }
+  };
   const tools = useMemo(() => getDailyTools(t), [t]);
   const formats = tools.find((tool) => tool.id === 'minutes')?.options[0];
 
@@ -314,11 +341,12 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
     },
     {
       id: 'raw',
-      title: t('Ask Nestor'),
+      title: t('My own instruction'),
       description: t(
-        'Nestor processes the text here; you can send the result to the conversation afterwards.',
+        'The text goes to the message field: add what you want, then send.',
       ),
       prompt: () => content,
+      inField: true,
     },
   ];
 
@@ -677,7 +705,12 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
                 type="button"
                 onClick={() => {
                   const prompt = action.prompt();
-                  if (prompt) openNestorTask(prompt, action.title);
+                  if (!prompt) return;
+                  if ('inField' in action && action.inField) {
+                    placePrompt(prompt);
+                  } else {
+                    sendToAssistant(prompt);
+                  }
                 }}
                 // Six actions: the first and the last take the whole row.
                 $css={actionCss(
