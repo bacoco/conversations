@@ -746,40 +746,43 @@ export const ToolsPanel = () => {
           </Box>
         </Box>
       ) : (
-        <Box
-          as="ul"
-          aria-label={t('What AI can do for you')}
-          $css={css`
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            grid-auto-rows: 190px;
-            gap: 14px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-          `}
-        >
-          {categories.map((item) => (
-            <Box as="li" key={item.id} $css="display: flex;">
-              <Box
-                as="button"
-                type="button"
-                onClick={() => setFamilyId(item.id)}
-                $align="center"
-                $justify="center"
-                $gap="10px"
-                $css={familyCardCss}
-              >
-                <img src={item.image} alt="" width={88} height={88} />
-                <Text $size="lg" $weight="800">
-                  {item.label}
-                </Text>
-                <Text $size="sm" $variation="secondary" $textAlign="center">
-                  {item.description}
-                </Text>
+        // Centred in the free height of the panel, never stuck to the top.
+        <Box $css="flex: 1; justify-content: center; padding: 16px 0;">
+          <Box
+            as="ul"
+            aria-label={t('What AI can do for you')}
+            $css={css`
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              grid-auto-rows: minmax(190px, auto);
+              gap: 14px;
+              margin: 0;
+              padding: 0;
+              list-style: none;
+            `}
+          >
+            {categories.map((item) => (
+              <Box as="li" key={item.id} $css="display: flex;">
+                <Box
+                  as="button"
+                  type="button"
+                  onClick={() => setFamilyId(item.id)}
+                  $align="center"
+                  $justify="center"
+                  $gap="10px"
+                  $css={familyCardCss}
+                >
+                  <img src={item.image} alt="" width={88} height={88} />
+                  <Text $size="lg" $weight="800">
+                    {item.label}
+                  </Text>
+                  <Text $size="sm" $variation="secondary" $textAlign="center">
+                    {item.description}
+                  </Text>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))}
+          </Box>
         </Box>
       )}
       <Box $gap="4px" $css="margin-top: auto;">
