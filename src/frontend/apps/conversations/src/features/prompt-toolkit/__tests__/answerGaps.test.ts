@@ -59,3 +59,24 @@ describe('the answer to paste in an email', () => {
     ).toBe('Objet : Réponse\nDétail\n• un point\n• un autre');
   });
 });
+
+describe('the facts an answer adds', () => {
+  const answer =
+    'Bonjour,\nVotre dossier est bloqué par un afflux de demandes. Nous vous répondrons vite.\nCordialement';
+
+  it('finds the sentence a claim quotes, and takes it away', async () => {
+    const { sentenceOfClaim, withoutSentences } =
+      await import('../coach/answerGaps');
+    const sentence = sentenceOfClaim(
+      answer,
+      'La cause du retard : « afflux de demandes »',
+    );
+    expect(sentence).toBe(
+      'Votre dossier est bloqué par un afflux de demandes.',
+    );
+    expect(withoutSentences(answer, [sentence ?? ''])).toBe(
+      'Bonjour,\nNous vous répondrons vite.\nCordialement',
+    );
+    expect(sentenceOfClaim(answer, 'Un délai : « 15 jours »')).toBeNull();
+  });
+});

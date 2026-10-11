@@ -324,6 +324,10 @@ describe('the facts of an answer', () => {
     expect(
       screen.getByText('La cause du retard : « afflux de demandes »'),
     ).toBeInTheDocument();
+    // The workshop says itself what is left: the warning goes.
+    expect(
+      screen.queryByText('This answer is not ready to be sent yet'),
+    ).not.toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 });

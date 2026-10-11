@@ -3,6 +3,15 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "The text is selected below: press Ctrl+C to copy it.": "Le texte est sélectionné ci-dessous : appuyez sur Ctrl+C pour le copier.",
+      "{{count}} points to settle before sending_one": "Encore {{count}} point à régler avant d’envoyer",
+      "{{count}} points to settle before sending_many": "Encore {{count}} points à régler avant d’envoyer",
+      "{{count}} points to settle before sending_other": "Encore {{count}} points à régler avant d’envoyer",
+      "Facts your request did not give": "Des faits que votre demande ne donnait pas",
+      "Kept: you checked it.": "Gardé : vous avez vérifié.",
+      "It is right, I checked": "C’est juste, j’ai vérifié",
+      "Take this sentence away": "Retirer cette phrase",
+      "The answer, as it will be pasted": "La réponse, telle qu’elle sera collée",
       "This answer is not ready to be sent yet": "Cette réponse n’est pas encore prête à être envoyée",
       "{{count}} parts to complete_one": "{{count}} élément à compléter",
       "{{count}} parts to complete_many": "{{count}} éléments à compléter",

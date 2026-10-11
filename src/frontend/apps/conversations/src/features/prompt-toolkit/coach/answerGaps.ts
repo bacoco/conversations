@@ -123,3 +123,36 @@ export const plainAnswer = (text: string) =>
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/^\s*[-*]\s+/gm, '• ')
     .trim();
+
+/** The words a claim quotes from the answer: « … », “…” or "…". */
+const quoteOf = (claim: string) =>
+  /«\s*([^»]+?)\s*»|“([^”]+)”|"([^"]+)"/.exec(claim)?.slice(1).find(Boolean);
+
+/**
+ * The sentence of the answer a claim is about, found by the words it
+ * quotes; null when the quote is not in the answer word for word.
+ */
+export const sentenceOfClaim = (text: string, claim: string) => {
+  const quote = quoteOf(claim)
+    ?.replace(/[….]+$/, '')
+    .trim();
+  if (!quote || quote.length < 3) {
+    return null;
+  }
+  const at = text.toLocaleLowerCase().indexOf(quote.toLocaleLowerCase());
+  if (at === -1) {
+    return null;
+  }
+  const { from, to } = sentenceAround(text, at, at + quote.length);
+  return text.slice(from, to).trim();
+};
+
+/** The answer without some of its sentences, spaces tidied. */
+export const withoutSentences = (text: string, sentences: string[]) =>
+  sentences
+    .reduce((result, sentence) => result.replace(sentence, ''), text)
+    .replace(/^[ \t]+/gm, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();

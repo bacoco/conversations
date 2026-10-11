@@ -2,53 +2,38 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { AnswerFinisher } from '../components/AnswerFinisher';
 
-const mockRemove = vi.fn();
-vi.mock('../coach/coachApi', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../coach/coachApi')>()),
-  removeUnsupportedFacts: (...args: unknown[]) =>
-    mockRemove(...args) as Promise<string>,
-}));
+const mockShowToast = vi.fn();
 vi.mock('@/components/ToastProvider', () => ({
-  useToast: () => ({ showToast: vi.fn() }),
+  useToast: () => ({ showToast: mockShowToast }),
 }));
 
-const REQUEST = 'Réponds à ce courriel.\n"""\nOù en est ma carte grise ?\n"""';
 const ANSWER =
-  'Bonjour,\nVotre dossier est bloqué par un afflux de demandes.\nCordialement,\n[Votre nom]';
-const CORRECTED =
-  'Bonjour,\nVotre dossier : À COMPLÉTER (état du dossier).\nCordialement,\n[Votre nom]';
+  '**Objet** : Votre carte grise\nBonjour,\nVotre dossier est bloqué par un afflux de demandes. Suivez-le sur À COMPLÉTER (vérifier le site officiel).\nRevenez sur À COMPLÉTER (vérifier le site officiel) demain.\nCordialement,\n[Votre nom]';
+const CLAIM = 'La cause du retard : « afflux de demandes »';
 
 describe('<AnswerFinisher />, making an answer ready', () => {
-  beforeEach(() => mockRemove.mockReset());
+  beforeEach(() => mockShowToast.mockReset());
 
-  it('takes out the facts, then asks for each part, then lets copy', async () => {
+  it('lists the points to settle, then lets copy exactly the answer', () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, { clipboard: { writeText } });
-    mockRemove.mockResolvedValue(CORRECTED);
-    render(
-      <AnswerFinisher
-        request={REQUEST}
-        answer={ANSWER}
-        claims={['« afflux de demandes »']}
-        language="French"
-      />,
-    );
-    // Nothing to copy before the facts are dealt with.
-    expect(
-      screen.queryByRole('button', { name: 'Copy the answer' }),
-    ).not.toBeInTheDocument();
+    render(<AnswerFinisher answer={ANSWER} claims={[CLAIM]} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Take them out' }));
     expect(
-      await screen.findByText(
-        'What changed: struck out, taken away; in green, added.',
-      ),
+      screen.getByText('{{count}} points to settle before sending'),
     ).toBeInTheDocument();
     const copy = screen.getByRole('button', { name: 'Copy the answer' });
     expect(copy).toBeDisabled();
 
-    fireEvent.change(screen.getByLabelText('état du dossier'), {
-      target: { value: 'en cours d’instruction' },
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Take this sentence away' }),
+    );
+    // The same thing asked twice is given once.
+    expect(screen.getAllByLabelText('vérifier le site officiel')).toHaveLength(
+      1,
+    );
+    fireEvent.change(screen.getByLabelText('vérifier le site officiel'), {
+      target: { value: 'ants.gouv.fr' },
     });
     fireEvent.change(screen.getByLabelText('Votre nom'), {
       target: { value: 'Martine Leroy' },
@@ -56,48 +41,34 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     expect(screen.getByText('Your answer is ready')).toBeInTheDocument();
     fireEvent.click(copy);
     expect(writeText).toHaveBeenCalledWith(
-      'Bonjour,\nVotre dossier : en cours d’instruction.\nCordialement,\nMartine Leroy',
+      'Objet : Votre carte grise\nBonjour,\nSuivez-le sur ants.gouv.fr.\nRevenez sur ants.gouv.fr demain.\nCordialement,\nMartine Leroy',
     );
   });
 
-  it('takes away the sentence of a fact the user does not have', async () => {
-    mockRemove.mockResolvedValue(CORRECTED);
-    render(
-      <AnswerFinisher
-        request={REQUEST}
-        answer={ANSWER}
-        claims={['« afflux de demandes »']}
-        language="French"
-      />,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Take them out' }));
-    await screen.findByText(
-      'What changed: struck out, taken away; in green, added.',
-    );
+  it('keeps a fact the user checked', () => {
+    render(<AnswerFinisher answer={ANSWER} claims={[CLAIM]} />);
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'I do not have it' })[0],
+      screen.getByRole('button', { name: 'It is right, I checked' }),
     );
-    expect(
-      screen.getByText('This sentence is taken away.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('{{count}} parts still to complete'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Kept: you checked it.')).toBeInTheDocument();
+    // In the point, and still in the answer as it will be pasted.
+    expect(screen.getAllByText(/afflux de demandes/)).toHaveLength(3);
   });
 
-  it('keeps facts the user checked', () => {
-    render(
-      <AnswerFinisher
-        request={REQUEST}
-        answer={ANSWER}
-        claims={['« afflux de demandes »']}
-        language="French"
-      />,
+  it('selects the text when the browser refuses to copy', async () => {
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error('no')) },
+    });
+    Object.assign(document, { execCommand: vi.fn().mockReturnValue(false) });
+    render(<AnswerFinisher answer="Bonjour, tout est prêt." claims={[]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Copy the answer' }));
+    await vi.waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith(
+        'info',
+        'The text is selected below: press Ctrl+C to copy it.',
+        undefined,
+        6000,
+      ),
     );
-    fireEvent.click(
-      screen.getByRole('button', { name: 'They are right, I checked' }),
-    );
-    expect(mockRemove).not.toHaveBeenCalled();
-    expect(screen.getByLabelText('Votre nom')).toBeInTheDocument();
   });
 });

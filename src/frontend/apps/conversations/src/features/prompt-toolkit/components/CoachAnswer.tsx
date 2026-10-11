@@ -93,66 +93,58 @@ const AnswerCheck = ({
       </Text>
     ) : null;
   }
+  // The workshop takes over: it says itself what is left to settle.
+  if (isOpen) {
+    return <AnswerFinisher answer={answer} claims={toCheck} />;
+  }
   return (
-    <Box $gap="10px">
-      <Box
-        role="note"
-        $direction="row"
-        $gap="8px"
-        $css={css`
-          padding: 10px 12px;
-          border-radius: 10px;
-          background: var(
-            --c--contextuals--background--semantic--warning--tertiary
-          );
-        `}
-      >
-        <Icon iconName="fact_check" $size="20px" $theme="warning" />
-        <Box $gap="4px" $css="flex: 1; min-width: 0;">
-          <Text $size="sm" $weight="700">
-            {t('This answer is not ready to be sent yet')}
+    <Box
+      role="note"
+      $direction="row"
+      $gap="8px"
+      $css={css`
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(
+          --c--contextuals--background--semantic--warning--tertiary
+        );
+      `}
+    >
+      <Icon iconName="fact_check" $size="20px" $theme="warning" />
+      <Box $gap="4px" $css="flex: 1; min-width: 0;">
+        <Text $size="sm" $weight="700">
+          {t('This answer is not ready to be sent yet')}
+        </Text>
+        <Text $size="sm">
+          {[
+            toComplete > 0
+              ? t('{{count}} parts to complete', { count: toComplete })
+              : '',
+            toCheck.length > 0
+              ? t('{{count}} facts your request did not give', {
+                  count: toCheck.length,
+                })
+              : '',
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </Text>
+        {isChecking && (
+          <Text $size="xs" $variation="secondary" role="status">
+            {t('Nestor checks the answer against your request…')}
           </Text>
-          <Text $size="sm">
-            {[
-              toComplete > 0
-                ? t('{{count}} parts to complete', { count: toComplete })
-                : '',
-              toCheck.length > 0
-                ? t('{{count}} facts your request did not give', {
-                    count: toCheck.length,
-                  })
-                : '',
-            ]
-              .filter(Boolean)
-              .join(' · ')}
-          </Text>
-          {isChecking && (
-            <Text $size="xs" $variation="secondary" role="status">
-              {t('Nestor checks the answer against your request…')}
-            </Text>
-          )}
-          {!isOpen && (
-            <Box $direction="row">
-              <Button
-                size="small"
-                disabled={isChecking}
-                onClick={() => setIsOpen(true)}
-                icon={<Icon iconName="task_alt" $size="16px" />}
-              >
-                {t('Make it ready with Nestor')}
-              </Button>
-            </Box>
-          )}
+        )}
+        <Box $direction="row">
+          <Button
+            size="small"
+            disabled={isChecking}
+            onClick={() => setIsOpen(true)}
+            icon={<Icon iconName="task_alt" $size="16px" />}
+          >
+            {t('Make it ready with Nestor')}
+          </Button>
         </Box>
       </Box>
-      {isOpen && (
-        <AnswerFinisher
-          request={request}
-          answer={answer}
-          claims={toCheck}
-          language={language}
-        />
-      )}
     </Box>
   );
 };
