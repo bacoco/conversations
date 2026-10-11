@@ -9,7 +9,6 @@ import {
   GeneratedPrompt,
   PromptImprovement,
   generatePrompts,
-  hasPlaceholders,
   improvePrompt,
 } from '../coach/coachApi';
 import { languageName } from '../coach/language';
@@ -28,7 +27,6 @@ import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
-import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { ExplainedComparison, TutorHints } from './CoachExtras';
 import { CoachIntro } from './CoachIntro';
@@ -54,7 +52,6 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const { t, i18n } = useTranslation();
   const { showToast } = useToast();
   const offerPrompt = useOfferPrompt();
-  const placePrompt = usePlacePrompt();
   const reward = useReward();
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const setChatInput = usePromptToolkitStore((state) => state.setChatInput);
@@ -161,12 +158,10 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       return;
     }
     // Placeholders left by the rewrite are filled through Nestor's questions.
-    if (hasPlaceholders(improvement.improvedPrompt)) {
-      offerPrompt(improvement.improvedPrompt, t('Improved prompt'));
-    } else {
-      // "Replace my prompt" says it: the draft gives way to its version.
-      placePrompt(improvement.improvedPrompt, { replaceDraft: true });
-    }
+    // "Replace my prompt" says it: the draft gives way to its version.
+    offerPrompt(improvement.improvedPrompt, t('Improved prompt'), {
+      replaceDraft: true,
+    });
     reward('improvement');
     setImprovement(null);
   };

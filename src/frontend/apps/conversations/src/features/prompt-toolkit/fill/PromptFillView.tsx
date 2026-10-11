@@ -188,7 +188,13 @@ export const PromptFillView = ({
               <Button
                 size="small"
                 onClick={() => {
-                  placePrompt(final.prompt);
+                  const { fill: current, chatInput } =
+                    usePromptToolkitStore.getState();
+                  placePrompt(final.prompt, {
+                    replaceDraft:
+                      !!current?.replaces &&
+                      chatInput.trim() === current.replaces,
+                  });
                   reward('fill');
                   closeFill();
                 }}

@@ -75,6 +75,8 @@ interface PromptToolkitState {
     context?: string;
     /** "draft": strengthen the user's own text rather than fill blanks. */
     mode?: 'template' | 'draft';
+    /** The draft this prompt is a version of: it replaces it when used. */
+    replaces?: string;
   } | null;
   /** `context`: what the user already wrote, used to ask fewer questions. */
   startFill: (
@@ -82,6 +84,7 @@ interface PromptToolkitState {
     title: string,
     context?: string,
     mode?: 'template' | 'draft',
+    replaces?: string,
   ) => void;
   closeFill: () => void;
   /** A prompt shared by a colleague through a link, waiting to be imported. */
@@ -193,8 +196,8 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       setCoachMode: (coachMode) => set({ coachMode }),
       openSection: (mode) => set({ mode, showHome: false, fill: null }),
       fill: null,
-      startFill: (template, title, context, mode) =>
-        set({ fill: { template, title, context, mode } }),
+      startFill: (template, title, context, mode, replaces) =>
+        set({ fill: { template, title, context, mode, replaces } }),
       closeFill: () => set({ fill: null }),
       sharedPrompt: null,
       clearSharedPrompt: () => set({ sharedPrompt: null }),

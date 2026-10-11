@@ -12,12 +12,24 @@ export const useOfferPrompt = () => {
   const startFill = usePromptToolkitStore((state) => state.startFill);
   const isAiAvailable = useAiAvailable();
 
-  return (prompt: string, title: string) => {
+  /** `replaceDraft`: the prompt is a version of the draft, not a new one. */
+  return (
+    prompt: string,
+    title: string,
+    options: { replaceDraft?: boolean } = {},
+  ) => {
+    const draft = usePromptToolkitStore.getState().chatInput.trim();
     // Without Nestor, the brackets are completed by hand in the message field.
     if (isAiAvailable && hasPlaceholders(prompt)) {
-      startFill(prompt, title);
+      startFill(
+        prompt,
+        title,
+        undefined,
+        undefined,
+        options.replaceDraft && draft ? draft : undefined,
+      );
     } else {
-      placePrompt(prompt);
+      placePrompt(prompt, { replaceDraft: options.replaceDraft });
     }
   };
 };

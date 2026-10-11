@@ -161,7 +161,9 @@ const VariantCard = ({ variant }: { variant: GeneratedPrompt }) => {
         </Button>
         <Button
           size="small"
-          onClick={() => offerPrompt(variant.prompt, variant.title)}
+          onClick={() =>
+            offerPrompt(variant.prompt, variant.title, { replaceDraft: true })
+          }
           icon={<Icon iconName="north_west" $size="16px" />}
         >
           {t('Use')}
@@ -412,7 +414,11 @@ const PhraseRow = ({
             as="button"
             type="button"
             disabled={!onUse}
-            onClick={() => offerPrompt(template.prompt, template.title)}
+            onClick={() =>
+              offerPrompt(template.prompt, template.title, {
+                replaceDraft: true,
+              })
+            }
             $direction="row"
             $align="center"
             $gap="12px"
@@ -472,7 +478,13 @@ export const InstantSuggestions = ({ text }: { text: string }) => {
       setIsSearching(true);
       searchPhrases(query, i18n.language, PHRASE_COUNT, controller.signal)
         .then((found) => {
-          setPhrases(found);
+          // The request already in the field is not proposed again.
+          setPhrases(
+            found.filter(
+              (phrase) =>
+                phrase.text.trim().toLowerCase() !== query.toLowerCase(),
+            ),
+          );
           setHasError(false);
         })
         .catch(() => {
