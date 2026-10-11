@@ -3,6 +3,10 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Steps to make the answer ready": "Les étapes pour rendre la réponse prête",
+      "1. Check the facts": "1. Vérifier les faits",
+      "2. Complete": "2. Compléter",
+      "3. Read again and copy": "3. Relire et copier",
       "Subject copied: paste it in the subject of your email.": "Objet copié : collez-le dans l’objet de votre courriel.",
       "Message copied: paste it in the body of your email.": "Message copié : collez-le dans le corps de votre courriel.",
       "Ready to copy into your email": "Prête à copier dans votre courriel",
@@ -1310,7 +1314,7 @@
       "With your version": "Avec votre version",
       "Work from your own documents": "Travaillez depuis vos propres documents",
       "Write": "Écrire",
-      "Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Present what the sender says as what they say (\"You tell us that…\"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, simply ask for their file number.": "Rédige une réponse au courriel ci-dessous. Objectif : {{intent}}. Ton : {{tone}}, en langage clair. Structure : formule d’appel, réponse en paragraphes courts, formule de politesse. Présente ce que dit l’expéditeur comme ce qu’il dit (« Vous nous indiquez que… »), jamais comme un fait vérifié par l’administration. N’utilise que les faits donnés ici : aucune cause de retard, état du dossier, démarche, site, date, chiffre ou contact qui ne figure pas dans le courriel, et aucune conclusion sur le dossier ; là où la réponse en a besoin, écris À COMPLÉTER suivi de ce qu’il faut vérifier. Ne promets rien, pas même ce qui sera fait ensuite ; si c’est utile, demande simplement le numéro de dossier.",
+      "Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Begin by apologising for the trouble, without judging the sender's tone. Present what the sender says as what they say (\"You tell us that…\"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, end by asking them to reply with their file number, if they have one.": "Rédige une réponse au courriel ci-dessous. Objectif : {{intent}}. Ton : {{tone}}, en langage clair. Structure : formule d’appel, réponse en paragraphes courts, formule de politesse. Commence par t’excuser pour la gêne, sans juger le ton de l’expéditeur. Présente ce que dit l’expéditeur comme ce qu’il dit (« Vous nous indiquez que… »), jamais comme un fait vérifié par l’administration. N’utilise que les faits donnés ici : aucune cause de retard, état du dossier, démarche, site, date, chiffre ou contact qui ne figure pas dans le courriel, et aucune conclusion sur le dossier ; là où la réponse en a besoin, écris À COMPLÉTER suivi de ce qu’il faut vérifier. Ne promets rien, pas même ce qui sera fait ensuite ; si c’est utile, termine en lui demandant de répondre avec son numéro de dossier, s’il en a un.",
       "Write a short product description": "Écrire une description courte du produit",
       "Write in this style:": "Écris dans ce style :",
       "Write on Tchap": "Écrire sur Tchap",

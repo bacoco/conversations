@@ -219,6 +219,48 @@ export const AnswerFinisher = ({
 
   return (
     <Box $gap="10px">
+      <Box
+        as="ol"
+        aria-label={t('Steps to make the answer ready')}
+        $direction="row"
+        $gap="6px"
+        $css="margin: 0; padding: 0; list-style: none; flex-wrap: wrap;"
+      >
+        {[
+          { label: t('1. Check the facts'), isDone: factsLeft === 0 },
+          { label: t('2. Complete'), isDone: gapsLeft === 0 },
+          { label: t('3. Read again and copy'), isDone: isReady && isReread },
+        ].map((step) => (
+          <Box
+            as="li"
+            key={step.label}
+            $direction="row"
+            $align="center"
+            $gap="4px"
+            $css={css`
+              padding: 3px 10px;
+              border-radius: 999px;
+              font-size: 0.8125rem;
+              color: var(
+                --c--contextuals--content--semantic--${
+                    step.isDone ? 'success' : 'neutral'
+                  }--primary
+              );
+              background: var(
+                --c--contextuals--background--semantic--${
+                    step.isDone ? 'success' : 'neutral'
+                  }--tertiary
+              );
+            `}
+          >
+            {step.isDone && (
+              <Icon iconName="check" $size="14px" $withThemeInherited />
+            )}
+            {step.label}
+            {step.isDone && <span className="sr-only">{t('done')}</span>}
+          </Box>
+        ))}
+      </Box>
       <Box $gap="8px" $css={statusCss(isReady && isReread)}>
         <Box $direction="row" $align="center" $gap="10px">
           <Icon

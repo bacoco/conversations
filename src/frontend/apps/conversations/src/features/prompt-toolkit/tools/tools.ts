@@ -99,7 +99,7 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       ],
       build: (c, source) =>
         t(
-          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Present what the sender says as what they say ("You tell us that…"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, simply ask for their file number.',
+          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Begin by apologising for the trouble, without judging the sender\'s tone. Present what the sender says as what they say ("You tell us that…"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, end by asking them to reply with their file number, if they have one.',
           { intent: c.intent, tone: c.tone },
         ) + block(source),
     },
