@@ -15,6 +15,7 @@ import { NESTOR_CHALLENGES_URL } from '../components/PanelHome';
 import { PanelTextArea } from '../components/PanelTextArea';
 import { useReward } from '../rewards/useReward';
 
+import { ScreenActions } from './CourseFrame';
 import { CHALLENGE_PASS_GRADE, Challenge } from './challenges';
 import { useLearnProgressStore } from './useLearnProgressStore';
 
@@ -185,14 +186,6 @@ export const ChallengeView = ({
           ) : (
             <span />
           )}
-          <Button
-            size="small"
-            disabled={status === 'loading' || !draft.trim()}
-            onClick={() => void evaluate()}
-            icon={<Icon iconName="grading" $size="16px" />}
-          >
-            {t('Have it graded')}
-          </Button>
         </Box>
         {allowHints && showHints && (
           <Box as="ul" $gap="4px" $css="margin: 0; padding-left: 18px;">
@@ -291,20 +284,34 @@ export const ChallengeView = ({
         />
       )}
 
-      {inStep && (
-        <Box $gap="8px">
+      <ScreenActions>
+        {inStep && !passed && (
           <Button
-            fullWidth
-            color={passed ? 'brand' : 'neutral'}
-            variant={passed ? 'primary' : 'secondary'}
-            onClick={() => inStep.onDone(passed)}
+            color="neutral"
+            variant="secondary"
+            onClick={() => inStep.onDone(false)}
+          >
+            {t('Finish the step without it')}
+          </Button>
+        )}
+        {inStep && passed ? (
+          <Button
+            onClick={() => inStep.onDone(true)}
             iconPosition="right"
             icon={<Icon iconName="arrow_forward" $size="18px" />}
           >
-            {passed ? inStep.doneLabel : t('Finish the step without it')}
+            {inStep.doneLabel}
           </Button>
-        </Box>
-      )}
+        ) : (
+          <Button
+            disabled={status === 'loading' || !draft.trim()}
+            onClick={() => void evaluate()}
+            icon={<Icon iconName="grading" $size="18px" />}
+          >
+            {t('Have it graded')}
+          </Button>
+        )}
+      </ScreenActions>
     </>,
   );
 };

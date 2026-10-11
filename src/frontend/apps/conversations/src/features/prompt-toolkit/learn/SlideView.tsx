@@ -333,6 +333,13 @@ const chipCss = (state: 'idle' | 'on' | 'right' | 'wrong' | 'missed') => css`
 
 const cardCss = (state: 'idle' | 'better' | 'worse' | 'picked') => css`
   width: 100%;
+  justify-content: flex-start;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
   padding: 12px 14px;
   border-radius: 12px;
   cursor: ${state === 'idle' ? 'pointer' : 'default'};
@@ -380,7 +387,21 @@ const ChooseSlide = ({ slide }: { slide: Slide }) => {
   return (
     <Box $gap="12px">
       <RichText text={slide.content} />
-      <Box as="ul" $gap="8px" $css="margin: 0; padding: 0; list-style: none;">
+      {/* Side by side when there is room: the two answers compare at a glance. */}
+      <Box
+        as="ul"
+        $css={css`
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 10px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          & > li {
+            display: flex;
+          }
+        `}
+      >
         {choices.map((choice, index) => {
           const state =
             picked === null ? 'idle' : index === better ? 'better' : 'worse';

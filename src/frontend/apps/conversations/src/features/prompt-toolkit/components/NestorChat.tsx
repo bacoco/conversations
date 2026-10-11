@@ -140,6 +140,7 @@ export const NestorDock = ({ language }: { language: string }) => {
   const conversationId = useConversationRouteId();
   const turns = usePromptToolkitStore((state) => state.nestorChat);
   const setTurns = usePromptToolkitStore((state) => state.setNestorChat);
+  const actionBarShown = usePromptToolkitStore((state) => state.actionBarShown);
   const nestorDockPosition = usePromptToolkitStore(
     (state) => state.nestorDockPosition,
   );
@@ -365,7 +366,12 @@ export const NestorDock = ({ language }: { language: string }) => {
                   ? 'left: 50%;'
                   : 'right: 16px;'
           }
-          bottom: 16px;
+          /* Above the action bar of a course screen, when there is one. */
+          bottom: ${actionBarShown ? 80 : 16}px;
+          transition: bottom 0.2s ease;
+          @media (prefers-reduced-motion: reduce) {
+            transition: none;
+          }
           z-index: 3;
           width: 52px;
           height: 52px;

@@ -182,24 +182,17 @@ describe('<LearnPanel />', () => {
     expect(useLearnProgressStore.getState().completedLessons).toEqual([
       lesson.id,
     ]);
-    // A pause between two times: stop here, or go on.
-    expect(
-      screen.getByRole('heading', { name: 'Reading done' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Come back later' }),
-    ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /^Continue/ }));
+    // No pause between two times: the next one follows at once.
+    expect(screen.queryByText('Reading done')).not.toBeInTheDocument();
 
     // Remember: each card once.
     cards.forEach(() => {
-      fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
+      fireEvent.click(screen.getByRole('button', { name: 'Show the answer' }));
       fireEvent.click(screen.getByRole('button', { name: /I knew it/ }));
     });
     expect(useLearnProgressStore.getState().knownCards).toEqual(
       cards.map((c) => c.id),
     );
-    fireEvent.click(screen.getByRole('button', { name: /^Continue/ }));
 
     // Check, then the end of the step.
     answerQuizRight(questions);
@@ -227,8 +220,24 @@ describe('<LearnPanel />', () => {
       'read',
     ]);
     expect(
-      screen.getByRole('button', { name: /Show the answer/ }),
+      screen.getByRole('button', { name: 'Show the answer' }),
     ).toBeInTheDocument();
+  });
+
+  it('stops here and keeps the place for later', () => {
+    render(<LearnPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Next$/ }));
+    // The main action stays in the bar at the bottom, whatever the screen.
+    expect(
+      screen.getByRole('button', { name: 'Stop here, resume later' }),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Stop here, resume later' }),
+    );
+
+    expect(useLearnProgressStore.getState().sessions).toHaveLength(1);
+    expect(screen.getByText('To resume')).toBeInTheDocument();
   });
 
   it('resumes the step in progress from the path', () => {
@@ -258,7 +267,7 @@ describe('<LearnPanel />', () => {
       screen.getByRole('button', { name: 'Review {{count}} items' }),
     );
     cards.forEach(() => {
-      fireEvent.click(screen.getByRole('button', { name: /Show the answer/ }));
+      fireEvent.click(screen.getByRole('button', { name: 'Show the answer' }));
       fireEvent.click(screen.getByRole('button', { name: /I knew it/ }));
     });
 

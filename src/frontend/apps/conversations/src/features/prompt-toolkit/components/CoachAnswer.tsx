@@ -21,7 +21,7 @@ import {
   SuggestionPills,
   UserBubble,
 } from '../fill/GuidedThread';
-import { useRoomyPanel } from '../hooks/useRoomyPanel';
+import { useIsSpaceShown, useRoomyPanel } from '../hooks/useRoomyPanel';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
@@ -81,7 +81,8 @@ const AnswerCheck = ({
     }
   }, [finishNextAnswer]);
   // The workshop needs room: the panel widens while it is open.
-  useRoomyPanel(isOpen);
+  const isCoachShown = useIsSpaceShown('coach');
+  useRoomyPanel(isOpen && isCoachShown);
   useEffect(() => {
     if (!isAiAvailable || !answer.trim()) {
       return;

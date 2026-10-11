@@ -7,6 +7,7 @@ import { Box, Icon, Text } from '@/components';
 
 import { useReward } from '../rewards/useReward';
 
+import { Direction, ScreenActions, enterCss } from './CourseFrame';
 import { SlideView } from './SlideView';
 import type { Lesson } from './types';
 import { useLearnProgressStore } from './useLearnProgressStore';
@@ -38,6 +39,11 @@ export const LessonView = ({
     return saved < lesson.slides.length - 1 ? saved : 0;
   });
   const topRef = useRef<HTMLDivElement | null>(null);
+  const [direction, setDirection] = useState<Direction>('forward');
+  const move = (step: number) => {
+    setDirection(step > 0 ? 'forward' : 'back');
+    setIndex((current) => current + step);
+  };
   const slide = lesson.slides[index];
   const isLast = index === lesson.slides.length - 1;
 
@@ -69,8 +75,9 @@ export const LessonView = ({
         aria-live="polite"
         $gap="14px"
         $css={css`
-          padding: 18px;
+          padding: 22px 24px;
           border-radius: 14px;
+          overflow: hidden;
           border: 1px solid var(--c--contextuals--border--surface--primary);
           background: var(--c--contextuals--background--surface--primary);
         `}
@@ -105,51 +112,29 @@ export const LessonView = ({
           </Box>
         </Box>
 
-        <SlideView
-          key={index}
-          slide={slide}
-          lessonId={lesson.id}
-          index={index}
-        />
+        <Box key={index} $css={enterCss(direction)}>
+          <SlideView slide={slide} lessonId={lesson.id} index={index} />
+        </Box>
       </Box>
 
-      <Box
-        $css={css`
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 10px;
-        `}
-      >
+      <ScreenActions>
         <Button
-          fullWidth
           color="neutral"
           variant="secondary"
           disabled={index === 0}
-          onClick={() => setIndex((current) => current - 1)}
+          onClick={() => move(-1)}
           icon={<Icon iconName="arrow_back" $size="18px" />}
         >
           {t('Previous')}
         </Button>
-        {isLast ? (
-          <Button
-            fullWidth
-            onClick={onDone}
-            iconPosition="right"
-            icon={<Icon iconName="arrow_forward" $size="18px" />}
-          >
-            {doneLabel}
-          </Button>
-        ) : (
-          <Button
-            fullWidth
-            onClick={() => setIndex((current) => current + 1)}
-            iconPosition="right"
-            icon={<Icon iconName="arrow_forward" $size="18px" />}
-          >
-            {t('Next')}
-          </Button>
-        )}
-      </Box>
+        <Button
+          onClick={isLast ? onDone : () => move(1)}
+          iconPosition="right"
+          icon={<Icon iconName="arrow_forward" $size="18px" />}
+        >
+          {isLast ? doneLabel : t('Next')}
+        </Button>
+      </ScreenActions>
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import {
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
+import { CourseFrame, ScreenActions } from './CourseFrame';
 import { ILLUSTRATION_BACKGROUND, weekStats } from './CourseParts';
 import { CardsResult, FlashcardsView } from './FlashcardsView';
 import { ManageProgressView } from './ManageProgressView';
@@ -151,7 +152,10 @@ const placementQuestions = (steps: Step[]) => {
         .filter((question): question is QuizQuestion => Boolean(question));
 };
 
-/** A page of the course with "Back to the course" on top. */
+/**
+ * A page of the course in the same frame as a step: its title on top, the
+ * way back at the bottom left, its main action at the bottom right.
+ */
 const CoursePage = ({
   title,
   onBack,
@@ -163,10 +167,14 @@ const CoursePage = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <Box $gap="16px" $css="padding: 12px 16px 96px;">
-      <Box $direction="row">
+    <CourseFrame
+      top={
+        <Text as="h2" $size="lg" $weight="800" $margin="0">
+          {title}
+        </Text>
+      }
+      exit={
         <Button
-          size="small"
           color="neutral"
           variant="tertiary"
           onClick={onBack}
@@ -174,12 +182,10 @@ const CoursePage = ({
         >
           {t('Back to the course')}
         </Button>
-      </Box>
-      <Text as="h2" $size="lg" $weight="800" $margin="0">
-        {title}
-      </Text>
-      {children}
-    </Box>
+      }
+    >
+      <Box $gap="16px">{children}</Box>
+    </CourseFrame>
   );
 };
 
@@ -253,9 +259,6 @@ const ReviewView = ({
         <Text $size="xs" $variation="secondary">
           {t('What you know comes back later and later; the rest, soon.')}
         </Text>
-        <Button fullWidth onClick={onBack}>
-          {t('Back to the course')}
-        </Button>
       </Box>
     </CoursePage>
   );
@@ -322,24 +325,21 @@ const PlacementView = ({
               })}
             </Text>
           )}
-          {next ? (
-            <Box $gap="8px">
-              <Text $size="sm" $variation="secondary">
-                {t('Your next step: {{title}}', { title: next.lesson.title })}
-              </Text>
+          {next && (
+            <Text $size="sm" $variation="secondary">
+              {t('Your next step: {{title}}', { title: next.lesson.title })}
+            </Text>
+          )}
+          {next && (
+            <ScreenActions>
               <Button
-                fullWidth
                 onClick={() => onOpenStep(next.lesson.id)}
                 iconPosition="right"
                 icon={<Icon iconName="arrow_forward" $size="18px" />}
               >
                 {t('Start at step {{number}}', { number: next.number })}
               </Button>
-            </Box>
-          ) : (
-            <Button fullWidth onClick={onBack}>
-              {t('Back to the course')}
-            </Button>
+            </ScreenActions>
           )}
         </Box>
       </CoursePage>

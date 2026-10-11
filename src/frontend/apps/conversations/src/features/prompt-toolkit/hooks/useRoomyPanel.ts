@@ -2,7 +2,24 @@ import { useEffect } from 'react';
 
 import { useResponsiveStore } from '@/stores';
 
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import {
+  RightPanelMode,
+  usePromptToolkitStore,
+} from '../stores/usePromptToolkitStore';
+
+/**
+ * Whether a space of the panel is the one on screen: the spaces stay
+ * mounted when hidden, so what they do to the panel must check this.
+ */
+export const useIsSpaceShown = (mode: RightPanelMode) =>
+  usePromptToolkitStore(
+    (state) =>
+      state.isOpen &&
+      state.mode === mode &&
+      !state.showHome &&
+      state.hasSeenWelcome &&
+      !state.fill,
+  );
 
 /**
  * An activity that needs room (a step of the course, the answer workshop)

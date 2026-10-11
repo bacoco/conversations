@@ -12,6 +12,7 @@ import { DetailPage } from '../components/DetailPage';
 import { NESTOR_AVATAR_URL, NESTOR_QUIZ_URL } from '../components/PanelHome';
 import { useReward } from '../rewards/useReward';
 
+import { ScreenActions, enterCss } from './CourseFrame';
 import {
   QuizAnswer,
   QuizQuestionView,
@@ -324,10 +325,9 @@ export const QuizView = ({
             ))}
           </Box>
         )}
-        <Box $direction="row" $gap="8px">
+        <ScreenActions>
           {!inStep && retryMistakes && (
             <Button
-              fullWidth
               color="neutral"
               variant="secondary"
               onClick={restart}
@@ -338,7 +338,6 @@ export const QuizView = ({
           )}
           {inStep ? (
             <Button
-              fullWidth
               onClick={() => inStep.onDone(result)}
               iconPosition="right"
               icon={<Icon iconName="arrow_forward" $size="18px" />}
@@ -346,11 +345,9 @@ export const QuizView = ({
               {inStep.doneLabel}
             </Button>
           ) : (
-            <Button fullWidth onClick={onBack}>
-              {t('Back to the course')}
-            </Button>
+            <Button onClick={onBack}>{t('Back to the course')}</Button>
           )}
-        </Box>
+        </ScreenActions>
       </>,
     );
   }
@@ -403,23 +400,24 @@ export const QuizView = ({
         </Box>
       </Box>
 
-      <Text
-        as="h3"
-        $size="lg"
-        $weight="700"
-        $margin="0"
-        $css="line-height: 1.35;"
-      >
-        {question.question}
-      </Text>
+      <Box key={`${position}-${question.id}`} $gap="16px" $css={enterCss()}>
+        <Text
+          as="h3"
+          $size="lg"
+          $weight="700"
+          $margin="0"
+          $css="line-height: 1.35;"
+        >
+          {question.question}
+        </Text>
 
-      <QuizQuestionView
-        key={`${position}-${question.id}`}
-        question={question}
-        answer={answer}
-        onAnswer={setAnswer}
-        isLocked={checked !== null}
-      />
+        <QuizQuestionView
+          question={question}
+          answer={answer}
+          onAnswer={setAnswer}
+          isLocked={checked !== null}
+        />
+      </Box>
 
       {!checked && showHints && question.hint && (
         <Box $gap="8px" $align="flex-start">
@@ -440,14 +438,7 @@ export const QuizView = ({
       )}
 
       {!checked ? (
-        <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
-          <Button
-            disabled={!isComplete(question, answer)}
-            onClick={() => check(true)}
-            icon={<Icon iconName="check" $size="18px" />}
-          >
-            {t('Check my answer')}
-          </Button>
+        <ScreenActions>
           <Button
             color="neutral"
             variant="tertiary"
@@ -456,13 +447,21 @@ export const QuizView = ({
           >
             {t('Check my answer, I am not sure')}
           </Button>
-        </Box>
+          <Button
+            disabled={!isComplete(question, answer)}
+            onClick={() => check(true)}
+            icon={<Icon iconName="check" $size="18px" />}
+          >
+            {t('Check my answer')}
+          </Button>
+        </ScreenActions>
       ) : (
         <>
           <Box
             role="status"
             $gap="8px"
             $css={css`
+              ${enterCss()}
               padding: 12px 14px;
               border-radius: 10px;
               background: var(
@@ -518,7 +517,7 @@ export const QuizView = ({
               )}
             </Box>
           )}
-          <Box $direction="row" $justify="flex-end">
+          <ScreenActions>
             <Button
               onClick={next}
               iconPosition="right"
@@ -535,7 +534,7 @@ export const QuizView = ({
                 ? t('See my score')
                 : t('Next question')}
             </Button>
-          </Box>
+          </ScreenActions>
         </>
       )}
     </>,

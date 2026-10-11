@@ -388,6 +388,10 @@ export const RightPanel = ({ isVisible = true }: { isVisible?: boolean }) => {
               max-width: 480px;
               margin-inline: auto;
             }
+            /* A course screen in its frame uses the whole panel. */
+            & > [data-frame] {
+              max-width: none;
+            }
           `}
         >
           <LearnPanel />

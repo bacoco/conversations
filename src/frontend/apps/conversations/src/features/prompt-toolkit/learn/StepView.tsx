@@ -11,11 +11,12 @@ import {
   NESTOR_ANALYSIS_URL,
   NESTOR_COURSE_URL,
 } from '../components/PanelHome';
-import { useRoomyPanel } from '../hooks/useRoomyPanel';
+import { useIsSpaceShown, useRoomyPanel } from '../hooks/useRoomyPanel';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { ChallengeView } from './ChallengeView';
+import { CourseFrame, Direction, ScreenActions, enterCss } from './CourseFrame';
 import {
   FoxSays,
   ILLUSTRATION_BACKGROUND,
@@ -38,7 +39,6 @@ import {
   lessonSkills,
   nextStage,
   nextStep,
-  stageMinutes,
 } from './steps';
 import { useLearnProgress, useSkillLevels } from './useLearnProgress';
 import { SkillLevel, useLearnProgressStore } from './useLearnProgressStore';
@@ -50,6 +50,13 @@ const dotCss = (state: 'done' | 'current' | 'todo') => css`
   height: 30px;
   border-radius: 50%;
   box-sizing: border-box;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
   font-size: 0.8125rem;
   font-weight: 700;
   border: 2px solid
@@ -198,16 +205,17 @@ const CoachTry = ({
       <Text $size="sm" $variation="secondary">
         {t('The coach will tell you when it sees what this step taught.')}
       </Text>
-      <Button
-        fullWidth
-        onClick={onOpenCoach}
-        icon={<Icon iconName="touch_app" $size="18px" />}
-      >
-        {t('Open the coach')}
-      </Button>
-      <Button fullWidth color="neutral" variant="secondary" onClick={onFinish}>
-        {t('Finish the step')}
-      </Button>
+      <ScreenActions>
+        <Button color="neutral" variant="secondary" onClick={onFinish}>
+          {t('Finish the step')}
+        </Button>
+        <Button
+          onClick={onOpenCoach}
+          icon={<Icon iconName="touch_app" $size="18px" />}
+        >
+          {t('Open the coach')}
+        </Button>
+      </ScreenActions>
     </Box>
   );
 };
@@ -266,81 +274,6 @@ const GoalQuestion = () => {
   );
 };
 
-/**
- * Between two times of a step: a short pause, named after what was done.
- * The learner can stop here and come back later; the first sessions are
- * celebrated.
- */
-const SessionDone = ({
-  done,
-  next,
-  minutes,
-  onContinue,
-  onLater,
-}: {
-  done: Stage;
-  next: string;
-  minutes: number;
-  onContinue: () => void;
-  onLater: () => void;
-}) => {
-  const { t } = useTranslation();
-  const sessions = useLearnProgressStore((state) => state.sessions.length);
-  const celebration = useCelebration()(sessions);
-  const doneLabels: Record<Stage, string> = {
-    read: t('Reading done'),
-    cards: t('Cards done'),
-    quiz: t('Questions done'),
-    practice: t('Exercise done'),
-  };
-
-  return (
-    <Box $align="center" $gap="14px" $css="text-align: center;">
-      <Box
-        $align="center"
-        $justify="center"
-        $css={css`
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          color: var(--c--contextuals--content--semantic--success--primary);
-          background: var(
-            --c--contextuals--background--semantic--success--tertiary
-          );
-        `}
-      >
-        <Icon iconName="check" $size="32px" $withThemeInherited />
-      </Box>
-      <Text as="h3" $size="lg" $weight="800" $margin="0">
-        {doneLabels[done]}
-      </Text>
-      <Text $size="sm" $variation="secondary">
-        {t('Next: {{stage}}, about {{count}} min. Or come back later.', {
-          stage: next.toLocaleLowerCase(),
-          count: minutes,
-        })}
-      </Text>
-      {celebration && <FoxSays>{celebration}</FoxSays>}
-      <Box $gap="8px" $css="width: 100%; max-width: 320px;">
-        <Button
-          fullWidth
-          onClick={onContinue}
-          iconPosition="right"
-          icon={<Icon iconName="arrow_forward" $size="18px" />}
-        >
-          {t('Continue: {{stage}} · about {{count}} min', {
-            stage: next.toLocaleLowerCase(),
-            count: minutes,
-          })}
-        </Button>
-        <Button fullWidth color="neutral" variant="tertiary" onClick={onLater}>
-          {t('Come back later')}
-        </Button>
-      </Box>
-    </Box>
-  );
-};
-
 type PracticeResult = 'passed' | 'coach' | 'skipped';
 
 const okDotCss = (isDone: boolean) => css`
@@ -373,7 +306,6 @@ const StepDone = ({
   onRedo,
   onMemo,
   onTryForReal,
-  onBack,
 }: {
   step: Step;
   steps: Step[];
@@ -386,7 +318,6 @@ const StepDone = ({
   onRedo: () => void;
   onMemo: () => void;
   onTryForReal: () => void;
-  onBack: () => void;
 }) => {
   const { t } = useTranslation();
   const progress = useLearnProgress();
@@ -405,6 +336,8 @@ const StepDone = ({
           total: step.quiz.length,
         }
       : undefined);
+  const sessions = useLearnProgressStore((state) => state.sessions.length);
+  const celebration = useCelebration()(sessions);
   const takeaway = [...step.lesson.slides]
     .reverse()
     .find((slide) => slide.keyTakeaway)?.keyTakeaway;
@@ -494,6 +427,7 @@ const StepDone = ({
           {t('Step {{number}} completed', { number: step.number })}
         </Text>
         <Text $variation="secondary">{step.lesson.title}</Text>
+        {celebration && <FoxSays>{celebration}</FoxSays>}
       </Box>
 
       {risen.length > 0 && (
@@ -588,39 +522,37 @@ const StepDone = ({
       )}
 
       <GoalQuestion />
-      {next ? (
-        <Button
-          fullWidth
-          onClick={() => onOpenStep(next.lesson.id)}
-          iconPosition="right"
-          icon={<Icon iconName="arrow_forward" $size="18px" />}
-        >
-          {t('Next step: {{number}} · {{title}}', {
-            number: next.number,
-            title: next.lesson.title,
-          })}
-        </Button>
-      ) : (
-        <Box $gap="8px">
-          <Text $weight="700" $textAlign="center">
-            {t('Path completed, congratulations!')}
-          </Text>
-          <Button fullWidth onClick={onFullQuiz}>
-            {t('Take the full quiz')}
+      {!next && (
+        <Text $weight="700" $textAlign="center">
+          {t('Path completed, congratulations!')}
+        </Text>
+      )}
+      <ScreenActions>
+        {isAiAvailable && (
+          <Button
+            color="neutral"
+            variant="secondary"
+            onClick={onTryForReal}
+            icon={<Icon iconName="send" $size="18px" />}
+          >
+            {t('Try it on my next request')}
           </Button>
-        </Box>
-      )}
-      {isAiAvailable && (
-        <Button
-          fullWidth
-          color="neutral"
-          variant="secondary"
-          onClick={onTryForReal}
-          icon={<Icon iconName="send" $size="18px" />}
-        >
-          {t('Try it on my next request')}
-        </Button>
-      )}
+        )}
+        {next ? (
+          <Button
+            onClick={() => onOpenStep(next.lesson.id)}
+            iconPosition="right"
+            icon={<Icon iconName="arrow_forward" $size="18px" />}
+          >
+            {t('Next step: {{number}} · {{title}}', {
+              number: next.number,
+              title: next.lesson.title,
+            })}
+          </Button>
+        ) : (
+          <Button onClick={onFullQuiz}>{t('Take the full quiz')}</Button>
+        )}
+      </ScreenActions>
       <Box
         $direction="row"
         $gap="8px"
@@ -647,14 +579,6 @@ const StepDone = ({
             {t('Do it again without help')}
           </Button>
         )}
-        <Button
-          size="small"
-          color="neutral"
-          variant="tertiary"
-          onClick={onBack}
-        >
-          {t('Back to the course')}
-        </Button>
       </Box>
     </Box>
   );
@@ -662,14 +586,14 @@ const StepDone = ({
 
 type View =
   | { name: 'stage'; stage: Stage }
-  | { name: 'pause'; next: Stage; done: Stage }
   | { name: 'done' }
   | { name: 'memo'; from: View };
 
 /**
  * One step of the path, done in its times in order: read, remember, check,
- * practise. Each time is a short session; any can be reached from the bar.
- * "Do it again without help" replays its questions and exercise, no hints.
+ * practise, one after the other with no stop in between; "Stop here" keeps
+ * the place for later. Any time can be reached from the bar on top. "Do it
+ * again without help" replays its questions and exercise, no hints.
  */
 export const StepView = ({
   step,
@@ -731,19 +655,29 @@ export const StepView = ({
   const [quiz, setQuiz] = useState<QuizResult>();
   const [practice, setPractice] = useState<PracticeResult>();
   const topRef = useRef<HTMLDivElement | null>(null);
+  const [direction, setDirection] = useState<Direction>('forward');
+  // Something done in this visit makes it a session, when the user stops.
+  const hasWorkedRef = useRef(false);
   const stage = view.name === 'stage' ? view.stage : null;
 
   // This is the step being done, to resume it from the path.
   useEffect(() => {
     setCurrentStep(id);
   }, [id, setCurrentStep]);
-  // A step is an activity: the panel widens while it is open.
-  useRoomyPanel();
+  // A step is an activity: the panel widens while it is on screen.
+  useRoomyPanel(useIsSpaceShown('learn'));
 
-  // Each time of the step starts at the top.
+  // Each time of the step starts at the top of the panel.
   useEffect(() => {
-    topRef.current?.scrollIntoView?.({ block: 'start' });
+    topRef.current?.closest('[data-frame]')?.scrollIntoView?.({
+      block: 'start',
+    });
   }, [view]);
+
+  const slidePosition = useLearnProgressStore(
+    (state) => state.slidePositions[id] ?? 0,
+  );
+  const startSlideRef = useRef(slidePosition);
 
   const after = (current: Stage) => {
     const position = stages.indexOf(current);
@@ -755,25 +689,33 @@ export const StepView = ({
       ? t('Continue: {{stage}}', { stage: labels[next].toLocaleLowerCase() })
       : t('Finish the step');
   };
-  /** A time finished; passed on purpose, it is not a session. */
+  const goTo = (next: View, way: Direction = 'forward') => {
+    setDirection(way);
+    setView(next);
+  };
+  /** A time finished: the next one follows at once, or the step is done. */
   const finish = (current: Stage, isPassed = false) => {
     markStage(id, current);
     if (!isPassed) {
-      recordSession();
+      hasWorkedRef.current = true;
     }
     const next = after(current);
     if (next) {
-      setView(
-        isPassed
-          ? { name: 'stage', stage: next }
-          : { name: 'pause', next, done: current },
-      );
+      goTo({ name: 'stage', stage: next });
       return;
     }
-    setView({ name: 'done' });
+    recordSession();
+    goTo({ name: 'done' });
     if (isStepDone(step, useLearnProgressStore.getState())) {
       setCurrentStep(null);
     }
+  };
+  /** "Stop here": the place is kept, and the time spent counts. */
+  const stop = () => {
+    if (hasWorkedRef.current || slidePosition !== startSlideRef.current) {
+      recordSession();
+    }
+    onBack();
   };
   /** The coach will look for this step in the next real requests. */
   const tryForReal = () => {
@@ -785,38 +727,38 @@ export const StepView = ({
     startCoach();
   };
   // Passing a time on purpose: only towards a time that follows, and not
-  // on the last screen of the reading, where "Continue" already goes there.
-  const slidePosition = useLearnProgressStore(
-    (state) => state.slidePositions[id] ?? 0,
-  );
+  // on the last screen of the reading, where the main button goes there.
   const isLastScreen =
     stage === 'read' && slidePosition >= step.lesson.slides.length - 1;
   const following = stage && !isLastScreen ? after(stage) : null;
 
-  return (
-    <Box
-      ref={topRef}
-      $gap="16px"
-      $css="padding: 12px 16px 96px; scroll-margin-top: 0;"
-    >
-      <Box $direction="row" $justify="space-between" $css="flex-wrap: wrap;">
-        <Button
-          size="small"
-          color="neutral"
-          variant="tertiary"
-          onClick={view.name === 'memo' ? () => setView(view.from) : onBack}
-          icon={<Icon iconName="arrow_back" $size="18px" />}
-        >
-          {view.name === 'memo'
-            ? t('Back to the step')
-            : t('Back to the course')}
-        </Button>
-        {view.name !== 'memo' && view.name !== 'done' && (
+  const top = (
+    <>
+      <Box
+        $direction="row"
+        $align="center"
+        $justify="flex-end"
+        $gap="4px"
+        $css="min-height: 32px; flex-wrap: nowrap;"
+      >
+        {stage && following && (
           <Button
             size="small"
             color="neutral"
             variant="tertiary"
-            onClick={() => setView({ name: 'memo', from: view })}
+            onClick={() => finish(stage, true)}
+          >
+            {t('I already know: go to {{stage}}', {
+              stage: labels[following].toLocaleLowerCase(),
+            })}
+          </Button>
+        )}
+        {view.name === 'stage' && (
+          <Button
+            size="small"
+            color="neutral"
+            variant="tertiary"
+            onClick={() => goTo({ name: 'memo', from: view })}
             icon={<Icon iconName="sticky_note_2" $size="18px" />}
           >
             {t('Memo')}
@@ -829,128 +771,155 @@ export const StepView = ({
           title: step.lesson.title,
         })}
       </Text>
+      {view.name === 'stage' && (
+        <StageBar
+          step={step}
+          stages={stages}
+          current={view.stage}
+          onSelect={(selected) =>
+            goTo(
+              { name: 'stage', stage: selected },
+              stages.indexOf(selected) < stages.indexOf(view.stage)
+                ? 'back'
+                : 'forward',
+            )
+          }
+        />
+      )}
       {isRedo && view.name === 'stage' && (
         <Text $size="sm" $variation="secondary">
           {t('Without help: no hints this time.')}
         </Text>
       )}
-      {(view.name === 'stage' || view.name === 'pause') && (
-        <StageBar
-          step={step}
-          stages={stages}
-          current={view.name === 'stage' ? view.stage : null}
-          onSelect={(selected) => setView({ name: 'stage', stage: selected })}
-        />
-      )}
+    </>
+  );
 
-      {view.name === 'memo' && <StepMemo step={step} />}
+  const exit =
+    view.name === 'memo' ? (
+      <Button
+        color="neutral"
+        variant="tertiary"
+        onClick={() => goTo(view.from, 'back')}
+        icon={<Icon iconName="arrow_back" $size="18px" />}
+      >
+        {t('Back to the step')}
+      </Button>
+    ) : view.name === 'done' ? (
+      <Button
+        color="neutral"
+        variant="tertiary"
+        onClick={onBack}
+        icon={<Icon iconName="arrow_back" $size="18px" />}
+      >
+        {t('Back to the course')}
+      </Button>
+    ) : (
+      <Button
+        color="neutral"
+        variant="tertiary"
+        onClick={stop}
+        icon={<Icon iconName="pause" $size="18px" />}
+      >
+        {t('Stop here, resume later')}
+      </Button>
+    );
 
-      {view.name === 'pause' && (
-        <SessionDone
-          done={view.done}
-          next={labels[view.next]}
-          minutes={stageMinutes(step, view.next)}
-          onContinue={() => setView({ name: 'stage', stage: view.next })}
-          onLater={onBack}
-        />
-      )}
+  return (
+    <CourseFrame top={top} exit={exit}>
+      <Box
+        ref={topRef}
+        key={view.name === 'stage' ? view.stage : view.name}
+        $gap="16px"
+        $css={css`
+          ${enterCss(direction)}
+        `}
+      >
+        {view.name === 'memo' && <StepMemo step={step} />}
 
-      {stage === 'read' && (
-        <LessonView
-          lesson={step.lesson}
-          doneLabel={continueLabel('read')}
-          onDone={() => finish('read')}
-        />
-      )}
-      {stage === 'cards' && (
-        <FlashcardsView
-          cards={step.cards}
-          onDone={(result) => {
-            setCards(result);
-            finish('cards');
-          }}
-        />
-      )}
-      {stage === 'quiz' && (
-        <QuizView
-          key={`${id}-${isRedo ? 'redo' : 'first'}`}
-          title={step.lesson.title}
-          scope={id}
-          questions={step.quiz}
-          onBack={onBack}
-          showHints={!isRedo}
-          lessonLabel={lessonLabel}
-          inStep={{
-            doneLabel: continueLabel('quiz'),
-            onDone: (result) => {
-              setQuiz(result);
-              finish('quiz');
-            },
-          }}
-        />
-      )}
-      {stage === 'practice' && step.challenge && (
-        <ChallengeView
-          key={`${step.challenge.id}-${isRedo ? 'redo' : 'first'}`}
-          challenge={step.challenge}
-          onBack={onBack}
-          allowHints={!isRedo}
-          inStep={{
-            doneLabel: t('Finish the step'),
-            onDone: (passed) => {
-              setPractice(passed ? 'passed' : 'skipped');
+        {stage === 'read' && (
+          <LessonView
+            lesson={step.lesson}
+            doneLabel={continueLabel('read')}
+            onDone={() => finish('read')}
+          />
+        )}
+        {stage === 'cards' && (
+          <FlashcardsView
+            cards={step.cards}
+            onDone={(result) => {
+              setCards(result);
+              finish('cards');
+            }}
+          />
+        )}
+        {stage === 'quiz' && (
+          <QuizView
+            key={`${id}-${isRedo ? 'redo' : 'first'}`}
+            title={step.lesson.title}
+            scope={id}
+            questions={step.quiz}
+            onBack={onBack}
+            showHints={!isRedo}
+            lessonLabel={lessonLabel}
+            inStep={{
+              doneLabel: continueLabel('quiz'),
+              onDone: (result) => {
+                setQuiz(result);
+                finish('quiz');
+              },
+            }}
+          />
+        )}
+        {stage === 'practice' && step.challenge && (
+          <ChallengeView
+            key={`${step.challenge.id}-${isRedo ? 'redo' : 'first'}`}
+            challenge={step.challenge}
+            onBack={onBack}
+            allowHints={!isRedo}
+            inStep={{
+              doneLabel: t('Finish the step'),
+              onDone: (passed) => {
+                setPractice(passed ? 'passed' : 'skipped');
+                finish('practice');
+              },
+            }}
+          />
+        )}
+        {stage === 'practice' && !step.challenge && (
+          <CoachTry
+            onOpenCoach={() => {
+              setPractice('coach');
               finish('practice');
-            },
-          }}
-        />
-      )}
-      {stage === 'practice' && !step.challenge && (
-        <CoachTry
-          onOpenCoach={() => {
-            setPractice('coach');
-            finish('practice');
-            tryForReal();
-          }}
-          onFinish={() => {
-            setPractice('skipped');
-            finish('practice');
-          }}
-        />
-      )}
-      {stage && following && (
-        <Button
-          size="small"
-          color="neutral"
-          variant="tertiary"
-          onClick={() => finish(stage, true)}
-        >
-          {t('I already know: go to {{stage}}', {
-            stage: labels[following].toLocaleLowerCase(),
-          })}
-        </Button>
-      )}
+              tryForReal();
+            }}
+            onFinish={() => {
+              setPractice('skipped');
+              finish('practice');
+            }}
+          />
+        )}
 
-      {view.name === 'done' && (
-        <StepDone
-          step={step}
-          steps={steps}
-          cards={cards}
-          quiz={quiz}
-          practice={practice}
-          levelsAtStart={levelsAtStart}
-          onOpenStep={onOpenStep}
-          onFullQuiz={onFullQuiz}
-          onRedo={() => {
-            setIsRedo(true);
-            setQuiz(undefined);
-            setPractice(undefined);
-            setView({ name: 'stage', stage: 'quiz' });
-          }}
-          onMemo={() => setView({ name: 'memo', from: { name: 'done' } })}
-          onTryForReal={tryForReal}
-          onBack={onBack}
-        />
-      )}
-    </Box>
+        {view.name === 'done' && (
+          <StepDone
+            step={step}
+            steps={steps}
+            cards={cards}
+            quiz={quiz}
+            practice={practice}
+            levelsAtStart={levelsAtStart}
+            onOpenStep={onOpenStep}
+            onFullQuiz={onFullQuiz}
+            onRedo={() => {
+              setIsRedo(true);
+              setQuiz(undefined);
+              setPractice(undefined);
+              goTo({ name: 'stage', stage: 'quiz' }, 'back');
+            }}
+            onMemo={() => goTo({ name: 'memo', from: { name: 'done' } })}
+            onTryForReal={tryForReal}
+          />
+        )}
+      </Box>
+    </CourseFrame>
   );
 };

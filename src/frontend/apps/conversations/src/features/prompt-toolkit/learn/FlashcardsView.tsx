@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { ScreenActions, enterCss } from './CourseFrame';
 import type { Flashcard } from './types';
 import { useLearnProgressStore } from './useLearnProgressStore';
 
@@ -93,14 +94,25 @@ export const FlashcardsView = ({
           'Read the question, look for the answer in your head, then turn the card over.',
         )}
       </Text>
-      <Text $size="sm" $weight="700" $theme="brand">
-        {t('Card {{current}} of {{total}}', {
-          current: index + 1,
-          total: cards.length,
-        })}
-      </Text>
+      <Box $direction="row" $justify="space-between" $align="center">
+        <Text $size="sm" $weight="700" $theme="brand">
+          {t('Card {{current}} of {{total}}', {
+            current: index + 1,
+            total: cards.length,
+          })}
+        </Text>
+        {isKnown && (
+          <Text
+            $size="xs"
+            $color="var(--c--contextuals--content--semantic--success--primary)"
+          >
+            ✓ {t('Already known')}
+          </Text>
+        )}
+      </Box>
 
       <Box
+        key={card.id}
         as="button"
         type="button"
         aria-pressed={isRevealed}
@@ -110,8 +122,9 @@ export const FlashcardsView = ({
         onClick={() => setIsRevealed((value) => !value)}
         onKeyDown={onKeyDown}
         $css={css`
+          ${enterCss('forward')}
           position: relative;
-          height: 220px;
+          height: clamp(240px, 42vh, 380px);
           padding: 0;
           border: none;
           background: transparent;
@@ -149,7 +162,7 @@ export const FlashcardsView = ({
             <Text $size="xs" $weight="700" $variation="secondary">
               {t('Question')}
             </Text>
-            <Text $size="md" $weight="700">
+            <Text $size="lg" $weight="700" $css="line-height: 1.35;">
               {card.front}
             </Text>
             <Text $size="xs" $variation="secondary">
@@ -165,15 +178,16 @@ export const FlashcardsView = ({
             <Text $size="xs" $weight="700" $theme="brand">
               {t('Answer')}
             </Text>
-            <Text $size="sm">{card.back}</Text>
+            <Text $size="md" $css="line-height: 1.5;">
+              {card.back}
+            </Text>
           </Box>
         </Box>
       </Box>
 
-      {isRevealed ? (
-        <Box $direction="row" $gap="8px">
+      <ScreenActions>
+        {isRevealed && (
           <Button
-            fullWidth
             color="neutral"
             variant="secondary"
             onClick={() => answer(false)}
@@ -181,40 +195,23 @@ export const FlashcardsView = ({
           >
             {t('To review later')}
           </Button>
+        )}
+        {isRevealed ? (
           <Button
-            fullWidth
             onClick={() => answer(true)}
             icon={<Icon iconName="check" $size="18px" />}
           >
             {t('I knew it')}
           </Button>
-        </Box>
-      ) : (
-        <Box $direction="row" $justify="space-between" $align="center">
+        ) : (
           <Button
-            color="neutral"
-            variant="tertiary"
-            onClick={() => goTo(index - 1)}
-            aria-label={t('Previous card')}
-            icon={<Icon iconName="chevron_left" $size="20px" />}
-          />
-          {isKnown && (
-            <Text
-              $size="xs"
-              $color="var(--c--contextuals--content--semantic--success--primary)"
-            >
-              ✓ {t('Already known')}
-            </Text>
-          )}
-          <Button
-            color="neutral"
-            variant="tertiary"
-            onClick={() => goTo(index + 1)}
-            aria-label={t('Next card')}
-            icon={<Icon iconName="chevron_right" $size="20px" />}
-          />
-        </Box>
-      )}
+            onClick={() => setIsRevealed(true)}
+            icon={<Icon iconName="flip" $size="18px" />}
+          >
+            {t('Show the answer')}
+          </Button>
+        )}
+      </ScreenActions>
     </Box>
   );
 };
