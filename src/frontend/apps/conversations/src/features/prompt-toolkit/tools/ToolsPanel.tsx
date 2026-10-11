@@ -141,6 +141,7 @@ const ToolForm = ({
     }
     sendQuestion(prompt);
     usePromptToolkitStore.getState().setOfferAnswerHelp(true);
+    usePromptToolkitStore.getState().setFollowAnswer(true);
     showToast(
       'success',
       t('Sent: the answer arrives in the conversation.'),

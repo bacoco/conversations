@@ -22,6 +22,7 @@ import {
   UserBubble,
 } from '../fill/GuidedThread';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AnswerFinisher } from './AnswerFinisher';
@@ -66,7 +67,15 @@ const AnswerCheck = ({
   const { brackets, marks } = answerGaps(answer);
   const [claims, setClaims] = useState<string[] | null>(null);
   const [isChecking, setIsChecking] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  // Straight to the workshop when the answer comes from a tool's request.
+  const [isOpen, setIsOpen] = useState(() => {
+    const store = usePromptToolkitStore.getState();
+    if (store.finishNextAnswer) {
+      store.setFinishNextAnswer(false);
+      return true;
+    }
+    return false;
+  });
   useEffect(() => {
     if (!isAiAvailable || !answer.trim()) {
       return;
@@ -93,9 +102,16 @@ const AnswerCheck = ({
       </Text>
     ) : null;
   }
-  // The workshop takes over: it says itself what is left to settle.
+  // The workshop takes over: it says itself what is left to settle, once
+  // the facts are checked.
   if (isOpen) {
-    return <AnswerFinisher answer={answer} claims={toCheck} />;
+    return isChecking ? (
+      <Text $size="sm" $variation="secondary" role="status">
+        {t('Nestor checks the answer against your request…')}
+      </Text>
+    ) : (
+      <AnswerFinisher answer={answer} claims={toCheck} />
+    );
   }
   return (
     <Box

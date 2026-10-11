@@ -138,6 +138,13 @@ export const AnswerFinisher = ({
   const factsLeft = facts.filter((_, index) => !decisions[index]).length;
   const gapsLeft = findGaps(final).length;
   const left = factsLeft + gapsLeft;
+  const removedCount =
+    Object.values(decisions).filter((decision) => decision === 'remove')
+      .length +
+    Object.values(given).filter((choice) => choice && 'drop' in choice).length;
+  const filledCount = Object.values(given).filter(
+    (choice) => choice && 'value' in choice && choice.value.trim(),
+  ).length;
   const isReady = left === 0;
 
   const copy = async () => {
@@ -174,7 +181,7 @@ export const AnswerFinisher = ({
         />
         <Text $size="sm" $weight="700" $css="flex: 1;" role="status">
           {isReady
-            ? t('Your answer is ready')
+            ? t('Nothing left to settle: read it again, then copy it')
             : t('{{count}} points to settle before sending', { count: left })}
         </Text>
         <Button
@@ -187,6 +194,27 @@ export const AnswerFinisher = ({
         </Button>
       </Box>
 
+      {(removedCount > 0 || filledCount > 0) && (
+        <Text $size="xs" $variation="secondary">
+          {[
+            removedCount > 0
+              ? t('{{count}} sentences taken away', { count: removedCount })
+              : '',
+            filledCount > 0
+              ? t('{{count}} parts completed by you', { count: filledCount })
+              : '',
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </Text>
+      )}
+      {isReady && (
+        <Text $size="xs" $variation="secondary">
+          {t(
+            'Copy it from here: the answer in the conversation still has its parts to complete.',
+          )}
+        </Text>
+      )}
       {facts.length > 0 && (
         <Text $size="sm" $weight="700">
           {t('Facts your request did not give')}

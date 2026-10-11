@@ -34,4 +34,16 @@ describe('<AnswerHelpBanner />', () => {
     rerender(<AnswerHelpBanner isCoachShown />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('goes on with the answer when a tool of the panel asked', () => {
+    usePromptToolkitStore.setState({
+      followAnswer: true,
+      finishNextAnswer: false,
+    });
+    render(<AnswerHelpBanner isCoachShown={false} />);
+    const state = usePromptToolkitStore.getState();
+    expect(state.mode).toBe('coach');
+    expect(state.finishNextAnswer).toBe(true);
+    expect(state.followAnswer).toBe(false);
+  });
 });

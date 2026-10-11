@@ -38,7 +38,9 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     fireEvent.change(screen.getByLabelText('Votre nom'), {
       target: { value: 'Martine Leroy' },
     });
-    expect(screen.getByText('Your answer is ready')).toBeInTheDocument();
+    expect(
+      screen.getByText('Nothing left to settle: read it again, then copy it'),
+    ).toBeInTheDocument();
     fireEvent.click(copy);
     expect(writeText).toHaveBeenCalledWith(
       'Objet : Votre carte grise\nBonjour,\nSuivez-le sur ants.gouv.fr.\nRevenez sur ants.gouv.fr demain.\nCordialement,\nMartine Leroy',

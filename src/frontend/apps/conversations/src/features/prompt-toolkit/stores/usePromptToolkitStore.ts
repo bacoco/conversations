@@ -109,6 +109,15 @@ interface PromptToolkitState {
   pendingRead: boolean;
   openCoachAndRead: () => void;
   clearPendingRead: () => void;
+  /**
+   * A tool asked the Assistant from the panel: once the answer is there,
+   * the panel goes on with it (what to settle before sending).
+   */
+  followAnswer: boolean;
+  setFollowAnswer: (follow: boolean) => void;
+  /** The coach opens the "make it ready" workshop on the next answer. */
+  finishNextAnswer: boolean;
+  setFinishNextAnswer: (finish: boolean) => void;
   /** A lesson asked from elsewhere, on one of its screens if given. */
   lessonRequest: { lessonId: string; slide?: number } | null;
   openLesson: (lessonId: string, slide?: number) => void;
@@ -186,6 +195,10 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           pendingRead: true,
         }),
       clearPendingRead: () => set({ pendingRead: false }),
+      followAnswer: false,
+      setFollowAnswer: (followAnswer) => set({ followAnswer }),
+      finishNextAnswer: false,
+      setFinishNextAnswer: (finishNextAnswer) => set({ finishNextAnswer }),
       setCoachWaitsForAnswer: (coachWaitsForAnswer) =>
         set({ coachWaitsForAnswer }),
       lessonRequest: null,

@@ -1,4 +1,5 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -28,6 +29,19 @@ export const AnswerHelpBanner = ({
       !state.isAssistantResponding &&
       state.latestCompletedAssistantMessageId !== null,
   );
+
+  const follow = usePromptToolkitStore((state) => state.followAnswer);
+  // Asked from a tool of the panel: the panel goes on with the answer,
+  // straight to what to settle before sending it.
+  useEffect(() => {
+    if (follow && hasAnswer) {
+      const store = usePromptToolkitStore.getState();
+      store.setFollowAnswer(false);
+      store.setOfferAnswerHelp(false);
+      store.setFinishNextAnswer(true);
+      store.startCoach();
+    }
+  }, [follow, hasAnswer]);
 
   if (!offer || !hasAnswer || isCoachShown) {
     return null;
