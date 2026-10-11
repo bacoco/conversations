@@ -1,5 +1,5 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useMemo, useRef, useState } from 'react';
+import { ReactNode, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
@@ -82,6 +82,45 @@ const linkCss = css`
 
 type FactDecision = 'keep' | 'remove';
 
+const markCss = (tone: 'warning' | 'success') => css`
+  padding: 0 2px;
+  border-radius: 3px;
+  color: var(--c--contextuals--content--semantic--${tone}--primary);
+  background: var(--c--contextuals--background--semantic--${tone}--tertiary);
+`;
+
+const escapeRegExp = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * The answer with what is left to complete in yellow and what the user
+ * gave in green: they see each change land in the text.
+ */
+const highlight = (text: string, values: string[]) => {
+  const gap =
+    '\\[[^\\]\\n]{2,120}\\]|(?:À COMPLÉTER|TO COMPLETE)(?:\\s*\\([^)\\n]{1,160}\\)|\\s*:\\s*[^.\\n;]{1,160})?';
+  const pattern = new RegExp([gap, ...values.map(escapeRegExp)].join('|'), 'g');
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  for (const match of text.matchAll(pattern)) {
+    const start = match.index ?? 0;
+    parts.push(text.slice(cursor, start));
+    const isGiven = values.includes(match[0]);
+    parts.push(
+      <Box
+        as="mark"
+        key={start}
+        $css={markCss(isGiven ? 'success' : 'warning')}
+      >
+        {match[0]}
+      </Box>,
+    );
+    cursor = start + match[0].length;
+  }
+  parts.push(text.slice(cursor));
+  return parts;
+};
+
 /**
  * "Make this answer ready": one list of points to settle before sending.
  * Each fact the request did not give: keep it (checked) or take its
@@ -138,6 +177,9 @@ export const AnswerFinisher = ({
   const factsLeft = facts.filter((_, index) => !decisions[index]).length;
   const gapsLeft = findGaps(final).length;
   const left = factsLeft + gapsLeft;
+  const givenValues = Object.values(given)
+    .map((choice) => (choice && 'value' in choice ? choice.value.trim() : ''))
+    .filter(Boolean);
   const removedCount =
     Object.values(decisions).filter((decision) => decision === 'remove')
       .length +
@@ -182,7 +224,9 @@ export const AnswerFinisher = ({
         <Text $size="sm" $weight="700" $css="flex: 1;" role="status">
           {isReady
             ? t('Nothing left to settle: read it again, then copy it')
-            : t('{{count}} points to settle before sending', { count: left })}
+            : t('Nestor found {{count}} things to check or complete', {
+                count: left,
+              })}
         </Text>
         <Button
           size="small"
@@ -215,6 +259,28 @@ export const AnswerFinisher = ({
           )}
         </Text>
       )}
+      {!isReady && (
+        <Text $size="xs" $variation="secondary">
+          {t(
+            'For each one: complete it, or “I do not have it” takes the sentence away cleanly. The answer below changes as you go.',
+          )}
+        </Text>
+      )}
+      <Text $size="sm" $weight="700">
+        {t('The answer, as it will be pasted')}
+      </Text>
+      <Box
+        ref={previewRef}
+        $css={css`
+          ${textCss}
+          max-height: 260px;
+          overflow-y: auto;
+        `}
+      >
+        <Text $size="sm" $css="white-space: pre-wrap;">
+          {highlight(final, givenValues)}
+        </Text>
+      </Box>
       {facts.length > 0 && (
         <Text $size="sm" $weight="700">
           {t('Facts your request did not give')}
@@ -343,15 +409,6 @@ export const AnswerFinisher = ({
           </Box>
         );
       })}
-
-      <Text $size="sm" $weight="700">
-        {t('The answer, as it will be pasted')}
-      </Text>
-      <Box ref={previewRef} $css={textCss}>
-        <Text $size="sm" $css="white-space: pre-wrap;">
-          {final}
-        </Text>
-      </Box>
     </Box>
   );
 };

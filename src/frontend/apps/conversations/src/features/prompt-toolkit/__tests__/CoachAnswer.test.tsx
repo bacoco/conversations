@@ -347,7 +347,9 @@ describe('an answer asked from a tool', () => {
       usePromptToolkitStore.setState({ finishNextAnswer: true });
     });
     expect(
-      await screen.findByText('{{count}} points to settle before sending'),
+      await screen.findByText(
+        'Nestor found {{count}} things to check or complete',
+      ),
     ).toBeInTheDocument();
     vi.unstubAllGlobals();
   });

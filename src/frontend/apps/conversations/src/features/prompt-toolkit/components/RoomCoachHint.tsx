@@ -193,7 +193,14 @@ export const RoomCoachHint = () => {
     closedAnswer,
   ]);
 
-  if (!PROMPT_TOOLKIT_ENABLED || !roomCoach || !hint || isCoachShown) {
+  // With the coach open, only the answer's warning stays: its version to
+  // send is being prepared there, not in the conversation.
+  if (
+    !PROMPT_TOOLKIT_ENABLED ||
+    !roomCoach ||
+    !hint ||
+    (isCoachShown && hint.kind !== 'answer')
+  ) {
     return null;
   }
   if (draft && isClosed) {
@@ -230,7 +237,13 @@ export const RoomCoachHint = () => {
         style={{ flex: 'none', borderRadius: '50%' }}
       />
       <Box $gap="2px" $css="flex: 1; min-width: 0;">
-        <Text $size="sm">{hint.text}</Text>
+        <Text $size="sm">
+          {hint.kind === 'answer' && isCoachShown
+            ? t(
+                'Do not copy this answer as it is: its version to send is prepared in the panel, on the right.',
+              )
+            : hint.text}
+        </Text>
         {hint.kind === 'tip' && showWhy && hint.why && (
           <Text $size="xs" $variation="secondary">
             {hint.why}
@@ -259,7 +272,7 @@ export const RoomCoachHint = () => {
                 {t('Fix it with me')}
               </Box>
             )}
-          {hint.kind === 'answer' && (
+          {hint.kind === 'answer' && !isCoachShown && (
             <Box
               as="button"
               type="button"

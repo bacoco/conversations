@@ -20,7 +20,7 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     render(<AnswerFinisher answer={ANSWER} claims={[CLAIM]} />);
 
     expect(
-      screen.getByText('{{count}} points to settle before sending'),
+      screen.getByText('Nestor found {{count}} things to check or complete'),
     ).toBeInTheDocument();
     const copy = screen.getByRole('button', { name: 'Copy the answer' });
     expect(copy).toBeDisabled();
