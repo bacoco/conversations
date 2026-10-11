@@ -22,7 +22,7 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     expect(
       screen.getByText('Nestor found {{count}} things to check or complete'),
     ).toBeInTheDocument();
-    const copy = screen.getByRole('button', { name: 'Copy the answer' });
+    const copy = screen.getByRole('button', { name: 'Copy the message' });
     expect(copy).toBeDisabled();
 
     fireEvent.click(
@@ -38,12 +38,27 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     fireEvent.change(screen.getByLabelText('Votre nom'), {
       target: { value: 'Martine Leroy' },
     });
+    // The last word is the user's: a read again, before the copy.
     expect(
-      screen.getByText('Nothing left to settle: read it again, then copy it'),
+      screen.getByText(
+        'The points found are settled: read the answer once more',
+      ),
     ).toBeInTheDocument();
+    expect(copy).toBeDisabled();
+    fireEvent.click(
+      screen.getByLabelText(
+        'I read it again: it matches what my service does and can do.',
+      ),
+    );
+    expect(
+      screen.getByText('Ready to copy into your email'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy the subject' }));
+    expect(writeText).toHaveBeenLastCalledWith('Votre carte grise');
     fireEvent.click(copy);
-    expect(writeText).toHaveBeenCalledWith(
-      'Objet : Votre carte grise\nBonjour,\nSuivez-le sur ants.gouv.fr.\nRevenez sur ants.gouv.fr demain.\nCordialement,\nMartine Leroy',
+    expect(writeText).toHaveBeenLastCalledWith(
+      'Bonjour,\nSuivez-le sur ants.gouv.fr.\nRevenez sur ants.gouv.fr demain.\nCordialement,\nMartine Leroy',
     );
   });
 
@@ -63,6 +78,11 @@ describe('<AnswerFinisher />, making an answer ready', () => {
     });
     Object.assign(document, { execCommand: vi.fn().mockReturnValue(false) });
     render(<AnswerFinisher answer="Bonjour, tout est prêt." claims={[]} />);
+    fireEvent.click(
+      screen.getByLabelText(
+        'I read it again: it matches what my service does and can do.',
+      ),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Copy the answer' }));
     await vi.waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith(

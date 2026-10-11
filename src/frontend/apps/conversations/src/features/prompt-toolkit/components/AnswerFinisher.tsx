@@ -154,6 +154,8 @@ export const AnswerFinisher = ({
   /** One answer per thing to give, however many times it is asked. */
   const [given, setGiven] = useState<Record<string, GapChoice | undefined>>({});
   const previewRef = useRef<HTMLDivElement | null>(null);
+  /** The last word is the user's: they confirm they read it again. */
+  const [isReread, setIsReread] = useState(false);
 
   const kept = withoutSentences(
     base,
@@ -189,11 +191,18 @@ export const AnswerFinisher = ({
   ).length;
   const isReady = left === 0;
 
-  const copy = async () => {
-    if (await copyText(final)) {
+  /** An email's subject line ("Objet : …") is copied on its own. */
+  const subjectMatch = /^(?:Objet|Subject)\s*:\s*(.+)\n+/i.exec(final);
+  const subject = subjectMatch?.[1].trim() ?? null;
+  const body = subjectMatch ? final.slice(subjectMatch[0].length) : final;
+
+  const copy = async (text: string, what: 'subject' | 'message') => {
+    if (await copyText(text)) {
       showToast(
         'success',
-        t('Copied: paste it in your email.'),
+        what === 'subject'
+          ? t('Subject copied: paste it in the subject of your email.')
+          : t('Message copied: paste it in the body of your email.'),
         undefined,
         4000,
       );
@@ -210,32 +219,59 @@ export const AnswerFinisher = ({
 
   return (
     <Box $gap="10px">
-      <Box
-        $direction="row"
-        $align="center"
-        $gap="10px"
-        $css={statusCss(isReady)}
-      >
-        <Icon
-          iconName={isReady ? 'task_alt' : 'pending_actions'}
-          $size="20px"
-          $theme={isReady ? 'success' : 'warning'}
-        />
-        <Text $size="sm" $weight="700" $css="flex: 1;" role="status">
-          {isReady
-            ? t('Nothing left to settle: read it again, then copy it')
-            : t('Nestor found {{count}} things to check or complete', {
-                count: left,
-              })}
-        </Text>
-        <Button
-          size="small"
-          disabled={!isReady}
-          onClick={() => void copy()}
-          icon={<Icon iconName="content_copy" $size="16px" />}
-        >
-          {t('Copy the answer')}
-        </Button>
+      <Box $gap="8px" $css={statusCss(isReady && isReread)}>
+        <Box $direction="row" $align="center" $gap="10px">
+          <Icon
+            iconName={isReady && isReread ? 'task_alt' : 'pending_actions'}
+            $size="20px"
+            $theme={isReady && isReread ? 'success' : 'warning'}
+          />
+          <Text $size="sm" $weight="700" $css="flex: 1;" role="status">
+            {!isReady
+              ? t('Nestor found {{count}} things to check or complete', {
+                  count: left,
+                })
+              : isReread
+                ? t('Ready to copy into your email')
+                : t('The points found are settled: read the answer once more')}
+          </Text>
+        </Box>
+        {isReady && (
+          <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            <input
+              type="checkbox"
+              checked={isReread}
+              onChange={(event) => setIsReread(event.target.checked)}
+            />
+            <Text $size="sm">
+              {t(
+                'I read it again: it matches what my service does and can do.',
+              )}
+            </Text>
+          </label>
+        )}
+        <Box $direction="row" $gap="6px" $css="flex-wrap: wrap;">
+          {subject && (
+            <Button
+              size="small"
+              color="neutral"
+              variant="secondary"
+              disabled={!isReady || !isReread}
+              onClick={() => void copy(subject, 'subject')}
+              icon={<Icon iconName="title" $size="16px" />}
+            >
+              {t('Copy the subject')}
+            </Button>
+          )}
+          <Button
+            size="small"
+            disabled={!isReady || !isReread}
+            onClick={() => void copy(body.trim(), 'message')}
+            icon={<Icon iconName="content_copy" $size="16px" />}
+          >
+            {subject ? t('Copy the message') : t('Copy the answer')}
+          </Button>
+        </Box>
       </Box>
 
       {(removedCount > 0 || filledCount > 0) && (

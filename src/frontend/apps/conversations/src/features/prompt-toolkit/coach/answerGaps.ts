@@ -83,7 +83,10 @@ export const fillGaps = (
   });
   result += text.slice(cursor);
   if (drops.length === 0) {
-    return result.replace(/[ \t]{2,}/g, ' ').replace(/[ \t]+$/gm, '');
+    return result
+      .replace(/[ \t]{2,}/g, ' ')
+      .replace(/[ \t]+$/gm, '')
+      .replace(/\n{3,}/g, '\n\n');
   }
   // Drop on the original text, then fill what is left, in one more pass.
   let kept = '';

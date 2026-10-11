@@ -134,6 +134,9 @@ const AnswerCheck = ({
         <Text $size="sm" $weight="700">
           {t('This answer is not ready to be sent yet')}
         </Text>
+        <Text $size="xs" $variation="secondary">
+          {t('Nestor helps you check the answer the Assistant wrote.')}
+        </Text>
         <Text $size="sm">
           {[
             toComplete > 0
