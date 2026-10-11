@@ -3,6 +3,7 @@ import { COURSE_FR } from '../learn/content/fr';
 import {
   CHECKPOINTS,
   ProgressSnapshot,
+  Stage,
   buildSteps,
   cardsToReview,
   checkpointQuestions,
@@ -93,14 +94,25 @@ describe('the course path', () => {
     ).toBe('cards');
   });
 
-  it('reviews the cards of the steps read and not known yet', () => {
+  it('reviews the cards seen in a step and not known yet', () => {
     const first = steps[0];
     const progress = {
       ...empty,
       completedLessons: [first.lesson.id],
+      doneStages: { [first.lesson.id]: ['read', 'cards'] as Stage[] },
       knownCards: [first.cards[0].id],
     };
     expect(cardsToReview(steps, progress)).toEqual(first.cards.slice(1));
+  });
+
+  it('does not review the cards of a step only read', () => {
+    const first = steps[0];
+    const progress = {
+      ...empty,
+      completedLessons: [first.lesson.id],
+      doneStages: { [first.lesson.id]: ['read'] as Stage[] },
+    };
+    expect(cardsToReview(steps, progress)).toEqual([]);
   });
 
   it('brings a card back when its time has come', () => {
@@ -110,6 +122,7 @@ describe('the course path', () => {
     const progress: ProgressSnapshot = {
       ...empty,
       completedLessons: ['lesson-1'],
+      doneStages: { 'lesson-1': ['read', 'cards'] },
       knownCards: [first.id, second.id],
       cardSchedule: {
         [first.id]: { box: 1, due: now - 1 },

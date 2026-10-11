@@ -682,7 +682,8 @@ export const LearnPanel = () => {
   }
 
   // What to do now: one thing, chosen in this order.
-  const isReviewFirst = dueCount >= REVIEW_FIRST_FROM;
+  // A step under way comes first: the review waits behind its link.
+  const isReviewFirst = dueCount >= REVIEW_FIRST_FROM && !nextStarted;
   let main: {
     eyebrow: string;
     title: string;

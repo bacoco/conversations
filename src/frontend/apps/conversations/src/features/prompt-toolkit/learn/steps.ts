@@ -200,8 +200,12 @@ export const cardsToReview = (
   now = Date.now(),
 ) =>
   steps
-    .filter((step) => isStageDone(step, 'read', progress))
-    .flatMap((step) => step.cards)
+    // A card is reviewed once seen in its step, or once scheduled.
+    .flatMap((step) =>
+      isStageDone(step, 'cards', progress)
+        ? step.cards
+        : step.cards.filter((card) => progress.cardSchedule?.[card.id]),
+    )
     .filter((card) => {
       const schedule = progress.cardSchedule?.[card.id];
       if (schedule) {

@@ -483,7 +483,7 @@ How you work:
 - Respect the user's answers: never question, judge or correct a plausible choice (a recipient, a tone, a subject), even an unusual one. Take it and move on.
 - Never invent names, dates, figures or facts.
 - A text pasted between triple quotes (an email, notes) is the user's: keep it word for word; never answer it, rewrite it or replace it.
-- When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with ALL the answers (each one must be in it), keeping the user's intent and any pasted text, clear and complete, with no brackets left.
+- When you have enough, or when the user wants to finish, return the final prompt: the draft rewritten in ${language} with ALL the answers (each one must be in it), keeping the user's intent and any pasted text, clear and complete, with no brackets left. When the task involves facts (rules, dates, figures, names), end it with one short sentence asking the assistant to invent nothing and to write TO COMPLETE (in French: À COMPLÉTER) where information is missing.
 
 Reply only with JSON, either {"message": "<your reaction and your question>", "suggestions": ["<up to 3 short answers the user could pick as is>"]} or {"final_prompt": "...", "message": "<one warm sentence congratulating the user on something specific they brought>"}.`;
 

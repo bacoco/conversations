@@ -246,9 +246,12 @@ describe('<LearnPanel />', () => {
     ).toBeInTheDocument();
   });
 
-  it('brings back the cards of the steps read, to review', () => {
+  it('brings back the cards seen in a step, to review', () => {
     const cards = course.flashcards.filter((c) => c.lessonId === 'lesson-1');
-    useLearnProgressStore.setState({ completedLessons: ['lesson-1'] });
+    useLearnProgressStore.setState({
+      completedLessons: ['lesson-1'],
+      doneStages: { 'lesson-1': ['read', 'cards'] },
+    });
     render(<LearnPanel />);
 
     fireEvent.click(
@@ -359,9 +362,12 @@ describe('<LearnPanel />', () => {
     expect(screen.getByText('Mastered')).toBeInTheDocument();
   });
 
-  it('puts the review first when enough is due', () => {
+  it('puts the review first when enough is due and no step is under way', () => {
+    const done = ['read', 'cards', 'quiz'] as const;
     useLearnProgressStore.setState({
-      completedLessons: ['lesson-1', 'lesson-2', 'lesson-3'],
+      doneStages: Object.fromEntries(
+        ['lesson-1', 'lesson-2', 'lesson-3'].map((id) => [id, [...done]]),
+      ),
     });
     render(<LearnPanel />);
     expect(
