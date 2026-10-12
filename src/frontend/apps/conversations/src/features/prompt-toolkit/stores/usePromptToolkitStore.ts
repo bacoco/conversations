@@ -6,19 +6,6 @@ import { NestorTurn, PROMPT_TOOLKIT_ENABLED } from '../coach/coachApi';
 import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
-/**
- * The coach's screens: analyse, prompt help, as you type, the advice thread
- * (with the next questions) and the session review that ends it.
- */
-export type CoachMode = 'manual' | 'assist' | 'instant' | 'session' | 'advice';
-export const COACH_MODES: readonly CoachMode[] = [
-  'manual',
-  'assist',
-  'instant',
-  'session',
-  'advice',
-];
-
 export type RightPanelMode = 'coach' | 'learn' | 'tools';
 /** Horizontal resting place of the collapsed Nestor coach launcher. */
 export type NestorDockPosition = 'left' | 'center' | 'right';
@@ -39,7 +26,6 @@ export const clampPanelWidth = (width: number, viewportWidth: number) =>
 interface PromptToolkitState {
   isOpen: boolean;
   mode: RightPanelMode;
-  coachMode: CoachMode;
   width: number;
   isExpanded: boolean;
   /** The height of a course screen's action bar at the bottom; 0: none. */
@@ -66,8 +52,7 @@ interface PromptToolkitState {
   close: () => void;
   setMode: (mode: RightPanelMode) => void;
   /** Open the coach from the home cards: one screen, following the moment. */
-  startCoach: (coachMode?: CoachMode) => void;
-  setCoachMode: (coachMode: CoachMode) => void;
+  startCoach: () => void;
   /** Open a section of the panel, leaving the home cards. */
   openSection: (mode: RightPanelMode) => void;
   goHome: () => void;
@@ -183,7 +168,6 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       setShowNestorSettings: (showNestorSettings) =>
         set({ showNestorSettings }),
       showHome: true,
-      coachMode: 'instant',
       hasSeenWelcome: false,
       dismissWelcome: () => set({ hasSeenWelcome: true }),
       resetCount: 0,
@@ -193,18 +177,13 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       close: () => set({ isOpen: false }),
       setMode: (mode) => set({ mode }),
       setCoachOptionsOpen: (isCoachOptionsOpen) => set({ isCoachOptionsOpen }),
-      startCoach: (coachMode) =>
+      startCoach: () =>
         set({
-          // Only a known screen: a click handler may pass its event.
-          ...(COACH_MODES.includes(coachMode as CoachMode)
-            ? { coachMode: coachMode as CoachMode }
-            : {}),
           mode: 'coach',
           showHome: false,
           showNestorSettings: false,
           fill: null,
         }),
-      setCoachMode: (coachMode) => set({ coachMode }),
       openSection: (mode) =>
         set({ mode, showHome: false, showNestorSettings: false, fill: null }),
       fill: null,
@@ -297,12 +276,13 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       name: 'prompt-toolkit',
       // v2 removed the live coach, v3 the "off" mode; v5 brought back the
       // coach's four screens; v6 starts everyone on "as you type"; v7 moved
-      // the next questions into the advice thread.
-      version: 7,
-      migrate: (persisted, version) => {
-        const stored = persisted as Partial<PromptToolkitState>;
-        // Read as a string: it may be a screen that no longer exists.
-        const storedMode = (persisted as { coachMode?: string }).coachMode;
+      // the next questions into the advice thread; v8 made the coach one chat
+      // with Nestor: no screen to remember.
+      version: 8,
+      migrate: (persisted) => {
+        const { coachMode: _screen, ...stored } = persisted as Partial<
+          PromptToolkitState & { coachMode: string }
+        >;
         return {
           isOpen: false,
           width: PANEL_DEFAULT_WIDTH_PX,
@@ -310,13 +290,6 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           hasSeenWelcome: false,
           mode: 'coach' as RightPanelMode,
           ...stored,
-          coachMode: (version < 6
-            ? 'instant'
-            : storedMode === 'next'
-              ? 'advice'
-              : COACH_MODES.includes(storedMode as CoachMode)
-                ? storedMode
-                : 'instant') as CoachMode,
         };
       },
       // A panel left open stays closed if the deployment turned it off.
@@ -336,7 +309,6 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       partialize: (state) => ({
         isOpen: state.isOpen,
         mode: state.mode,
-        coachMode: state.coachMode,
         width: state.width,
         showHome: state.showHome,
         hasSeenWelcome: state.hasSeenWelcome,

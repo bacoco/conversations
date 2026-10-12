@@ -48,34 +48,23 @@ describe('usePromptToolkitStore', () => {
     expect(usePromptToolkitStore.getState().setChatInput).toBe(newer);
   });
 
-  it('opens the coach on its analysis, or on the screen asked for', () => {
-    usePromptToolkitStore.setState({
-      mode: 'learn',
-      showHome: true,
-      coachMode: 'manual',
-    });
+  it('opens the coach: one chat with Nestor, no screen to pick', () => {
+    usePromptToolkitStore.setState({ mode: 'learn', showHome: true });
     usePromptToolkitStore.getState().startCoach();
-    expect(usePromptToolkitStore.getState()).toMatchObject({
-      mode: 'coach',
-      showHome: false,
-      fill: null,
-      coachMode: 'manual',
-    });
-    usePromptToolkitStore.getState().startCoach('instant');
-    expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
-    // A click handler's event is not a screen, and must stay out of the
-    // stored state (it cannot be saved).
-    usePromptToolkitStore
-      .getState()
-      .startCoach({ target: {} } as unknown as 'manual');
-    expect(usePromptToolkitStore.getState().coachMode).toBe('instant');
+    const state = usePromptToolkitStore.getState();
+    expect(state).toMatchObject({ mode: 'coach', showHome: false, fill: null });
+    expect('coachMode' in state).toBe(false);
   });
 
-  it('starts a stored panel on "as you type", keeping the rest', () => {
-    const { migrate } = usePromptToolkitStore.persist.getOptions();
-    expect(
-      migrate?.({ coachMode: 'session', mode: 'coach', width: 420 }, 5),
-    ).toMatchObject({ mode: 'coach', width: 420, coachMode: 'instant' });
+  it('v7 → v8 forgets the old coach screen, keeping the rest', () => {
+    const { migrate, version } = usePromptToolkitStore.persist.getOptions();
+    expect(version).toBe(8);
+    const migrated = migrate?.(
+      { coachMode: 'advice', mode: 'coach', width: 420 },
+      7,
+    ) as Record<string, unknown>;
+    expect(migrated).toMatchObject({ mode: 'coach', width: 420 });
+    expect('coachMode' in migrated).toBe(false);
   });
 
   it('shows the conversation first on a phone, even if the panel was open', () => {
