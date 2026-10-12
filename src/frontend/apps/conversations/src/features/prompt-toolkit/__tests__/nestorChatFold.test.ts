@@ -64,6 +64,7 @@ describe('foldSummary', () => {
     expect(
       foldSummary(
         [
+          msg(1, { kind: 'user', text: 'Compléter', via: 'action' }),
           msg(1, { kind: 'question', index: 0, items: [] }),
           msg(1, {
             kind: 'user',
@@ -93,5 +94,30 @@ describe('foldSummary', () => {
     expect(
       foldSummary([msg(3, { kind: 'hint', hint: 'write-first' })], t),
     ).toBe('Nestor asked to write the request first');
+  });
+
+  it('an idea cancelled is said cancelled', () => {
+    expect(
+      foldSummary(
+        [
+          msg(2, {
+            kind: 'chosen',
+            text: 'Rédige',
+            previous: '',
+            undone: true,
+          }),
+        ],
+        t,
+      ),
+    ).toBe('Idea cancelled: {{text}}'.replace('{{text}}', 'Rédige'));
+  });
+
+  it('examples are named examples, not ideas close to yours', () => {
+    expect(
+      foldSummary(
+        [msg(2, { kind: 'pistes', phrases: ['a'], examples: true })],
+        t,
+      ),
+    ).toBe('Examples of requests');
   });
 });

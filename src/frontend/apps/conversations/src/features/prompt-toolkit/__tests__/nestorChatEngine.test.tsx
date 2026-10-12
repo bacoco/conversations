@@ -148,7 +148,10 @@ describe('useNestorChat', () => {
     usePromptToolkitStore.setState({ chatInput: 'Résume ce texte' });
     const fetchMock = vi
       .spyOn(global, 'fetch')
-      .mockResolvedValue(
+      .mockResolvedValueOnce(
+        completion({ present: ['Le résumé'], missing: [], message: 'Claire.' }),
+      )
+      .mockResolvedValueOnce(
         completion({ version: 'Résume ce texte en 5 points.' }),
       );
     const { result } = renderHook(() => useNestorChat('French'));
@@ -156,9 +159,9 @@ describe('useNestorChat', () => {
       result.current.runBar('improve');
       return Promise.resolve();
     });
-    expect(fetchMock.mock.calls[0][1]?.body as string).not.toContain(
-      'bureau 3',
-    );
+    const bodies = fetchMock.mock.calls.map((call) => call[1]?.body as string);
+    expect(bodies).toHaveLength(2);
+    expect(bodies.join('\n')).not.toContain('bureau 3');
   });
 
   it('the review before any answer says when it will be possible', () => {
@@ -276,6 +279,62 @@ describe('useNestorChat', () => {
     });
     expect(thread().some((message) => message.kind === 'advice')).toBe(false);
     expect(thread().at(-1)).toMatchObject({ kind: 'request', n: 2 });
+  });
+
+  it('"Améliorer" on a vague request asks what is missing first, then writes', async () => {
+    usePromptToolkitStore.setState({ chatInput: 'aide moi compte rendu' });
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      completion({
+        present: ['Le compte rendu'],
+        missing: [
+          { short: 'réunion', question: 'De quelle réunion ?', choices: [] },
+        ],
+        message: 'Il me faut la réunion.',
+      }),
+    );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.runBar('improve');
+      return Promise.resolve();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(thread().at(-1)).toMatchObject({
+      kind: 'question',
+      index: 0,
+    });
+  });
+
+  it('what the user clicked shows on their side, before Nestor answers', () => {
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runBar('analyse'));
+    const [said, hint] = thread().slice(-2);
+    expect(said).toMatchObject({
+      kind: 'user',
+      via: 'action',
+      text: 'Analyse my text',
+    });
+    expect(hint).toMatchObject({ kind: 'hint', hint: 'write-first' });
+  });
+
+  it('a round clicked shows on the user’s side too', () => {
+    const store = useNestorChatStore.getState();
+    const id = store.post('c1', {
+      kind: 'analysis',
+      draft: 'x',
+      check: {
+        present: [],
+        missing: [{ short: 'date', question: 'Quelle date ?', choices: [] }],
+        message: 'm',
+      },
+      rounds: [{ id: 'complete', primary: true }],
+    });
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runRound(id, { id: 'complete', primary: true }));
+    expect(thread().slice(-2)[0]).toMatchObject({
+      kind: 'user',
+      via: 'action',
+      text: 'Complete them',
+    });
   });
 });
 

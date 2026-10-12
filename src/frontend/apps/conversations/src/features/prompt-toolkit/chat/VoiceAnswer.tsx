@@ -55,6 +55,10 @@ export const VoiceAnswer = ({
     return () => stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // No microphone: the keyboard at once, nothing more to look for.
+  useEffect(() => {
+    if (error) setTyping(true);
+  }, [error]);
   const shown = typing
     ? text
     : [text, capture.liveText].filter(Boolean).join(' ');
@@ -65,7 +69,7 @@ export const VoiceAnswer = ({
 
   return (
     <Band role="group" aria-label={t('Answer out loud')}>
-      {!typing && (
+      {(!typing || error) && (
         <strong aria-live="polite">
           {error
             ? t('The microphone does not answer. Type your answer instead.')

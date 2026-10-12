@@ -14,7 +14,7 @@ vi.mock('../speech/useSpeechCapture', () => ({
 }));
 
 describe('<VoiceAnswer />', () => {
-  it('without a microphone, says so and lets the answer be typed', () => {
+  it('without a microphone, says so and opens the field at once', () => {
     const onSend = vi.fn();
     render(<VoiceAnswer onSend={onSend} onCancel={vi.fn()} />);
     expect(
@@ -22,7 +22,7 @@ describe('<VoiceAnswer />', () => {
         'The microphone does not answer. Type your answer instead.',
       ),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Or type it' }));
+    // The field is there at once: nothing more to find.
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'Tout le service' },
     });

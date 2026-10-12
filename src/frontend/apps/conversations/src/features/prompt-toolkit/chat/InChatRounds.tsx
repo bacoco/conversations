@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components';
 
+import { roundLabel } from './labels';
 import type { NestorMessage, Round, RoundId } from './types';
 import { RoundButton, RoundsTile } from './ui';
 
@@ -33,26 +34,11 @@ export const InChatRounds = ({
   onRound: (round: Round) => void;
 }) => {
   const { t, i18n } = useTranslation();
-  const items = new Intl.ListFormat(i18n.language, {
-    type: 'conjunction',
-  }).format(missing);
   const label = (id: RoundId) =>
-    ({
-      examples: t('See examples'),
-      complete: t('Complete them'),
-      'create-without': t('Create without this information'),
-      'redo-with-missing': t('Redo with {{items}}', { items }),
-      shorter: t('Shorter'),
-      'other-version': t('Another version'),
-      undo:
-        message.kind === 'chosen'
-          ? t('Cancel')
-          : t('Back to the previous version'),
-      'resume-questions': t('Resume the questions'),
-      'new-request': t('Start a request'),
-      lesson: t('See the lesson'),
-      retry: t('Retry'),
-    })[id];
+    roundLabel(t, i18n.language, id, {
+      missing,
+      chosen: message.kind === 'chosen',
+    });
   return (
     <RoundsTile>
       {rounds.map((round) => (

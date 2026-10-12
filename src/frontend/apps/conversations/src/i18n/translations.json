@@ -3,6 +3,9 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Idea cancelled: {{text}}": "Piste annulée : {{text}}",
+      "Examples of requests": "Exemples de demandes",
+      "A few everyday requests. One click puts it in the Assistant’s field.": "Quelques demandes de tous les jours. Un clic en met une dans le champ de l’Assistant.",
       "The microphone does not answer. Type your answer instead.": "Le micro ne répond pas. Écrivez plutôt votre réponse.",
       "⚠ To add when you know it: {{items}}.": "⚠ À ajouter quand vous le saurez : {{items}}.",
       "Version put in the Assistant’s field": "Version mise dans le champ de l’Assistant",

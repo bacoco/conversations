@@ -4,6 +4,7 @@ import { Icon } from '@/components';
 
 import { NESTOR_AVATAR_URL } from '../components/PanelHome';
 
+import { barLabel } from './labels';
 import type { BarAction } from './types';
 import { Dock, DockDivider, FaceRound, RoundButton } from './ui';
 import type { NestorChat } from './useNestorChat';
@@ -12,9 +13,9 @@ import type { NestorChat } from './useNestorChat';
 export const NestorBar = ({ chat }: { chat: NestorChat }) => {
   const { t } = useTranslation();
   const items: { action: BarAction; label: string; icon: string }[] = [
-    { action: 'analyse', label: t('Analyse my text'), icon: 'search' },
-    { action: 'improve', label: t('Improve my text'), icon: 'auto_awesome' },
-    { action: 'review', label: t('Do the review'), icon: 'show_chart' },
+    { action: 'analyse', label: barLabel(t, 'analyse'), icon: 'search' },
+    { action: 'improve', label: barLabel(t, 'improve'), icon: 'auto_awesome' },
+    { action: 'review', label: barLabel(t, 'review'), icon: 'show_chart' },
   ];
   return (
     <Dock role="toolbar" aria-label={t('Nestor’s buttons')}>
@@ -37,7 +38,7 @@ export const NestorBar = ({ chat }: { chat: NestorChat }) => {
         <FaceRound>
           <img src={NESTOR_AVATAR_URL} alt="" />
         </FaceRound>
-        {t('Ask Nestor')}
+        {barLabel(t, 'ask')}
       </RoundButton>
     </Dock>
   );

@@ -133,6 +133,28 @@ describe('<NestorThread />', () => {
     ).toBeInTheDocument();
   });
 
+  it('examples are introduced as examples', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'e',
+            action: 9,
+            kind: 'pistes',
+            phrases: ['Résume ceci'],
+            examples: true,
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getByText(
+        'A few everyday requests. One click puts it in the Assistant’s field.',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('a question: "Question 1 of 3", the choices, "I don’t know", stop', () => {
     const items = [
       {

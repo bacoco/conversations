@@ -103,9 +103,13 @@ export const MessageView = ({
       return (
         <>
           <NestorBubble>
-            {t(
-              'Starting ideas, close to yours. One click puts it in the Assistant’s field.',
-            )}
+            {message.examples
+              ? t(
+                  'A few everyday requests. One click puts it in the Assistant’s field.',
+                )
+              : t(
+                  'Starting ideas, close to yours. One click puts it in the Assistant’s field.',
+                )}
           </NestorBubble>
           <UnderBubble>
             {message.phrases.map((phrase) => (

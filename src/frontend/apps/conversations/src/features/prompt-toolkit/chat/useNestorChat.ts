@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useConversationRouteId } from '@/utils';
 
@@ -29,6 +30,7 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { decideBarAction } from './barGuard';
+import { barLabel, roundLabel } from './labels';
 import {
   VersionInput,
   adviceCount,
@@ -85,6 +87,7 @@ const focusAssistantField = () =>
  * messages in the thread. Nothing here draws: the thread is the state.
  */
 export const useNestorChat = (language: string) => {
+  const { t, i18n } = useTranslation();
   const conversationId = useConversationRouteId();
   const key = conversationId ?? NEW_CHAT_KEY;
   const messages = useNestorChatStore((state) => messagesOf(state.chats, key));
@@ -158,24 +161,61 @@ export const useNestorChat = (language: string) => {
    * The caller says what the version is made of: answers and skips of the
    * open round only, never those of an earlier request.
    */
+  const writeVersionInto = useCallback(
+    async (
+      input: VersionInput,
+      extra: Round[],
+      signal: AbortSignal,
+      say: typeof post,
+    ) => {
+      const version = await writeVersion(input, language, signal);
+      const missing = input.skipped;
+      say({ kind: 'version', original: input.draft, version, missing }, [
+        ...(missing.length
+          ? [{ id: 'redo-with-missing', primary: true } as Round]
+          : []),
+        { id: 'shorter' },
+        { id: 'other-version' },
+        ...extra,
+      ]);
+      reward('improvement');
+    },
+    [language, reward],
+  );
+
   const writeAndPost = useCallback(
     (input: VersionInput, extra: Round[] = []) => {
-      void run('version', 'improve', async (signal, say) => {
-        const version = await writeVersion(input, language, signal);
-        const missing = input.skipped;
-        say({ kind: 'version', original: input.draft, version, missing }, [
-          ...(missing.length
-            ? [{ id: 'redo-with-missing', primary: true } as Round]
-            : []),
-          { id: 'shorter' },
-          { id: 'other-version' },
-          ...extra,
-        ]);
-        reward('improvement');
-      });
+      void run('version', 'improve', (signal, say) =>
+        writeVersionInto(input, extra, signal, say),
+      );
     },
-    [language, reward, run],
+    [run, writeVersionInto],
   );
+
+  /**
+   * "Améliorer mon texte" on a new request: when only the user knows what
+   * is missing, the questions come first; a version made without it would
+   * say nothing.
+   */
+  const runImprove = useCallback(() => {
+    const draft = draftNow();
+    void run('improve', 'improve', async (signal, say) => {
+      const check = await checkRequest(draft, language, signal);
+      warnSensitive(draft, say);
+      if (check.missing.length) {
+        say({ kind: 'analysis', draft, check });
+        say({ kind: 'question', index: 0, items: check.missing });
+        return;
+      }
+      await writeVersionInto(
+        { draft, answers: [], skipped: [] },
+        [],
+        signal,
+        say,
+      );
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, run, writeVersionInto]);
 
   const runAnalyse = useCallback(() => {
     const draft = draftNow();
@@ -243,6 +283,12 @@ export const useNestorChat = (language: string) => {
         return;
       }
       store().beginAction(key);
+      // What was clicked shows on the user's side, as in a chat.
+      store().post(key, {
+        kind: 'user',
+        via: 'action',
+        text: barLabel(t, bar),
+      });
       if (decision.kind === 'hint') {
         post({ kind: 'hint', hint: decision.hint });
         if (decision.focusField) focusAssistantField();
@@ -269,20 +315,22 @@ export const useNestorChat = (language: string) => {
       const open = questionState(all);
       if (bar === 'analyse') runAnalyse();
       if (bar === 'improve') {
-        writeAndPost(
-          open.current
-            ? {
-                draft: draftNow(),
-                answers: open.answers,
-                skipped: open.skipped,
-              }
-            : { draft: draftNow(), answers: [], skipped: [] },
-          resume,
-        );
+        if (open.current) {
+          writeAndPost(
+            {
+              draft: draftNow(),
+              answers: open.answers,
+              skipped: open.skipped,
+            },
+            resume,
+          );
+        } else {
+          runImprove();
+        }
       }
       if (bar === 'review') runReview();
     },
-    [key, post, runAnalyse, runReview, store, writeAndPost],
+    [key, post, runAnalyse, runImprove, runReview, store, t, writeAndPost],
   );
 
   const askQuestion = useCallback(
@@ -318,40 +366,62 @@ export const useNestorChat = (language: string) => {
   );
 
   /** "Voir des exemples": close to the job when one is chosen. */
-  const showExamples = useCallback(() => {
-    const job = useProfileStore.getState().job;
-    const code = language === 'French' ? 'fr' : 'en';
-    store().beginAction(key);
-    if (!job) {
-      const firsts = ['email', 'meeting', 'summary'].map(
-        (category) =>
-          getPhrases(code).find((phrase) => phrase.category.id === category)
-            ?.text ?? '',
-      );
-      post({ kind: 'pistes', phrases: firsts.filter(Boolean) });
-      return;
-    }
-    void run('reply', null, async (signal, say) => {
-      const found = await searchPhrases(job.label, code, 3, signal);
-      say({ kind: 'pistes', phrases: found.map((phrase) => phrase.text) });
-    });
-  }, [key, language, post, run, store]);
+  const showExamples = useCallback(
+    (said: () => void) => {
+      const job = useProfileStore.getState().job;
+      const code = language === 'French' ? 'fr' : 'en';
+      store().beginAction(key);
+      said();
+      if (!job) {
+        const firsts = ['email', 'meeting', 'summary'].map(
+          (category) =>
+            getPhrases(code).find((phrase) => phrase.category.id === category)
+              ?.text ?? '',
+        );
+        post({
+          kind: 'pistes',
+          phrases: firsts.filter(Boolean),
+          examples: true,
+        });
+        return;
+      }
+      void run('reply', null, async (signal, say) => {
+        const found = await searchPhrases(job.label, code, 3, signal);
+        say({
+          kind: 'pistes',
+          phrases: found.map((phrase) => phrase.text),
+          examples: true,
+        });
+      });
+    },
+    [key, language, post, run, store],
+  );
 
   const runRound = useCallback(
     (messageId: string, round: Round) => {
       // The welcome's round has no stored message.
+      const all = messagesOf(store().chats, key);
+      const version = lastOf(all, 'version');
+      const said = (chosen: boolean) =>
+        store().post(key, {
+          kind: 'user',
+          via: 'action',
+          text: roundLabel(t, i18n.language, round.id, {
+            missing: version?.missing ?? [],
+            chosen,
+          }),
+        });
       if (round.id === 'examples') {
         if (messageId !== 'hello') store().consumeRounds(key, messageId);
-        showExamples();
+        showExamples(() => said(false));
         return;
       }
-      const all = messagesOf(store().chats, key);
       const message = all.find((item) => item.id === messageId);
       if (!message) return;
       store().consumeRounds(key, messageId);
       store().beginAction(key);
+      said(message.kind === 'chosen');
       const analysis = lastOf(all, 'analysis');
-      const version = lastOf(all, 'version');
       switch (round.id) {
         case 'complete':
           if (analysis) askQuestion(analysis.check.missing, 0);
@@ -417,7 +487,17 @@ export const useNestorChat = (language: string) => {
           break;
       }
     },
-    [askQuestion, key, post, runBar, showExamples, store, writeAndPost],
+    [
+      askQuestion,
+      i18n.language,
+      key,
+      post,
+      runBar,
+      showExamples,
+      store,
+      t,
+      writeAndPost,
+    ],
   );
 
   const placeVersion = useCallback(
@@ -454,7 +534,8 @@ export const useNestorChat = (language: string) => {
       const history = messagesOf(store().chats, key)
         .filter(
           (m): m is Find<'user'> | Find<'reply'> =>
-            m.kind === 'reply' || (m.kind === 'user' && !m.answers),
+            m.kind === 'reply' ||
+            (m.kind === 'user' && !m.answers && m.via !== 'action'),
         )
         .slice(-8)
         .map((m) =>

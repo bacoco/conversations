@@ -119,6 +119,38 @@ describe('writeVersion', () => {
   });
 });
 
+describe('writeVersion — the answers woven in', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('asks again when the version copies a question instead of using the answer', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValueOnce(
+        completion({
+          version: 'Réponds à l’agent. Pourquoi refuser ? besoin de présence.',
+        }),
+      )
+      .mockResolvedValueOnce(
+        completion({
+          version:
+            'Rédige un refus courtois : le service a besoin de présence sur place.',
+        }),
+      );
+    const version = await writeVersion(
+      {
+        draft: 'Réponds non à l’agent',
+        answers: [
+          { question: 'Pourquoi refuser ?', answer: 'besoin de présence' },
+        ],
+        skipped: [],
+      },
+      'French',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(version).not.toContain('Pourquoi refuser ?');
+  });
+});
+
 describe('checkRequest', () => {
   afterEach(() => vi.restoreAllMocks());
 

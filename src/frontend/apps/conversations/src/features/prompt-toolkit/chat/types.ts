@@ -49,7 +49,14 @@ export interface Round {
 export type HintKind = 'write-first' | 'review-after-answer' | 'new-request';
 
 /** How the user said something in the thread. */
-export type UserVia = 'choice' | 'voice' | 'keyboard' | 'skip' | 'stop';
+export type UserVia =
+  | 'choice'
+  | 'voice'
+  | 'keyboard'
+  | 'skip'
+  | 'stop'
+  /** A button clicked (bar or round), shown on the user's side. */
+  | 'action';
 
 interface Base {
   id: string;
@@ -61,7 +68,12 @@ interface Base {
 export type NestorMessage = Base &
   (
     | { kind: 'request'; n: number; at: number }
-    | { kind: 'pistes'; phrases: string[] }
+    | {
+        kind: 'pistes';
+        phrases: string[];
+        /** "Voir des exemples": everyday requests, not ideas from the text. */
+        examples?: boolean;
+      }
     | { kind: 'chosen'; text: string; previous: string; undone?: boolean }
     | { kind: 'hint'; hint: HintKind }
     | { kind: 'warning'; text: string }

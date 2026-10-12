@@ -53,7 +53,8 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
         (message): message is Extract<NestorMessage, { kind: 'user' }> =>
           message.kind === 'user' &&
           message.via !== 'skip' &&
-          message.via !== 'stop',
+          message.via !== 'stop' &&
+          message.via !== 'action',
       )
       .map((message) => message.text);
     return said.length
@@ -67,10 +68,15 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   }
   const chosen = find('chosen');
   if (chosen) {
-    return t('Chosen start: {{text}}', { text: chosen.text });
+    return chosen.undone
+      ? t('Idea cancelled: {{text}}', { text: chosen.text })
+      : t('Chosen start: {{text}}', { text: chosen.text });
   }
-  if (find('pistes')) {
-    return t('Starting ideas, close to yours');
+  const pistes = find('pistes');
+  if (pistes) {
+    return pistes.examples
+      ? t('Examples of requests')
+      : t('Starting ideas, close to yours');
   }
   const advice = find('advice');
   if (advice) {
@@ -92,7 +98,7 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   }
   const question = messages.find(
     (message): message is Extract<NestorMessage, { kind: 'user' }> =>
-      message.kind === 'user',
+      message.kind === 'user' && message.via !== 'action',
   );
   if (question) {
     return t('You asked Nestor: {{text}}', { text: question.text });
