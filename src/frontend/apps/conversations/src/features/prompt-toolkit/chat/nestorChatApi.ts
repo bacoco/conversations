@@ -79,6 +79,43 @@ export const withoutHoles = (text: string) =>
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
+export const PISTES_COUNT = 3;
+
+const PISTES_SYSTEM_PROMPT = (language: string) =>
+  `You are Nestor, a coach who helps a public servant write a request for an AI assistant. The user is typing it now.
+${COMMON_RULES(language)}
+Propose ${PISTES_COUNT} complete versions of THIS request the user could start from. Each keeps exactly the user's task, subject, people and facts, and adds one useful precision of form only (purpose, format, length, tone or a part to include), a different one each time.
+Never another task or another subject. Never a new fact: no name, date, place or figure the user did not write. Never brackets, placeholders or blanks.
+Each one: 6 to 18 words, ready to send, written as the user writes to the assistant, with the same form of address.
+JSON shape: {"pistes": ["...", "...", "..."]}`;
+
+const sameText = (a: string, b: string) =>
+  a.replace(/\s+/g, ' ').trim().toLowerCase() ===
+  b.replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * Starting ideas while the user types: their own request, made more
+ * precise. Never another task, never a blank, never the draft itself.
+ */
+export const suggestPistes = async (
+  draft: string,
+  language: string,
+  signal?: AbortSignal,
+): Promise<string[]> => {
+  const raw = await complete(PISTES_SYSTEM_PROMPT(language), draft, signal);
+  const pistes: string[] = [];
+  for (const piste of asStringList(raw.pistes, 10)) {
+    if (
+      !hasHoles(piste) &&
+      !sameText(piste, draft) &&
+      !pistes.some((kept) => sameText(kept, piste))
+    ) {
+      pistes.push(piste);
+    }
+  }
+  return pistes.slice(0, PISTES_COUNT);
+};
+
 export type VersionStyle = 'full' | 'shorter' | 'other';
 
 export interface VersionInput {

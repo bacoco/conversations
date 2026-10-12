@@ -1,15 +1,123 @@
-import { Button } from '@gouvfr-lasuite/cunningham-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { css } from 'styled-components';
+import styled from 'styled-components';
 
-import { Box, Icon, Text } from '@/components';
+import { Box, Icon } from '@/components';
 
+import { NESTOR_AVATAR_URL } from '../components/PanelHome';
 import { RECORD_RED } from '../speech/RecorderView';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
 
+import { C, LinkButton, MainButton } from './ui';
 import type { NestorChat } from './useNestorChat';
+
+const Veil = styled.button`
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: none;
+  cursor: default;
+  background: rgba(30, 30, 46, 0.38);
+`;
+
+const Window = styled.div`
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #ffffff;
+  color: ${C.ink};
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  outline: none;
+`;
+
+const Head = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  & img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+  & button {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: ${C.soft};
+    color: ${C.muted};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+const Record = styled.button<{ $on: boolean }>`
+  align-self: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  background: ${RECORD_RED};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: ${({ $on }) =>
+    $on
+      ? `0 0 0 8px rgba(208, 52, 44, 0.18), 0 4px 12px rgba(208, 52, 44, 0.35)`
+      : '0 4px 12px rgba(208, 52, 44, 0.35)'};
+  &:focus-visible {
+    outline: 2px solid ${C.brand};
+    outline-offset: 3px;
+  }
+`;
+
+const Status = styled.div`
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+`;
+
+const Legend = styled.span<{ $center?: boolean }>`
+  font-size: 12px;
+  color: ${C.muted};
+  text-align: ${({ $center }) => ($center ? 'center' : 'left')};
+`;
+
+const Said = styled.div`
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: ${C.brandSoft};
+  color: ${C.brandDark};
+`;
+
+const Field = styled.textarea`
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 14px;
+  padding: 9px 10px;
+  border: 1px solid ${C.grey};
+  border-radius: 10px;
+  resize: vertical;
+`;
 
 export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
   const { t, i18n } = useTranslation();
@@ -58,33 +166,35 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
     if (text.trim()) chat.askNestor(text.trim(), via);
   };
 
+  const said = [text, capture.liveText].filter(Boolean).join(' ');
   return (
-    <Box $css="position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 16px;">
+    <Box $css="position: absolute; inset: 0; z-index: 5;">
       {/* The veil: a click outside the window closes it. */}
-      <Box
-        as="button"
+      <Veil
         type="button"
         tabIndex={-1}
         aria-label={t('Close')}
         onClick={close}
-        $css="position: absolute; inset: 0; padding: 0; border: none; cursor: default; background: rgba(0,0,0,0.35);"
       />
-      <Box
+      <Window
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('Ask Nestor')}
         tabIndex={-1}
-        $align="center"
-        $gap="14px"
-        $css="position: relative; width: min(360px, 100%); padding: 20px; border-radius: 16px; background: #fff; outline: none;"
       >
-        <Text $weight="700">{t('Ask Nestor')}</Text>
+        <Head>
+          <img src={NESTOR_AVATAR_URL} alt="" />
+          {t('Ask Nestor')}
+          <button type="button" aria-label={t('Close')} onClick={close}>
+            <Icon iconName="close" $size="18px" $withThemeInherited />
+          </button>
+        </Head>
         {!typing && (
           <>
-            <Box
-              as="button"
+            <Record
               type="button"
+              $on={isRecording}
               aria-label={
                 isRecording ? t('Stop listening') : t('Press to speak')
               }
@@ -92,82 +202,66 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
               onClick={() =>
                 isRecording ? capture.stop() : void capture.start()
               }
-              $css={css`
-                width: 96px;
-                height: 96px;
-                border-radius: 50%;
-                border: none;
-                cursor: pointer;
-                color: #fff;
-                background: ${RECORD_RED};
-              `}
             >
               <Icon
                 iconName={isRecording ? 'stop' : 'mic'}
                 $size="40px"
                 $withThemeInherited
               />
-            </Box>
-            <Text $size="sm" $textAlign="center">
+            </Record>
+            <Status aria-live="polite">
               {isRecording
                 ? t('I am listening…')
                 : t('Press the red button to speak')}
-            </Text>
-            <Text $size="xs" $variation="secondary" $textAlign="center">
+            </Status>
+            <Legend $center>
               {t('The microphone only turns on when you press.')}
-            </Text>
+            </Legend>
+            {said && <Said>« {said} »</Said>}
           </>
         )}
-        {(text || capture.liveText) && !typing && (
-          <Text $size="sm">
-            « {[text, capture.liveText].filter(Boolean).join(' ')} »
-          </Text>
-        )}
         {typing && (
-          <Box
-            as="textarea"
+          <Field
+            ref={fieldRef}
             aria-label={t('Your question to Nestor')}
             value={text}
-            ref={fieldRef}
             rows={3}
-            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setText(event.target.value)
-            }
-            $css="width: 100%; font: inherit; padding: 8px; border-radius: 8px;"
+            onChange={(event) => setText(event.target.value)}
           />
         )}
         {text.trim() && (
-          <Box $direction="row" $gap="8px">
-            <Button
-              size="small"
+          <Box $direction="row" $gap="8px" $justify="center">
+            <MainButton
+              type="button"
               onClick={() => send(typing ? 'keyboard' : 'voice')}
             >
               {t('Send to Nestor')}
-            </Button>
-            <Button
-              size="small"
-              color="neutral"
-              variant="secondary"
+            </MainButton>
+            <LinkButton
+              type="button"
+              style={{ alignSelf: 'center' }}
               onClick={() => setText('')}
             >
               {t('Start again')}
-            </Button>
+            </LinkButton>
           </Box>
         )}
         {!typing && (
-          <Button
-            size="small"
-            color="neutral"
-            variant="tertiary"
+          <LinkButton
+            type="button"
+            style={{ alignSelf: 'center' }}
             onClick={() => {
               capture.stop();
               setTyping(true);
             }}
           >
             {t('Or type it')}
-          </Button>
+          </LinkButton>
         )}
-      </Box>
+        <Legend>
+          {t('You are talking to Nestor: nothing is sent to the Assistant.')}
+        </Legend>
+      </Window>
     </Box>
   );
 };

@@ -82,4 +82,16 @@ describe('foldSummary', () => {
       ),
     ).toBe('Questions: toute l’équipe');
   });
+
+  it('names the step where the version went into the field', () => {
+    expect(foldSummary([msg(3, { kind: 'placed', previous: 'x' })], t)).toBe(
+      'Version put in the Assistant’s field',
+    );
+  });
+
+  it('names a hint by what it said, never "Earlier step"', () => {
+    expect(
+      foldSummary([msg(3, { kind: 'hint', hint: 'write-first' })], t),
+    ).toBe('Nestor asked to write the request first');
+  });
 });

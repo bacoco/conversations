@@ -193,6 +193,29 @@ describe('useNestorChat', () => {
     expect(thread().at(-1)).toMatchObject({ kind: 'pistes' });
     expect((thread().at(-1) as { phrases: string[] }).phrases).toHaveLength(3);
   });
+
+  it('never offers a way to go on that holds a blank', () => {
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() =>
+      result.current.postSuites('m1', [
+        {
+          kind: 'standard',
+          axis: 'deepen',
+          questions: [
+            'Voici le message : [insérer le message ici]',
+            'Donne un exemple',
+          ],
+        },
+        { kind: 'extra', label: 'Trous', questions: ['Date : ___'] },
+      ]),
+    );
+    expect(thread().at(-1)).toMatchObject({
+      kind: 'suites',
+      groups: [
+        { kind: 'standard', axis: 'deepen', questions: ['Donne un exemple'] },
+      ],
+    });
+  });
 });
 
 describe('useNestorAuto', () => {

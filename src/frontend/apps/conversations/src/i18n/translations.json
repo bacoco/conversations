@@ -3,6 +3,13 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Version put in the Assistant’s field": "Version mise dans le champ de l’Assistant",
+      "Nestor asked to write the request first": "Nestor a demandé d’écrire d’abord la demande",
+      "The review comes after an answer": "Le bilan vient après une réponse",
+      "New request": "Nouvelle demande",
+      "Said aloud": "Dit au micro",
+      "A question for me? Click “Ask Nestor”, at the bottom right.": "Une question pour moi ? Cliquez sur « Demander à Nestor », en bas à droite.",
+      "You are talking to Nestor: nothing is sent to the Assistant.": "Vous parlez à Nestor : rien n’est envoyé à l’Assistant.",
       "Advice after each answer": "Conseil après chaque réponse",
       "Always on, whatever the settings: simple words, and Nestor never makes anything up.": "Toujours actif, quel que soit le réglage : des mots simples, et Nestor n’invente jamais rien.",
       "Analyse when I pause": "Analyser quand je fais une pause",

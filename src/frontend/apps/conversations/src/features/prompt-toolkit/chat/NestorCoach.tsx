@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box } from '@/components';
@@ -28,17 +29,28 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
     (state) => state.setShowNestorSettings,
   );
   const pistesOn = useCoachPrefsStore((state) => isAutoOn(state, 'autoPistes'));
-  // Ideas while typing, not during the questions: one thing at a time.
+  // Once Nestor has answered, his ideas go: they come back when the text
+  // changes. One thing at a time, never under an analysis or a question.
+  const [answeredOn, setAnsweredOn] = useState<string | null>(null);
+  const messageCount = chat.messages.length;
+  useEffect(() => {
+    if (messageCount > 0) {
+      setAnsweredOn(usePromptToolkitStore.getState().chatInput);
+    }
+  }, [messageCount]);
   const { phrases } = usePistes(
     chatInput,
-    isActive && pistesOn && !chat.questions.current,
+    isActive && pistesOn && !chat.questions.current && chatInput !== answeredOn,
   );
 
   if (showSettings) {
     return <NestorSettings onClose={() => setShowSettings(false)} />;
   }
   return (
-    <Box $direction="column" $css="flex: 1 0 auto; position: relative;">
+    <Box
+      $direction="column"
+      $css="flex: 1; min-height: 0; position: relative; background: #ffffff;"
+    >
       <NestorThread chat={chat} pistes={phrases} />
       {isActive && <NestorBar chat={chat} />}
       <AskNestorSheet chat={chat} />

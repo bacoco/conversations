@@ -33,6 +33,7 @@ import {
   VersionInput,
   adviceCount,
   checkRequest,
+  hasHoles,
   writeVersion,
 } from './nestorChatApi';
 import { questionState } from './questions';
@@ -522,9 +523,17 @@ export const useNestorChat = (language: string) => {
     [key, language, post, run, store],
   );
 
+  /** Ways to go on: a suggestion holding a blank is never offered. */
   const postSuites = useCallback(
-    (answerId: string, groups: NextGroup[]) =>
-      post({ kind: 'suites', groups, answerId }),
+    (answerId: string, groups: NextGroup[]) => {
+      const whole = groups
+        .map((group) => ({
+          ...group,
+          questions: group.questions.filter((question) => !hasHoles(question)),
+        }))
+        .filter((group) => group.questions.length > 0);
+      if (whole.length) post({ kind: 'suites', groups: whole, answerId });
+    },
     [post],
   );
 

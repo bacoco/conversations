@@ -2,7 +2,7 @@ import { Button, Switch } from '@gouvfr-lasuite/cunningham-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Text } from '@/components';
+import { Box, Icon, Text } from '@/components';
 import { useConversationRouteId } from '@/utils';
 
 import { ProfileSettings } from '../components/ProfileSettings';
@@ -32,18 +32,18 @@ export const NestorHeaderTools = ({
         onChange={(event) => setAuto(event.target.checked)}
       />
       {onSettings && (
-        <Button
-          size="small"
-          color="neutral"
-          variant="tertiary"
+        <Box
+          as="button"
+          type="button"
           aria-label={t('Nestor’s settings')}
+          title={t('Nestor’s settings')}
           onClick={onSettings}
-          icon={
-            <span className="material-icons" aria-hidden="true">
-              settings
-            </span>
-          }
-        />
+          $align="center"
+          $justify="center"
+          $css="width: 34px; height: 34px; padding: 0; border: none; border-radius: 50%; cursor: pointer; background: #f4f4f7; color: #4b45c6;"
+        >
+          <Icon iconName="settings" $size="20px" $withThemeInherited />
+        </Box>
       )}
     </Box>
   );

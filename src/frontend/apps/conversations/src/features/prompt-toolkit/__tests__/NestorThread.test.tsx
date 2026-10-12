@@ -106,6 +106,33 @@ describe('<NestorThread />', () => {
     });
   });
 
+  it('"Redo with…" names what is missing, even under the ways to go on', () => {
+    const chat = chatWith([
+      {
+        id: 'v',
+        action: 7,
+        kind: 'version',
+        original: 'a',
+        version: 'b',
+        missing: ['date', 'salle'],
+      },
+      {
+        id: 's',
+        action: 9,
+        kind: 'suites',
+        answerId: 'm1',
+        groups: [
+          { kind: 'extra', label: 'x', questions: ['Donne un exemple'] },
+        ],
+        rounds: [{ id: 'redo-with-missing', primary: true }],
+      },
+    ]);
+    render(<NestorThread chat={chat} pistes={[]} />);
+    expect(
+      screen.getByRole('button', { name: 'Redo with date and salle' }),
+    ).toBeInTheDocument();
+  });
+
   it('a question: "Question 1 of 3", the choices, "I don’t know", stop', () => {
     const items = [
       {
@@ -174,25 +201,22 @@ describe('<NestorThread />', () => {
     const scroll = vi.fn();
     Element.prototype.scrollIntoView = scroll;
     const { rerender } = render(
-      <div data-panel-scroll data-testid="scroller">
-        <NestorThread chat={chatWith([])} pistes={[]} />
-      </div>,
+      <NestorThread chat={chatWith([])} pistes={[]} />,
     );
-    const box = screen.getByTestId('scroller');
+    // The thread scrolls by itself.
+    const box = screen.getByTestId('nestor-thread');
     Object.defineProperty(box, 'scrollHeight', { value: 2000 });
     Object.defineProperty(box, 'clientHeight', { value: 100 });
     box.scrollTop = scrollTop;
     fireEvent.scroll(box);
     scroll.mockClear();
     rerender(
-      <div data-panel-scroll data-testid="scroller">
-        <NestorThread
-          chat={chatWith([
-            { id: 'n', action: 9, kind: 'reply', text: 'nouveau' },
-          ])}
-          pistes={[]}
-        />
-      </div>,
+      <NestorThread
+        chat={chatWith([
+          { id: 'n', action: 9, kind: 'reply', text: 'nouveau' },
+        ])}
+        pistes={[]}
+      />,
     );
     return scroll;
   };

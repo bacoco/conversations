@@ -405,7 +405,8 @@ export const RightPanel = ({
         )}
         <Box
           $display={!showHome && !fill && mode === 'coach' ? undefined : 'none'}
-          $css="flex: 1 0 auto;"
+          // The chat scrolls by itself; its bar stays at the bottom.
+          $css="flex: 1; min-height: 0;"
         >
           <CoachPanel />
         </Box>

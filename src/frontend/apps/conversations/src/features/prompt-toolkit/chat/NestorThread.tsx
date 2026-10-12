@@ -1,15 +1,35 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { Box, Text } from '@/components';
+import { NESTOR_AVATAR_URL } from '../components/PanelHome';
 
 import { InChatRounds } from './InChatRounds';
-import { MessageView, NestorBubble } from './NestorMessages';
+import { MessageView } from './NestorMessages';
 import { foldSummary, foldThread } from './fold';
+import {
+  C,
+  Fold,
+  FoldChevron,
+  Hello,
+  NestorBubble,
+  ThreadInner,
+  ThreadScroll,
+} from './ui';
 import type { NestorChat } from './useNestorChat';
 
 /** Closer than this to the bottom, the reader follows new messages. */
 const FOLLOW_PX = 80;
+
+const Typing = styled.div`
+  align-self: center;
+  font-size: 12px;
+  color: ${C.muted};
+  background: #ffffff;
+  border: 1px dashed ${C.grey};
+  border-radius: 999px;
+  padding: 6px 12px;
+`;
 
 export const NestorThread = ({
   chat,
@@ -26,6 +46,10 @@ export const NestorThread = ({
     [chat.messages, chat.action],
   );
   const last = chat.messages.at(-1);
+  // A round kept from earlier ("Refaire avec…") names what is still missing.
+  const missing =
+    chat.messages.findLast((message) => message.kind === 'version')?.missing ??
+    [];
 
   // Follow new messages only when the reader is at the bottom.
   useEffect(() => {
@@ -44,18 +68,23 @@ export const NestorThread = ({
   }, [chat.messages.length, chat.busy, pistes.length]);
 
   return (
-    <Box
-      $gap="14px"
-      $padding={{ horizontal: 'base', vertical: 'base' }}
-      $css="flex: 1; justify-content: flex-end;"
-    >
-      {chat.messages.length === 0 && (
-        <>
-          <NestorBubble>
+    <ThreadScroll data-panel-scroll data-testid="nestor-thread">
+      <ThreadInner>
+        {/* Nestor's welcome opens the thread, always. */}
+        <Hello>
+          <img src={NESTOR_AVATAR_URL} alt="" />
+        </Hello>
+        <NestorBubble>
+          <span>
             {t(
               'Hello! Write your request in the Assistant’s field, in the middle, as you would tell a colleague. I suggest starting ideas as you type.',
             )}
-          </NestorBubble>
+          </span>
+          <span>
+            {t('A question for me? Click “Ask Nestor”, at the bottom right.')}
+          </span>
+        </NestorBubble>
+        {chat.messages.length === 0 && pistes.length === 0 && (
           <InChatRounds
             message={{
               id: 'hello',
@@ -63,57 +92,52 @@ export const NestorThread = ({
               kind: 'hint',
               hint: 'new-request',
             }}
+            missing={[]}
             rounds={[{ id: 'examples', primary: true }]}
             onRound={() => chat.runRound('hello', { id: 'examples' })}
           />
-        </>
-      )}
-      {parts.map((part) =>
-        part.kind === 'fold' ? (
-          <Box
-            as="details"
-            key={part.messages[0].id}
-            $css="border-radius: 8px; background: #f6f6f6; padding: 6px 10px;"
-          >
-            <Box as="summary" $css="cursor: pointer; font-size: 0.8125rem;">
-              {foldSummary(part.messages, t)}
-            </Box>
-            <Box $gap="10px" $css="margin-top: 8px;">
-              {part.messages.map((message) => (
-                <MessageView key={message.id} message={message} chat={chat} />
-              ))}
-            </Box>
-          </Box>
-        ) : (
-          <Fragment key={part.message.id}>
-            <MessageView message={part.message} chat={chat} />
-          </Fragment>
-        ),
-      )}
-      {pistes.length > 0 && (
-        <MessageView
-          message={{
-            id: 'live-pistes',
-            action: chat.action,
-            kind: 'pistes',
-            phrases: pistes,
-          }}
-          chat={chat}
-        />
-      )}
-      {chat.busy && (
-        <Text $size="sm" $variation="secondary" role="status">
-          {t('Nestor is writing…')}
-        </Text>
-      )}
-      {last?.rounds?.length ? (
-        <InChatRounds
-          message={last}
-          rounds={last.rounds}
-          onRound={(round) => chat.runRound(last.id, round)}
-        />
-      ) : null}
-      <div ref={endRef} />
-    </Box>
+        )}
+        {parts.map((part) =>
+          part.kind === 'fold' ? (
+            <Fold key={part.messages[0].id}>
+              <summary>
+                <FoldChevron />
+                <span>{foldSummary(part.messages, t)}</span>
+              </summary>
+              <div>
+                {part.messages.map((message) => (
+                  <MessageView key={message.id} message={message} chat={chat} />
+                ))}
+              </div>
+            </Fold>
+          ) : (
+            <Fragment key={part.message.id}>
+              <MessageView message={part.message} chat={chat} />
+            </Fragment>
+          ),
+        )}
+        {pistes.length > 0 && (
+          <MessageView
+            message={{
+              id: 'live-pistes',
+              action: chat.action,
+              kind: 'pistes',
+              phrases: pistes,
+            }}
+            chat={chat}
+          />
+        )}
+        {chat.busy && <Typing role="status">{t('Nestor is writing…')}</Typing>}
+        {last?.rounds?.length ? (
+          <InChatRounds
+            message={last}
+            missing={missing}
+            rounds={last.rounds}
+            onRound={(round) => chat.runRound(last.id, round)}
+          />
+        ) : null}
+        <div ref={endRef} />
+      </ThreadInner>
+    </ThreadScroll>
   );
 };

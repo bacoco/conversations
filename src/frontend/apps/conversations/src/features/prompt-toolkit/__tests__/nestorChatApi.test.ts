@@ -3,6 +3,7 @@ import {
   checkRequest,
   hasHoles,
   parseRequestCheck,
+  suggestPistes,
   withoutHoles,
   writeVersion,
 } from '../chat/nestorChatApi';
@@ -148,5 +149,36 @@ describe('adviceCount', () => {
       advised: 2,
       applied: 1,
     });
+  });
+});
+
+describe('suggestPistes', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('keeps the user’s own task: three versions, no blank, not the draft itself', async () => {
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        pistes: [
+          'Fais un courriel pour inviter l’équipe',
+          'Rédige un courriel court pour inviter l’équipe à une réunion',
+          'Invite l’équipe le [date] en salle [salle]',
+          'Rédige un courriel cordial pour inviter toute l’équipe',
+          'Rédige un courriel court pour inviter l’équipe à une réunion',
+          'Écris une invitation à l’équipe, avec une demande de confirmation',
+          'Une quatrième de trop',
+        ],
+      }),
+    );
+    const pistes = await suggestPistes(
+      'Fais un courriel pour inviter l’équipe',
+      'French',
+    );
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[1].content).toContain('Fais un courriel pour inviter');
+    expect(pistes).toEqual([
+      'Rédige un courriel court pour inviter l’équipe à une réunion',
+      'Rédige un courriel cordial pour inviter toute l’équipe',
+      'Écris une invitation à l’équipe, avec une demande de confirmation',
+    ]);
   });
 });

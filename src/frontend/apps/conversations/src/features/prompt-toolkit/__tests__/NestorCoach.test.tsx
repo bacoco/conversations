@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { CoachPanel } from '../components/CoachPanel';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
@@ -7,6 +7,11 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
+}));
+vi.mock('../chat/nestorChatApi', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../chat/nestorChatApi')>()),
+  suggestPistes: () =>
+    Promise.resolve(['Invite l’équipe à la réunion de lancement']),
 }));
 vi.mock('@/utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils')>()),
@@ -51,6 +56,27 @@ describe('the coach is one chat with Nestor', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ask Nestor' }));
     expect(
       screen.getByRole('dialog', { name: 'Ask Nestor' }),
+    ).toBeInTheDocument();
+  });
+
+  it('ideas go once Nestor answers, and come back when the text changes', async () => {
+    const idea = 'Invite l’équipe à la réunion de lancement';
+    usePromptToolkitStore.setState({ chatInput: 'Fais un courriel' });
+    render(<CoachPanel />);
+    expect(
+      await screen.findByText(idea, undefined, { timeout: 3000 }),
+    ).toBeInTheDocument();
+    act(() => {
+      useNestorChatStore
+        .getState()
+        .post('c1', { kind: 'hint', hint: 'write-first' });
+    });
+    expect(screen.queryByText(idea)).toBeNull();
+    act(() => {
+      usePromptToolkitStore.setState({ chatInput: 'Fais un courriel court' });
+    });
+    expect(
+      await screen.findByText(idea, undefined, { timeout: 3000 }),
     ).toBeInTheDocument();
   });
 });

@@ -79,6 +79,17 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   if (find('review')) {
     return t('Session review');
   }
+  if (find('placed')) {
+    return t('Version put in the Assistant’s field');
+  }
+  const hint = find('hint');
+  if (hint) {
+    return hint.hint === 'write-first'
+      ? t('Nestor asked to write the request first')
+      : hint.hint === 'review-after-answer'
+        ? t('The review comes after an answer')
+        : t('New request');
+  }
   const question = messages.find(
     (message): message is Extract<NestorMessage, { kind: 'user' }> =>
       message.kind === 'user',
