@@ -53,6 +53,9 @@ interface PromptToolkitState {
   dismissWelcome: () => void;
   /** The coaching mode options, folded by default to save room. */
   isCoachOptionsOpen: boolean;
+  /** Nestor's settings over the chat (gear in the header); not kept. */
+  showNestorSettings: boolean;
+  setShowNestorSettings: (show: boolean) => void;
   /** Bumped by the header trash button; the open section clears itself. */
   resetCount: number;
   /** Live copy of the chat input, published by the chat while it is mounted. */
@@ -176,6 +179,9 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       setActionBarHeight: (actionBarHeight) => set({ actionBarHeight }),
       isResizing: false,
       isCoachOptionsOpen: false,
+      showNestorSettings: false,
+      setShowNestorSettings: (showNestorSettings) =>
+        set({ showNestorSettings }),
       showHome: true,
       coachMode: 'instant',
       hasSeenWelcome: false,
@@ -195,10 +201,12 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
             : {}),
           mode: 'coach',
           showHome: false,
+          showNestorSettings: false,
           fill: null,
         }),
       setCoachMode: (coachMode) => set({ coachMode }),
-      openSection: (mode) => set({ mode, showHome: false, fill: null }),
+      openSection: (mode) =>
+        set({ mode, showHome: false, showNestorSettings: false, fill: null }),
       fill: null,
       startFill: (template, title, context, mode, replaces) =>
         set({ fill: { template, title, context, mode, replaces } }),
@@ -259,6 +267,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           showHome: true,
           hasSeenWelcome: false,
           isCoachOptionsOpen: false,
+          showNestorSettings: false,
         }),
       // Home opens the cards; a second Home goes back to the welcome.
       goHome: () =>
@@ -266,6 +275,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           fill: null,
           showHome: true,
           isCoachOptionsOpen: false,
+          showNestorSettings: false,
         }),
       // The trash button: clear the coach and come back to the home cards.
       resetSection: () =>

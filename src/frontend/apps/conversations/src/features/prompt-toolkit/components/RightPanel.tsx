@@ -15,6 +15,7 @@ import { useAuthQuery } from '@/features/auth';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
+import { NestorHeaderTools } from '../chat/NestorSettings';
 import {
   useAiAvailability,
   useAiAvailable,
@@ -200,6 +201,7 @@ export const RightPanel = ({
     showHome: isHomeRequested,
     goHome,
     goWelcome,
+    setShowNestorSettings,
   } = usePromptToolkitStore();
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
@@ -242,6 +244,8 @@ export const RightPanel = ({
           label: '',
         });
   const title = showHome ? 'Nestor' : current.label;
+  // The coach is a chat with Nestor: his name, Auto and the gear on top.
+  const isNestorChat = mode === 'coach' && !showHome;
 
   return (
     <Box
@@ -306,7 +310,20 @@ export const RightPanel = ({
               <Icon iconName="home" $size="18px" $withThemeInherited />
               {t('Home')}
             </Box>
-            {!showHome && (
+            {isNestorChat && (
+              <Box $direction="row" $align="center" $gap="10px">
+                <Box
+                  as="h2"
+                  $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap;"
+                >
+                  Nestor
+                </Box>
+                <NestorHeaderTools
+                  onSettings={() => setShowNestorSettings(true)}
+                />
+              </Box>
+            )}
+            {!showHome && !isNestorChat && (
               <Box
                 as="h2"
                 $direction="row"
@@ -321,7 +338,7 @@ export const RightPanel = ({
           </Box>
         )}
         <Box $direction="row" $gap="4px">
-          {!showHome && (
+          {!showHome && !isNestorChat && (
             <Button
               size="small"
               color="neutral"
@@ -418,7 +435,10 @@ export const RightPanel = ({
         </Box>
       </Box>
       {/* Nestor, on every screen: a round button that opens a sheet. */}
-      {isAiAvailable && <NestorDock language={languageName(i18n.language)} />}
+      {/* In the coach, "Demander à Nestor" is in the bar. */}
+      {isAiAvailable && !isNestorChat && (
+        <NestorDock language={languageName(i18n.language)} />
+      )}
     </Box>
   );
 };
