@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components';
 
-import { wordDiff } from '../coach/wordDiff';
-
 import { VoiceAnswer } from './VoiceAnswer';
 import type { NestorMessage } from './types';
 import {
@@ -17,7 +15,6 @@ import {
   Keys,
   LinkButton,
   MainButton,
-  Mine,
   NestorBubble,
   Pill,
   Pills,
@@ -31,6 +28,7 @@ import {
   Warn,
 } from './ui';
 import type { NestorChat } from './useNestorChat';
+import { versionParts } from './versionParts';
 
 export { NestorBubble };
 
@@ -222,27 +220,25 @@ export const MessageView = ({
       );
     }
     case 'version': {
-      const parts = wordDiff(message.original, message.version) ?? [
-        { kind: 'added' as const, text: message.version },
-      ];
+      const parts = versionParts(message.original, message.version);
+      const added = parts.some((part) => part.kind === 'added');
       return (
         <NestorBubble>
           <span>{t('Here is your request:')}</span>
           <VersionBox>
-            {parts
-              .filter((part) => part.kind !== 'removed')
-              .map((part, index) =>
-                part.kind === 'added' ? (
-                  <Added key={index}>{part.text}</Added>
-                ) : (
-                  <Mine key={index}>{part.text}</Mine>
-                ),
-              )}
+            {parts.map((part, index) =>
+              part.kind === 'added' ? (
+                <Added key={index}>{part.text}</Added>
+              ) : (
+                <span key={index}>{part.text}</span>
+              ),
+            )}
           </VersionBox>
-          <Keys>
-            <Mine>{t('You')}</Mine>
-            <Added>{t('Suggested by Nestor')}</Added>
-          </Keys>
+          {added && (
+            <Keys>
+              <Added>{t('Suggested by Nestor')}</Added>
+            </Keys>
+          )}
           {message.missing.length > 0 && (
             <Warn>
               {t('⚠ To add when you know it: {{items}}.', {
@@ -274,7 +270,10 @@ export const MessageView = ({
         </Event>
       );
     case 'advice': {
-      const warn = message.missing.length > 0 || /\[/.test(message.note.issue);
+      const warn =
+        message.missing.length > 0 ||
+        (message.gaps?.length ?? 0) > 0 ||
+        /\[/.test(message.note.issue);
       return (
         <NestorBubble>
           {message.note.issue &&

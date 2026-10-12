@@ -159,14 +159,30 @@ describe('<NestorThread />', () => {
     render(
       <NestorThread
         chat={chatWith([
-          { id: 'v1', action: 9, kind: 'version', original: 'a', version: 'Ancienne version', missing: [] },
-          { id: 'v2', action: 9, kind: 'version', original: 'b', version: 'Nouvelle version', missing: [] },
+          {
+            id: 'v1',
+            action: 9,
+            kind: 'version',
+            original: 'a',
+            version: 'Ancienne version',
+            missing: [],
+          },
+          {
+            id: 'v2',
+            action: 9,
+            kind: 'version',
+            original: 'b',
+            version: 'Nouvelle version',
+            missing: [],
+          },
         ])}
         pistes={[]}
       />,
     );
     expect(
-      screen.getAllByRole('button', { name: 'Put it in the Assistant’s field' }),
+      screen.getAllByRole('button', {
+        name: 'Put it in the Assistant’s field',
+      }),
     ).toHaveLength(1);
   });
 

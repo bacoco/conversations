@@ -88,7 +88,14 @@ export type NestorMessage = Base &
       }
     | { kind: 'version'; original: string; version: string; missing: string[] }
     | { kind: 'placed'; previous: string; undone?: boolean }
-    | { kind: 'advice'; note: CoachNote; missing: string[]; answerId: string }
+    | {
+        kind: 'advice';
+        note: CoachNote;
+        missing: string[];
+        /** Blanks left in the answer: the advice warns first. */
+        gaps?: string[];
+        answerId: string;
+      }
     | { kind: 'suites'; groups: NextGroup[]; answerId: string }
     | {
         kind: 'review';

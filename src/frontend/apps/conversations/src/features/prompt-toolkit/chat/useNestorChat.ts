@@ -240,12 +240,16 @@ export const useNestorChat = (language: string) => {
     const prompts = turns
       .filter((turn) => turn.role === 'user')
       .map((turn) => turn.text);
+    // Advice counts only when a later request could apply it.
     const advice = all
       .filter((message): message is Find<'advice'> => message.kind === 'advice')
       .map((message) => ({
-        afterPrompt: message.note.exchanges,
+        afterPrompt: turns
+          .slice(0, message.note.upTo)
+          .filter((turn) => turn.role === 'user').length,
         text: message.note.tryNow,
-      }));
+      }))
+      .filter((item) => item.afterPrompt < prompts.length);
     void run('review', 'review', async (signal, say) => {
       const review = await reviewSession(prompts, language, signal, advice);
       const lastAdvice = lastOf(all, 'advice');
@@ -595,20 +599,21 @@ export const useNestorChat = (language: string) => {
       const missing = lastOf(all, 'version')?.missing ?? [];
       const answer =
         turns.findLast((turn) => turn.role === 'assistant')?.text ?? '';
+      const gaps = answerGaps(answer);
       void run('advice', null, async (signal, say) => {
         const note = await coachThreadNote(
           turns,
           previous,
           language,
           signal,
-          answerGaps(answer),
+          gaps,
           missing,
         );
         const lesson = note.competency
           ? LESSON_FOR_COMPETENCY[note.competency]
           : undefined;
         say(
-          { kind: 'advice', note, missing, answerId },
+          { kind: 'advice', note, missing, gaps, answerId },
           missing.length
             ? [{ id: 'redo-with-missing', primary: true }]
             : lesson

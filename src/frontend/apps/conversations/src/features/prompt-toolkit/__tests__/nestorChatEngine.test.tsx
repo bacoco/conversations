@@ -336,6 +336,61 @@ describe('useNestorChat', () => {
       text: 'Complete them',
     });
   });
+
+  it('the review never hears of advice that no later request could apply', async () => {
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Fais un courriel' },
+        { role: 'assistant', text: 'Voici' },
+      ],
+      latestCompletedAssistantMessageId: 'm1',
+      isAssistantResponding: false,
+    });
+    useNestorChatStore.getState().post('c1', {
+      kind: 'advice',
+      note: { exchanges: 1, tryNow: 'Ajoutez l’heure', applied: null } as never,
+      missing: [],
+      answerId: 'm1',
+    });
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        summary: 'Bien.',
+        strengths: ['Clair'],
+        habits: [],
+        tips: ['a', 'b', 'c'],
+        grades: [],
+      }),
+    );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.runBar('review');
+      return Promise.resolve();
+    });
+    expect(fetchMock.mock.calls[0][1]?.body as string).not.toContain(
+      'Ajoutez l’heure',
+    );
+  });
+
+  it('advice on an answer with blanks keeps them, to warn first', async () => {
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Fais un courriel' },
+        { role: 'assistant', text: 'Rendez-vous à [heure] en salle B12.' },
+      ],
+    });
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({ issue: 'Il manque l’heure.', try: 'Donnez l’heure.' }),
+    );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.postAdvice('m1');
+      return new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(thread().at(-1)).toMatchObject({
+      kind: 'advice',
+      gaps: [expect.stringContaining('heure')],
+    });
+  });
 });
 
 describe('useNestorAuto', () => {
