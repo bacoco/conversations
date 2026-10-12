@@ -15,6 +15,8 @@ export interface ToolChoice {
 export interface ToolOptionGroup {
   id: string;
   label: string;
+  /** The block of the request it writes; the instruction by default. */
+  part?: PromptPartKind;
   choices: ToolChoice[];
 }
 
@@ -23,6 +25,17 @@ export interface ToolSource {
   placeholder: string;
   /** Used in the prompt when the user leaves the field empty. */
   fallback: string;
+}
+
+/**
+ * The four parts of a good request, after the guide on AI for public
+ * servants: each part of a prompt is shown in its own colour.
+ */
+export type PromptPartKind = 'context' | 'instruction' | 'format' | 'document';
+
+export interface PromptPart {
+  kind: PromptPartKind;
+  text: string;
 }
 
 export interface DailyTool {
@@ -34,15 +47,49 @@ export interface DailyTool {
   options: ToolOptionGroup[];
   /** Builds the prompt from the chosen instructions and the source text. */
   build: (choices: Record<string, string>, source: string) => string;
+  /** The same prompt, part by part, to explain what each part is for. */
+  parts?: (choices: Record<string, string>, source: string) => PromptPart[];
 }
 
 const block = (source: string) => `\n\n"""\n${source}\n"""`;
+
+/** "Improve with Nestor": the rework goes through Nestor's questions. */
+export const IMPROVE_CHOICE = 'improve';
+
+/** The prompt sent: its parts one after the other, the text quoted last. */
+export const joinParts = (parts: PromptPart[]) =>
+  parts
+    .map((part) =>
+      part.kind === 'document' ? `"""\n${part.text}\n"""` : part.text,
+    )
+    .join('\n\n');
+
+/** A tool written part by part: its prompt is the parts joined. */
+const byParts = (
+  parts: (choices: Record<string, string>, source: string) => PromptPart[],
+) => ({
+  parts,
+  build: (choices: Record<string, string>, source: string) =>
+    joinParts(parts(choices, source)),
+});
 
 export const getDailyTools = (t: TFunction): DailyTool[] => {
   const pastedText: ToolSource = {
     label: t('Text to work on'),
     placeholder: t('Paste the text here (optional)'),
     fallback: t('[paste the text here]'),
+  };
+
+  // A short instruction first: the detailed one is for later, when
+  // the user is ready for it.
+  const level: ToolOptionGroup = {
+    id: 'level',
+    part: 'instruction',
+    label: t('Level of detail'),
+    choices: [
+      { id: 'simple', label: t('Simple'), instruction: 'simple' },
+      { id: 'complete', label: t('Complete'), instruction: 'complete' },
+    ],
   };
 
   return [
@@ -57,6 +104,41 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
         fallback: t('[paste the email received here]'),
       },
       options: [
+        {
+          id: 'sender',
+          part: 'context',
+          label: t('Who wrote to you'),
+          choices: [
+            {
+              id: 'citizen',
+              label: t('A member of the public'),
+              instruction: t(
+                'I work in an administration and I must reply to an email from a member of the public.',
+              ),
+            },
+            {
+              id: 'colleague',
+              label: t('A colleague'),
+              instruction: t(
+                'I work in an administration and I must reply to an email from a colleague.',
+              ),
+            },
+            {
+              id: 'management',
+              label: t('My management'),
+              instruction: t(
+                'I work in an administration and I must reply to an email from my management.',
+              ),
+            },
+            {
+              id: 'partner',
+              label: t('A partner'),
+              instruction: t(
+                'I work in an administration and I must reply to an email from an outside partner (a company, an association, another administration).',
+              ),
+            },
+          ],
+        },
         {
           id: 'intent',
           label: t('Goal'),
@@ -88,28 +170,108 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             },
           ],
         },
+        level,
         {
           id: 'tone',
+          part: 'format',
           label: t('Tone'),
           choices: [
             { id: 'cordial', label: t('Cordial'), instruction: t('cordial') },
             { id: 'formal', label: t('Formal'), instruction: t('formal') },
           ],
         },
+        {
+          id: 'length',
+          part: 'format',
+          label: t('Length'),
+          choices: [
+            {
+              id: 'short',
+              label: t('Short'),
+              instruction: t('short: five lines at most'),
+            },
+            {
+              id: 'standard',
+              label: t('Standard'),
+              instruction: t('about ten lines'),
+            },
+            {
+              id: 'detailed',
+              label: t('Detailed'),
+              instruction: t('detailed, one paragraph per point'),
+            },
+          ],
+        },
       ],
-      build: (c, source) =>
-        t(
-          'Write a reply to the email below. Goal: {{intent}}. Tone: {{tone}}, in plain language. Structure: greeting, answer in short paragraphs, closing. Begin by apologising for the trouble, without judging the sender\'s tone. Present what the sender says as what they say ("You tell us that…"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, end by asking them to reply with their file number, if they have one.',
-          { intent: c.intent, tone: c.tone },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.sender },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t(
+                  'Write a reply to this email to {{intent}}. Invent nothing: write TO COMPLETE where information is missing.',
+                  { intent: c.intent },
+                )
+              : t(
+                  'Write a reply to the email below. Goal: {{intent}}. Begin by apologising for the trouble, without judging the sender\'s tone. Present what the sender says as what they say ("You tell us that…"), never as a fact checked by the administration. Use only the facts given here: no cause of a delay, state of the file, procedure, website, date, figure or contact that is not in the email, and no conclusion about the file; where the reply needs one, write TO COMPLETE followed by what to check. Promise nothing, not even what will be done next; if useful, end by asking them to reply with their file number, if they have one.',
+                  { intent: c.intent },
+                ),
+        },
+        {
+          kind: 'format',
+          text: t('Tone: {{tone}}. Length: {{length}}.', {
+            tone: c.tone,
+            length: c.length,
+          }),
+        },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'rewrite',
       icon: 'edit_note',
-      title: t('Rewrite a text'),
-      description: t('Plain language, shorter, corrected or more formal.'),
+      title: t('Rework a text'),
+      description: t(
+        'Plain language, shorter, corrected, more formal, or improved with Nestor.',
+      ),
       source: pastedText,
       options: [
+        {
+          id: 'readers',
+          part: 'context',
+          label: t('For'),
+          choices: [
+            {
+              id: 'public',
+              label: t('General public'),
+              instruction: t(
+                'Here is a text I wrote for my work. It is for the general public.',
+              ),
+            },
+            {
+              id: 'colleagues',
+              label: t('My colleagues'),
+              instruction: t(
+                'Here is a text I wrote for my work. It is for my colleagues.',
+              ),
+            },
+            {
+              id: 'management',
+              label: t('My management'),
+              instruction: t(
+                'Here is a text I wrote for my work. It is for my management.',
+              ),
+            },
+            {
+              id: 'partner',
+              label: t('A partner'),
+              instruction: t(
+                'Here is a text I wrote for my work. It is for an outside partner.',
+              ),
+            },
+          ],
+        },
         {
           id: 'action',
           label: t('Action'),
@@ -145,14 +307,58 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
               label: t('Bullet points'),
               instruction: t('turn it into a clear bullet-point list'),
             },
+            {
+              id: IMPROVE_CHOICE,
+              label: t('Improve with Nestor'),
+              instruction: t(
+                'make it clearer and more convincing, keeping its meaning',
+              ),
+            },
+          ],
+        },
+        level,
+        {
+          id: 'output',
+          part: 'format',
+          label: t('Expected result'),
+          choices: [
+            {
+              id: 'only',
+              label: t('The text only'),
+              instruction: t('Give only the reworked text, ready to use.'),
+            },
+            {
+              id: 'changes',
+              label: t('The text and the changes'),
+              instruction: t(
+                'Give the reworked text, then the list of the changes made.',
+              ),
+            },
+            {
+              id: 'two',
+              label: t('Two versions'),
+              instruction: t(
+                'Give two versions to choose from, each ready to use.',
+              ),
+            },
           ],
         },
       ],
-      build: (c, source) =>
-        t(
-          'Rewrite the text below: {{action}}. Keep every fact, date and amount unchanged. Give only the rewritten text.',
-          { action: c.action },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.readers },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('Rework this text: {{action}}.', { action: c.action })
+              : t(
+                  'Rework the text below: {{action}}. Keep every fact, date and amount unchanged.',
+                  { action: c.action },
+                ),
+        },
+        { kind: 'format', text: c.output },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'minutes',
@@ -279,6 +485,34 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       source: pastedText,
       options: [
         {
+          id: 'purpose',
+          part: 'context',
+          label: t('What for'),
+          choices: [
+            {
+              id: 'send',
+              label: t('To send it'),
+              instruction: t(
+                'Here is a text to translate, to send to someone who reads this language.',
+              ),
+            },
+            {
+              id: 'understand',
+              label: t('To understand it'),
+              instruction: t(
+                'Here is a text I received and must understand for my work.',
+              ),
+            },
+            {
+              id: 'publish',
+              label: t('To publish it'),
+              instruction: t(
+                'Here is a text to translate, to be published (a web page, a leaflet, a sign).',
+              ),
+            },
+          ],
+        },
+        {
           id: 'language',
           label: t('Into'),
           choices: [
@@ -289,12 +523,53 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             { id: 'it', label: t('Italian'), instruction: t('Italian') },
           ],
         },
+        level,
+        {
+          id: 'output',
+          part: 'format',
+          label: t('Expected result'),
+          choices: [
+            {
+              id: 'only',
+              label: t('The translation only'),
+              instruction: t(
+                'Give only the translation, then list any term you were unsure about.',
+              ),
+            },
+            {
+              id: 'side',
+              label: t('Side by side'),
+              instruction: t(
+                'Give a table: each original sentence on the left, its translation on the right.',
+              ),
+            },
+            {
+              id: 'plain',
+              label: t('In plain language'),
+              instruction: t(
+                'Give the translation in plain, simple language, then list any term you were unsure about.',
+              ),
+            },
+          ],
+        },
       ],
-      build: (c, source) =>
-        t(
-          'Translate the text below into {{language}}. Keep the tone, the formatting and the proper nouns. Give only the translation, then list any term you were unsure about.',
-          { language: c.language },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.purpose },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('Translate this text into {{language}}.', {
+                  language: c.language,
+                })
+              : t(
+                  'Translate the text below into {{language}}. Keep the tone, the formatting and the proper nouns.',
+                  { language: c.language },
+                ),
+        },
+        { kind: 'format', text: c.output },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'letter',
@@ -307,6 +582,41 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
         fallback: t('[recipient, subject and key points]'),
       },
       options: [
+        {
+          id: 'situation',
+          part: 'context',
+          label: t('Situation'),
+          choices: [
+            {
+              id: 'answer',
+              label: t('Answering a request'),
+              instruction: t(
+                'I work in an administration and I am answering a request I received.',
+              ),
+            },
+            {
+              id: 'inform',
+              label: t('Informing'),
+              instruction: t(
+                'I work in an administration and I must inform people of a change or a piece of news.',
+              ),
+            },
+            {
+              id: 'decision',
+              label: t('Announcing a decision'),
+              instruction: t(
+                'I work in an administration and I must announce a decision.',
+              ),
+            },
+            {
+              id: 'ask',
+              label: t('Asking for something'),
+              instruction: t(
+                'I work in an administration and I must ask for something (a document, an answer, a meeting).',
+              ),
+            },
+          ],
+        },
         {
           id: 'kind',
           label: t('Type'),
@@ -328,12 +638,52 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             },
           ],
         },
+        level,
+        {
+          id: 'length',
+          part: 'format',
+          label: t('Length'),
+          choices: [
+            {
+              id: 'page',
+              label: t('One page at most'),
+              instruction: t('one page at most'),
+            },
+            {
+              id: 'short',
+              label: t('A few lines'),
+              instruction: t('a few lines'),
+            },
+            {
+              id: 'detailed',
+              label: t('Detailed'),
+              instruction: t('detailed, one paragraph per point'),
+            },
+          ],
+        },
       ],
-      build: (c, source) =>
-        t(
-          'Write {{kind}} from the points below. Use the usual structure (subject, introduction, body, closing formula), plain and courteous language, and write TO COMPLETE where information is missing.',
-          { kind: c.kind },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.situation },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('Write {{kind}} from these points. Invent nothing.', {
+                  kind: c.kind,
+                })
+              : t(
+                  'Write {{kind}} from the points below. Use only these points, and write TO COMPLETE where information is missing.',
+                  { kind: c.kind },
+                ),
+        },
+        {
+          kind: 'format',
+          text: t('Length: {{length}}. Plain and courteous language.', {
+            length: c.length,
+          }),
+        },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'plan',
@@ -431,6 +781,42 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
 };
 
 /** Prompt of a tool for the selected choices (first choice by default). */
+const chosenInstructions = (
+  tool: DailyTool,
+  selected: Record<string, string>,
+) =>
+  Object.fromEntries(
+    tool.options.map((group) => {
+      const choice =
+        group.choices.find((c) => c.id === selected[group.id]) ??
+        group.choices[0];
+      return [group.id, choice.instruction];
+    }),
+  );
+
+/**
+ * The prompt of a tool, part by part; a single part when not split. A part
+ * the user rewrote in its block replaces the one proposed.
+ */
+export const buildToolParts = (
+  tool: DailyTool,
+  selected: Record<string, string>,
+  source: string,
+  edits: Partial<Record<PromptPartKind, string>> = {},
+): PromptPart[] => {
+  const text = source.trim() || tool.source.fallback;
+  const choices = chosenInstructions(tool, selected);
+  return tool.parts
+    ? tool
+        .parts(choices, text)
+        .map((part) =>
+          part.kind !== 'document' && edits[part.kind] !== undefined
+            ? { ...part, text: edits[part.kind] as string }
+            : part,
+        )
+    : [{ kind: 'instruction', text: tool.build(choices, text) }];
+};
+
 export const buildToolPrompt = (
   tool: DailyTool,
   selected: Record<string, string>,

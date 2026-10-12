@@ -1,4 +1,4 @@
-import { Button } from '@gouvfr-lasuite/cunningham-react';
+import { Button, Loader } from '@gouvfr-lasuite/cunningham-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
@@ -7,7 +7,8 @@ import { Box, Icon, Text, useToast } from '@/components';
 import { useResponsiveStore } from '@/stores';
 
 import { useAiAvailable } from '../coach/aiAvailability';
-import { hasPlaceholders } from '../coach/coachApi';
+import { hasPlaceholders, rephrasePart } from '../coach/coachApi';
+import { languageName } from '../coach/language';
 import {
   NESTOR_ORGANIZE_URL,
   NESTOR_PROMPTS_URL,
@@ -27,8 +28,19 @@ import {
 
 import { MyStyleView } from './MyStyleView';
 import { FollowUpView, ImproveTextView } from './NestorToolViews';
+import { PromptExplained } from './PromptExplained';
 import { PromptGenerator } from './PromptGenerator';
-import { DailyTool, buildToolPrompt, getDailyTools } from './tools';
+import { PART_ORDER, PartHeader, partCss, usePartLabels } from './promptParts';
+import {
+  DailyTool,
+  IMPROVE_CHOICE,
+  PromptPartKind,
+  ToolOptionGroup,
+  buildToolParts,
+  buildToolPrompt,
+  getDailyTools,
+  joinParts,
+} from './tools';
 import { TOOL_KEYWORDS, useToolsUsageStore } from './useToolsUsageStore';
 
 const iconBadgeCss = (size: number) => css`
@@ -134,6 +146,101 @@ const TOOL_IMAGES: Record<string, string> = {
   brainstorm: NESTOR_ORGANIZE_URL,
 };
 
+/** "Other": what the user says in their words, rewritten into the block. */
+const OtherChoice = ({
+  kind,
+  task,
+  isOpen,
+  onToggle,
+  onText,
+}: {
+  kind: 'context' | 'instruction' | 'format';
+  task: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  onText: (text: string) => void;
+}) => {
+  const { t, i18n } = useTranslation();
+  const isAiAvailable = useAiAvailable();
+  const [said, setSaid] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const placeholders = {
+    context: t('For example: it is for a member of the public who is angry'),
+    instruction: t('For example: thank them and say the file is complete'),
+    format: t('For example: very short, with a list of the documents'),
+  };
+  const rephrase = async () => {
+    if (!isAiAvailable) {
+      onText(said.trim());
+      return;
+    }
+    setStatus('loading');
+    try {
+      onText(
+        await rephrasePart(
+          said.trim(),
+          kind,
+          task,
+          languageName(i18n.language),
+        ),
+      );
+      setStatus('idle');
+      setSaid('');
+    } catch {
+      setStatus('error');
+    }
+  };
+  return (
+    <Box $gap="8px">
+      <Box $direction="row">
+        <Box
+          as="button"
+          type="button"
+          aria-pressed={isOpen}
+          onClick={onToggle}
+          $direction="row"
+          $css={choiceCss(isOpen)}
+        >
+          <Icon iconName="mic" $size="16px" $withThemeInherited />
+          {t('Other')}
+        </Box>
+      </Box>
+      {isOpen && (
+        <Box $gap="8px">
+          <PanelTextArea
+            label={t('Say it in your words')}
+            minRows={2}
+            value={said}
+            placeholder={placeholders[kind]}
+            onChange={setSaid}
+          />
+          <Box $direction="row" $gap="8px" $align="center">
+            <Button
+              size="small"
+              disabled={!said.trim() || status === 'loading'}
+              onClick={() => void rephrase()}
+              icon={
+                status === 'loading' ? (
+                  <Loader size="small" />
+                ) : (
+                  <Icon iconName="auto_fix_high" $size="16px" />
+                )
+              }
+            >
+              {isAiAvailable ? t('Nestor rewrites it') : t('Use this text')}
+            </Button>
+            {status === 'error' && (
+              <Text $size="xs" role="alert">
+                {t('Nestor did not answer. Try again.')}
+              </Text>
+            )}
+          </Box>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
 const ToolForm = ({
   tool,
   onBack,
@@ -146,17 +253,47 @@ const ToolForm = ({
   const { isDesktop } = useResponsiveStore();
   const isAiAvailable = useAiAvailable();
   const offerPrompt = useOfferPrompt();
+  const startFill = usePromptToolkitStore((state) => state.startFill);
   const sendQuestion = useMainConversationStore((state) => state.sendQuestion);
   const closePanel = usePromptToolkitStore((state) => state.close);
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [source, setSource] = useState('');
-  const prompt = buildToolPrompt(tool, selected, source);
+  const [isExplained, setIsExplained] = useState(false);
+  /** The blocks the user rewrote, in place of the text proposed. */
+  const [edits, setEdits] = useState<Partial<Record<PromptPartKind, string>>>(
+    {},
+  );
+  /** The blocks where the user says what they want in their words. */
+  const [others, setOthers] = useState<Partial<Record<PromptPartKind, true>>>(
+    {},
+  );
+  /** A tool written part by part: its request is written in four blocks. */
+  const isExplainable = Boolean(tool.parts);
+  const parts = buildToolParts(tool, selected, source, edits);
+  const prompt = isExplainable
+    ? joinParts(parts)
+    : buildToolPrompt(tool, selected, source);
+  // Without the Albert relay, Nestor cannot improve the text.
+  const options = tool.options.map((group) => ({
+    ...group,
+    choices: group.choices.filter(
+      (choice) => isAiAvailable || choice.id !== IMPROVE_CHOICE,
+    ),
+  }));
+  // "Improve with Nestor": Nestor asks his questions, then writes it.
+  const isNestor =
+    isAiAvailable &&
+    tool.options.some((group) => selected[group.id] === IMPROVE_CHOICE);
   const prepare = () => offerPrompt(prompt, tool.title);
   /**
    * One click to the answer. Blanks to fill go through Nestor's questions
    * first; without an open conversation, the request is prepared instead.
    */
   const askNow = () => {
+    if (isNestor) {
+      startFill(prompt, tool.title, '', 'draft');
+      return;
+    }
     if ((isAiAvailable && hasPlaceholders(prompt)) || !sendQuestion) {
       prepare();
       return;
@@ -175,6 +312,89 @@ const ToolForm = ({
       closePanel();
     }
   };
+  const askLabel = isNestor ? t('Start with Nestor') : t('Ask the Assistant');
+
+  /**
+   * The buttons of one choice. In a block, a choice rewrites the block:
+   * what the user typed there gives way to the new proposal.
+   */
+  const choiceGroup = (group: ToolOptionGroup, kind?: PromptPartKind) => {
+    // Text of one's own in the block: none of its choices is in it.
+    const current =
+      kind && edits[kind] !== undefined
+        ? null
+        : (selected[group.id] ?? group.choices[0].id);
+    const labelId = `${tool.id}-${group.id}`;
+    return (
+      <Box key={group.id} $gap="8px" $css={kind ? undefined : sectionCardCss}>
+        <Text $size="sm" $weight="700" id={labelId}>
+          {group.label}
+        </Text>
+        <Box
+          role="radiogroup"
+          aria-labelledby={labelId}
+          $direction="row"
+          $gap="6px"
+          $css="flex-wrap: wrap;"
+        >
+          {group.choices.map((choice) => {
+            const isSelected = current === choice.id;
+            return (
+              <Box
+                key={choice.id}
+                as="button"
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={() => {
+                  setSelected((previous) => ({
+                    ...previous,
+                    [group.id]: choice.id,
+                  }));
+                  if (kind) {
+                    setEdits((previous) => ({
+                      ...previous,
+                      [kind]: undefined,
+                    }));
+                  }
+                }}
+                $direction="row"
+                $css={choiceCss(isSelected)}
+              >
+                {isSelected && (
+                  <Icon iconName="check" $size="16px" $withThemeInherited />
+                )}
+                {choice.label}
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+    );
+  };
+  const partLabels = usePartLabels();
+
+  const textBox = (
+    <Box
+      $gap="8px"
+      $css={css`
+        ${sectionCardCss}
+        flex: 1;
+      `}
+    >
+      <Text $size="sm" $weight="700">
+        {tool.source.label}
+      </Text>
+      <PanelTextArea
+        fill
+        label={tool.source.label}
+        minRows={isExplainable ? 7 : 5}
+        value={source}
+        placeholder={tool.source.placeholder}
+        onChange={setSource}
+      />
+    </Box>
+  );
 
   return (
     <Box $css="min-height: 100%;">
@@ -215,121 +435,141 @@ const ToolForm = ({
             padding: 16px 20px 32px;
           `}
         >
-          <img
-            src={TOOL_IMAGES[tool.id] ?? NESTOR_WRITE_URL}
-            alt=""
-            width={112}
-            height={112}
-            style={{
-              alignSelf: 'center',
-              borderRadius: '50%',
-              background: '#f7f8fd',
-            }}
-          />
-          {tool.options.map((group) => {
-            const current = selected[group.id] ?? group.choices[0].id;
-            return (
-              <Box key={group.id} $gap="8px" $css={sectionCardCss}>
-                <Text $size="sm" $weight="700" id={`${tool.id}-${group.id}`}>
-                  {group.label}
-                </Text>
+          {!isExplainable && (
+            <img
+              src={TOOL_IMAGES[tool.id] ?? NESTOR_WRITE_URL}
+              alt=""
+              width={112}
+              height={112}
+              style={{
+                alignSelf: 'center',
+                borderRadius: '50%',
+                background: '#f7f8fd',
+              }}
+            />
+          )}
+          {isExplainable &&
+            PART_ORDER.map((kind) => {
+              const part = parts.find((item) => item.kind === kind);
+              if (!part) {
+                return null;
+              }
+              const groups = options.filter(
+                (group) => (group.part ?? 'instruction') === kind,
+              );
+              const fieldId = `${tool.id}-part-${kind}`;
+              return (
                 <Box
-                  role="radiogroup"
-                  aria-labelledby={`${tool.id}-${group.id}`}
-                  $direction="row"
-                  $gap="6px"
-                  $css="flex-wrap: wrap;"
+                  key={kind}
+                  role="group"
+                  aria-labelledby={fieldId}
+                  $gap="8px"
+                  $css={partCss(kind)}
                 >
-                  {group.choices.map((choice) => {
-                    const isSelected = current === choice.id;
-                    return (
-                      <Box
-                        key={choice.id}
-                        as="button"
-                        type="button"
-                        role="radio"
-                        aria-checked={isSelected}
+                  <PartHeader kind={kind} id={fieldId} />
+                  {kind === 'document' ? (
+                    <PanelTextArea
+                      label={tool.source.label}
+                      minRows={6}
+                      value={source}
+                      placeholder={tool.source.placeholder}
+                      onChange={setSource}
+                    />
+                  ) : (
+                    <PanelTextArea
+                      label={partLabels[kind].label}
+                      minRows={2}
+                      dictation={false}
+                      value={part.text}
+                      onChange={(text) =>
+                        setEdits((previous) => ({ ...previous, [kind]: text }))
+                      }
+                    />
+                  )}
+                  {groups.map((group) => choiceGroup(group, kind))}
+                  {kind !== 'document' && (
+                    <OtherChoice
+                      kind={kind}
+                      task={tool.title}
+                      isOpen={Boolean(others[kind])}
+                      onToggle={() =>
+                        setOthers((previous) => ({
+                          ...previous,
+                          [kind]: previous[kind] ? undefined : true,
+                        }))
+                      }
+                      onText={(text) => {
+                        setEdits((previous) => ({ ...previous, [kind]: text }));
+                        setOthers((previous) => ({
+                          ...previous,
+                          [kind]: undefined,
+                        }));
+                      }}
+                    />
+                  )}
+                  {edits[kind] !== undefined && (
+                    <Box $direction="row">
+                      <Button
+                        size="nano"
+                        color="neutral"
+                        variant="tertiary"
                         onClick={() =>
-                          setSelected((previous) => ({
+                          setEdits((previous) => ({
                             ...previous,
-                            [group.id]: choice.id,
+                            [kind]: undefined,
                           }))
                         }
-                        $direction="row"
-                        $css={choiceCss(isSelected)}
+                        icon={<Icon iconName="undo" $size="16px" />}
                       >
-                        {isSelected && (
-                          <Icon
-                            iconName="check"
-                            $size="16px"
-                            $withThemeInherited
-                          />
-                        )}
-                        {choice.label}
-                      </Box>
-                    );
-                  })}
+                        {t('Back to the proposed text')}
+                      </Button>
+                    </Box>
+                  )}
                 </Box>
-              </Box>
-            );
-          })}
+              );
+            })}
+          {!isExplainable && options.map((group) => choiceGroup(group))}
 
           {/* The text to work on takes the room left in the panel. */}
-          <Box
-            $gap="8px"
-            $css={css`
-              ${sectionCardCss}
-              flex: 1;
-            `}
-          >
-            <Text $size="sm" $weight="700">
-              {tool.source.label}
-            </Text>
-            <PanelTextArea
-              fill
-              label={tool.source.label}
-              minRows={5}
-              value={source}
-              placeholder={tool.source.placeholder}
-              onChange={setSource}
-            />
-          </Box>
+          {!isExplainable && textBox}
 
-          <Box
-            as="details"
-            $gap="8px"
-            $css={css`
-              ${sectionCardCss}
-              & > summary {
-                cursor: pointer;
-                font-size: 0.875rem;
-                font-weight: 700;
-              }
-              & > summary:focus-visible {
-                outline: 2px solid
-                  var(--c--contextuals--border--semantic--brand--primary);
-                outline-offset: 2px;
-              }
-            `}
-          >
-            <summary>{t('Prompt that will be prepared')}</summary>
-            <Text
-              $size="xs"
+          {!isExplainable && (
+            <Box
+              as="details"
+              $gap="8px"
               $css={css`
-                max-height: 160px;
-                overflow-y: auto;
-                white-space: pre-wrap;
-                overflow-wrap: anywhere;
-                padding: 10px 12px;
-                border-radius: 8px;
-                background: var(
-                  --c--contextuals--background--surface--secondary
-                );
+                ${sectionCardCss}
+                & > summary {
+                  cursor: pointer;
+                  font-size: 0.875rem;
+                  font-weight: 700;
+                }
+                & > summary:focus-visible {
+                  outline: 2px solid
+                    var(--c--contextuals--border--semantic--brand--primary);
+                  outline-offset: 2px;
+                }
               `}
             >
-              {prompt}
-            </Text>
-          </Box>
+              <summary>{t('Prompt that will be prepared')}</summary>
+              <Text
+                $size="xs"
+                $css={css`
+                  max-height: 160px;
+                  overflow-y: auto;
+                  white-space: pre-wrap;
+                  overflow-wrap: anywhere;
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  background: var(
+                    --c--contextuals--background--surface--secondary
+                  );
+                `}
+              >
+                {prompt}
+              </Text>
+            </Box>
+          )}
         </Box>
       </Box>
       {/* The action stays at hand at the bottom of the panel. */}
@@ -344,23 +584,67 @@ const ToolForm = ({
           background: var(--c--contextuals--background--surface--primary);
         `}
       >
-        <Button
-          fullWidth
-          onClick={askNow}
-          icon={<Icon iconName="send" $size="18px" />}
-        >
-          {t('Ask the Assistant')}
-        </Button>
-        <Button
-          fullWidth
-          size="small"
-          color="neutral"
-          variant="tertiary"
-          onClick={prepare}
-        >
-          {t('Prepare without sending, to read it first')}
-        </Button>
+        {isExplainable ? (
+          <Box $direction="row" $gap="8px" $css="flex-wrap: wrap;">
+            <Button
+              color="neutral"
+              variant="secondary"
+              onClick={() => setIsExplained(true)}
+              icon={<Icon iconName="palette" $size="18px" />}
+            >
+              {t('See my request')}
+            </Button>
+            <Box $css="flex: 1; min-width: 160px;">
+              <Button
+                fullWidth
+                onClick={askNow}
+                icon={
+                  <Icon
+                    iconName={isNestor ? 'edit_note' : 'send'}
+                    $size="18px"
+                  />
+                }
+              >
+                {askLabel}
+              </Button>
+            </Box>
+          </Box>
+        ) : (
+          <>
+            <Button
+              fullWidth
+              onClick={askNow}
+              icon={<Icon iconName="send" $size="18px" />}
+            >
+              {askLabel}
+            </Button>
+            <Button
+              fullWidth
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={prepare}
+            >
+              {t('Prepare without sending, to read it first')}
+            </Button>
+          </>
+        )}
       </Box>
+      {isExplained && (
+        <PromptExplained
+          parts={parts}
+          isNestor={isNestor}
+          onClose={() => setIsExplained(false)}
+          onAsk={() => {
+            setIsExplained(false);
+            askNow();
+          }}
+          onPrepare={() => {
+            setIsExplained(false);
+            prepare();
+          }}
+        />
+      )}
     </Box>
   );
 };
@@ -479,14 +763,8 @@ export const ToolsPanel = () => {
       description: t('Emails, letters, rewriting, translation.'),
       icon: 'edit',
       label: t('Write'),
-      tools: [
-        'email-reply',
-        'letter',
-        'rewrite',
-        'translate',
-        'improve',
-        'my-style',
-      ],
+      // "Improve my text" is in "Rework"; "My writing style" in examples.
+      tools: ['email-reply', 'letter', 'rewrite', 'translate'],
     },
     {
       id: 'summarize',
@@ -510,7 +788,7 @@ export const ToolsPanel = () => {
       description: t('Ready-made examples, a better follow-up.'),
       icon: 'auto_awesome',
       label: t('Prompts'),
-      tools: ['library', 'generator', 'follow-up'],
+      tools: ['library', 'generator', 'follow-up', 'my-style'],
     },
   ];
 
@@ -641,10 +919,60 @@ export const ToolsPanel = () => {
     </Box>
   );
 
+  // The writing tools, on their cards, by what you do: one verb each.
+  const cardTitles: Record<string, string> = {
+    'email-reply': t('Reply'),
+    letter: t('Draft'),
+    rewrite: t('Rework'),
+    translate: t('Translate'),
+  };
+  const toolCards = (items: ToolEntry[], label: string) => (
+    // Centred in the free height of the panel, never stuck to the top.
+    <Box $css="flex: 1; justify-content: center; padding: 8px 0 24px;">
+      <Box
+        as="ul"
+        aria-label={label}
+        $css={css`
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-auto-rows: minmax(170px, auto);
+          gap: 14px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        `}
+      >
+        {items.map((tool) => (
+          <Box as="li" key={tool.id} $css="display: flex;">
+            <Box
+              as="button"
+              type="button"
+              onClick={() => open(tool.id)}
+              $align="center"
+              $justify="center"
+              $gap="10px"
+              $css={familyCardCss}
+            >
+              <Box $align="center" $justify="center" $css={iconBadgeCss(56)}>
+                <Icon iconName={tool.icon} $size="30px" $withThemeInherited />
+              </Box>
+              <Text $size="lg" $weight="800" $textAlign="center">
+                {cardTitles[tool.id] ?? tool.title}
+              </Text>
+              <Text $size="sm" $variation="secondary" $textAlign="center">
+                {tool.description}
+              </Text>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+
   const family = categories.find((item) => item.id === familyId);
   if (family && !query) {
     return (
-      <Box $gap="16px" $padding={{ all: 'base' }}>
+      <Box $gap="16px" $padding={{ all: 'base' }} $css="min-height: 100%;">
         <Box $direction="row">
           <Button
             size="small"
@@ -673,7 +1001,7 @@ export const ToolsPanel = () => {
             </Text>
           </Box>
         </Box>
-        {list(offered(family.tools), family.label)}
+        {toolCards(offered(family.tools), family.label)}
       </Box>
     );
   }

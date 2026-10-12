@@ -15,7 +15,7 @@ import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
-import { getDailyTools } from '../tools/tools';
+import { buildToolPrompt, getDailyTools } from '../tools/tools';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
@@ -331,11 +331,13 @@ export const RecorderView = ({ onBack }: { onBack: () => void }) => {
       description: language === 'fr' ? t('Into English.') : t('Into French.'),
       prompt: () => {
         const tool = tools.find((item) => item.id === 'translate');
-        const target = tool?.options[0].choices.find(
-          (choice) => choice.id === (language === 'fr' ? 'en' : 'fr'),
-        );
-        return tool && target
-          ? tool.build({ language: target.instruction }, content)
+        // The other choices of the tool keep their first, usual value.
+        return tool
+          ? buildToolPrompt(
+              tool,
+              { language: language === 'fr' ? 'en' : 'fr', level: 'complete' },
+              content,
+            )
           : '';
       },
     },

@@ -32,8 +32,11 @@ describe('without the Albert relay', () => {
   it('hides the tools that need Nestor', () => {
     render(<ToolsPanel />);
     fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
-    expect(screen.getByText('Reply to an email')).toBeInTheDocument();
-    expect(screen.queryByText('Improve my text')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /^Rework/ }));
+    expect(screen.getByRole('radio', { name: 'Shorten' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('radio', { name: 'Improve with Nestor' }),
+    ).not.toBeInTheDocument();
   });
 
   it('asks the relay whether the AI features are there', async () => {

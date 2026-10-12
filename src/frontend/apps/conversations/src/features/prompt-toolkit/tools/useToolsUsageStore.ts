@@ -49,6 +49,9 @@ export const TOOL_KEYWORDS: Record<string, string[]> = {
   ],
   letter: ['courrier', 'lettre', 'note', 'officiel', 'letter', 'memo'],
   rewrite: [
+    'retravailler',
+    'ameliorer',
+    'renforcer',
     'reformuler',
     'simplifier',
     'corriger',

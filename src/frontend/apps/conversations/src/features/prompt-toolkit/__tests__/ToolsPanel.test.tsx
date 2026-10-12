@@ -1,3 +1,4 @@
+import { CunninghamProvider } from '@gouvfr-lasuite/cunningham-react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { TFunction } from 'i18next';
 
@@ -23,7 +24,7 @@ describe('daily tools', () => {
     const tool = getDailyTools(t).find((item) => item.id === 'email-reply')!;
     const prompt = buildToolPrompt(
       tool,
-      { intent: 'decline', tone: 'formal' },
+      { intent: 'decline', tone: 'formal', level: 'complete' },
       'Bonjour, pouvez-vous…',
     );
 
@@ -57,17 +58,35 @@ describe('<ToolsPanel />', () => {
   });
 
   it('prepares the prompt of a tool in the chat input', () => {
-    render(<ToolsPanel />);
+    // The request opens in a window, as in the app.
+    render(
+      <CunninghamProvider>
+        <ToolsPanel />
+      </CunninghamProvider>,
+    );
     fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
     fireEvent.click(screen.getByRole('radio', { name: 'German' }));
     fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
       target: { value: 'Bonjour à tous' },
     });
+    // The request, part by part in its colours, before it goes.
+    fireEvent.click(screen.getByRole('button', { name: 'See my request' }));
+    expect(screen.getByText('Your request, explained')).toBeInTheDocument();
+    for (const part of [
+      'Context',
+      'Precise instruction',
+      'Expected format',
+      'Reference document',
+    ]) {
+      expect(screen.getAllByText(part).length).toBeGreaterThan(0);
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
+    expect(
+      screen.getByText('A good request always has these four parts'),
+    ).toBeInTheDocument();
     fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Prepare without sending, to read it first',
-      }),
+      screen.getByRole('button', { name: 'Put it in the message field' }),
     );
 
     const prompt = setChatInput.mock.calls[0][0] as string;
@@ -92,20 +111,79 @@ describe('<ToolsPanel />', () => {
     expect(cards).toHaveLength(4);
     // Nothing of a family's tools until its card is opened.
     expect(
-      screen.queryByRole('button', { name: /Reply to an email/ }),
+      screen.queryByRole('button', { name: /^Reply/ }),
     ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
     expect(screen.getByRole('heading', { name: 'Write' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Reply to an email/ }),
-    ).toBeInTheDocument();
+    // Its tools, as cards too: one verb each.
+    for (const name of [/^Reply/, /^Draft/, /^Rework/, /^Translate/]) {
+      expect(screen.getByRole('button', { name })).toBeInTheDocument();
+    }
     fireEvent.click(
       screen.getByRole('button', { name: 'What AI can do for you' }),
     );
     expect(
       screen.getAllByRole('button', { name: /^Write/ }).length,
     ).toBeGreaterThan(0);
+  });
+
+  it('writes the request in four blocks the user can rewrite', () => {
+    const sendQuestion = vi.fn();
+    useMainConversationStore.setState({ sendQuestion });
+    render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Reply/ }));
+    for (const block of [
+      'Context',
+      'Precise instruction',
+      'Expected format',
+      'Reference document',
+    ]) {
+      expect(screen.getByRole('group', { name: block })).toBeInTheDocument();
+    }
+    const context = within(
+      screen.getByRole('group', { name: 'Context' }),
+    ).getByRole('textbox');
+    fireEvent.change(context, {
+      target: { value: 'I answer a member of the public, for my office.' },
+    });
+    // A choice rewrites its own block only: the context typed stays.
+    const format = screen.getByRole('group', { name: 'Expected format' });
+    fireEvent.change(within(format).getByRole('textbox'), {
+      target: { value: 'Ten lines at most.' },
+    });
+    fireEvent.click(within(format).getByRole('radio', { name: 'Formal' }));
+    fireEvent.change(screen.getByRole('textbox', { name: 'Email received' }), {
+      target: { value: 'Bonjour, où en est mon dossier ?' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the Assistant' }));
+
+    const prompt = sendQuestion.mock.calls[0][0] as string;
+    expect(prompt).toMatch(/^I answer a member of the public, for my office\./);
+    expect(prompt).toContain('Tone:');
+    expect(prompt).not.toContain('Ten lines at most.');
+    expect(prompt).toContain('Bonjour, où en est mon dossier ?');
+  });
+
+  it('improves a text with Nestor from "Rework"', () => {
+    const startFill = vi.fn();
+    usePromptToolkitStore.setState({ startFill });
+    render(<ToolsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Rework/ }));
+    fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
+      target: { value: 'La réunion est déplacée.' },
+    });
+    fireEvent.click(screen.getByRole('radio', { name: 'Improve with Nestor' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Start with Nestor' }));
+
+    expect(startFill).toHaveBeenCalledWith(
+      expect.stringContaining('La réunion est déplacée.'),
+      'Rework a text',
+      '',
+      'draft',
+    );
   });
 
   it('finds tools from the words of the need, accents aside', () => {
