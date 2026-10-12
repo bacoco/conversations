@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components';
 
 import { VoiceAnswer } from './VoiceAnswer';
+import { plainWords } from './plainWords';
 import type { NestorMessage } from './types';
 import {
   Added,
@@ -40,6 +41,8 @@ export const MessageView = ({
   chat: NestorChat;
 }) => {
   const { t, i18n } = useTranslation();
+  // Nestor's words, plain: « demande », « courriel ».
+  const say = (text: string) => plainWords(text, i18n.language);
   const list = (items: string[]) =>
     new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(items);
   const [voice, setVoice] = useState(false);
@@ -148,7 +151,7 @@ export const MessageView = ({
               </Pill>
             ))}
           </Pills>
-          <span>{message.check.message}</span>
+          <span>{say(message.check.message)}</span>
           {message.check.missing.length > 0 && (
             <strong>{t('Shall we complete them together?')}</strong>
           )}
@@ -165,7 +168,7 @@ export const MessageView = ({
               total: message.items.length,
             })}
           </QuestionNumber>
-          <span>{item.question}</span>
+          <span>{say(item.question)}</span>
           {isCurrent && !voice && (
             <>
               <Choices>
@@ -278,14 +281,14 @@ export const MessageView = ({
         <NestorBubble>
           {message.note.issue &&
             (warn ? (
-              <Warn>⚠ {message.note.issue}</Warn>
+              <Warn>⚠ {say(message.note.issue)}</Warn>
             ) : (
-              <span>{message.note.issue}</span>
+              <span>{say(message.note.issue)}</span>
             ))}
-          {message.note.worked && <span>✓ {message.note.worked}</span>}
+          {message.note.worked && <span>✓ {say(message.note.worked)}</span>}
           {message.note.tryNow && (
             <span>
-              <strong>{t('To try:')}</strong> {message.note.tryNow}
+              <strong>{t('To try:')}</strong> {say(message.note.tryNow)}
             </span>
           )}
           <details>
@@ -295,7 +298,7 @@ export const MessageView = ({
               {t('See the full advice')}
             </summary>
             <UnderBubble style={{ paddingLeft: 0, paddingTop: 6 }}>
-              {message.note.tryWhy && <span>{message.note.tryWhy}</span>}
+              {message.note.tryWhy && <span>{say(message.note.tryWhy)}</span>}
               <Choices>
                 <Choice
                   type="button"
@@ -317,7 +320,7 @@ export const MessageView = ({
     }
     case 'suites': {
       const all = message.groups.flatMap((group, tone) =>
-        group.questions.map((question) => ({ question, tone })),
+        group.questions.map((question) => ({ question: say(question), tone })),
       );
       const shown = moreSuites ? all.slice(0, 6) : all.slice(0, 3);
       return (
@@ -347,15 +350,16 @@ export const MessageView = ({
       return (
         <NestorBubble>
           <strong>{t('Session review')}</strong>
-          {message.review.summary && <span>{message.review.summary}</span>}
+          {message.review.summary && <span>{say(message.review.summary)}</span>}
           {message.review.strengths[0] && (
             <span>
-              <strong>{t('What worked:')}</strong> {message.review.strengths[0]}
+              <strong>{t('What worked:')}</strong>{' '}
+              {say(message.review.strengths[0])}
             </span>
           )}
           {message.review.tips[0] && (
             <span>
-              <strong>{t('Next time:')}</strong> {message.review.tips[0]}
+              <strong>{t('Next time:')}</strong> {say(message.review.tips[0])}
             </span>
           )}
           {message.advised > 0 && (
@@ -376,7 +380,7 @@ export const MessageView = ({
       const prompt = message.prompt;
       return (
         <NestorBubble>
-          <span style={{ whiteSpace: 'pre-wrap' }}>{message.text}</span>
+          <span style={{ whiteSpace: 'pre-wrap' }}>{say(message.text)}</span>
           {prompt && (
             <MainButton type="button" onClick={() => chat.usePrompt(prompt)}>
               {t('Put it in the Assistant’s field')}
