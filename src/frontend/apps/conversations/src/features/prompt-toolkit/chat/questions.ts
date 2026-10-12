@@ -34,6 +34,10 @@ export const questionState = (messages: NestorMessage[]): QuestionState => {
   const state: QuestionState = { ...CLOSED, answers: [], skipped: [] };
   const asked = new Map<string, QuestionMessage>();
   for (const message of messages.slice(start)) {
+    // A new request, or a new analysis, starts over: nothing carries over.
+    if (message.kind === 'request' || message.kind === 'analysis') {
+      return CLOSED;
+    }
     if (message.kind === 'question') {
       state.items = message.items;
       asked.set(message.id, message);

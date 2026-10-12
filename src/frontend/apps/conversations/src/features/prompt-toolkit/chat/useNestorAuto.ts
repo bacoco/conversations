@@ -28,17 +28,26 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const requestCount = turns.filter((turn) => turn.role === 'user').length;
 
-  // Sent from this tab: opening an older conversation is not a send, and
-  // an answer counts only once written here.
-  const sentHere = isResponding || !!answerId;
-
-  // The thread written before the first send follows that conversation;
-  // an older conversation opened later never takes it.
+  // The thread written before the first send follows the conversation that
+  // send creates: the page went from "new" to a conversation, and a request
+  // is being answered there. An older conversation opened later never takes it.
+  const previousIdRef = useRef(conversationId);
+  const fromNewRef = useRef(false);
   useEffect(() => {
-    if (conversationId && requestCount <= 1 && sentHere) {
+    if (conversationId !== previousIdRef.current) {
+      fromNewRef.current = !previousIdRef.current && !!conversationId;
+      previousIdRef.current = conversationId;
+    }
+    if (
+      conversationId &&
+      fromNewRef.current &&
+      isResponding &&
+      requestCount <= 1
+    ) {
+      fromNewRef.current = false;
       useNestorChatStore.getState().adopt(NEW_CHAT_KEY, conversationId);
     }
-  }, [conversationId, requestCount, sentHere]);
+  }, [conversationId, isResponding, requestCount]);
 
   // "Demande n · 10 h 12" each time a request starts its answer.
   const wasRespondingRef = useRef(isResponding);

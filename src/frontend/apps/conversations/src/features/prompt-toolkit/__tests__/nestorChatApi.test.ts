@@ -54,6 +54,8 @@ describe('holes', () => {
     expect(hasHoles('Date : [date].')).toBe(true);
     expect(hasHoles('Salle : À COMPLÉTER.')).toBe(true);
     expect(hasHoles('Salle : ___.')).toBe(true);
+    expect(hasHoles('Écris au [service')).toBe(true);
+    expect(hasHoles('Remplis ceci : []')).toBe(true);
     expect(hasHoles('Rédige un courriel court.')).toBe(false);
   });
 

@@ -93,4 +93,25 @@ describe('useNestorAuto — the thread before the first send', () => {
       messagesOf(useNestorChatStore.getState().chats, NEW_CHAT_KEY),
     ).toHaveLength(1);
   });
+
+  it('an older conversation with its answer never takes the new thread', () => {
+    useNestorChatStore
+      .getState()
+      .post(NEW_CHAT_KEY, { kind: 'reply', text: 'avant' });
+    const { rerender } = renderHook(() =>
+      useNestorAuto(useNestorChat('French'), 'French'),
+    );
+    mockRoute.id = 'old';
+    act(() =>
+      useMainConversationStore.setState({
+        turns: [
+          { role: 'user', text: '1' },
+          { role: 'assistant', text: '2' },
+        ],
+        latestCompletedAssistantMessageId: 'm1',
+      }),
+    );
+    rerender();
+    expect(messagesOf(useNestorChatStore.getState().chats, 'old')).toEqual([]);
+  });
 });

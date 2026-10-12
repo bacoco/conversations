@@ -80,4 +80,32 @@ describe('questionState', () => {
     expect(state.current?.index).toBe(0);
     expect(state.answers).toEqual([]);
   });
+
+  it('a new request closes the questions of the earlier one', () => {
+    const state = questionState([
+      q(0),
+      said('q0', 'le bureau 3', 'voice'),
+      q(1),
+      { id: 'r', action: 2, kind: 'request', n: 2, at: 0 },
+    ]);
+    expect(state.current).toBeNull();
+    expect(state.answers).toEqual([]);
+  });
+
+  it('a new analysis closes the questions of the earlier one', () => {
+    const state = questionState([
+      q(0),
+      said('q0', 'le bureau 3', 'voice'),
+      q(1),
+      {
+        id: 'a',
+        action: 2,
+        kind: 'analysis',
+        draft: 'B',
+        check: { present: [], missing: [], message: 'm' },
+      },
+    ]);
+    expect(state.current).toBeNull();
+    expect(state.answers).toEqual([]);
+  });
 });

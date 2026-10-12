@@ -216,6 +216,67 @@ describe('useNestorChat', () => {
       ],
     });
   });
+
+  it('answers to questions rewrite the request they are about, not an older version', async () => {
+    const store = useNestorChatStore.getState();
+    store.post('c1', {
+      kind: 'version',
+      original: 'A',
+      version: 'Version de la demande A',
+      missing: [],
+    });
+    store.post('c1', {
+      kind: 'analysis',
+      draft: 'Demande B sur le budget',
+      check: {
+        present: [],
+        missing: [{ short: 'année', question: 'Quelle année ?', choices: [] }],
+        message: 'm',
+      },
+    });
+    store.post('c1', {
+      kind: 'question',
+      index: 0,
+      items: [{ short: 'année', question: 'Quelle année ?', choices: [] }],
+    });
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(
+        completion({ version: 'Demande B sur le budget 2026.' }),
+      );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.answerQuestion('2026', 'choice');
+      return Promise.resolve();
+    });
+    const body = fetchMock.mock.calls[0][1]?.body as string;
+    expect(body).toContain('Demande B sur le budget');
+    expect(body).not.toContain('Version de la demande A');
+  });
+
+  it('advice still running when a new request is sent is dropped, never shown after it', async () => {
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Fais un courriel' },
+        { role: 'assistant', text: 'Bonjour à tous' },
+      ],
+    });
+    let answer: (response: Response) => void = () => undefined;
+    vi.spyOn(global, 'fetch').mockReturnValue(
+      new Promise<Response>((resolve) => {
+        answer = resolve;
+      }),
+    );
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.postAdvice('m1'));
+    act(() => result.current.postRequest(2));
+    await act(() => {
+      answer(completion({ issue: 'Trop tard.', try: 'Rien.' }));
+      return new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(thread().some((message) => message.kind === 'advice')).toBe(false);
+    expect(thread().at(-1)).toMatchObject({ kind: 'request', n: 2 });
+  });
 });
 
 describe('useNestorAuto', () => {

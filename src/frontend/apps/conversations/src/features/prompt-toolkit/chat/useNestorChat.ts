@@ -58,6 +58,22 @@ const lastOf = <K extends NestorMessage['kind']>(
   kind: K,
 ) => messages.findLast((message): message is Find<K> => message.kind === kind);
 
+/**
+ * The request a round of questions is about: the analysis or the version
+ * just before its first question, never an older one.
+ */
+const roundSource = (messages: NestorMessage[]) => {
+  const start = messages.findLastIndex(
+    (message) => message.kind === 'question' && message.index === 0,
+  );
+  for (let index = start - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (message.kind === 'analysis') return message.draft;
+    if (message.kind === 'version') return message.version;
+  }
+  return '';
+};
+
 /** The central field, focused when Nestor asks to write in it. */
 const focusAssistantField = () =>
   document
@@ -107,14 +123,18 @@ export const useNestorChat = (language: string) => {
     async (
       kind: BusyKind,
       retry: BarAction | null,
-      task: (signal: AbortSignal) => Promise<void>,
+      task: (signal: AbortSignal, say: typeof post) => Promise<void>,
     ) => {
       controllerRef.current?.abort();
       const controller = new AbortController();
       controllerRef.current = controller;
       setBusy(kind);
+      // A call stopped (new call, new request, other conversation) writes
+      // nothing, even if its answer arrives.
+      const say: typeof post = (message, rounds) =>
+        controller.signal.aborted ? '' : post(message, rounds);
       try {
-        await task(controller.signal);
+        await task(controller.signal, say);
       } catch {
         if (!controller.signal.aborted && retry) {
           post({ kind: 'error', retry }, [{ id: 'retry', primary: true }]);
@@ -128,9 +148,9 @@ export const useNestorChat = (language: string) => {
 
   const draftNow = () => usePromptToolkitStore.getState().chatInput.trim();
 
-  const warnSensitive = (text: string) => {
+  const warnSensitive = (text: string, say: typeof post) => {
     if (detectSensitiveData(text).length) {
-      post({ kind: 'warning', text: 'sensitive' });
+      say({ kind: 'warning', text: 'sensitive' });
     }
   };
 
@@ -140,10 +160,10 @@ export const useNestorChat = (language: string) => {
    */
   const writeAndPost = useCallback(
     (input: VersionInput, extra: Round[] = []) => {
-      void run('version', 'improve', async (signal) => {
+      void run('version', 'improve', async (signal, say) => {
         const version = await writeVersion(input, language, signal);
         const missing = input.skipped;
-        post({ kind: 'version', original: input.draft, version, missing }, [
+        say({ kind: 'version', original: input.draft, version, missing }, [
           ...(missing.length
             ? [{ id: 'redo-with-missing', primary: true } as Round]
             : []),
@@ -154,15 +174,15 @@ export const useNestorChat = (language: string) => {
         reward('improvement');
       });
     },
-    [language, post, reward, run],
+    [language, reward, run],
   );
 
   const runAnalyse = useCallback(() => {
     const draft = draftNow();
-    void run('analyse', 'analyse', async (signal) => {
+    void run('analyse', 'analyse', async (signal, say) => {
       const check = await checkRequest(draft, language, signal);
-      warnSensitive(draft);
-      post(
+      warnSensitive(draft, say);
+      say(
         { kind: 'analysis', draft, check },
         check.missing.length
           ? [{ id: 'complete', primary: true }, { id: 'create-without' }]
@@ -186,13 +206,13 @@ export const useNestorChat = (language: string) => {
         afterPrompt: message.note.exchanges,
         text: message.note.tryNow,
       }));
-    void run('review', 'review', async (signal) => {
+    void run('review', 'review', async (signal, say) => {
       const review = await reviewSession(prompts, language, signal, advice);
       const lastAdvice = lastOf(all, 'advice');
       const lesson = lastAdvice?.note.competency
         ? LESSON_FOR_COMPETENCY[lastAdvice.note.competency]
         : undefined;
-      post(
+      say(
         {
           kind: 'review',
           review,
@@ -202,7 +222,7 @@ export const useNestorChat = (language: string) => {
         [{ id: 'new-request' }, ...(lesson ? [{ id: 'lesson' } as Round] : [])],
       );
     });
-  }, [key, language, post, run, store]);
+  }, [key, language, run, store]);
 
   const runBar = useCallback(
     (bar: BarAction) => {
@@ -289,11 +309,7 @@ export const useNestorChat = (language: string) => {
       const all = messagesOf(store().chats, key);
       const done = questionState(all);
       writeAndPost({
-        draft:
-          draftNow() ||
-          lastOf(all, 'version')?.version ||
-          lastOf(all, 'analysis')?.draft ||
-          '',
+        draft: draftNow() || roundSource(all),
         answers: done.answers,
         skipped: done.skipped,
       });
@@ -315,9 +331,9 @@ export const useNestorChat = (language: string) => {
       post({ kind: 'pistes', phrases: firsts.filter(Boolean) });
       return;
     }
-    void run('reply', null, async (signal) => {
+    void run('reply', null, async (signal, say) => {
       const found = await searchPhrases(job.label, code, 3, signal);
-      post({ kind: 'pistes', phrases: found.map((phrase) => phrase.text) });
+      say({ kind: 'pistes', phrases: found.map((phrase) => phrase.text) });
     });
   }, [key, language, post, run, store]);
 
@@ -450,7 +466,7 @@ export const useNestorChat = (language: string) => {
                 ...(m.prompt ? { prompt: m.prompt } : {}),
               },
         );
-      void run('reply', 'ask', async (signal) => {
+      void run('reply', 'ask', async (signal, say) => {
         const reply = await chatWithNestor(
           history,
           language,
@@ -458,10 +474,10 @@ export const useNestorChat = (language: string) => {
           signal,
           useMainConversationStore.getState().turns,
         );
-        post({ kind: 'reply', text: reply.text, prompt: reply.prompt });
+        say({ kind: 'reply', text: reply.text, prompt: reply.prompt });
       });
     },
-    [key, language, post, run, store],
+    [key, language, run, store],
   );
 
   const askAbout = useCallback(
@@ -471,7 +487,7 @@ export const useNestorChat = (language: string) => {
           item.id === messageId && item.kind === 'advice',
       );
       if (!advice) return;
-      void run('reply', null, async (signal) => {
+      void run('reply', null, async (signal, say) => {
         const reply = await coachThreadReply(
           advice.note,
           ask,
@@ -479,14 +495,14 @@ export const useNestorChat = (language: string) => {
           language,
           signal,
         );
-        post({
+        say({
           kind: 'reply',
           text: reply.text,
           prompt: reply.prompt || undefined,
         });
       });
     },
-    [key, language, post, run, store],
+    [key, language, run, store],
   );
 
   /** Nestor's advice on the latest answer (Auto, or asked). */
@@ -498,7 +514,7 @@ export const useNestorChat = (language: string) => {
       const missing = lastOf(all, 'version')?.missing ?? [];
       const answer =
         turns.findLast((turn) => turn.role === 'assistant')?.text ?? '';
-      void run('advice', null, async (signal) => {
+      void run('advice', null, async (signal, say) => {
         const note = await coachThreadNote(
           turns,
           previous,
@@ -510,7 +526,7 @@ export const useNestorChat = (language: string) => {
         const lesson = note.competency
           ? LESSON_FOR_COMPETENCY[note.competency]
           : undefined;
-        post(
+        say(
           { kind: 'advice', note, missing, answerId },
           missing.length
             ? [{ id: 'redo-with-missing', primary: true }]
@@ -520,7 +536,7 @@ export const useNestorChat = (language: string) => {
         );
       });
     },
-    [key, language, post, run, store],
+    [key, language, run, store],
   );
 
   /** Ways to go on: a suggestion holding a blank is never offered. */
@@ -540,6 +556,9 @@ export const useNestorChat = (language: string) => {
   /** "Demande n · 10 h 12": a request was sent to the Assistant. */
   const postRequest = useCallback(
     (n: number) => {
+      // What Nestor was preparing belongs to the earlier request.
+      controllerRef.current?.abort();
+      setBusy(null);
       store().beginAction(key);
       store().post(key, { kind: 'request', n, at: Date.now() });
     },
