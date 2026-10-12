@@ -186,6 +186,13 @@ describe('useNestorChat', () => {
       rounds: [{ id: 'retry', primary: true }],
     });
   });
+
+  it('"Voir des exemples" with no job: three everyday requests', () => {
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runRound('hello', { id: 'examples' }));
+    expect(thread().at(-1)).toMatchObject({ kind: 'pistes' });
+    expect((thread().at(-1) as { phrases: string[] }).phrases).toHaveLength(3);
+  });
 });
 
 describe('useNestorAuto', () => {

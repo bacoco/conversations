@@ -363,6 +363,7 @@ export const RightPanel = ({
         </Box>
       </Box>
       <Box
+        data-panel-scroll
         $css={css`
           flex: 1;
           min-height: 0;
