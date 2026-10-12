@@ -70,7 +70,8 @@ const Head = () => {
 
 export function App() {
   return (
-    <BrowserRouter>
+    // Served under a sub-path when built with --base (e.g. /notaires/).
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <Head />
       <AppProvider>
         <Routes>

@@ -5,5 +5,9 @@ export const authUrl = ({ silent = false } = {}) => {
   if (silent) {
     url.searchParams.set('silent', 'true');
   }
+  // Served under a sub-path (e.g. /notaires/): come back there, not to "/".
+  if (import.meta.env.BASE_URL !== '/') {
+    url.searchParams.set('next', import.meta.env.BASE_URL);
+  }
   return url;
 };

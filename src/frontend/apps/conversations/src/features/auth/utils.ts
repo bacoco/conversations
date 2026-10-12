@@ -1,5 +1,6 @@
 import { User } from './api/types';
-import { LOGIN_URL, LOGOUT_URL, PATH_AUTH_LOCAL_STORAGE } from './conf';
+import { authUrl } from './authUrl';
+import { LOGOUT_URL, PATH_AUTH_LOCAL_STORAGE } from './conf';
 
 /** Safe email for display, since the API may return a null email. */
 export const getUserEmail = (user: User) => user.email ?? '';
@@ -17,8 +18,11 @@ export const getAuthUrl = () => {
 };
 
 export const setAuthUrl = () => {
-  if (window.location.pathname !== '/') {
-    localStorage.setItem(PATH_AUTH_LOCAL_STORAGE, window.location.pathname);
+  // The router adds its base path itself (e.g. /notaires/).
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const path = window.location.pathname.slice(base.length) || '/';
+  if (path !== '/') {
+    localStorage.setItem(PATH_AUTH_LOCAL_STORAGE, path);
   }
 };
 
@@ -27,7 +31,7 @@ export const gotoLogin = (withRedirect = true) => {
     setAuthUrl();
   }
 
-  window.location.replace(LOGIN_URL);
+  window.location.replace(authUrl().href);
 };
 
 export const gotoLogout = () => {
