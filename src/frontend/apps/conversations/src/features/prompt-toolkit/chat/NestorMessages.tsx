@@ -207,9 +207,9 @@ export const MessageView = ({
           )}
           {isCurrent && voice && (
             <VoiceAnswer
-              onSend={(text) => {
+              onSend={(text, via) => {
                 setVoice(false);
-                chat.answerQuestion(text, 'voice');
+                chat.answerQuestion(text, via);
               }}
               onCancel={() => setVoice(false)}
             />
@@ -241,7 +241,7 @@ export const MessageView = ({
           </Keys>
           {message.missing.length > 0 && (
             <Warn>
-              {t('⚠ Missing {{items}}: I did not put them in.', {
+              {t('⚠ To add when you know it: {{items}}.', {
                 items: list(message.missing),
               })}
             </Warn>

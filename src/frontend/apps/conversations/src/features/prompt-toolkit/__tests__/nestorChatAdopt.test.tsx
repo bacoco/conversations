@@ -114,4 +114,23 @@ describe('useNestorAuto — the thread before the first send', () => {
     rerender();
     expect(messagesOf(useNestorChatStore.getState().chats, 'old')).toEqual([]);
   });
+
+  it('on the new page, an earlier answer still in memory gets no advice', () => {
+    const fetchMock = vi.spyOn(global, 'fetch');
+    renderHook(() => useNestorAuto(useNestorChat('French'), 'French'));
+    act(() =>
+      useMainConversationStore.setState({
+        turns: [
+          { role: 'user', text: 'avant' },
+          { role: 'assistant', text: 'réponse' },
+        ],
+        latestCompletedAssistantMessageId: 'old-answer',
+      }),
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      messagesOf(useNestorChatStore.getState().chats, NEW_CHAT_KEY),
+    ).toEqual([]);
+    fetchMock.mockRestore();
+  });
 });

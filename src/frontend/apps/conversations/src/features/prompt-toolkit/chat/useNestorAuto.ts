@@ -78,7 +78,9 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
   }, [chatInput, prefs, chat]);
 
   // Advice after each answer, once per answer.
-  const hasAnswer = !!answerId && !isResponding;
+  // An answer belongs to a conversation: on the new page, the one still in
+  // memory is the previous conversation's, never commented here.
+  const hasAnswer = !!conversationId && !!answerId && !isResponding;
   const advisedRef = useRef<string | null>(null);
   useEffect(() => {
     if (!hasAnswer || !answerId || !isAutoOn(prefs, 'autoAdvice')) return;
@@ -91,9 +93,13 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
   }, [hasAnswer, answerId, prefs, chat]);
 
   // Ways to go on, once the next questions are ready.
-  const after = useAfterAnswer(isAutoOn(prefs, 'autoSuites'), language);
+  const after = useAfterAnswer(
+    !!conversationId && isAutoOn(prefs, 'autoSuites'),
+    language,
+  );
   useEffect(() => {
     if (
+      !conversationId ||
       !answerId ||
       after.next.status !== 'ready' ||
       after.next.answerId !== answerId
@@ -105,5 +111,5 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
     );
     if (!known && after.next.groups.length)
       chat.postSuites(answerId, after.next.groups);
-  }, [answerId, after.next, chat]);
+  }, [conversationId, answerId, after.next, chat]);
 };

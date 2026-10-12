@@ -189,7 +189,7 @@ describe('<NestorThread />', () => {
     expect(screen.getByText('Suggested by Nestor')).toBeInTheDocument();
     expect(
       screen.getByText(
-        '⚠ Missing {{items}}: I did not put them in.'.replace(
+        '⚠ To add when you know it: {{items}}.'.replace(
           '{{items}}',
           'date and salle',
         ),
