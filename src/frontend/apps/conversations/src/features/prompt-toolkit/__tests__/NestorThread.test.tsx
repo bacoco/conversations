@@ -155,6 +155,21 @@ describe('<NestorThread />', () => {
     ).toBeInTheDocument();
   });
 
+  it('only the latest version can be put in the field', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          { id: 'v1', action: 9, kind: 'version', original: 'a', version: 'Ancienne version', missing: [] },
+          { id: 'v2', action: 9, kind: 'version', original: 'b', version: 'Nouvelle version', missing: [] },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getAllByRole('button', { name: 'Put it in the Assistant’s field' }),
+    ).toHaveLength(1);
+  });
+
   it('a question: "Question 1 of 3", the choices, "I don’t know", stop', () => {
     const items = [
       {

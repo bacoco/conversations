@@ -250,12 +250,16 @@ export const MessageView = ({
               })}
             </Warn>
           )}
-          <MainButton
-            type="button"
-            onClick={() => chat.placeVersion(message.id)}
-          >
-            {t('Put it in the Assistant’s field')}
-          </MainButton>
+          {/* Only the latest version goes into the field: never an older one. */}
+          {chat.messages.findLast((item) => item.kind === 'version')?.id ===
+            message.id && (
+            <MainButton
+              type="button"
+              onClick={() => chat.placeVersion(message.id)}
+            >
+              {t('Put it in the Assistant’s field')}
+            </MainButton>
+          )}
         </NestorBubble>
       );
     }
