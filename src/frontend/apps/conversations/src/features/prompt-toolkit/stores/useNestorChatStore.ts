@@ -72,7 +72,7 @@ const withoutRounds = (message: NestorMessage): NestorMessage => {
     return message;
   }
   const { rounds: _rounds, ...rest } = message;
-  return rest as NestorMessage;
+  return rest;
 };
 
 /**
@@ -97,7 +97,7 @@ export const useNestorChatStore = create<NestorChatState>()(
             action: chat.action,
             messages: [
               ...chat.messages.map(withoutRounds),
-              { ...message, id, action: chat.action } as NestorMessage,
+              { ...message, id, action: chat.action },
             ].slice(-CHAT_MAX_MESSAGES),
           })),
         }));

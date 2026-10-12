@@ -26,10 +26,7 @@ const AUDIENCE_WORDS: Record<UsualAudience, string> = {
 export const FELT_ASK_EVERY_MS = 24 * 60 * 60 * 1000;
 
 export type AutoPart =
-  | 'autoPistes'
-  | 'autoAnalyse'
-  | 'autoAdvice'
-  | 'autoSuites';
+  'autoPistes' | 'autoAnalyse' | 'autoAdvice' | 'autoSuites';
 
 interface CoachPrefsState {
   tone: CoachTone;

@@ -2,7 +2,9 @@ import { coachThreadNote } from '../coach/coachApi';
 
 const completion = (content: object) =>
   new Response(
-    JSON.stringify({ choices: [{ message: { content: JSON.stringify(content) } }] }),
+    JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(content) } }],
+    }),
     { status: 200 },
   );
 
@@ -12,7 +14,9 @@ describe('coachThreadNote', () => {
   it('tells the coach what the user left out, to say it first', async () => {
     const fetchMock = vi
       .spyOn(global, 'fetch')
-      .mockResolvedValue(completion({ issue: 'Il manque la date.', try: 'Ajoutez-la.' }));
+      .mockResolvedValue(
+        completion({ issue: 'Il manque la date.', try: 'Ajoutez-la.' }),
+      );
     await coachThreadNote(
       [
         { role: 'user', text: 'Fais un courriel pour inviter l’équipe' },
@@ -24,7 +28,9 @@ describe('coachThreadNote', () => {
       [],
       ['date', 'salle'],
     );
-    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
-    expect(body.messages[1].content).toContain('sent without them: date, salle');
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[1].content).toContain(
+      'sent without them: date, salle',
+    );
   });
 });

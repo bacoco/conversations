@@ -15,13 +15,22 @@ describe('foldThread', () => {
       [
         msg(0, { kind: 'request', n: 1, at: 0 }),
         msg(0, { kind: 'pistes', phrases: ['a'] }),
-        msg(1, { kind: 'analysis', draft: 'x', check: { present: [], missing: [], message: 'm' } }),
+        msg(1, {
+          kind: 'analysis',
+          draft: 'x',
+          check: { present: [], missing: [], message: 'm' },
+        }),
         msg(1, { kind: 'hint', hint: 'write-first' }),
         msg(2, { kind: 'reply', text: 'live' }),
       ],
       2,
     );
-    expect(parts.map((part) => part.kind)).toEqual(['live', 'fold', 'fold', 'live']);
+    expect(parts.map((part) => part.kind)).toEqual([
+      'live',
+      'fold',
+      'fold',
+      'live',
+    ]);
     expect(parts[2]).toMatchObject({ kind: 'fold', action: 1 });
   });
 
@@ -35,7 +44,17 @@ describe('foldSummary', () => {
   it('names an analysis by its verdict', () => {
     expect(
       foldSummary(
-        [msg(1, { kind: 'analysis', draft: 'x', check: { present: [], missing: [{ short: 'date', question: 'q', choices: [] }], message: 'm' } })],
+        [
+          msg(1, {
+            kind: 'analysis',
+            draft: 'x',
+            check: {
+              present: [],
+              missing: [{ short: 'date', question: 'q', choices: [] }],
+              message: 'm',
+            },
+          }),
+        ],
         t,
       ),
     ).toBe('Analysis: missing {{items}}'.replace('{{items}}', 'date'));
@@ -46,8 +65,18 @@ describe('foldSummary', () => {
       foldSummary(
         [
           msg(1, { kind: 'question', index: 0, items: [] }),
-          msg(1, { kind: 'user', text: 'toute l’équipe', via: 'voice', answers: 'q' }),
-          msg(1, { kind: 'user', text: 'Je ne sais pas', via: 'skip', answers: 'q2' }),
+          msg(1, {
+            kind: 'user',
+            text: 'toute l’équipe',
+            via: 'voice',
+            answers: 'q',
+          }),
+          msg(1, {
+            kind: 'user',
+            text: 'Je ne sais pas',
+            via: 'skip',
+            answers: 'q2',
+          }),
         ],
         t,
       ),

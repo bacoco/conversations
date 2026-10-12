@@ -70,9 +70,15 @@ describe('carryOver', () => {
   it('never shows the same round twice nor more than three', () => {
     const rounds = carryOver(
       [{ id: 'redo-with-missing' }, { id: 'resume-questions' }],
-      [{ id: 'redo-with-missing', primary: true }, { id: 'shorter' }, { id: 'other-version' }],
+      [
+        { id: 'redo-with-missing', primary: true },
+        { id: 'shorter' },
+        { id: 'other-version' },
+      ],
     );
     expect(rounds).toHaveLength(ROUNDS_MAX);
-    expect(rounds.filter((round) => round.id === 'redo-with-missing')).toHaveLength(1);
+    expect(
+      rounds.filter((round) => round.id === 'redo-with-missing'),
+    ).toHaveLength(1);
   });
 });

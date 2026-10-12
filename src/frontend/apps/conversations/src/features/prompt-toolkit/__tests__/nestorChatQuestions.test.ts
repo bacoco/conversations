@@ -6,9 +6,24 @@ const items: MissingItem[] = [
   { short: 'date', question: 'Quelle date ?', choices: [] },
   { short: 'salle', question: 'Quelle salle ?', choices: [] },
 ];
-const q = (index: number): NestorMessage => ({ id: `q${index}`, action: 1, kind: 'question', index, items });
-const said = (answers: string, text: string, via: 'voice' | 'skip' | 'stop' | 'choice'): NestorMessage => ({
-  id: `u-${answers}`, action: 1, kind: 'user', text, via, answers,
+const q = (index: number): NestorMessage => ({
+  id: `q${index}`,
+  action: 1,
+  kind: 'question',
+  index,
+  items,
+});
+const said = (
+  answers: string,
+  text: string,
+  via: 'voice' | 'skip' | 'stop' | 'choice',
+): NestorMessage => ({
+  id: `u-${answers}`,
+  action: 1,
+  kind: 'user',
+  text,
+  via,
+  answers,
 });
 
 describe('questionState', () => {
@@ -21,8 +36,16 @@ describe('questionState', () => {
   });
 
   it('keeps answers, skips and the question after them, as after a reload', () => {
-    const state = questionState([q(0), said('q0', 'toute l’équipe du bureau 3', 'voice'), q(1), said('q1', 'Je ne sais pas', 'skip'), q(2)]);
-    expect(state.answers).toEqual([{ question: 'Quelle équipe ?', answer: 'toute l’équipe du bureau 3' }]);
+    const state = questionState([
+      q(0),
+      said('q0', 'toute l’équipe du bureau 3', 'voice'),
+      q(1),
+      said('q1', 'Je ne sais pas', 'skip'),
+      q(2),
+    ]);
+    expect(state.answers).toEqual([
+      { question: 'Quelle équipe ?', answer: 'toute l’équipe du bureau 3' },
+    ]);
     expect(state.skipped).toEqual(['date']);
     expect(state.current?.index).toBe(2);
   });
@@ -36,14 +59,24 @@ describe('questionState', () => {
   it('a version written from the round closes it', () => {
     const state = questionState([
       q(0),
-      { id: 'v', action: 2, kind: 'version', original: 'a', version: 'b', missing: [] },
+      {
+        id: 'v',
+        action: 2,
+        kind: 'version',
+        original: 'a',
+        version: 'b',
+        missing: [],
+      },
     ]);
     expect(state.current).toBeNull();
     expect(state.done).toBe(true);
   });
 
   it('a free question to Nestor is not an answer', () => {
-    const state = questionState([q(0), { id: 'x', action: 1, kind: 'user', text: 'Bonjour ?', via: 'keyboard' }]);
+    const state = questionState([
+      q(0),
+      { id: 'x', action: 1, kind: 'user', text: 'Bonjour ?', via: 'keyboard' },
+    ]);
     expect(state.current?.index).toBe(0);
     expect(state.answers).toEqual([]);
   });

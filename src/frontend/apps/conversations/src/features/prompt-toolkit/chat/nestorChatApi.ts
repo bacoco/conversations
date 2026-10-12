@@ -6,7 +6,12 @@ import {
   droppedAnswers,
 } from '../coach/coachApi';
 
-import { MissingItem, NestorMessage, QUESTIONS_MAX, RequestCheck } from './types';
+import {
+  MissingItem,
+  NestorMessage,
+  QUESTIONS_MAX,
+  RequestCheck,
+} from './types';
 
 const CHECK_SYSTEM_PROMPT = (language: string) =>
   `You are Nestor, a coach who helps a public servant write a request for an AI assistant.
@@ -32,7 +37,9 @@ const asMissing = (value: unknown): MissingItem[] =>
     .filter((item) => item.short && item.question)
     .slice(0, QUESTIONS_MAX);
 
-export const parseRequestCheck = (raw: Record<string, unknown>): RequestCheck => {
+export const parseRequestCheck = (
+  raw: Record<string, unknown>,
+): RequestCheck => {
   const message = typeof raw.message === 'string' ? raw.message.trim() : '';
   if (!message) {
     throw new CoachError('Nestor returned no reading of the request');
@@ -50,7 +57,9 @@ export const checkRequest = async (
   language: string,
   signal?: AbortSignal,
 ): Promise<RequestCheck> =>
-  parseRequestCheck(await complete(CHECK_SYSTEM_PROMPT(language), draft, signal));
+  parseRequestCheck(
+    await complete(CHECK_SYSTEM_PROMPT(language), draft, signal),
+  );
 
 /** A blank left for later: brackets, "À COMPLÉTER", underscores. */
 const HOLE = /\[[^\]\n]{1,120}\]|À COMPL[ÉE]TER|A COMPLETER|TO COMPLETE|_{3,}/i;
@@ -84,7 +93,8 @@ export interface VersionInput {
 const STYLE_RULE: Record<VersionStyle, string> = {
   full: '',
   shorter: 'Make it clearly shorter, keeping every fact.',
-  other: 'Write it differently: another structure and other words, the same facts.',
+  other:
+    'Write it differently: another structure and other words, the same facts.',
 };
 
 const VERSION_SYSTEM_PROMPT = (language: string, style: VersionStyle) =>
@@ -129,9 +139,13 @@ export const writeVersion = async (
       await complete(
         system,
         `${input}\n\nYour version was: ${version}\n${
-          hasHoles(version) ? 'It holds a blank: remove it and adapt the wording. ' : ''
+          hasHoles(version)
+            ? 'It holds a blank: remove it and adapt the wording. '
+            : ''
         }${
-          dropped.length ? `It leaves out: ${dropped.join(', ')}. Put them in. ` : ''
+          dropped.length
+            ? `It leaves out: ${dropped.join(', ')}. Put them in. `
+            : ''
         }Return the whole version again.`,
         signal,
         false,
