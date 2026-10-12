@@ -3,6 +3,16 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Do the review": "Faire le bilan",
+      "Stop listening": "Arrêter d’écouter",
+      "Analyse my text": "Analyser mon texte",
+      "Nestor’s buttons": "Les boutons de Nestor",
+      "Press to speak": "Appuyer pour parler",
+      "Press the red button to speak": "Appuyez sur le rond rouge pour parler",
+      "The microphone only turns on when you press.": "Le micro ne s’allume que quand vous appuyez.",
+      "Or type it": "Ou l’écrire au clavier",
+      "Send to Nestor": "Envoyer à Nestor",
+      "Your question to Nestor": "Votre question à Nestor",
       "Complete them": "Compléter",
       "+ {{n}} more": "+ {{n}} autres",
       "Another version": "Autre version",

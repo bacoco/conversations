@@ -30,7 +30,7 @@ import { useSpeechCapture } from './useSpeechCapture';
 
 /** Pieces of a recording: the text arrives about every half minute. */
 const CHUNK_SECONDS = 30;
-const RECORD_RED = '#d0342c';
+export const RECORD_RED = '#d0342c';
 const WAVE_BARS = 28;
 const NESTOR_TRANSCRIPTION_URL = '/assets/nestor-transcription.webp';
 
