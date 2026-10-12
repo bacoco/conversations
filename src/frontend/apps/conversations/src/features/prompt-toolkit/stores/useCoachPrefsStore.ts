@@ -25,6 +25,12 @@ const AUDIENCE_WORDS: Record<UsualAudience, string> = {
 /** "Useful? Too simple? Too complicated?" is asked at most once a day. */
 export const FELT_ASK_EVERY_MS = 24 * 60 * 60 * 1000;
 
+export type AutoPart =
+  | 'autoPistes'
+  | 'autoAnalyse'
+  | 'autoAdvice'
+  | 'autoSuites';
+
 interface CoachPrefsState {
   tone: CoachTone;
   length: CoachLength;
@@ -40,6 +46,14 @@ interface CoachPrefsState {
   /** The coach in the room said once what it does. */
   roomCoachIntroSeen: boolean;
   usualAudience: UsualAudience | null;
+  /** "Auto" in Nestor's header: off, Nestor does nothing by himself. */
+  auto: boolean;
+  autoPistes: boolean;
+  autoAnalyse: boolean;
+  autoAdvice: boolean;
+  autoSuites: boolean;
+  setAuto: (auto: boolean) => void;
+  setAutoPart: (part: AutoPart, on: boolean) => void;
   /** Tips the user said are not needed, per kind of request. */
   dismissedTips: Partial<Record<RequestKind, Competency[]>>;
   /** When "useful? too simple? too complicated?" was last asked. */
@@ -64,9 +78,20 @@ const initialPrefs = {
   roomCoach: true,
   roomCoachIntroSeen: false,
   usualAudience: null as UsualAudience | null,
+  auto: true,
+  autoPistes: true,
+  autoAnalyse: false,
+  autoAdvice: true,
+  autoSuites: true,
   dismissedTips: {} as Partial<Record<RequestKind, Competency[]>>,
   feltAskedAt: 0,
 };
+
+/** A part of "Auto" runs only when "Auto" itself is on. */
+export const isAutoOn = (
+  state: Pick<CoachPrefsState, 'auto' | AutoPart>,
+  part: AutoPart,
+) => state.auto && state[part];
 
 export const useCoachPrefsStore = create<CoachPrefsState>()(
   persist(
@@ -79,6 +104,9 @@ export const useCoachPrefsStore = create<CoachPrefsState>()(
       setRoomCoach: (roomCoach) => set({ roomCoach }),
       setRoomCoachIntroSeen: () => set({ roomCoachIntroSeen: true }),
       setUsualAudience: (usualAudience) => set({ usualAudience }),
+      setAuto: (auto) => set({ auto }),
+      setAutoPart: (part, on) =>
+        set({ [part]: on } as Partial<CoachPrefsState>),
       dismissTip: (kind, skill) =>
         set((state) => {
           const current = state.dismissedTips[kind] ?? [];
@@ -94,7 +122,11 @@ export const useCoachPrefsStore = create<CoachPrefsState>()(
       markFeltAsked: (now = Date.now()) => set({ feltAskedAt: now }),
       reset: () => set(initialPrefs),
     }),
-    { name: 'prompt-coach-prefs' },
+    {
+      name: 'prompt-coach-prefs',
+      version: 1,
+      migrate: (persisted) => ({ ...initialPrefs, ...(persisted as object) }),
+    },
   ),
 );
 
@@ -109,7 +141,7 @@ export const coachRules = () => {
       ? 'The user likes details: you may explain why in one more sentence.'
       : 'Keep every text short.',
     usualAudience
-      ? `The user usually writes to ${AUDIENCE_WORDS[usualAudience]}: when a request does not name its audience, assume this one and do not ask about it nor lower the audience grade for it.`
+      ? `The user often writes to ${AUDIENCE_WORDS[usualAudience]}: use this only to pick examples. Never add it to a request and never take it as said; when a request does not name its audience, it is still missing.`
       : '',
   ]
     .filter(Boolean)
