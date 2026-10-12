@@ -46,13 +46,11 @@ describe('coach modes', () => {
       'Help me with this prompt',
       'Analyse my prompt',
       'As you type',
-      'Next questions',
       'Nestor’s view on this exchange',
-      'Session review',
     ]);
-    // After the answer: nothing to go on with while there is none.
+    // After the answer: no advice while there is none.
     expect(
-      screen.getByRole('button', { name: 'Next questions' }),
+      screen.getByRole('button', { name: 'Nestor’s view on this exchange' }),
     ).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: 'As you type' }));
     expect(usePromptToolkitStore.getState().coachMode).toBe('instant');

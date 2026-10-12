@@ -6,15 +6,16 @@ import { NestorTurn, PROMPT_TOOLKIT_ENABLED } from '../coach/coachApi';
 import { readSharedPrompt } from '../library/templateVars';
 
 /** Sections of the right panel; add one here and in `RightPanel`. */
-/** The coach's screens: analyse, prompt help, as you type, session review. */
-export type CoachMode =
-  'manual' | 'assist' | 'instant' | 'session' | 'next' | 'advice';
+/**
+ * The coach's screens: analyse, prompt help, as you type, the advice thread
+ * (with the next questions) and the session review that ends it.
+ */
+export type CoachMode = 'manual' | 'assist' | 'instant' | 'session' | 'advice';
 export const COACH_MODES: readonly CoachMode[] = [
   'manual',
   'assist',
   'instant',
   'session',
-  'next',
   'advice',
 ];
 
@@ -285,12 +286,13 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
     {
       name: 'prompt-toolkit',
       // v2 removed the live coach, v3 the "off" mode; v5 brought back the
-      // coach's four screens; v6 starts everyone on "as you type".
-      version: 6,
-      migrate: (persisted) => {
-        const stored = persisted as Partial<PromptToolkitState> & {
-          coachMode?: string;
-        };
+      // coach's four screens; v6 starts everyone on "as you type"; v7 moved
+      // the next questions into the advice thread.
+      version: 7,
+      migrate: (persisted, version) => {
+        const stored = persisted as Partial<PromptToolkitState>;
+        // Read as a string: it may be a screen that no longer exists.
+        const storedMode = (persisted as { coachMode?: string }).coachMode;
         return {
           isOpen: false,
           width: PANEL_DEFAULT_WIDTH_PX,
@@ -298,7 +300,13 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           hasSeenWelcome: false,
           mode: 'coach' as RightPanelMode,
           ...stored,
-          coachMode: 'instant' as CoachMode,
+          coachMode: (version < 6
+            ? 'instant'
+            : storedMode === 'next'
+              ? 'advice'
+              : COACH_MODES.includes(storedMode as CoachMode)
+                ? storedMode
+                : 'instant') as CoachMode,
         };
       },
       // A panel left open stays closed if the deployment turned it off.

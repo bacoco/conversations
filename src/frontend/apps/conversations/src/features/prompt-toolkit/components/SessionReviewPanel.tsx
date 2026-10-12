@@ -11,6 +11,7 @@ import { useConversationRouteId } from '@/utils';
 import { SessionReview, reviewSession } from '../coach/coachApi';
 import { levelColor, wordLevel } from '../coach/levels';
 import { useReward } from '../rewards/useReward';
+import { threadOf, useCoachThreadStore } from '../stores/useCoachThreadStore';
 import { useSectionReset } from '../stores/usePromptToolkitStore';
 
 import { CoachFeedback } from './CoachFeedback';
@@ -81,12 +82,16 @@ export const SessionReviewPanel = ({
   language: string;
   /** Opened on purpose: the review starts at once. */
   autoStart?: boolean;
-  /** Back to the coach, which opened the review. */
+  /** Back to the advice thread, which opened the review. */
   onBack?: () => void;
 }) => {
   const { t } = useTranslation();
   const conversationId = useConversationRouteId();
   const reward = useReward();
+  // The coach's thread on this conversation: the review ends it.
+  const coachNotes = useCoachThreadStore((state) =>
+    threadOf(state.threads, conversationId),
+  );
   const [review, setReview] = useState<SessionReview | null>(null);
   const [promptCount, setPromptCount] = useState(0);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'empty'>(
@@ -123,7 +128,22 @@ export const SessionReviewPanel = ({
         setStatus('empty');
         return;
       }
-      setReview(await reviewSession(prompts, language, controller.signal));
+      setReview(
+        await reviewSession(
+          prompts,
+          language,
+          controller.signal,
+          coachNotes
+            .map((note, index) => ({
+              // Each note reads the requests since the one before.
+              afterPrompt: coachNotes
+                .slice(0, index + 1)
+                .reduce((sum, item) => sum + item.exchanges, 0),
+              text: note.tryNow || note.habit,
+            }))
+            .filter((item) => item.text),
+        ),
+      );
       reward('review');
       setStatus('idle');
     } catch {
@@ -152,7 +172,7 @@ export const SessionReviewPanel = ({
         onClick={onBack}
         icon={<Icon iconName="arrow_back" $size="18px" />}
       >
-        {t('Back to the coach')}
+        {t('Back to the advice')}
       </Button>
     </Box>
   );
@@ -330,6 +350,20 @@ export const SessionReviewPanel = ({
               </Text>
             )}
             {review.summary && <Text $size="sm">{review.summary}</Text>}
+            {coachNotes.length > 0 && (
+              <Box $direction="row" $align="center" $gap="8px">
+                <Icon iconName="forum" $size="18px" $theme="brand" />
+                <Text $size="sm" $weight="600">
+                  {t('{{count}} pieces of advice from Nestor', {
+                    count: coachNotes.length,
+                  })}
+                  {' · '}
+                  {t('{{count}} applied', {
+                    count: coachNotes.filter((note) => note.applied).length,
+                  })}
+                </Text>
+              </Box>
+            )}
             {keyMoment && (
               <Box
                 $direction="row"

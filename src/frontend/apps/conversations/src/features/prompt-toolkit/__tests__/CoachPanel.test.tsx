@@ -81,6 +81,47 @@ describe('<CoachPanel />', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('plays the peephole sequence once and requires another click', () => {
+    vi.stubGlobal('fetch', vi.fn());
+    const play = vi
+      .spyOn(HTMLMediaElement.prototype, 'play')
+      .mockResolvedValue(undefined);
+    render(<CoachPanel />);
+
+    const peephole = screen.getByRole('button', {
+      name: 'Watch Nestor look through the peephole',
+    });
+    const video = screen.getByTestId('nestor-peephole-video');
+
+    expect(peephole).toHaveAttribute('data-playing', 'false');
+    expect(peephole).toHaveAttribute('aria-pressed', 'false');
+    expect(video).toHaveAttribute('src', '/assets/nestor-peephole.mp4');
+    expect(video).toHaveAttribute(
+      'poster',
+      '/assets/nestor-peephole-poster.webp',
+    );
+    expect(video).not.toHaveAttribute('loop');
+    expect(video).not.toHaveAttribute('autoplay');
+
+    fireEvent.click(peephole);
+    expect(peephole).toHaveAttribute('data-playing', 'true');
+    expect(peephole).toHaveAttribute('aria-pressed', 'true');
+    expect(play).toHaveBeenCalledTimes(1);
+
+    // A click during the sequence does not interrupt or restart it.
+    fireEvent.click(peephole);
+    expect(peephole).toHaveAttribute('data-playing', 'true');
+    expect(play).toHaveBeenCalledTimes(1);
+
+    fireEvent.ended(video);
+    expect(peephole).toHaveAttribute('data-playing', 'false');
+    expect(peephole).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(peephole);
+    expect(peephole).toHaveAttribute('data-playing', 'true');
+    expect(play).toHaveBeenCalledTimes(2);
+  });
+
   it('warns about personal data without calling the model', () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);

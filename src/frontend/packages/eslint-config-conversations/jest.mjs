@@ -18,6 +18,9 @@ export function jestTestConfigs() {
     {
       files: testFilePatterns,
       ...jestPlugin.configs['flat/recommended'],
+      // Tests run with Vitest: jest is not installed, its version is not
+      // detected and a rule which needs it stops the whole lint.
+      settings: { jest: { version: 29 } },
       rules: {
         ...jestPlugin.configs['flat/recommended'].rules,
         '@typescript-eslint/no-empty-function': 'off',

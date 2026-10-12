@@ -15,6 +15,7 @@ import { languageName } from '../coach/language';
 import { levelColor, wordLevel } from '../coach/levels';
 import { SensitiveKind, detectSensitiveData } from '../coach/sensitiveData';
 import { useAfterAnswer } from '../coach/useAfterAnswer';
+import { useCoachThread } from '../coach/useCoachThread';
 import { usePromptAnalysis } from '../coach/usePromptAnalysis';
 import { wordDiff } from '../coach/wordDiff';
 import { useOfferPrompt } from '../fill/useOfferPrompt';
@@ -23,22 +24,20 @@ import { searchLibrary } from '../library/embeddingSearch';
 import type { LibraryPrompt } from '../library/types';
 import { useReward } from '../rewards/useReward';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
-import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
 
-import { AdviceView, NextQuestionsView } from './AfterAnswerViews';
 import { CoachActionBar } from './CoachActionBar';
 import { ExplainedComparison, TutorHints } from './CoachExtras';
 import { AssistResults, InstantSuggestions } from './CoachModes';
 import { CoachStatus } from './CoachStatus';
+import { CoachThreadView } from './CoachThreadView';
 import { DiffView } from './DiffView';
 import { DinumGrid } from './DinumGrid';
 import { LivePillars } from './LivePillars';
-import { NESTOR_AVATAR_URL } from './PanelHome';
 import { PromptAddOns } from './PromptAddOns';
 import { SessionReviewPanel } from './SessionReviewPanel';
 
@@ -50,6 +49,96 @@ const sectionCss = css`
 const prefersReducedMotion = () =>
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
+const NESTOR_PEEPHOLE_VIDEO_URL = '/assets/nestor-peephole.mp4';
+const NESTOR_PEEPHOLE_POSTER_URL = '/assets/nestor-peephole-poster.webp';
+
+const nestorPeepholeCss = css`
+  position: relative;
+  flex: none;
+  display: block;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #f7f8fd;
+  background-image: url(${NESTOR_PEEPHOLE_POSTER_URL});
+  background-position: center;
+  background-size: cover;
+
+  &:focus-visible {
+    outline: 2px solid var(--c--contextuals--border--semantic--brand--primary);
+    outline-offset: 3px;
+  }
+`;
+
+const nestorPeepholeVideoCss = css`
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+`;
+
+const NestorPeephole = () => {
+  const { t } = useTranslation();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const playOnce = () => {
+    if (isPlaying) {
+      return;
+    }
+
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    video.currentTime = 0;
+    setIsPlaying(true);
+    void video.play().catch(() => setIsPlaying(false));
+  };
+
+  const resetToPoster = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+    }
+    setIsPlaying(false);
+  };
+
+  return (
+    <Box
+      as="button"
+      type="button"
+      onClick={playOnce}
+      aria-label={t('Watch Nestor look through the peephole')}
+      aria-pressed={isPlaying}
+      data-playing={isPlaying}
+      $css={nestorPeepholeCss}
+    >
+      <Box
+        ref={videoRef}
+        as="video"
+        aria-hidden="true"
+        data-testid="nestor-peephole-video"
+        src={NESTOR_PEEPHOLE_VIDEO_URL}
+        poster={NESTOR_PEEPHOLE_POSTER_URL}
+        preload="metadata"
+        muted
+        playsInline
+        disablePictureInPicture
+        onEnded={resetToPoster}
+        onError={resetToPoster}
+        $css={nestorPeepholeVideoCss}
+      />
+    </Box>
+  );
+};
+
 /** `isActive` is false while the panel is hidden: live mode then pauses. */
 export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -60,32 +149,24 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
   const setChatInput = usePromptToolkitStore((state) => state.setChatInput);
   const coachMode = usePromptToolkitStore((state) => state.coachMode);
   const setCoachMode = usePromptToolkitStore((state) => state.setCoachMode);
-  const requestCount = useMainConversationStore(
-    (state) => state.turns.filter((turn) => turn.role === 'user').length,
-  );
   const language = languageName(i18n.language);
 
   const analysis = usePromptAnalysis(chatInput, language);
   const after = useAfterAnswer(isActive, language);
-  // "Advice" shown for an answer it has not read yet: it reads it now,
+  const thread = useCoachThread(language);
+  // "Advice" shown with exchanges it has not read yet: it reads them now,
   // instead of waiting on nothing.
+  const { askNote } = thread;
   useEffect(() => {
     if (
       isActive &&
       coachMode === 'advice' &&
-      after.hasAnswer &&
-      after.advice.status === 'idle'
+      thread.newExchanges > 0 &&
+      thread.status === 'idle'
     ) {
-      after.askAdvice();
+      askNote();
     }
-  }, [isActive, coachMode, after.hasAnswer, after.advice.status, after]);
-  // The dot on "Go on" says "new": once the questions are seen, it goes.
-  const [seenNextFor, setSeenNextFor] = useState<string | null>(null);
-  useEffect(() => {
-    if (coachMode === 'next' && after.next.status === 'ready') {
-      setSeenNextFor(after.next.answerId);
-    }
-  }, [coachMode, after.next.status, after.next.answerId]);
+  }, [isActive, coachMode, thread.newExchanges, thread.status, askNote]);
   const sensitive = useMemo(() => detectSensitiveData(chatInput), [chatInput]);
 
   const [improvement, setImprovement] = useState<
@@ -139,6 +220,9 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
     assistControllerRef.current?.abort();
     setAssist(null);
     setAssistError(false);
+    if (usePromptToolkitStore.getState().coachMode === 'advice') {
+      thread.clear();
+    }
   });
 
   useEffect(() => () => improveControllerRef.current?.abort(), []);
@@ -309,40 +393,21 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       onClick: () => setCoachMode('instant'),
     },
     {
-      mode: 'next' as const,
-      icon: 'arrow_forward',
-      label: t('Go on'),
-      title: t('Next questions'),
-      groupStart: true,
-      disabled: !after.hasAnswer,
-      isLoading: after.next.status === 'loading' && coachMode === 'next',
-      hasNews:
-        after.next.status === 'ready' &&
-        coachMode !== 'next' &&
-        after.next.answerId !== seenNextFor,
-      onClick: () => setCoachMode('next'),
-    },
-    {
       mode: 'advice' as const,
       icon: 'forum',
       label: t('Advice'),
       title: t('Nestor’s view on this exchange'),
-      disabled: !after.hasAnswer,
-      isLoading: after.advice.status === 'loading',
+      groupStart: true,
+      disabled: !after.hasAnswer && thread.entries.length === 0,
+      isLoading: thread.status === 'loading',
+      // A new answer: Nestor has advice and ways to go on.
+      hasNews: coachMode !== 'advice' && thread.newExchanges > 0,
       onClick: () => {
         setCoachMode('advice');
-        if (after.advice.status === 'idle' || after.advice.status === 'error') {
-          after.askAdvice();
+        if (thread.status === 'error') {
+          askNote();
         }
       },
-    },
-    {
-      mode: 'session' as const,
-      icon: 'insights',
-      label: t('Wrap-up'),
-      title: t('Session review'),
-      disabled: requestCount === 0,
-      onClick: () => setCoachMode('session'),
     },
   ];
   /** Nothing to show yet in this mode: one line says what to do. */
@@ -408,38 +473,35 @@ export const CoachPanel = ({ isActive = true }: { isActive?: boolean }) => {
       <Box $css="flex: 1; justify-content: center;">
         {idleHint && (
           <Box $align="center" $gap="12px" $padding={{ all: 'lg' }}>
-            <img
-              src={NESTOR_AVATAR_URL}
-              alt=""
-              width={72}
-              height={72}
-              style={{ borderRadius: '50%' }}
-            />
+            <NestorPeephole />
             <Text $textAlign="center" $size="sm">
               {idleHint}
             </Text>
           </Box>
         )}
 
-        {coachMode === 'next' && (
-          <NextQuestionsView
-            hasAnswer={after.hasAnswer}
-            status={after.next.status}
-            questions={after.next.questions}
-            onRetry={after.prepareNext}
-          />
-        )}
         {coachMode === 'advice' && (
-          <AdviceView
-            status={after.advice.status}
-            text={after.advice.text}
+          <CoachThreadView
+            entries={thread.entries}
+            status={thread.status}
+            asking={thread.asking}
+            hasAnswer={thread.hasAnswer}
             gaps={after.gaps}
-            hasAnswer={after.hasAnswer}
-            onRetry={after.askAdvice}
+            canReview={thread.canReview}
+            next={after.next}
+            isUpToDate={thread.newExchanges === 0}
+            onRetry={askNote}
+            onAsk={thread.askMore}
+            onReview={() => setCoachMode('session')}
           />
         )}
         {coachMode === 'session' && (
-          <SessionReviewPanel language={language} autoStart />
+          // Reached from the end of the advice thread, and back to it.
+          <SessionReviewPanel
+            language={language}
+            autoStart
+            onBack={() => setCoachMode('advice')}
+          />
         )}
 
         {coachMode === 'assist' && chatInput.trim() !== '' && assist && (
