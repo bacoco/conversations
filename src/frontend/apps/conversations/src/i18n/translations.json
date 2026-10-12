@@ -3,6 +3,9 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "This answer is not ready to be sent: {{count}} parts to complete_one": "Cette réponse n’est pas prête à être envoyée : {{count}} élément à compléter",
+      "This answer is not ready to be sent: {{count}} parts to complete_many": "Cette réponse n’est pas prête à être envoyée : {{count}} éléments à compléter",
+      "This answer is not ready to be sent: {{count}} parts to complete_other": "Cette réponse n’est pas prête à être envoyée : {{count}} éléments à compléter",
       "Emails, letters, rewriting, translation.": "Courriels, courriers, reformuler, traduire.",
       "Minutes, summary notes, actions to take.": "Comptes rendus, synthèses, actions à mener.",
       "Action plans, ideas, agendas.": "Plans d’action, idées, ordres du jour.",

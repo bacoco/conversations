@@ -4,6 +4,7 @@ import {
   PointerEvent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   RightPanelMode,
   clampPanelWidth,
@@ -201,6 +203,19 @@ export const RightPanel = ({
   } = usePromptToolkitStore();
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
+  const closeFill = usePromptToolkitStore((state) => state.closeFill);
+  // A request sent to the Assistant moves on: Nestor's questions about an
+  // earlier draft would hide the coach, which now has an answer to read.
+  const requestCount = useMainConversationStore(
+    (state) => state.turns.filter((turn) => turn.role === 'user').length,
+  );
+  const requestCountRef = useRef(requestCount);
+  useEffect(() => {
+    if (requestCount > requestCountRef.current) {
+      closeFill();
+    }
+    requestCountRef.current = requestCount;
+  }, [requestCount, closeFill]);
   const isAiAvailable = useAiAvailable();
   const isAiUnavailable = useAiUnavailable();
   const checkAi = useAiAvailability((state) => state.check);

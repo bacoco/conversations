@@ -424,17 +424,26 @@ const PhraseRow = ({
             $gap="12px"
             $css={improvedRowCss}
           >
-            <Box
-              as="span"
-              $direction="row"
-              $align="center"
-              $gap="4px"
-              $css={tagCss('brand')}
-            >
-              <Icon iconName="auto_awesome" $size="14px" $withThemeInherited />
-              {t('Improved version')}
-            </Box>
+            {/* The badge above the title: beside it, it squeezes the text. */}
             <Box $gap="2px" $css="flex: 1; min-width: 0;">
+              <Box
+                as="span"
+                $direction="row"
+                $align="center"
+                $gap="4px"
+                $css={css`
+                  ${tagCss('brand')}
+                  align-self: flex-start;
+                  margin-bottom: 4px;
+                `}
+              >
+                <Icon
+                  iconName="auto_awesome"
+                  $size="14px"
+                  $withThemeInherited
+                />
+                {t('Improved version')}
+              </Box>
               <Text $weight="600">{template.title}</Text>
               <Text $size="xs" $variation="secondary">
                 {template.description}
