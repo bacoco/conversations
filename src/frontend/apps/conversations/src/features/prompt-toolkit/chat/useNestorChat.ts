@@ -240,15 +240,23 @@ export const useNestorChat = (language: string) => {
     const prompts = turns
       .filter((turn) => turn.role === 'user')
       .map((turn) => turn.text);
-    // Advice counts only when a later request could apply it.
-    const advice = all
-      .filter((message): message is Find<'advice'> => message.kind === 'advice')
-      .map((message) => ({
-        afterPrompt: turns
-          .slice(0, message.note.upTo)
-          .filter((turn) => turn.role === 'user').length,
-        text: message.note.tryNow,
-      }))
+    // Advice counts only when a later request could apply it; whether it
+    // was applied is what the next advice checked, never a guess.
+    const notes = all.filter(
+      (message): message is Find<'advice'> => message.kind === 'advice',
+    );
+    const advice = notes
+      .map((message, index) => {
+        const applied = notes[index + 1]?.note.applied;
+        return {
+          afterPrompt: turns
+            .slice(0, message.note.upTo)
+            .filter((turn) => turn.role === 'user').length,
+          text: `${message.note.tryNow} (applied: ${
+            applied === true ? 'yes' : applied === false ? 'no' : 'unknown'
+          })`,
+        };
+      })
       .filter((item) => item.afterPrompt < prompts.length);
     void run('review', 'review', async (signal, say) => {
       const review = await reviewSession(prompts, language, signal, advice);

@@ -79,4 +79,15 @@ describe('the coach is one chat with Nestor', () => {
       await screen.findByText(idea, undefined, { timeout: 3000 }),
     ).toBeInTheDocument();
   });
+
+  it('no ideas over a long request with a pasted text: a click would lose it', async () => {
+    usePromptToolkitStore.setState({
+      chatInput: `Résume cette note pour ma directrice : ${'Le décret modifie les seuils. '.repeat(10)}`,
+    });
+    render(<CoachPanel />);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    expect(
+      screen.queryByText('Invite l’équipe à la réunion de lancement'),
+    ).toBeNull();
+  });
 });

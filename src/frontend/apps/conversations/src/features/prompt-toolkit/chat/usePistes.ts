@@ -9,6 +9,11 @@ import { suggestPistes } from './nestorChatApi';
 export const PISTES_DELAY_MS = 900;
 /** Below this, there is no request yet to start from. */
 export const PISTES_MIN_CHARS = 12;
+/**
+ * Above this, the request holds a pasted text or is written out: an idea
+ * would replace it all. Nestor stays quiet.
+ */
+export const PISTES_MAX_CHARS = 160;
 
 /**
  * Starting ideas while the user types: their own request made more precise
@@ -22,7 +27,11 @@ export const usePistes = (text: string, enabled: boolean) => {
 
   useEffect(() => {
     setPhrases([]);
-    if (!enabled || query.length < PISTES_MIN_CHARS) {
+    if (
+      !enabled ||
+      query.length < PISTES_MIN_CHARS ||
+      query.length > PISTES_MAX_CHARS
+    ) {
       return;
     }
     const controller = new AbortController();

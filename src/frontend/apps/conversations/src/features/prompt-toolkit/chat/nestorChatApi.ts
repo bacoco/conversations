@@ -129,7 +129,7 @@ export interface VersionInput {
 }
 
 const STYLE_RULE: Record<VersionStyle, string> = {
-  full: '',
+  full: 'Make it clearly more useful: when the request does not say them, add the expected format and length and, if it helps, the tone (e.g. "en 3 points, en langage simple"). Form only, never a fact. A text pasted in the request is kept word for word.',
   shorter: 'Make it clearly shorter, keeping every fact.',
   other:
     'Write it differently: another structure and other words, the same facts.',

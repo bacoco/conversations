@@ -391,6 +391,49 @@ describe('useNestorChat', () => {
       gaps: [expect.stringContaining('heure')],
     });
   });
+
+  it('the review is told which advice was applied, never left to guess', async () => {
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Résume' },
+        { role: 'assistant', text: 'R1' },
+        { role: 'user', text: 'Plus court' },
+        { role: 'assistant', text: 'R2' },
+      ],
+      latestCompletedAssistantMessageId: 'm2',
+      isAssistantResponding: false,
+    });
+    const store = useNestorChatStore.getState();
+    store.post('c1', {
+      kind: 'advice',
+      note: { upTo: 2, tryNow: 'Dites pour qui', applied: null } as never,
+      missing: [],
+      answerId: 'm1',
+    });
+    store.post('c1', {
+      kind: 'advice',
+      note: { upTo: 4, tryNow: 'Gardez ce format', applied: false } as never,
+      missing: [],
+      answerId: 'm2',
+    });
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        summary: 'Bien.',
+        strengths: [],
+        habits: [],
+        tips: ['a', 'b', 'c'],
+        grades: [],
+      }),
+    );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.runBar('review');
+      return Promise.resolve();
+    });
+    expect(fetchMock.mock.calls[0][1]?.body as string).toContain(
+      'Dites pour qui (applied: no)',
+    );
+  });
 });
 
 describe('useNestorAuto', () => {

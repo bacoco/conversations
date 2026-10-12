@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Out of 1 piece of advice, you applied {{applied}}": "Sur 1 conseil, vous en avez appliqué {{applied}}",
       "Idea cancelled: {{text}}": "Piste annulée : {{text}}",
       "Examples of requests": "Exemples de demandes",
       "A few everyday requests. One click puts it in the Assistant’s field.": "Quelques demandes de tous les jours. Un clic en met une dans le champ de l’Assistant.",

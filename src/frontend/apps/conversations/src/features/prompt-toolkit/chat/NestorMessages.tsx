@@ -360,10 +360,14 @@ export const MessageView = ({
           )}
           {message.advised > 0 && (
             <span>
-              {t(
-                'Out of {{advised}} pieces of advice, you applied {{applied}}',
-                { advised: message.advised, applied: message.applied },
-              )}
+              {message.advised === 1
+                ? t('Out of 1 piece of advice, you applied {{applied}}', {
+                    applied: message.applied,
+                  })
+                : t(
+                    'Out of {{advised}} pieces of advice, you applied {{applied}}',
+                    { advised: message.advised, applied: message.applied },
+                  )}
             </span>
           )}
         </NestorBubble>

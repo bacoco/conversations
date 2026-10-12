@@ -186,6 +186,34 @@ describe('<NestorThread />', () => {
     ).toHaveLength(1);
   });
 
+  it('one piece of advice is said in the singular', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'r',
+            action: 9,
+            kind: 'review',
+            advised: 1,
+            applied: 0,
+            answerId: 'm',
+            review: {
+              summary: 'Bien.',
+              strengths: [],
+              habits: [],
+              tips: [],
+              grades: [],
+            },
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getByText('Out of 1 piece of advice, you applied 0'),
+    ).toBeInTheDocument();
+  });
+
   it('a question: "Question 1 of 3", the choices, "I don’t know", stop', () => {
     const items = [
       {

@@ -355,7 +355,7 @@ export const reviewSession = async (
     )
     .join('\n');
   const coached = advice.length
-    ? `\n<advice>\n${advice.map((item) => `After prompt ${item.afterPrompt}: ${item.text}`).join('\n')}\n</advice>\nDuring the session, the coach gave this advice. Advice given after prompt n can only be applied in the prompts after n. In "summary", say in one sentence which advice the user applied; advice with no prompt after it is still to try, never applied.`
+    ? `\n<advice>\n${advice.map((item) => `After prompt ${item.afterPrompt}: ${item.text}`).join('\n')}\n</advice>\nDuring the session, the coach gave this advice, each marked applied yes, no or unknown. Use these marks as they are, never your own guess: in "summary", mention an advice as applied only when it is marked "applied: yes"; never say an advice marked "no" or "unknown" was applied.`
     : '';
   return parseSessionReview(
     await complete(
@@ -1030,7 +1030,7 @@ Three standard axes, always:
 - "reshape": reuse the answer in another form (email, table, shorter, plainer, for another reader).
 - "step_back": check or complete it (limits, risks, what is missing to decide, another point of view).
 Then 0 to ${NEXT_EXTRA_MAX} extra axes, only when this conversation calls for one the standard axes do not cover (e.g. "Budget", "Special cases", "Timeline"). An extra axis has a short label of 1 to 3 words, in plain words, no jargon. Never repeat a standard axis under another name: when nothing specific is worth it, give no extra axis.
-No idea twice, across all axes. Do not invent facts: use [brackets] only when a missing detail is essential.
+No idea twice, across all axes. Do not invent facts and never write brackets or blanks. Stay in the world of a public servant's work (no social networks unless the conversation is about them). In French, say "courriel", never "mail" or "email".
 Write the labels in ${language}. Write the suggestions in the language of the conversation (${language} when unclear): they are sent in it. Each suggestion must stand alone and be ready to send, written as the person would write to the assistant, with one same form of address for all of them (the one the person uses, else the informal one).
 Reply only with valid JSON: {"deepen": ["...", "..."], "reshape": ["...", "..."], "step_back": ["...", "..."], "extra": [{"label": "...", "questions": ["...", "..."]}]}.`;
 
@@ -1239,7 +1239,7 @@ You coach the way of asking; you never do the user's task and you never answer i
 You receive the exchanges already discussed <before> (maybe empty), the new exchanges since your last advice <since>, and your previous advice <previous> (maybe empty). Talk about <since>; use <before> only to understand it.
 Reply only with valid JSON, every field in plain text:
 {"follow_up": "<only when <previous> is given: did the user apply it in <since>? Say it in one sentence, quoting their words; congratulate when they did. Else empty>", "applied": <true, false, or null when there is no previous advice>, "worked": "<one or two sentences: what worked in the user's requests, quoting their own words>", "issue": "<one or two sentences: what is missing or weak in the latest answer, and which part of the request caused it>", "try": "<the one move to make now, at most 20 words>", "try_why": "<one sentence: why it gives a better answer>", "prompt": "<the next request to send to the assistant, complete and ready to send, written as the user would; empty if no request is needed>", "habit": "<one sentence: the habit to keep for every request, beyond this case>", "competency": "<the skill this habit trains, one of: ${COMPETENCIES.join(', ')}>"}
-Be specific to these exchanges, warm and concrete; never generic. Never advise adding something the request already says (read it again before "try"). Plain everyday words: say who will read it, never "audience", "public cible" or "audience cible"; say the request, never "prompt".
+Be specific to these exchanges, warm and concrete; never generic. Raise an issue only when it really matters for what the user wants; when the answer does what was asked, leave "issue" empty and give a next step instead of a nitpick. Words of the user's own field are not jargon for their reader (a director in public procurement knows "marchés publics"). Never advise adding something the request already says (read it again before "try"). Plain everyday words: say who will read it, never "audience", "public cible" or "audience cible"; say the request, never "prompt".
 Never invent facts. In "prompt", never brackets, placeholders or blanks: leave out what only the user knows, the user adds it.
 Write in ${language}; in French, address the user formally ("vous") and use the words of the French administration ("courriel", never "mail").`;
 
