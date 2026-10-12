@@ -3,6 +3,17 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Analysis: missing {{items}}": "Analyse : il manquait {{items}}",
+      "Analysis: clear request": "Analyse : demande claire",
+      "Questions: {{answers}}": "Questions : {{answers}}",
+      "Questions: nothing given": "Questions : rien de précisé",
+      "Version prepared, put in the Assistant’s field": "Version préparée, mise dans le champ de l’Assistant",
+      "Version prepared": "Version préparée",
+      "Chosen start: {{text}}": "Piste choisie : {{text}}",
+      "Starting ideas, close to yours": "Des pistes de départ, proches de la vôtre",
+      "Advice: {{advice}}": "Conseil : {{advice}}",
+      "You asked Nestor: {{text}}": "Vous avez demandé à Nestor : {{text}}",
+      "Earlier step": "Étape précédente",
       "My colleagues": "Mes collègues",
       "I work in an administration. This summary is for my management, who must take decisions.": "Je travaille dans une administration. Cette synthèse est pour ma hiérarchie, qui doit prendre des décisions.",
       "I work in an administration. This summary is for my team, who need to know what changes in practice.": "Je travaille dans une administration. Cette synthèse est pour mon équipe, qui doit savoir ce qui change concrètement.",
