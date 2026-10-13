@@ -8,7 +8,11 @@ export type CasesDone = Record<string, number>;
 
 interface CasesState {
   done: CasesDone;
+  /** A case asked from elsewhere (the home page): the course opens it. */
+  requested: string | null;
   markDone: (caseId: string, at?: number) => void;
+  request: (caseId: string) => void;
+  clearRequest: () => void;
   reset: () => void;
 }
 
@@ -16,11 +20,14 @@ export const useCasesStore = create<CasesState>()(
   persist(
     (set) => ({
       done: {},
+      requested: null,
+      request: (caseId) => set({ requested: caseId }),
+      clearRequest: () => set({ requested: null }),
       markDone: (caseId, at = Date.now()) =>
         set((state) => ({ done: { ...state.done, [caseId]: at } })),
       reset: () => set({ done: {} }),
     }),
-    { name: 'nestor-cases' },
+    { name: 'nestor-cases', partialize: (state) => ({ done: state.done }) },
   ),
 );
 

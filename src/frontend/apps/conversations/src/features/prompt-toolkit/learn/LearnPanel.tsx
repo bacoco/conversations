@@ -20,6 +20,10 @@ import { MyMemo } from './MemoViews';
 import { QuizResult, QuizView } from './QuizView';
 import { SkillsView } from './SkillsView';
 import { StepView, useStageLabels } from './StepView';
+import { CaseView } from './cases/CaseView';
+import { CasesView } from './cases/CasesView';
+import { JourneyView } from './cases/JourneyView';
+import { useCasesStore } from './cases/casesProgress';
 import { getCourseContent } from './content';
 import {
   CHECKPOINTS,
@@ -50,7 +54,10 @@ type View =
   | { name: 'placement' }
   | { name: 'quiz' }
   | { name: 'memo' }
-  | { name: 'manage' };
+  | { name: 'manage' }
+  | { name: 'cases' }
+  | { name: 'case'; caseId: string }
+  | { name: 'journey' };
 
 const rowCss = (isCurrent: boolean) => css`
   width: 100%;
@@ -467,6 +474,16 @@ export const LearnPanel = () => {
     }
   }, [lessonRequest, clearLessonRequest, setSlidePosition]);
 
+  // A case asked from the home page ("Le cas de la semaine") opens here.
+  const caseRequest = useCasesStore((state) => state.requested);
+  const clearCaseRequest = useCasesStore((state) => state.clearRequest);
+  useEffect(() => {
+    if (caseRequest) {
+      setView({ name: 'case', caseId: caseRequest });
+      clearCaseRequest();
+    }
+  }, [caseRequest, clearCaseRequest]);
+
   if (view.name === 'step') {
     const step = steps.find((s) => s.lesson.id === view.lessonId);
     if (step) {
@@ -500,6 +517,33 @@ export const LearnPanel = () => {
 
   if (view.name === 'manage') {
     return <ManageProgressView course={course} onBack={back} />;
+  }
+
+  // The practical cases of the user's job, and the journey through them.
+  if (view.name === 'cases') {
+    return (
+      <CasesView
+        onBack={back}
+        onOpen={(caseId) => setView({ name: 'case', caseId })}
+      />
+    );
+  }
+  if (view.name === 'case') {
+    return (
+      <CaseView
+        caseId={view.caseId}
+        onBack={() => setView({ name: 'cases' })}
+        onDone={() => setView({ name: 'journey' })}
+      />
+    );
+  }
+  if (view.name === 'journey') {
+    return (
+      <JourneyView
+        onBack={back}
+        onOpen={(caseId) => setView({ name: 'case', caseId })}
+      />
+    );
   }
 
   if (view.name === 'review') {
@@ -864,6 +908,24 @@ export const LearnPanel = () => {
             {t('Review {{count}} items', { count: dueCount })}
           </Button>
         )}
+        <Button
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={() => setView({ name: 'cases' })}
+          icon={<Icon iconName="work" $size="18px" />}
+        >
+          {t('Cases of my job')}
+        </Button>
+        <Button
+          size="small"
+          color="neutral"
+          variant="tertiary"
+          onClick={() => setView({ name: 'journey' })}
+          icon={<Icon iconName="flag" $size="18px" />}
+        >
+          {t('My journey')}
+        </Button>
         <Button
           size="small"
           color="neutral"

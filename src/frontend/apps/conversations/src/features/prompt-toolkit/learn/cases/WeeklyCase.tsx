@@ -1,0 +1,107 @@
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import { C, Choice, MainButton } from '../../chat/ui';
+import { jobById } from '../../jobs/jobs';
+import { useProfileStore } from '../../stores/useProfileStore';
+import { usePromptToolkitStore } from '../../stores/usePromptToolkitStore';
+
+import { useCasesStore, weeklyCase } from './casesProgress';
+import { downloadIcs, weeklySlotIcs } from './ics';
+
+const Card = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid ${C.brandLine};
+  border-radius: 14px;
+  background: #f7f6ff;
+  color: ${C.ink};
+  & > span:first-child {
+    font-size: 12px;
+    font-weight: 700;
+    color: ${C.brandInk};
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  & > strong {
+    font-size: 16px;
+  }
+  & > small {
+    font-size: 13px;
+    color: ${C.muted};
+  }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+`;
+
+/**
+ * « Le cas de la semaine », on the home page: one real task of the user's
+ * job, chosen in the browser from their level. Nothing is sent.
+ */
+export const WeeklyCase = () => {
+  const { t } = useTranslation();
+  const job = jobById(useProfileStore((state) => state.job?.id));
+  const done = useCasesStore((state) => state.done);
+  const request = useCasesStore((state) => state.request);
+  const openSection = usePromptToolkitStore((state) => state.openSection);
+
+  if (!job) {
+    return (
+      <Card aria-label={t('The case of the week')}>
+        <span>{t('The case of the week')}</span>
+        <small>
+          {t('Choose your job below: each week, a case of your job.')}
+        </small>
+      </Card>
+    );
+  }
+  const item = weeklyCase(job.id, done);
+  if (!item) {
+    return null;
+  }
+  const bookSlot = () =>
+    downloadIcs(
+      weeklySlotIcs(new Date(), {
+        title: t('Nestor: 20 minutes to make progress'),
+        description: t(
+          'The case of the week is waiting for you in Nestor’s panel, in the Assistant.',
+        ),
+      }),
+      'nestor-20-minutes.ics',
+    );
+  return (
+    <Card aria-label={t('The case of the week')}>
+      <span>{t('The case of the week')}</span>
+      <strong>{item.title}</strong>
+      <small>
+        {job.label} ·{' '}
+        {t('Level {{level}} · about {{minutes}} min', {
+          level: item.level,
+          minutes: item.minutes,
+        })}
+        {done[item.id] ? ` · ${t('to practise again')}` : ''}
+      </small>
+      <Actions>
+        <MainButton
+          type="button"
+          onClick={() => {
+            request(item.id);
+            openSection('learn');
+          }}
+        >
+          {t('Start this case')}
+        </MainButton>
+        <Choice type="button" onClick={bookSlot}>
+          {t('Book 20 minutes a week')}
+        </Choice>
+      </Actions>
+    </Card>
+  );
+};

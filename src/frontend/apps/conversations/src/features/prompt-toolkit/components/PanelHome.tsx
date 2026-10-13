@@ -6,6 +6,7 @@ import { css } from 'styled-components';
 import { Box, Icon, Text } from '@/components';
 
 import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
+import { WeeklyCase } from '../learn/cases/WeeklyCase';
 import { REVIEW_FIRST_FROM } from '../learn/steps';
 import { useReviewDue } from '../learn/useLearnProgress';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
@@ -66,7 +67,7 @@ const homeCss = css`
 `;
 
 export const NESTOR_IMAGE_URL = '/assets/nestor.webp';
-export const NESTOR_AVATAR_URL = '/assets/nestor-avatar.webp';
+export { NESTOR_AVATAR_URL } from '../chat/avatar';
 /** Nestor in each space of the panel, same style as the welcome. */
 export const NESTOR_ANALYSIS_URL = '/assets/nestor-analyse.webp';
 export const NESTOR_HELP_URL = '/assets/nestor-aide.webp';
@@ -484,6 +485,8 @@ export const PanelHome = () => {
           </li>
         ))}
       </Box>
+      {/* One real task of the user's job each week. */}
+      <WeeklyCase />
       <ProfileSettings />
     </Box>
   );

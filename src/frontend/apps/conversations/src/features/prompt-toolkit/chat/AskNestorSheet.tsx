@@ -4,11 +4,11 @@ import styled from 'styled-components';
 
 import { Box, Icon } from '@/components';
 
-import { NESTOR_AVATAR_URL } from '../components/PanelHome';
 import { RECORD_RED } from '../speech/RecorderView';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
 
+import { NESTOR_AVATAR_URL } from './avatar';
 import { C, LinkButton, MainButton } from './ui';
 import type { NestorChat } from './useNestorChat';
 

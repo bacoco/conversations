@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { Icon } from '@/components';
 
-import { NESTOR_AVATAR_URL } from '../components/PanelHome';
+import { NESTOR_AVATAR_URL } from './avatar';
 
 /** The colours of the "E · Coach en chat" canvas, screen for screen. */
 export const C = {

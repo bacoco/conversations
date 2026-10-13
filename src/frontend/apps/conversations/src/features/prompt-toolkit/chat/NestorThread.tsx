@@ -2,10 +2,9 @@ import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { NESTOR_AVATAR_URL } from '../components/PanelHome';
-
 import { InChatRounds } from './InChatRounds';
 import { MessageView } from './NestorMessages';
+import { NESTOR_AVATAR_URL } from './avatar';
 import { foldSummary, foldThread } from './fold';
 import {
   C,

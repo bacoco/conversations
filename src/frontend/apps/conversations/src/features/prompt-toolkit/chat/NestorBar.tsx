@@ -2,8 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components';
 
-import { NESTOR_AVATAR_URL } from '../components/PanelHome';
-
+import { NESTOR_AVATAR_URL } from './avatar';
 import { barLabel } from './labels';
 import type { BarAction } from './types';
 import { Dock, DockDivider, FaceRound, RoundButton } from './ui';

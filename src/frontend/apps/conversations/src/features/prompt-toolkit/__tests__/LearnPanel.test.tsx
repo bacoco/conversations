@@ -1,11 +1,14 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 
 import { useAiAvailability } from '../coach/aiAvailability';
+import { casesOf } from '../jobs/jobs';
 import { LearnPanel } from '../learn/LearnPanel';
+import { useCasesStore } from '../learn/cases/casesProgress';
 import { COURSE_EN } from '../learn/content/en';
 import { COURSE_FR } from '../learn/content/fr';
 import { useLearnProgressStore } from '../learn/useLearnProgressStore';
 import { useCoachHistoryStore } from '../stores/useCoachHistoryStore';
+import { useProfileStore } from '../stores/useProfileStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -437,6 +440,32 @@ describe('<LearnPanel />', () => {
     );
     expect(
       screen.getByRole('heading', { name: 'Test my level' }),
+    ).toBeInTheDocument();
+  });
+
+  it('opens the cases of my job, and a case asked from the home page', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    useCasesStore.setState({ done: {}, requested: null });
+    const { rerender } = render(<LearnPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'Cases of my job' }));
+    expect(
+      screen.getByRole('heading', { name: 'Cases of my job' }),
+    ).toBeInTheDocument();
+    const [first] = casesOf('rh');
+    act(() => useCasesStore.getState().request(first.id));
+    rerender(<LearnPanel />);
+    expect(
+      screen.getByRole('heading', { name: first.title }),
+    ).toBeInTheDocument();
+    expect(useCasesStore.getState().requested).toBeNull();
+    useProfileStore.setState({ job: null });
+  });
+
+  it('opens my journey', () => {
+    render(<LearnPanel />);
+    fireEvent.click(screen.getByRole('button', { name: 'My journey' }));
+    expect(
+      screen.getByRole('heading', { name: 'My journey' }),
     ).toBeInTheDocument();
   });
 });
