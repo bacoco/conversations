@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Icon } from '@/components';
+
 import { C, Choice, MainButton } from '../../chat/ui';
 import { jobById } from '../../jobs/jobs';
 import { useProfileStore } from '../../stores/useProfileStore';
@@ -13,7 +15,8 @@ const Card = styled.section`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 14px 16px;
+  position: relative;
+  padding: 14px 44px 14px 16px;
   border: 1px solid ${C.brandLine};
   border-radius: 14px;
   background: #f7f6ff;
@@ -34,6 +37,29 @@ const Card = styled.section`
   }
 `;
 
+const Close = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: ${C.muted};
+  cursor: pointer;
+  &:hover {
+    background: #ffffff;
+  }
+  &:focus-visible {
+    outline: 2px solid ${C.brand};
+  }
+`;
+
 const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -51,11 +77,29 @@ export const WeeklyCase = () => {
   const done = useCasesStore((state) => state.done);
   const request = useCasesStore((state) => state.request);
   const openSection = usePromptToolkitStore((state) => state.openSection);
+  const hidden = useCasesStore((state) => state.weeklyHidden);
+  const setHidden = useCasesStore((state) => state.setWeeklyHidden);
+
+  if (hidden) {
+    return null;
+  }
+  // Hidden for good; it comes back from Nestor's settings.
+  const close = (
+    <Close
+      type="button"
+      aria-label={t('Hide the case of the week')}
+      title={t('Hide the case of the week')}
+      onClick={() => setHidden(true)}
+    >
+      <Icon iconName="close" $size="18px" $withThemeInherited />
+    </Close>
+  );
 
   if (!job) {
     return (
       <Card aria-label={t('The case of the week')}>
         <span>{t('The case of the week')}</span>
+        {close}
         <small>
           {t('Choose your job below: each week, a case of your job.')}
         </small>
@@ -79,6 +123,7 @@ export const WeeklyCase = () => {
   return (
     <Card aria-label={t('The case of the week')}>
       <span>{t('The case of the week')}</span>
+      {close}
       <strong>{item.title}</strong>
       <small>
         {job.label} ·{' '}

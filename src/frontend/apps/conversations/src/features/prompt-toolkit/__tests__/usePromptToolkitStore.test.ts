@@ -124,4 +124,47 @@ describe('usePromptToolkitStore', () => {
     expect(clampPanelWidth(500, 1600)).toBe(500);
     expect(clampPanelWidth(1400, 1600)).toBe(960);
   });
+
+  it('opens Nestor’s settings from anywhere, home included', () => {
+    usePromptToolkitStore.setState({
+      isOpen: true,
+      mode: 'learn',
+      showHome: true,
+      showNestorSettings: false,
+    });
+    usePromptToolkitStore.getState().openNestorSettings();
+    const state = usePromptToolkitStore.getState();
+    expect(state.mode).toBe('coach');
+    expect(state.showHome).toBe(false);
+    expect(state.showNestorSettings).toBe(true);
+  });
+
+  it('closing a completion goes back where the user was: the home', () => {
+    usePromptToolkitStore.setState({
+      showHome: true,
+      mode: 'learn',
+      fill: null,
+    });
+    usePromptToolkitStore.getState().startFill('Écris à [qui]', 'Un modèle');
+    usePromptToolkitStore.getState().closeFill();
+    const state = usePromptToolkitStore.getState();
+    expect(state.fill).toBeNull();
+    expect(state.showHome).toBe(true);
+    expect(state.mode).toBe('learn');
+  });
+
+  it('closing a completion opened from my favorites goes back to them', () => {
+    usePromptToolkitStore.getState().openFavorites();
+    usePromptToolkitStore.getState().startFill('Écris à [qui]', 'Un modèle');
+    usePromptToolkitStore.getState().closeFill();
+    const state = usePromptToolkitStore.getState();
+    expect(state.showFavorites).toBe(true);
+    expect(state.showHome).toBe(false);
+  });
+
+  it('Home leaves my favorites', () => {
+    usePromptToolkitStore.getState().openFavorites();
+    usePromptToolkitStore.getState().goHome();
+    expect(usePromptToolkitStore.getState().showFavorites).toBe(false);
+  });
 });

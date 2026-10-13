@@ -41,6 +41,13 @@ interface PromptToolkitState {
   isCoachOptionsOpen: boolean;
   /** Nestor's settings over the chat (gear in the header); not kept. */
   showNestorSettings: boolean;
+  /** Nestor's settings, from any screen of the panel (home included). */
+  openNestorSettings: () => void;
+  /** « Mes favoris », a page of the panel opened from its home card. */
+  showFavorites: boolean;
+  openFavorites: () => void;
+  /** Where closing a completion goes back to: the screen it was opened from. */
+  fillReturn: { showHome: boolean; showFavorites: boolean } | null;
   setShowNestorSettings: (show: boolean) => void;
   /** Bumped by the header trash button; the open section clears itself. */
   resetCount: number;
@@ -167,6 +174,25 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       showNestorSettings: false,
       setShowNestorSettings: (showNestorSettings) =>
         set({ showNestorSettings }),
+      showFavorites: false,
+      openFavorites: () =>
+        set({
+          isOpen: true,
+          showHome: false,
+          showFavorites: true,
+          showNestorSettings: false,
+          fill: null,
+        }),
+      fillReturn: null,
+      openNestorSettings: () =>
+        set({
+          isOpen: true,
+          mode: 'coach',
+          showHome: false,
+          showFavorites: false,
+          fill: null,
+          showNestorSettings: true,
+        }),
       showHome: true,
       hasSeenWelcome: false,
       dismissWelcome: () => set({ hasSeenWelcome: true }),
@@ -181,15 +207,35 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         set({
           mode: 'coach',
           showHome: false,
+          showFavorites: false,
           showNestorSettings: false,
           fill: null,
         }),
       openSection: (mode) =>
-        set({ mode, showHome: false, showNestorSettings: false, fill: null }),
+        set({
+          mode,
+          showHome: false,
+          showFavorites: false,
+          showNestorSettings: false,
+          fill: null,
+        }),
       fill: null,
       startFill: (template, title, context, mode, replaces) =>
-        set({ fill: { template, title, context, mode, replaces } }),
-      closeFill: () => set({ fill: null }),
+        set((state) => ({
+          fill: { template, title, context, mode, replaces },
+          showHome: false,
+          showFavorites: false,
+          // Opened over a completion, it keeps the first screen to go back to.
+          fillReturn: state.fill
+            ? state.fillReturn
+            : { showHome: state.showHome, showFavorites: state.showFavorites },
+        })),
+      closeFill: () =>
+        set((state) => ({
+          fill: null,
+          fillReturn: null,
+          ...(state.fillReturn ?? {}),
+        })),
       sharedPrompt: null,
       clearSharedPrompt: () => set({ sharedPrompt: null }),
       nestorChat: [],
@@ -212,6 +258,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           isOpen: true,
           mode: 'coach',
           showHome: false,
+          showFavorites: false,
           fill: null,
           pendingRead: true,
         }),
@@ -228,6 +275,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           lessonRequest: { lessonId, slide },
           mode: 'learn',
           showHome: false,
+          showFavorites: false,
           fill: null,
         }),
       clearLessonRequest: () => set({ lessonRequest: null }),
@@ -237,11 +285,13 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
           toolRequest: toolId,
           mode: 'tools',
           showHome: false,
+          showFavorites: false,
           fill: null,
         }),
       clearToolRequest: () => set({ toolRequest: null }),
       goWelcome: () =>
         set({
+          showFavorites: false,
           fill: null,
           showHome: true,
           hasSeenWelcome: false,
@@ -251,6 +301,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
       // Home opens the cards; a second Home goes back to the welcome.
       goHome: () =>
         set({
+          showFavorites: false,
           fill: null,
           showHome: true,
           isCoachOptionsOpen: false,

@@ -75,6 +75,7 @@ export const NESTOR_HOME_URL = '/assets/nestor-accueil.webp';
 export const NESTOR_INSTANT_URL = '/assets/nestor-volee.webp';
 export const NESTOR_COURSE_URL = '/assets/nestor-cours.webp';
 export const NESTOR_TOOLS_URL = '/assets/nestor-outils.webp';
+export const NESTOR_FAVORITES_URL = '/assets/nestor-prompts.webp';
 export const NESTOR_WRITE_URL = '/assets/nestor-ecrire.webp';
 export const NESTOR_SUMMARIZE_URL = '/assets/nestor-resumer.webp';
 export const NESTOR_ORGANIZE_URL = '/assets/nestor-organiser.webp';
@@ -354,6 +355,7 @@ export const PanelHome = () => {
   const isAiUnavailable = useAiUnavailable();
   const isAiAvailable = useAiAvailable();
   const openTool = usePromptToolkitStore((state) => state.openTool);
+  const openFavorites = usePromptToolkitStore((state) => state.openFavorites);
   const reviewDue = useReviewDue();
 
   const transcriptionCard: HomeCard = {
@@ -400,6 +402,15 @@ export const PanelHome = () => {
       description: t('Emails, summaries, ready-made templates.'),
       onSelect: () => openSection('tools'),
     },
+    {
+      id: 'favorites',
+      image: NESTOR_FAVORITES_URL,
+      icon: 'star',
+      tone: 'brand',
+      title: t('My favorites'),
+      description: t('Your requests and models, one click away.'),
+      onSelect: () => openFavorites(),
+    },
   ];
 
   if (!hasSeenWelcome) {
@@ -427,8 +438,16 @@ export const PanelHome = () => {
           list-style: none;
         `}
       >
-        {shownCards.map((card) => (
-          <li key={card.id}>
+        {shownCards.map((card, index) => (
+          <li
+            key={card.id}
+            // An odd last card takes the whole row: no hole in the grid.
+            style={
+              shownCards.length % 2 === 1 && index === shownCards.length - 1
+                ? { gridColumn: '1 / -1' }
+                : undefined
+            }
+          >
             <Box
               as="button"
               type="button"

@@ -3,6 +3,11 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "One click puts the request in the Assistant’s field.": "Un clic met la demande dans le champ de l’Assistant.",
+      "Your requests and models, one click away.": "Vos demandes et modèles, à un clic.",
+      "Hide the case of the week": "Masquer le cas de la semaine",
+      "The case of the week on the home page": "Le cas de la semaine sur l’accueil",
+      "One real task of your job each week.": "Une vraie tâche de votre métier, chaque semaine.",
       "Star a request in Nestor: it waits for you here, one click away.": "Mettez une étoile à une demande dans Nestor : elle vous attend ici, à un clic.",
       "Keep in my favorites": "Garder dans mes favoris",
       "Remove from my favorites": "Retirer de mes favoris",

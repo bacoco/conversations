@@ -116,4 +116,16 @@ describe('practical cases of my job', () => {
       screen.getByText('Choose your job below: each week, a case of your job.'),
     ).toBeInTheDocument();
   });
+
+  it('the case of the week can be hidden, and comes back from the settings', () => {
+    useCasesStore.setState({ weeklyHidden: false });
+    const { container } = render(<WeeklyCase />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Hide the case of the week' }),
+    );
+    expect(useCasesStore.getState().weeklyHidden).toBe(true);
+    expect(container).toBeEmptyDOMElement();
+    useCasesStore.getState().setWeeklyHidden(false);
+    expect(useCasesStore.getState().weeklyHidden).toBe(false);
+  });
 });

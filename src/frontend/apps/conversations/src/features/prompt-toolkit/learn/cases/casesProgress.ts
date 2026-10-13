@@ -10,6 +10,9 @@ interface CasesState {
   done: CasesDone;
   /** A case asked from elsewhere (the home page): the course opens it. */
   requested: string | null;
+  /** « Le cas de la semaine » hidden from the home page by the user. */
+  weeklyHidden: boolean;
+  setWeeklyHidden: (hidden: boolean) => void;
   markDone: (caseId: string, at?: number) => void;
   request: (caseId: string) => void;
   clearRequest: () => void;
@@ -21,13 +24,21 @@ export const useCasesStore = create<CasesState>()(
     (set) => ({
       done: {},
       requested: null,
+      weeklyHidden: false,
+      setWeeklyHidden: (weeklyHidden) => set({ weeklyHidden }),
       request: (caseId) => set({ requested: caseId }),
       clearRequest: () => set({ requested: null }),
       markDone: (caseId, at = Date.now()) =>
         set((state) => ({ done: { ...state.done, [caseId]: at } })),
       reset: () => set({ done: {} }),
     }),
-    { name: 'nestor-cases', partialize: (state) => ({ done: state.done }) },
+    {
+      name: 'nestor-cases',
+      partialize: (state) => ({
+        done: state.done,
+        weeklyHidden: state.weeklyHidden,
+      }),
+    },
   ),
 );
 

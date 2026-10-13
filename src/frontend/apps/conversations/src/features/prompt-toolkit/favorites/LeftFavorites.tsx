@@ -6,15 +6,9 @@ import { Icon, Text } from '@/components';
 import { useAuthQuery } from '@/features/auth';
 
 import { C } from '../chat/ui';
-import { useAiAvailable } from '../coach/aiAvailability';
-import { hasPlaceholders } from '../coach/coachApi';
-import { getPromptLibrary } from '../library/content';
-import { templateVars } from '../library/templateVars';
-import { useLibraryStore } from '../library/useLibraryStore';
-import { useMyPromptsStore } from '../library/useMyPromptsStore';
 import { claimNestorData } from '../stores/accountScope';
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
-import { usePlacePrompt } from '../tools/usePlacePrompt';
+
+import { useFavorites } from './useFavorites';
 
 const Section = styled.section`
   display: flex;
@@ -62,26 +56,15 @@ const Hint = styled.p`
   color: ${C.muted};
 `;
 
-interface Favorite {
-  key: string;
-  title: string;
-  prompt: string;
-  icon: string;
-}
-
 /**
  * « Mes favoris », in the Assistant's left bar: the models the agent
  * starred and the requests they kept, one click from the message field.
  * Kept in this browser, for this account only.
  */
 export const LeftFavorites = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: user } = useAuthQuery();
-  const favoriteIds = useLibraryStore((state) => state.favorites);
-  const mine = useMyPromptsStore((state) => state.prompts);
-  const placePrompt = usePlacePrompt();
-  const startFill = usePromptToolkitStore((state) => state.startFill);
-  const isAiAvailable = useAiAvailable();
+  const { favorites: all, use } = useFavorites();
   // Nothing personal is shown before this account's data is claimed.
   const [claimedFor, setClaimedFor] = useState<string | null>(null);
 
@@ -100,39 +83,7 @@ export const LeftFavorites = () => {
     };
   }, [user?.id]);
 
-  const library = getPromptLibrary(i18n.language);
-  const favorites: Favorite[] =
-    !!user?.id && claimedFor === user.id
-      ? [
-          ...library.prompts
-            .filter((item) => favoriteIds.includes(item.id))
-            .map((item) => ({
-              key: `model-${item.id}`,
-              title: item.title,
-              prompt: item.prompt,
-              icon: 'star',
-            })),
-          ...mine.map((item) => ({
-            key: `mine-${item.id}`,
-            title: item.title,
-            prompt: item.prompt,
-            icon: 'star',
-          })),
-        ]
-      : [];
-
-  const use = (favorite: Favorite) => {
-    const hasBlanks =
-      hasPlaceholders(favorite.prompt) ||
-      templateVars(favorite.prompt).length > 0;
-    if (hasBlanks && isAiAvailable) {
-      // Nestor asks for what is missing, in its panel.
-      usePromptToolkitStore.setState({ isOpen: true, showHome: false });
-      startFill(favorite.prompt, favorite.title);
-      return;
-    }
-    placePrompt(favorite.prompt);
-  };
+  const favorites = !!user?.id && claimedFor === user.id ? all : [];
 
   return (
     <Section aria-label={t('My favorites')}>
@@ -161,7 +112,7 @@ export const LeftFavorites = () => {
             onClick={() => use(favorite)}
           >
             <Icon
-              iconName={favorite.icon}
+              iconName="star"
               $size="16px"
               aria-hidden="true"
               $theme="brand"

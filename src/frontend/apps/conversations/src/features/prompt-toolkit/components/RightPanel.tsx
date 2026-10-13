@@ -22,6 +22,7 @@ import {
   useAiUnavailable,
 } from '../coach/aiAvailability';
 import { languageName } from '../coach/language';
+import { FavoritesPage } from '../favorites/FavoritesPage';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
@@ -203,6 +204,8 @@ export const RightPanel = ({
     goHome,
     goWelcome,
     setShowNestorSettings,
+    openNestorSettings,
+    showFavorites,
   } = usePromptToolkitStore();
   const sections = useSections();
   const fill = usePromptToolkitStore((state) => state.fill);
@@ -249,8 +252,9 @@ export const RightPanel = ({
   const showHome =
     isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);
   // The open space, as named in the header.
-  const current =
-    mode === 'coach'
+  const current = showFavorites
+    ? { icon: 'star', label: t('My favorites') }
+    : mode === 'coach'
       ? { icon: 'touch_app', label: t('Coach') }
       : (sections.find((section) => section.mode === mode) ?? {
           icon: 'apps',
@@ -258,7 +262,7 @@ export const RightPanel = ({
         });
   const title = showHome ? 'Nestor' : current.label;
   // The coach is a chat with Nestor: his name, Auto and the gear on top.
-  const isNestorChat = mode === 'coach' && !showHome;
+  const isNestorChat = mode === 'coach' && !showHome && !showFavorites;
 
   return (
     <Box
@@ -351,7 +355,19 @@ export const RightPanel = ({
           </Box>
         )}
         <Box $direction="row" $gap="4px">
-          {!showHome && !isNestorChat && (
+          {/* On the home cards too: the settings never hide in the coach. */}
+          {showHome && !welcomeShown && (
+            <Button
+              size="small"
+              color="neutral"
+              variant="tertiary"
+              onClick={openNestorSettings}
+              aria-label={t('Nestor’s settings')}
+              title={t('Nestor’s settings')}
+              icon={<Icon iconName="settings" $size="20px" />}
+            />
+          )}
+          {!showHome && !isNestorChat && !showFavorites && (
             <Button
               size="small"
               color="neutral"
@@ -409,6 +425,7 @@ export const RightPanel = ({
             <PlacementChoice />
             {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
             {showHome && <PanelHome />}
+            {!showHome && !fill && showFavorites && <FavoritesPage />}
             {!showHome && fill && (
               <PromptFillView
                 key={fill.template}
@@ -420,7 +437,9 @@ export const RightPanel = ({
             )}
             <Box
               $display={
-                !showHome && !fill && mode === 'coach' ? undefined : 'none'
+                !showHome && !fill && !showFavorites && mode === 'coach'
+                  ? undefined
+                  : 'none'
               }
               // The chat scrolls by itself; its bar stays at the bottom.
               $css="flex: 1; min-height: 0;"
@@ -429,7 +448,9 @@ export const RightPanel = ({
             </Box>
             <Box
               $display={
-                !showHome && !fill && mode === 'learn' ? undefined : 'none'
+                !showHome && !fill && !showFavorites && mode === 'learn'
+                  ? undefined
+                  : 'none'
               }
               $css={css`
                 min-height: 100%;
@@ -449,7 +470,9 @@ export const RightPanel = ({
             </Box>
             <Box
               $display={
-                !showHome && !fill && mode === 'tools' ? undefined : 'none'
+                !showHome && !fill && !showFavorites && mode === 'tools'
+                  ? undefined
+                  : 'none'
               }
               $css="min-height: 100%;"
             >

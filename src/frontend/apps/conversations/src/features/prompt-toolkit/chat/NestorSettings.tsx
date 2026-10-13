@@ -6,6 +6,7 @@ import { Icon } from '@/components';
 import { useConversationRouteId } from '@/utils';
 
 import { JOBS, jobById } from '../jobs/jobs';
+import { useCasesStore } from '../learn/cases/casesProgress';
 import {
   AutoPart,
   USUAL_AUDIENCES,
@@ -292,6 +293,8 @@ const Line = ({
 
 /** Nestor's settings (E11): no bottom bar, back to the chat on top. */
 export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
+  const weeklyHidden = useCasesStore((state) => state.weeklyHidden);
+  const setWeeklyHidden = useCasesStore((state) => state.setWeeklyHidden);
   const { t } = useTranslation();
   const prefs = useCoachPrefsStore();
   const job = useProfileStore((state) => state.job);
@@ -482,6 +485,16 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
                   </option>
                 ))}
               </Select>
+            </Line>
+            <Line
+              label={t('The case of the week on the home page')}
+              note={t('One real task of your job each week.')}
+            >
+              <Switch
+                label={t('The case of the week on the home page')}
+                on={!weeklyHidden}
+                onChange={(on) => setWeeklyHidden(!on)}
+              />
             </Line>
           </Card>
         </Group>

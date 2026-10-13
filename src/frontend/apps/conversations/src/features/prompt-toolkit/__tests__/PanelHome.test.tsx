@@ -97,7 +97,7 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
     expect(
       screen.getByRole('button', { name: /Record and transcribe/i }),
     ).toBeInTheDocument();
@@ -183,5 +183,14 @@ describe('<PanelHome />', () => {
       screen.getByRole('button', { name: /Watch the presentation/ }),
     );
     expect(screen.getByLabelText(VIDEO)).toBeInTheDocument();
+  });
+
+  it('opens my favorites from their card', () => {
+    render(<PanelHome />);
+    fireEvent.click(screen.getByRole('button', { name: /My favorites/ }));
+    expect(usePromptToolkitStore.getState()).toMatchObject({
+      showHome: false,
+      showFavorites: true,
+    });
   });
 });
