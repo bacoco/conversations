@@ -31,7 +31,6 @@ const chatWith = (messages: NestorMessage[], action = 9): NestorChat =>
     usePrompt: vi.fn(),
   }) as unknown as NestorChat;
 
-
 describe('advice, then versions', () => {
   beforeAll(async () => {
     await i18n.use(initReactI18next).init({
@@ -152,5 +151,62 @@ describe('advice, then versions', () => {
     expect(
       screen.getByText(/Correct your text in the Assistant’s field/),
     ).toBeInTheDocument();
+  });
+
+  it('blanks to fill are said calmly, never as an alarm', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'a',
+            action: 9,
+            kind: 'advice',
+            answerId: 'm1',
+            missing: [],
+            gaps: ['Votre nom'],
+            note: {
+              upTo: 2,
+              exchanges: 1,
+              fromStart: true,
+              followUp: '',
+              applied: null,
+              worked: '',
+              issue: 'Il reste [Votre nom] à remplacer.',
+              tryNow: 'Avant d’envoyer : remplacez [Votre nom].',
+              tryWhy: '',
+              prompt: '',
+              habit: '',
+              competency: null,
+            },
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getByText(/Il reste \[Votre nom\]/).textContent,
+    ).not.toContain('⚠');
+  });
+
+  it('« Le dire » looks apart from the other buttons', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'c',
+            action: 9,
+            kind: 'counsel',
+            draft: 'x',
+            advice: { good: ['Bien.'], tips: [] },
+            rounds: [{ id: 'give-text', primary: true }, { id: 'say' }],
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(screen.getByRole('button', { name: /Say it/ })).toHaveAttribute(
+      'data-voice',
+      'true',
+    );
   });
 });

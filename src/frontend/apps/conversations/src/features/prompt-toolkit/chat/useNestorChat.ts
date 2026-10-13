@@ -802,6 +802,7 @@ export const useNestorChat = (language: string) => {
       const answer =
         turns.findLast((turn) => turn.role === 'assistant')?.text ?? '';
       const gaps = answerGaps(answer);
+      const author = lastOf(all, 'request')?.by ?? 'user';
       void run('advice', null, async (signal, say) => {
         const note = await coachThreadNote(
           turns,
@@ -810,6 +811,7 @@ export const useNestorChat = (language: string) => {
           signal,
           gaps,
           missing,
+          author,
         );
         const lesson = note.competency
           ? LESSON_FOR_COMPETENCY[note.competency]

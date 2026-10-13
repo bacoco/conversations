@@ -485,8 +485,9 @@ export const MessageView = ({
         </Event>
       );
     case 'advice': {
-      const warn =
-        message.missing.length > 0 || (message.gaps?.length ?? 0) > 0;
+      // A blank to fill ([Votre nom]) is a calm reminder; only what the
+      // user did not know yet is a real lack.
+      const warn = message.missing.length > 0;
       return (
         <NestorBubble>
           {message.note.issue &&

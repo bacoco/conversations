@@ -315,6 +315,28 @@ describe('useNestorChat', () => {
     });
   });
 
+  it('the advice knows when Nestor wrote the request', async () => {
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Rédige une réponse courte.' },
+        { role: 'assistant', text: 'Bonjour, …' },
+      ],
+    });
+    useNestorChatStore
+      .getState()
+      .post('c1', { kind: 'request', n: 1, at: 0, by: 'nestor' });
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(completion({ try: 'Dites le ton vous-même.' }));
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.postAdvice('m1');
+      return new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    const body = fetchMock.mock.calls[0][1]?.body as string;
+    expect(body).toContain('written by Nestor');
+  });
+
   it('the review is told which advice was applied, never left to guess', async () => {
     useMainConversationStore.setState({
       turns: [

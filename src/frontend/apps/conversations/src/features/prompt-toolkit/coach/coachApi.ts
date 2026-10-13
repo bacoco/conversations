@@ -1319,6 +1319,8 @@ export const coachThreadNote = async (
   gaps: string[] = [],
   /** What the user said they did not know: left out of the request. */
   missing: string[] = [],
+  /** Who wrote the latest request: Nestor's words are never the user's merit. */
+  author: 'user' | 'nestor' | 'both' = 'user',
 ): Promise<CoachNote> => {
   const from = Math.min(previous?.upTo ?? 0, conversation.length);
   const since = conversation.slice(from);
@@ -1346,12 +1348,18 @@ export const coachThreadNote = async (
         role: 'user',
         content: `<before>\n${before}\n</before>\n<since>\n${sinceText}\n</since>\n<previous>\n${previousText}\n</previous>\n\nGive your coaching advice on the new exchanges now.${
           gaps.length
-            ? ` The latest answer leaves these parts in brackets, to be filled in before it can be used: ${gaps.join(', ')}. In "issue", say plainly that it is not ready as it is and name each part; in "try", suggest giving the real information to the assistant (e.g. "the meeting is on Thursday 10 at 10 a.m., room 204"). Never fill them in yourself.`
+            ? ` The latest answer leaves these parts in brackets, for the user to fill in before sending: ${gaps.join(', ')}. Say it calmly in "try", naming each part (« Avant d’envoyer : remplacez [${gaps[0]}]. »); never say the answer is unusable or wrong because of them, and keep "issue" for something else. Never fill them in yourself.`
             : ''
         }${
           missing.length
             ? ` The user did not know these yet, so the request was sent without them: ${missing.join(', ')}. Start "issue" by saying plainly that the answer lacks them and that they must be added before it is used; in "try", suggest adding them once known. Never fill them in.`
             : ''
+        }${
+          author === 'nestor'
+            ? ' The latest request was written by Nestor, not by the user: never praise the user for its wording. In "worked", speak of the answer or of the choices the user made; in "try", give what the user can write themselves next time.'
+            : author === 'both'
+              ? ' The latest request was written partly by Nestor: praise only the words the user wrote themselves.'
+              : ''
         }`,
       },
     ],

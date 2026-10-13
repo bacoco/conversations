@@ -52,6 +52,8 @@ export const InChatRounds = ({
           key={round.id}
           type="button"
           $primary={round.primary}
+          $voice={round.id === 'say'}
+          data-voice={round.id === 'say' || undefined}
           onClick={() => onRound(round)}
         >
           <Icon iconName={ICONS[round.id]} $size="18px" $withThemeInherited />

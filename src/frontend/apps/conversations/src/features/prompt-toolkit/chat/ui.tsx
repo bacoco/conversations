@@ -547,7 +547,11 @@ export const RoundsTile = styled.div`
 `;
 
 /** One action of the moment: an icon and what it does, in words. */
-export const ActionButton = styled.button<{ $primary?: boolean }>`
+export const ActionButton = styled.button<{
+  $primary?: boolean;
+  /** « Le dire »: the microphone, apart from the other buttons. */
+  $voice?: boolean;
+}>`
   ${buttonReset}
   display: inline-flex;
   align-items: center;
@@ -568,6 +572,16 @@ export const ActionButton = styled.button<{ $primary?: boolean }>`
     outline: 2px solid ${C.brand};
     outline-offset: 2px;
   }
+  ${({ $voice }) =>
+    $voice &&
+    css`
+      border: 1.5px dashed ${C.muted};
+      color: ${C.ink};
+      & .material-icons,
+      & .material-symbols-outlined {
+        color: ${C.record};
+      }
+    `}
 `;
 
 /** The fixed bar: always the same four rounds. */
