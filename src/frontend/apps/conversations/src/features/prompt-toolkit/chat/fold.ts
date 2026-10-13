@@ -103,5 +103,12 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   if (question) {
     return t('You asked Nestor: {{text}}', { text: question.text });
   }
+  const clicked = messages.find(
+    (message): message is Extract<NestorMessage, { kind: 'user' }> =>
+      message.kind === 'user' && message.via === 'action',
+  );
+  if (clicked) {
+    return t('You clicked: {{text}}', { text: clicked.text });
+  }
   return t('Earlier step');
 };

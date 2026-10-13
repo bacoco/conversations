@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "You clicked: {{text}}": "Vous avez cliqué : {{text}}",
       "Out of 1 piece of advice, you applied {{applied}}": "Sur 1 conseil, vous en avez appliqué {{applied}}",
       "Idea cancelled: {{text}}": "Piste annulée : {{text}}",
       "Examples of requests": "Exemples de demandes",

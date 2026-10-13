@@ -120,4 +120,13 @@ describe('foldSummary', () => {
       ),
     ).toBe('Examples of requests');
   });
+
+  it('a step with only a click is named by that click', () => {
+    expect(
+      foldSummary(
+        [msg(4, { kind: 'user', text: 'Annuler', via: 'action' })],
+        t,
+      ),
+    ).toBe('You clicked: {{text}}'.replace('{{text}}', 'Annuler'));
+  });
 });
