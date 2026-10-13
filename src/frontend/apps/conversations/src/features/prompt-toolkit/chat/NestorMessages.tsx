@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components';
 
+import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
 import type { NestorMessage } from './types';
 import {
@@ -22,6 +23,7 @@ import {
   QuestionNumber,
   Separator,
   Small,
+  StarRow,
   Suite,
   UnderBubble,
   UserSays,
@@ -112,14 +114,20 @@ export const MessageView = ({
           </NestorBubble>
           <UnderBubble>
             {message.phrases.map((phrase) => (
-              <Chip
-                key={phrase}
-                type="button"
-                onClick={() => chat.choosePiste(phrase, message.phrases)}
-              >
-                <Icon iconName="north_west" $size="16px" $withThemeInherited />
-                {phrase}
-              </Chip>
+              <StarRow key={phrase}>
+                <Chip
+                  type="button"
+                  onClick={() => chat.choosePiste(phrase, message.phrases)}
+                >
+                  <Icon
+                    iconName="north_west"
+                    $size="16px"
+                    $withThemeInherited
+                  />
+                  {phrase}
+                </Chip>
+                <StarRequest text={phrase} />
+              </StarRow>
             ))}
           </UnderBubble>
         </>
@@ -257,12 +265,15 @@ export const MessageView = ({
           {/* Only the latest version goes into the field: never an older one. */}
           {chat.messages.findLast((item) => item.kind === 'version')?.id ===
             message.id && (
-            <MainButton
-              type="button"
-              onClick={() => chat.placeVersion(message.id)}
-            >
-              {t('Put it in the Assistant’s field')}
-            </MainButton>
+            <StarRow>
+              <MainButton
+                type="button"
+                onClick={() => chat.placeVersion(message.id)}
+              >
+                {t('Put it in the Assistant’s field')}
+              </MainButton>
+              <StarRequest text={message.version} />
+            </StarRow>
           )}
         </NestorBubble>
       );

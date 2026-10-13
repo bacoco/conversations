@@ -386,6 +386,17 @@ export const Small = styled.div`
 `;
 
 /** Under Nestor's bubble, aligned with it (past his face). */
+/** A request and its star (« Mes favoris »), side by side. */
+export const StarRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  & > button:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+`;
+
 export const UnderBubble = styled.div`
   padding-left: 36px;
   display: flex;

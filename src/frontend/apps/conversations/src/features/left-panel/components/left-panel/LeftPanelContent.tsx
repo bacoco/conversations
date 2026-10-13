@@ -4,6 +4,7 @@ import { Box } from '@/components';
 import { useAuth } from '@/features/auth/hooks';
 import { LeftPanelConversations } from '@/features/left-panel/components/left-panel/LeftPanelConversations';
 import { LeftPanelProjects } from '@/features/left-panel/components/left-panel/LeftPanelProjects';
+import { LeftFavorites } from '@/features/prompt-toolkit/favorites/LeftFavorites';
 import { useResponsiveStore } from '@/stores';
 
 export const LeftPanelContent = () => {
@@ -38,7 +39,7 @@ export const LeftPanelContent = () => {
     >
       {authenticated && (
         <>
-          <LeftPanelProjects /> <LeftPanelConversations />
+          <LeftFavorites /> <LeftPanelProjects /> <LeftPanelConversations />
         </>
       )}
     </Box>

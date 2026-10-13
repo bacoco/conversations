@@ -3,6 +3,9 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Star a request in Nestor: it waits for you here, one click away.": "Mettez une étoile à une demande dans Nestor : elle vous attend ici, à un clic.",
+      "Keep in my favorites": "Garder dans mes favoris",
+      "Remove from my favorites": "Retirer de mes favoris",
       "A diary file to open in Outlook: every Thursday at 10 a.m., changeable. Nothing is sent.": "Un fichier d’agenda à ouvrir dans Outlook : chaque jeudi à 10 h, modifiable. Rien n’est envoyé.",
       "All the cases of your job are done.": "Tous les cas de votre métier sont faits.",
       "Book 20 minutes a week": "Réserver 20 minutes par semaine",
