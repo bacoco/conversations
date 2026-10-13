@@ -132,6 +132,22 @@ describe('the questions follow the grid', () => {
     expect(check.missing[0]).toMatchObject({ part: 'form', fact: false });
     expect(check.missing[0].choices).toHaveLength(2);
     expect(check.missing[1]).toMatchObject({ yesno: true, choices: [] });
+    expect(
+      parseRequestCheck(
+        {
+          missing: [
+            {
+              short: 'délai',
+              question: 'Fait 48 h avant ?',
+              yesno: true,
+              choices: ['Oui'],
+            },
+          ],
+          message: 'Claire.',
+        },
+        '',
+      ).missing[0],
+    ).toMatchObject({ yesno: true, choices: [] });
   });
 });
 

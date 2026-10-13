@@ -67,7 +67,7 @@ const centeredCss = css`
 /** The cards page keeps room at the bottom for Nestor's round button. */
 const homeCss = css`
   ${centeredCss}
-  padding-bottom: 84px;
+  padding-bottom: 72px;
 `;
 
 export const NESTOR_IMAGE_URL = '/assets/nestor.webp';
@@ -274,8 +274,8 @@ const NestorHeader = () => {
       <img
         src={NESTOR_HOME_URL}
         alt=""
-        width={96}
-        height={96}
+        width={80}
+        height={80}
         style={{ borderRadius: '50%', background: ILLUSTRATION_BACKGROUND }}
       />
       <Box $gap="2px">

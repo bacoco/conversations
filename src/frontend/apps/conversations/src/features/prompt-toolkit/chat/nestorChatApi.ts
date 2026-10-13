@@ -27,7 +27,7 @@ List as missing only facts that really change this answer AND only the user know
 When the task works on a text only the user has (meeting notes for minutes, an email to answer, a document to summarise) and that text is not in the request, it is the first missing piece: short "notes" (or "courriel", "document"), question « Collez vos notes de la réunion ? » (adapted), no choice.
 Questions in everyday words: « Qui va le lire ? », never "public cible", "audience" or "cible". Use the right tense: the future for what is still to come (« Où aura-t-elle lieu ? »). All the choices of a question answer it the same way (all teams, or all subjects), never a mix.
 When a word of the request is vague, quote it: «L'équipe» reste vague : laquelle ?
-For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. A fact about the user's own case answered by yes or no (« Avez-vous l'accord du chef de bureau ? ») also gets "yesno": true. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 short answers that state the decision only, 2 to 5 words (« J'accepte », « Je refuse », « J'accepte sous condition »), never a reason, a rule or a fact.
+For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. Any question the user answers by yes or no (« Avez-vous l'accord du chef de bureau ? », « La demande a-t-elle été faite 48 h à l'avance ? »), fact or not, gets "yesno": true and no other choice: Nestor shows « Oui » and « Non ». Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 short answers that state the decision only, 2 to 5 words (« J'accepte », « Je refuse », « J'accepte sous condition »), never a reason, a rule or a fact.
 Name what is present with the words of THIS request (its subject, its reader, its day), never generic words like "La demande", "La réponse" or "La tâche".
 Choices are short answers to THIS question, about THIS request only. When nothing in the request lets you guess likely answers, give no choice at all: the user will say it.
 Also read the request with the same five lines every time. For each line, copy a short piece of the request exactly as it is written, character for character, 8 words at most (it is checked against the request: anything rephrased is thrown away), or "" when the request does not say it. Never rephrase, never turn a verb into a noun: if the request says « réponds à l'agent », task is « réponds » and reader is « l'agent ». The lines: task (what to produce), reader (who will read it), material (the text or facts to work from, e.g. the first words of a pasted email), form (length, layout), tone.
@@ -45,9 +45,12 @@ const asMissing = (value: unknown): MissingItem[] =>
       short: typeof item.short === 'string' ? item.short.trim() : '',
       question: typeof item.question === 'string' ? item.question.trim() : '',
       // A fact is the user's to say: Nestor never offers one.
-      choices: item.fact === true ? [] : asStringList(item.choices, 3),
+      choices:
+        item.fact === true || item.yesno === true
+          ? []
+          : asStringList(item.choices, 3),
       fact: item.fact === true,
-      ...(item.fact === true && item.yesno === true && { yesno: true }),
+      ...(item.yesno === true && { yesno: true }),
       ...((GRID_PARTS as readonly unknown[]).includes(item.part) && {
         part: item.part as GridPart,
       }),
