@@ -62,8 +62,16 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
       : t('Questions: nothing given');
   }
   if (find('version')) {
-    return find('placed')
-      ? t('Version prepared, put in the Assistant’s field')
+    if (find('placed')) {
+      return t('Version prepared, put in the Assistant’s field');
+    }
+    // "Plus court", "Autre version": the step says which one it was.
+    const asked = messages.find(
+      (message): message is Extract<NestorMessage, { kind: 'user' }> =>
+        message.kind === 'user' && message.via === 'action',
+    );
+    return asked
+      ? t('Version prepared: {{how}}', { how: asked.text })
       : t('Version prepared');
   }
   const chosen = find('chosen');

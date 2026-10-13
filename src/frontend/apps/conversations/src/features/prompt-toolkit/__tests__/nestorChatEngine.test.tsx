@@ -476,6 +476,25 @@ describe('useNestorChat', () => {
     expect(fetchMock).toHaveBeenCalled();
     expect(thread().at(-1)).toMatchObject({ kind: 'version', missing: [] });
   });
+
+  it('"Annuler" stays in the step of the idea it cancels: no extra step', () => {
+    usePromptToolkitStore.setState({ chatInput: 'Mon brouillon' });
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() =>
+      result.current.choosePiste('Rédige un courriel court', [
+        'Rédige un courriel court',
+      ]),
+    );
+    const chosen = thread().at(-1)!;
+    act(() => result.current.runRound(chosen.id, { id: 'undo' }));
+    const actions = new Set(thread().map((message) => message.action));
+    expect(actions.size).toBe(1);
+    expect(
+      thread().some(
+        (message) => message.kind === 'user' && message.via === 'action',
+      ),
+    ).toBe(false);
+  });
 });
 
 describe('useNestorAuto', () => {

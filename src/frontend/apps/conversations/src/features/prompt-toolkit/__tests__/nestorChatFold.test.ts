@@ -129,4 +129,16 @@ describe('foldSummary', () => {
       ),
     ).toBe('You clicked: {{text}}'.replace('{{text}}', 'Annuler'));
   });
+
+  it('a version is named by what was asked: shorter, another one', () => {
+    expect(
+      foldSummary(
+        [
+          msg(5, { kind: 'user', text: 'Plus court', via: 'action' }),
+          msg(5, { kind: 'version', original: 'a', version: 'b', missing: [] }),
+        ],
+        t,
+      ),
+    ).toBe('Version prepared: {{how}}'.replace('{{how}}', 'Plus court'));
+  });
 });

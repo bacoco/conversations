@@ -452,8 +452,11 @@ export const useNestorChat = (language: string) => {
       const message = all.find((item) => item.id === messageId);
       if (!message) return;
       store().consumeRounds(key, messageId);
-      store().beginAction(key);
-      said(message.kind === 'chosen');
+      // "Annuler" belongs to the step it cancels: no new step, no echo.
+      if (round.id !== 'undo') {
+        store().beginAction(key);
+        said(message.kind === 'chosen');
+      }
       const analysis = lastOf(all, 'analysis');
       switch (round.id) {
         case 'complete':
