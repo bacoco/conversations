@@ -350,9 +350,8 @@ describe('<LearnPanel />', () => {
     };
     useCoachHistoryStore.setState({
       entries: [
-        { excerpt: 'Résume…', score: 60, competencies: grades, sentAt: 1 },
+        { score: 60, competencies: grades, sentAt: 1 },
         {
-          excerpt: 'Rédige…',
           score: 50,
           competencies: { ...grades, format: 70, audience: 20 },
           sentAt: 2,

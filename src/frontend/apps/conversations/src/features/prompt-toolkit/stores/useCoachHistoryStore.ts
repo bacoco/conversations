@@ -5,10 +5,9 @@ import type { Competency, RequestKind } from '../coach/coachApi';
 
 /** Enough for a few weeks of progress, not a prompt archive. */
 export const HISTORY_MAX_ENTRIES = 60;
-export const HISTORY_EXCERPT_LENGTH = 80;
 
+/** Grades only: not a word of the request is ever kept. */
 export interface CoachHistoryEntry {
-  excerpt: string;
   score: number;
   competencies: Record<Competency, number>;
   sentAt: number;
@@ -19,8 +18,9 @@ export interface CoachHistoryEntry {
 
 interface CoachHistoryState {
   entries: CoachHistoryEntry[];
+  /** `request` is what was graded; it is never stored. */
   record: (
-    prompt: string,
+    request: string,
     score: number,
     competencies: Record<Competency, number>,
     details?: { kind?: RequestKind; turn?: number },
@@ -28,33 +28,35 @@ interface CoachHistoryState {
   clear: () => void;
 }
 
-export const toExcerpt = (prompt: string) => {
-  const flat = prompt.replace(/\s+/g, ' ').trim();
-  return flat.length > HISTORY_EXCERPT_LENGTH
-    ? `${flat.slice(0, HISTORY_EXCERPT_LENGTH - 1)}…`
-    : flat;
-};
-
 /** Grades of the last prompts sent, newest first, kept in this browser only. */
 export const useCoachHistoryStore = create<CoachHistoryState>()(
   persist(
     (set) => ({
       entries: [],
-      record: (prompt, score, competencies, details) =>
+      record: (_request, score, competencies, details) =>
         set((state) => ({
           entries: [
-            {
-              excerpt: toExcerpt(prompt),
-              score,
-              competencies,
-              sentAt: Date.now(),
-              ...details,
-            },
+            { score, competencies, sentAt: Date.now(), ...details },
             ...state.entries,
           ].slice(0, HISTORY_MAX_ENTRIES),
         })),
       clear: () => set({ entries: [] }),
     }),
-    { name: 'prompt-coach-history' },
+    {
+      name: 'prompt-coach-history',
+      // v1: the 80-character excerpt of each request is gone, also from the
+      // entries kept by an older version.
+      version: 1,
+      migrate: (persisted) => {
+        const stored = (persisted ?? {}) as {
+          entries?: (CoachHistoryEntry & { excerpt?: string })[];
+        };
+        return {
+          entries: (stored.entries ?? []).map(
+            ({ excerpt: _excerpt, ...entry }) => entry,
+          ),
+        } as CoachHistoryState;
+      },
+    },
   ),
 );

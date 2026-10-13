@@ -26,7 +26,6 @@ const entry = (
   sentAt: number,
   overrides: Partial<CoachHistoryEntry> = {},
 ): CoachHistoryEntry => ({
-  excerpt: 'Résume…',
   score: 60,
   competencies: grades(),
   sentAt,
@@ -73,7 +72,7 @@ describe('what the coach tells from the requests it read', () => {
     const monday = startOfWeek(now);
     const day = 24 * 60 * 60 * 1000;
     const entries = [
-      entry(monday + 3 * day, { score: 90, excerpt: 'La meilleure', turn: 1 }),
+      entry(monday + 3 * day, { score: 90, turn: 1 }),
       entry(monday + 2 * day, { score: 70, turn: 1 }),
       entry(monday + day, { score: 60, turn: 1 }),
       entry(monday - day, {
@@ -87,7 +86,7 @@ describe('what the coach tells from the requests it read', () => {
     ];
     const recap = weekRecap(entries, now);
     expect(recap.count).toBe(3);
-    expect(recap.best?.excerpt).toBe('La meilleure');
+    expect(recap.best?.score).toBe(90);
     expect(recap.allBricks).toBe(true);
     expect(recap.growing).toBe('audience');
     expect(recap.perConversation).toBe(1);

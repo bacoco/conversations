@@ -26,6 +26,7 @@ import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { claimNestorData } from '../stores/accountScope';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   RightPanelMode,
@@ -230,6 +231,8 @@ export const RightPanel = ({
   useEffect(() => {
     if (user?.id) {
       claimRecorder(user.id);
+      // On a shared computer, Nestor keeps nothing of the previous account.
+      void claimNestorData(user.id);
     }
   }, [user?.id, claimRecorder]);
   // Without the Albert relay there is no coach: the home cards instead.

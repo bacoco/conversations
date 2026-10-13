@@ -150,7 +150,6 @@ describe('the course path', () => {
 
   it('says a skill is mastered only when most recent requests show it', () => {
     const entry = (task: number) => ({
-      excerpt: '…',
       score: 50,
       sentAt: 1,
       competencies: {
