@@ -8,6 +8,7 @@ import {
   writeVersion,
 } from '../chat/nestorChatApi';
 import type { NestorMessage } from '../chat/types';
+import { FILL_MODEL } from '../coach/coachApi';
 
 const completion = (content: object) =>
   new Response(
@@ -362,6 +363,15 @@ describe('the lesson under a version', () => {
 
 describe('checkRequest', () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it('reads the request with the stronger model', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(completion({ missing: [], message: 'Claire.' }));
+    await checkRequest('Réponds à l’agent', 'French');
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.model).toBe(FILL_MODEL);
+  });
 
   it('reads the request with the conversation so far: what it says is not missing', async () => {
     const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(

@@ -196,6 +196,7 @@ export const complete = (
   prompt: string,
   signal?: AbortSignal,
   wrapPrompt = true,
+  model = COACH_MODEL,
 ) =>
   completeMessages(
     [
@@ -206,6 +207,8 @@ export const complete = (
       },
     ],
     signal,
+    0.2,
+    model,
   );
 
 export const parseAnalysis = (raw: Record<string, unknown>): PromptAnalysis => {
@@ -370,6 +373,8 @@ export const reviewSession = async (
       `${body}${coached}${written}`,
       signal,
       false,
+      // Judging who wrote what needs the stronger model.
+      FILL_MODEL,
     ),
   );
 };

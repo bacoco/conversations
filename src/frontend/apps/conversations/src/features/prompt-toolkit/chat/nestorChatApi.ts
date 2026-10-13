@@ -2,6 +2,7 @@ import {
   COMMON_RULES,
   CoachError,
   ConversationContextTurn,
+  FILL_MODEL,
   asStringList,
   complete,
   droppedAnswers,
@@ -105,6 +106,9 @@ export const checkRequest = async (
       }`,
       signal,
       false,
+      // Reading the request well (the grid, facts or decisions) is the
+      // lesson itself: the stronger model.
+      FILL_MODEL,
     ),
     draft,
   );
@@ -280,7 +284,7 @@ export const writeVersion = async (
       ? `\nNot said: ${gaps.join(', ')}. The lesson is about one of these, never about what the request already said.`
       : ''
   }`;
-  let raw = await complete(system, input, signal, false);
+  let raw = await complete(system, input, signal, false, FILL_MODEL);
   let version = versionOf(raw);
   const dropped = droppedAnswers(answers, version);
   const copied = copiedQuestions(answers, version);
@@ -320,6 +324,7 @@ export const writeVersion = async (
       }Return the whole version again.`,
       signal,
       false,
+      FILL_MODEL,
     );
     version = versionOf(raw);
   }
