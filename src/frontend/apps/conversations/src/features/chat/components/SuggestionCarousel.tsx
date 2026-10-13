@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Box } from '@/components';
 import { StatusBanner } from '@/core/config/api/useConfig';
+import { useJobTasks } from '@/features/prompt-toolkit/jobs/useJobTasks';
 
 const WRAPPER_CSS = `position: absolute;
                   top: 1rem;
@@ -31,14 +32,19 @@ export const SuggestionCarousel = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
 
+  // With a job chosen in Nestor, the ideas are the tasks of that job.
+  const jobTasks = useJobTasks();
   const suggestions = useMemo(
-    () => [
-      t('Ask a question'),
-      t('Turn this list into bullet points'),
-      t('Write a short product description'),
-      t('Find recent news about...'),
-    ],
-    [t],
+    () =>
+      jobTasks.length
+        ? jobTasks
+        : [
+            t('Ask a question'),
+            t('Turn this list into bullet points'),
+            t('Write a short product description'),
+            t('Find recent news about...'),
+          ],
+    [t, jobTasks],
   );
 
   const bannerItems = useMemo(

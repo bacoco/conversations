@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 
+import { useProfileStore } from '@/features/prompt-toolkit/stores/useProfileStore';
 import '@/i18n/initI18n';
 
 import { SuggestionCarousel } from '../SuggestionCarousel';
@@ -44,6 +45,16 @@ describe('SuggestionCarousel', () => {
       screen.getByText('Write a short product description'),
     ).toBeInTheDocument();
     expect(screen.getByText('Find recent news about...')).toBeInTheDocument();
+  });
+
+  it('with a job chosen in Nestor, suggests the tasks of that job', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    render(<SuggestionCarousel messagesLength={0} />);
+    expect(screen.getByText('Rédiger une fiche de poste')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Write a short product description'),
+    ).not.toBeInTheDocument();
+    useProfileStore.setState({ job: null });
   });
 
   it('should start the interval when messagesLength is 0', () => {

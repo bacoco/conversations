@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -7,7 +8,9 @@ import { Box, Icon } from '@/components';
 import { Listening, RECORD_RED, pulse } from '../speech/RecordingSigns';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
+import { jobById } from '../jobs/jobs';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
+import { useProfileStore } from '../stores/useProfileStore';
 
 import { NESTOR_AVATAR_URL } from './avatar';
 import { C, LinkButton, MainButton, Warn } from './ui';
@@ -132,19 +135,32 @@ const Examples = styled.div`
   }
 `;
 
-/** Before an answer, about the request; after one, about the answer. */
-const SAY_BEFORE = [
-  'Look at what I wrote',
-  'Help me improve it',
-  'How do I make a table?',
-  'I am done, take stock',
-];
-const SAY_AFTER = [
-  'Is what it answered reliable?',
-  'How do I go on?',
-  'Help me improve my request',
-  'I am done, take stock',
-];
+/**
+ * Before an answer, about the request; after one, about the answer. With a
+ * job, one example is a real task of that job.
+ */
+const sayExamples = (
+  t: TFunction,
+  hasAnswer: boolean,
+  tasks: string[],
+): string[] =>
+  hasAnswer
+    ? [
+        t('Is what it answered reliable?'),
+        t('How do I go on?'),
+        tasks[1]
+          ? t('Help me to {{task}}', { task: tasks[1] })
+          : t('Help me improve my request'),
+        t('I am done, take stock'),
+      ]
+    : [
+        t('Look at what I wrote'),
+        t('Help me improve it'),
+        tasks[0]
+          ? t('Help me to {{task}}', { task: tasks[0] })
+          : t('How do I make a table?'),
+        t('I am done, take stock'),
+      ];
 
 const Field = styled.textarea`
   width: 100%;
@@ -171,6 +187,8 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
   });
   const isRecording =
     capture.status === 'recording' || capture.status === 'starting';
+  const jobId = useProfileStore((state) => state.job?.id);
+  const tasks = jobById(jobId)?.tasks ?? [];
   const hasAnswer = useMainConversationStore(
     (state) =>
       !!state.latestCompletedAssistantMessageId && !state.isAssistantResponding,
@@ -276,8 +294,8 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
             ) : (
               <Examples>
                 <strong>{t('For example, say')}</strong>
-                {(hasAnswer ? SAY_AFTER : SAY_BEFORE).map((example) => (
-                  <span key={example}>« {t(example)} »</span>
+                {sayExamples(t, hasAnswer, tasks).map((example) => (
+                  <span key={example}>« {example} »</span>
                 ))}
               </Examples>
             )}

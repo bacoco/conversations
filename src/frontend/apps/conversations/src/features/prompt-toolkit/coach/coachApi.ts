@@ -164,6 +164,19 @@ export interface ChatMessage {
   content: string;
 }
 
+/**
+ * Every call knows who the user is (their job, a beginner or not), so all
+ * examples, choices and words fit them; told once, never twice.
+ */
+const withProfile = (messages: ChatMessage[]): ChatMessage[] => {
+  const rules = profileRules();
+  const [first, ...rest] = messages;
+  if (!rules || first?.role !== 'system' || first.content.includes(rules)) {
+    return messages;
+  }
+  return [{ ...first, content: `${first.content}\n${rules}` }, ...rest];
+};
+
 /** One JSON-mode call to the coach model. */
 export const completeMessages = async (
   messages: ChatMessage[],
@@ -182,7 +195,7 @@ export const completeMessages = async (
       temperature,
       max_tokens: 1200,
       response_format: { type: 'json_object' },
-      messages,
+      messages: withProfile(messages),
     }),
   });
   if (!response.ok) {

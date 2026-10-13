@@ -4,6 +4,7 @@ import { AskNestorSheet } from '../chat/AskNestorSheet';
 import type { NestorChat } from '../chat/useNestorChat';
 import type { CaptureError } from '../speech/useSpeechCapture';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
+import { useProfileStore } from '../stores/useProfileStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -36,6 +37,7 @@ const chat = () =>
 
 describe('<AskNestorSheet /> says what one can say', () => {
   beforeEach(() => {
+    useProfileStore.setState({ job: null });
     speech.error = null;
     speech.status = 'idle';
     speech.seconds = 0;
@@ -87,5 +89,17 @@ describe('<AskNestorSheet /> says what one can say', () => {
     expect(
       screen.getByRole('button', { name: 'Stop listening' }),
     ).toHaveAttribute('data-recording', 'true');
+  });
+
+  it('with a job, the examples speak of its own tasks', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    render(<AskNestorSheet chat={chat()} />);
+    // A task of the job, in the job's own words.
+    expect(
+      screen.getByText(/Help me to|sur ses congés ou son télétravail/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('« How do I make a table? »'),
+    ).not.toBeInTheDocument();
   });
 });
