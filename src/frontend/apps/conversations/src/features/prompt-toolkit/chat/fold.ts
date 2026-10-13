@@ -1,3 +1,4 @@
+import { shortText } from './shortText';
 import type { NestorMessage } from './types';
 
 export type ThreadPart =
@@ -77,8 +78,8 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   const chosen = find('chosen');
   if (chosen) {
     return chosen.undone
-      ? t('Idea cancelled: {{text}}', { text: chosen.text })
-      : t('Chosen start: {{text}}', { text: chosen.text });
+      ? t('Idea cancelled: {{text}}', { text: shortText(chosen.text) })
+      : t('Chosen start: {{text}}', { text: shortText(chosen.text) });
   }
   if (find('examples')) {
     return t('Examples, before and after');

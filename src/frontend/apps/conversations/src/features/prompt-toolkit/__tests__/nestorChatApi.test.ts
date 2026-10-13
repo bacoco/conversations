@@ -268,6 +268,28 @@ describe('writeVersion — the lesson under the version', () => {
   });
 });
 
+describe('a pasted text', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('always reaches the Assistant, word for word, under the version', async () => {
+    const pasted =
+      'Courriel reçu :\n« Bonjour, je suis en télétravail le mardi et le jeudi. La semaine prochaine, j’ai une formation le mardi : est-ce que je peux mettre mon télétravail le mercredi à la place ? Merci. »';
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version: 'Répondez à l’agent en acceptant le changement.',
+        lesson: '',
+      }),
+    );
+    const { version } = await writeVersion(
+      { draft: `réponds à l'agent\n\n${pasted}`, answers: [], skipped: [] },
+      'French',
+    );
+    expect(version).toBe(
+      `Répondez à l’agent en acceptant le changement.\n\n${pasted}`,
+    );
+  });
+});
+
 describe('a fact the user does not know', () => {
   afterEach(() => vi.restoreAllMocks());
 

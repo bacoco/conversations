@@ -5,6 +5,7 @@ import { Icon } from '@/components';
 
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
+import { shortText } from './shortText';
 import type { GridPart, NestorMessage } from './types';
 import {
   Added,
@@ -196,7 +197,7 @@ export const MessageView = ({
           {message.undone
             ? t('Choice cancelled: your text is back.')
             : t('✓ You chose: “{{text}}”. It is in the Assistant’s field.', {
-                text: message.text,
+                text: shortText(message.text),
               })}
         </Event>
       );

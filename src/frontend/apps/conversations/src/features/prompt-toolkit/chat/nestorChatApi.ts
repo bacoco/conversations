@@ -25,10 +25,11 @@ List as missing only facts that really change this answer AND only the user know
 When the task works on a text only the user has (meeting notes for minutes, an email to answer, a document to summarise) and that text is not in the request, it is the first missing piece: short "notes" (or "courriel", "document"), question « Collez vos notes de la réunion ? » (adapted), no choice.
 Questions in everyday words: « Qui va le lire ? », never "public cible", "audience" or "cible". Use the right tense: the future for what is still to come (« Où aura-t-elle lieu ? »). All the choices of a question answer it the same way (all teams, or all subjects), never a mix.
 When a word of the request is vague, quote it: «L'équipe» reste vague : laquelle ?
-For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 likely short answers, the most likely first, read from the user's own words.
+For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 short answers that state the decision only, 2 to 5 words (« J'accepte », « Je refuse », « J'accepte sous condition »), never a reason, a rule or a fact.
 Name what is present with the words of THIS request (its subject, its reader, its day), never generic words like "La demande", "La réponse" or "La tâche".
 Choices are short answers to THIS question, about THIS request only. When nothing in the request lets you guess likely answers, give no choice at all: the user will say it.
-Also read the request with the same five lines every time, copying the user's own words exactly (8 words at most each), or "" when the request does not say it: task (what to produce: « une réponse », « un résumé »), reader (for whom: « à un agent »), material (from what: a pasted text, notes, a reference), form (length, layout: « en 3 points »), tone (« cordiale », « simple »).
+Also read the request with the same five lines every time. For each line, copy a short piece of the request exactly as it is written, character for character, 8 words at most (it is checked against the request: anything rephrased is thrown away), or "" when the request does not say it. Never rephrase, never turn a verb into a noun: if the request says « réponds à l'agent », task is « réponds » and reader is « l'agent ». The lines: task (what to produce), reader (who will read it), material (the text or facts to work from, e.g. the first words of a pasted email), form (length, layout), tone.
+Never ask what the pasted text already says, nor a fact the answer does not need (the name of someone who is not the reader).
 JSON shape: {"grid": {"task": "", "reader": "", "material": "", "form": "", "tone": ""}, "present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "fact": true, "choices": []}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
 At most ${QUESTIONS_MAX} missing pieces, the most useful first.`;
 
@@ -217,6 +218,16 @@ export interface WrittenVersion {
 const normalized = (text: string) =>
   text.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
 
+/** Below this, what follows a blank line is part of the request, not a pasted text. */
+const PASTED_MIN_CHARS = 80;
+
+/** What follows the request's first blank line, when it is a pasted text. */
+const pastedText = (draft: string) => {
+  const cut = draft.indexOf('\n\n');
+  const rest = cut < 0 ? '' : draft.slice(cut).trim();
+  return rest.length >= PASTED_MIN_CHARS ? rest : '';
+};
+
 /** Questions of the round copied into the version instead of answered. */
 const copiedQuestions = (
   answers: { question: string; answer: string }[],
@@ -295,8 +306,15 @@ export const writeVersion = async (
     );
     version = versionOf(raw);
   }
+  const clean = hasHoles(version) ? withoutHoles(version) : version;
+  // A text pasted under the request (an email, notes) is what the answer
+  // works from: when the version left it out, it comes back word for word.
+  const pasted = pastedText(draft);
   return {
-    version: hasHoles(version) ? withoutHoles(version) : version,
+    version:
+      pasted && !normalized(clean).includes(normalized(pasted))
+        ? `${clean.trimEnd()}\n\n${pasted}`
+        : clean,
     lesson: lessonOf(raw),
   };
 };
