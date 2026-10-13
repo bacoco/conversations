@@ -38,7 +38,7 @@ import {
   hasHoles,
   writeVersion,
 } from './nestorChatApi';
-import { questionState } from './questions';
+import { PASTED_ANSWER_CHARS, questionState } from './questions';
 import { carryOver } from './rounds';
 import type {
   BarAction,
@@ -359,7 +359,9 @@ export const useNestorChat = (language: string) => {
       if (!current) return;
       store().post(key, { kind: 'user', text, via, answers: current.id });
       const next = current.index + 1;
-      if (via !== 'stop' && next < current.items.length) {
+      // A pasted text (notes, an email) answers the rest: no more questions.
+      const pasted = text.trim().length > PASTED_ANSWER_CHARS;
+      if (via !== 'stop' && !pasted && next < current.items.length) {
         askQuestion(current.items, next);
         return;
       }

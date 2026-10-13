@@ -18,10 +18,12 @@ const CHECK_SYSTEM_PROMPT = (language: string) =>
 ${COMMON_RULES(language)}
 Read the request and say, in plain words, what it already gives and what the assistant still needs for a good answer.
 List as missing only facts that really change this answer AND only the user knows: who (which team, which person), what about (the subject, the decision), when, where, a figure. Never ask about the tone, the format, the length, attachments or the structure: Nestor's version takes care of the form. Never list a role, a magic formula, or anything this request does not need. A simple, complete request has nothing missing.
+When the task works on a text only the user has (meeting notes for minutes, an email to answer, a document to summarise) and that text is not in the request, it is the first missing piece: short "notes" (or "courriel", "document"), question « Collez vos notes de la réunion ? » (adapted), no choice.
 When a word of the request is vague, quote it: «L'équipe» reste vague : laquelle ?
 For each missing piece: one short question (8 words at most) and up to 3 likely short answers the user could pick as is, the most likely first, read from the user's own words (a "réunion de service" is most likely for "Tout le service"); no answer when only the user can know it (a date, a room).
-Name what is present with the user's own subject, never generic words: "Le refus", "Le ton bienveillant", "La réunion de jeudi" — never "La demande", "La réponse" or "La tâche".
-JSON shape: {"present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "choices": ["..."]}], "message": "<one or two plain sentences; say you will not invent what only the user knows>"}
+Name what is present with the words of THIS request (its subject, its reader, its day), never generic words like "La demande", "La réponse" or "La tâche".
+Choices are short answers to THIS question, about THIS request only. When nothing in the request lets you guess likely answers, give no choice at all: the user will say it.
+JSON shape: {"present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "choices": ["..."]}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
 At most ${QUESTIONS_MAX} missing pieces, the most useful first.`;
 
 const asMissing = (value: unknown): MissingItem[] =>
@@ -140,7 +142,7 @@ const VERSION_SYSTEM_PROMPT = (language: string, style: VersionStyle) =>
 ${COMMON_RULES(language)}
 Rewrite the request into ONE clear request to the assistant that the user can send as is, keeping their own way of addressing the assistant: say what to write, for whom, with which content and in which tone.
 Always begin with the task and who it is for, taken from the user's words (e.g. "Rédige une réponse à un agent qui demande un troisième jour de télétravail : …"); never start with a detail.
-Keep the user's intent, subject and facts exactly, and weave every answer of <answers> into the request as a plain statement in the user's voice (e.g. answer "besoin de présence" to "Pourquoi refuser ?" becomes "explique que le service a besoin de présence sur place"). Never copy a question, never write "Pourquoi … ?" or "Quelle … ?" from <answers>.
+Keep the user's intent, subject and facts exactly, and weave every answer of <answers> into the request as a plain statement in the user's voice (e.g. answer "besoin de présence" to "Pourquoi refuser ?" becomes "explique que le service a besoin de présence sur place"). Never copy a question, never write "Pourquoi … ?" or "Quelle … ?" from <answers>. A pasted text given as an answer (notes, an email, a document) is kept word for word and introduced as the material to work from ("à partir de ces notes : …"), never with the question's words ("Collez…").
 Never write a placeholder, brackets, "à compléter", "to complete" or a blank. Information the user did not give is simply left out, and the wording adapts so that nothing looks missing. Never invent a name, date, place, figure or fact.
 ${STYLE_RULE[style]}
 JSON shape: {"version": "<the request>"}`;

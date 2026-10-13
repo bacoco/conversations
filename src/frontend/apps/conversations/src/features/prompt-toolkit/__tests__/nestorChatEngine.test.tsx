@@ -434,6 +434,46 @@ describe('useNestorChat', () => {
       'Dites pour qui (applied: no)',
     );
   });
+
+  it('pasted notes as an answer end the questions: they answer the rest', async () => {
+    const items = [
+      { short: 'notes', question: 'Collez vos notes ?', choices: [] },
+      { short: 'équipe', question: 'Quelle équipe ?', choices: [] },
+      { short: 'sujets', question: 'Quels sujets ?', choices: [] },
+    ];
+    const store = useNestorChatStore.getState();
+    store.post('c1', {
+      kind: 'analysis',
+      draft: 'Fais le compte rendu',
+      check: { present: [], missing: items, message: 'm' },
+    });
+    store.post('c1', { kind: 'question', index: 0, items });
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      // A fresh answer each time: a body can be read once.
+      .mockImplementation(() =>
+        Promise.resolve(
+          completion({
+            version:
+              'Rédige le compte rendu de la réunion à partir de ces notes : Présents Paul, Inès ; congés de décembre.',
+          }),
+        ),
+      );
+    const { result } = renderHook(() => useNestorChat('French'));
+    await act(() => {
+      result.current.answerQuestion(
+        'Présents : Paul, Inès, Marc. On a parlé du planning des congés de décembre : chacun pose ses jours avant le 15 novembre. Marc vérifie le budget formation.',
+        'keyboard',
+      );
+      return Promise.resolve();
+    });
+    expect(thread().some((m) => m.kind === 'question' && m.index === 1)).toBe(
+      false,
+    );
+    // The version is written (a second try when it leaves notes out).
+    expect(fetchMock).toHaveBeenCalled();
+    expect(thread().at(-1)).toMatchObject({ kind: 'version', missing: [] });
+  });
 });
 
 describe('useNestorAuto', () => {

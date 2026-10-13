@@ -1,5 +1,8 @@
 import type { MissingItem, NestorMessage, QuestionMessage } from './types';
 
+/** An answer this long is a pasted text: it answers the other questions. */
+export const PASTED_ANSWER_CHARS = 120;
+
 export interface QuestionState {
   /** The pieces asked in this round, in order. */
   items: MissingItem[];
@@ -51,6 +54,14 @@ export const questionState = (messages: NestorMessage[]): QuestionState => {
       }
       const item = question.items[question.index];
       if (message.via === 'stop') {
+        // Pasted notes say what the other questions asked: nothing missing.
+        if (
+          state.answers.some(
+            ({ answer }) => answer.length > PASTED_ANSWER_CHARS,
+          )
+        ) {
+          return { ...state, current: null };
+        }
         state.skipped.push(
           ...question.items.slice(question.index).map((piece) => piece.short),
         );

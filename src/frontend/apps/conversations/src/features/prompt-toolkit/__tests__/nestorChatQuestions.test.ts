@@ -108,4 +108,17 @@ describe('questionState', () => {
     expect(state.current).toBeNull();
     expect(state.answers).toEqual([]);
   });
+
+  it('after pasted notes, stopping marks nothing as missing: the notes say it', () => {
+    const notes =
+      'Présents : Paul, Inès, Marc. On a parlé du planning des congés de décembre : chacun pose ses jours avant le 15 novembre. Marc vérifie le budget.';
+    const state = questionState([
+      q(0),
+      said('q0', notes, 'voice'),
+      q(1),
+      said('q1', 'Arrêter', 'stop'),
+    ]);
+    expect(state.skipped).toEqual([]);
+    expect(state.answers).toHaveLength(1);
+  });
 });
