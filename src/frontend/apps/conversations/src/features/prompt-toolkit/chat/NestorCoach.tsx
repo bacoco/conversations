@@ -33,10 +33,26 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
   // changes. One thing at a time, never under an analysis or a question.
   const [answeredOn, setAnsweredOn] = useState<string | null>(null);
   const messageCount = chat.messages.length;
+  const lastMessage = chat.messages.at(-1);
   useEffect(() => {
-    if (messageCount > 0) {
-      setAnsweredOn(usePromptToolkitStore.getState().chatInput);
-    }
+    if (messageCount === 0) return;
+    // A text Nestor just put in the field is no draft to start from: no
+    // ideas for it (they would show the same requests again).
+    const placed = chat.messages.findLast(
+      (message) => message.kind === 'chosen' || message.kind === 'version',
+    );
+    setAnsweredOn(
+      lastMessage?.kind === 'chosen' ||
+        lastMessage?.kind === 'hint' ||
+        lastMessage?.kind === 'placed'
+        ? placed?.kind === 'chosen'
+          ? placed.text
+          : placed?.kind === 'version'
+            ? placed.version
+            : usePromptToolkitStore.getState().chatInput
+        : usePromptToolkitStore.getState().chatInput,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
   const { phrases } = usePistes(
     chatInput,

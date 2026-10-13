@@ -386,6 +386,60 @@ export const Small = styled.div`
 `;
 
 /** Under Nestor's bubble, aligned with it (past his face). */
+/** « Voir des exemples »: one before / after, its rule, and a try. */
+export const ExampleBox = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid ${C.line};
+  border-radius: 12px;
+  background: #ffffff;
+  & > button {
+    align-self: flex-start;
+  }
+`;
+
+export const ExampleLine = styled.p<{ $good?: boolean }>`
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: ${({ $good }) => ($good ? C.ink : C.muted)};
+  & > span {
+    display: inline-block;
+    margin-right: 6px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: ${({ $good }) => ($good ? '#18753c' : C.muted)};
+    background: ${({ $good }) => ($good ? '#e8f6ec' : C.soft)};
+  }
+`;
+
+/** « Analyser mon texte »: the five lines of a request. */
+export const Grid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const GridRow = styled.div<{ $ok: boolean }>`
+  display: grid;
+  grid-template-columns: 18px 150px 1fr;
+  gap: 6px;
+  align-items: baseline;
+  font-size: 13px;
+  & > span:first-child {
+    font-weight: 800;
+    color: ${({ $ok }) => ($ok ? '#18753c' : C.muted)};
+  }
+  & > span:last-child {
+    color: ${({ $ok }) => ($ok ? C.ink : C.muted)};
+    font-style: ${({ $ok }) => ($ok ? 'normal' : 'italic')};
+  }
+`;
+
 /** A request and its star (« Mes favoris »), side by side. */
 export const StarRow = styled.div`
   display: flex;

@@ -15,8 +15,6 @@ import { detectSensitiveData } from '../coach/sensitiveData';
 import { answerGaps } from '../coach/useAfterAnswer';
 import { jobById } from '../jobs/jobs';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
-import { searchPhrases } from '../library/embeddingSearch';
-import { getPhrases } from '../phrases';
 import { useReward } from '../rewards/useReward';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
@@ -30,7 +28,9 @@ import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
+import { authorOf } from './author';
 import { decideBarAction } from './barGuard';
+import { ExamplePair, examplePairs } from './examples';
 import { barLabel, roundLabel } from './labels';
 import {
   VersionInput,
@@ -169,7 +169,20 @@ export const useNestorChat = (language: string) => {
       signal: AbortSignal,
       say: typeof post,
     ) => {
-      const { version, lesson } = await writeVersion(input, language, signal);
+      // The lesson is about a line of the grid this request did not say.
+      const analysis = messagesOf(store().chats, key).findLast(
+        (message): message is Find<'analysis'> =>
+          message.kind === 'analysis' && message.draft === input.draft,
+      );
+      const gaps =
+        analysis?.check.grid
+          .filter((line) => !line.words)
+          .map((line) => line.part) ?? [];
+      const { version, lesson } = await writeVersion(
+        { gaps, ...input },
+        language,
+        signal,
+      );
       const missing = input.skipped;
       say(
         {
@@ -190,7 +203,7 @@ export const useNestorChat = (language: string) => {
       );
       reward('improvement');
     },
-    [language, reward],
+    [key, language, reward, store],
   );
 
   const writeAndPost = useCallback(
@@ -279,7 +292,20 @@ export const useNestorChat = (language: string) => {
       })
       .filter((item) => item.afterPrompt < prompts.length);
     void run('review', 'review', async (signal, say) => {
-      const review = await reviewSession(prompts, language, signal, advice);
+      const requests = all.filter(
+        (message): message is Find<'request'> => message.kind === 'request',
+      );
+      const authors = prompts.map(
+        (_, index) =>
+          requests.findLast((message) => message.n === index + 1)?.by ?? 'user',
+      );
+      const review = await reviewSession(
+        prompts,
+        language,
+        signal,
+        advice,
+        authors,
+      );
       const lastAdvice = lastOf(all, 'advice');
       const lesson = lastAdvice?.note.competency
         ? LESSON_FOR_COMPETENCY[lastAdvice.note.competency]
@@ -403,42 +429,27 @@ export const useNestorChat = (language: string) => {
   const showExamples = useCallback(
     (said: () => void) => {
       const job = useProfileStore.getState().job;
-      const code = language === 'French' ? 'fr' : 'en';
       store().beginAction(key);
       said();
-      if (!job) {
-        const firsts = ['email', 'meeting', 'summary'].map(
-          (category) =>
-            getPhrases(code).find((phrase) => phrase.category.id === category)
-              ?.text ?? '',
-        );
-        post({
-          kind: 'pistes',
-          phrases: firsts.filter(Boolean),
-          examples: true,
-        });
-        return;
-      }
-      // The everyday requests of the user's own job.
-      const profile = jobById(job.id);
-      if (profile) {
-        post({
-          kind: 'pistes',
-          phrases: profile.examples.slice(0, 3),
-          examples: true,
-        });
-        return;
-      }
-      void run('reply', null, async (signal, say) => {
-        const found = await searchPhrases(job.label, code, 3, signal);
-        say({
-          kind: 'pistes',
-          phrases: found.map((phrase) => phrase.text),
-          examples: true,
-        });
-      });
+      // Before / after: the request as many write it, then a good one.
+      post({ kind: 'examples', pairs: examplePairs(jobById(job?.id)?.id) });
     },
-    [key, language, post, run, store],
+    [key, post, store],
+  );
+
+  /** « Essayer avec cette demande »: the vague one, to improve oneself. */
+  const tryExample = useCallback(
+    (pair: ExamplePair) => {
+      const previous = usePromptToolkitStore.getState().chatInput;
+      const text = pair.material
+        ? `${pair.before}\n\n${pair.material}`
+        : pair.before;
+      placePrompt(text, { replaceDraft: true });
+      store().beginAction(key);
+      post({ kind: 'chosen', text, previous }, [{ id: 'undo' }]);
+      post({ kind: 'hint', hint: 'improve-it' });
+    },
+    [key, placePrompt, post, store],
   );
 
   const runRound = useCallback(
@@ -689,7 +700,24 @@ export const useNestorChat = (language: string) => {
       controllerRef.current?.abort();
       setBusy(null);
       store().beginAction(key);
-      store().post(key, { kind: 'request', n, at: Date.now() });
+      // Who wrote it: Nestor's text as given, added to, or the user's own.
+      const sent =
+        useMainConversationStore
+          .getState()
+          .turns.findLast((turn) => turn.role === 'user')?.text ?? '';
+      const nestorTexts = messagesOf(store().chats, key).flatMap((message) =>
+        message.kind === 'chosen'
+          ? [message.text]
+          : message.kind === 'version'
+            ? [message.version]
+            : [],
+      );
+      store().post(key, {
+        kind: 'request',
+        n,
+        at: Date.now(),
+        by: authorOf(sent, nestorTexts),
+      });
     },
     [key, store],
   );
@@ -718,6 +746,7 @@ export const useNestorChat = (language: string) => {
     answerQuestion,
     askNestor,
     choosePiste,
+    tryExample,
     placeVersion,
     askAbout,
     usePrompt,

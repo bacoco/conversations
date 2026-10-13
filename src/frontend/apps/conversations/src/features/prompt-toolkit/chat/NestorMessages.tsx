@@ -5,7 +5,7 @@ import { Icon } from '@/components';
 
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
-import type { NestorMessage } from './types';
+import type { GridPart, NestorMessage } from './types';
 import {
   Added,
   Caption,
@@ -13,13 +13,15 @@ import {
   Choice,
   Choices,
   Event,
+  ExampleBox,
+  ExampleLine,
+  Grid,
+  GridRow,
   Keys,
   Lesson,
   LinkButton,
   MainButton,
   NestorBubble,
-  Pill,
-  Pills,
   QuestionNumber,
   Separator,
   Small,
@@ -35,6 +37,15 @@ import { versionParts } from './versionParts';
 
 export { NestorBubble };
 
+/** The five lines of a request, as the user reads them. */
+const GRID_LABELS: Record<GridPart, string> = {
+  task: 'What to write',
+  reader: 'Who will read it',
+  material: 'The information to use',
+  form: 'The form',
+  tone: 'The tone',
+};
+
 export const MessageView = ({
   message,
   chat,
@@ -47,6 +58,7 @@ export const MessageView = ({
     new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(items);
   const [voice, setVoice] = useState(false);
   const [moreSuites, setMoreSuites] = useState(false);
+  const [exampleIndex, setExampleIndex] = useState(0);
 
   switch (message.kind) {
     case 'request':
@@ -88,8 +100,54 @@ export const MessageView = ({
             t(
               'Write your new request in the middle. I suggest starting ideas as you type.',
             )}
+          {message.hint === 'improve-it' &&
+            t(
+              'Now improve it yourself: click “Analyser mon texte”, at the bottom. I show you what it does not say yet.',
+            )}
         </NestorBubble>
       );
+    case 'examples': {
+      // One example at a time; « Un autre exemple » shows the next one.
+      const pair = message.pairs[exampleIndex % message.pairs.length];
+      return (
+        <NestorBubble>
+          <span>
+            {t(
+              'A request of your job: first as many write it, then a good one.',
+            )}
+          </span>
+          {pair && (
+            <ExampleBox key={pair.caseId}>
+              <strong>{pair.title}</strong>
+              <ExampleLine>
+                <span>{t('Before')}</span>« {pair.before} »
+              </ExampleLine>
+              <ExampleLine $good>
+                <span>{t('After')}</span>« {pair.after} »
+              </ExampleLine>
+              <Lesson>
+                <strong>{t('The rule to keep:')}</strong>
+                <span>{pair.rule}</span>
+              </Lesson>
+              <Choices>
+                <Choice type="button" onClick={() => chat.tryExample(pair)}>
+                  {t('I practise improving it')}
+                </Choice>
+                {message.pairs.length > 1 && (
+                  <Choice
+                    type="button"
+                    $tone="dunno"
+                    onClick={() => setExampleIndex((index) => index + 1)}
+                  >
+                    {t('Another example')}
+                  </Choice>
+                )}
+              </Choices>
+            </ExampleBox>
+          )}
+        </NestorBubble>
+      );
+    }
     case 'warning':
       return (
         <NestorBubble>
@@ -145,18 +203,16 @@ export const MessageView = ({
     case 'analysis':
       return (
         <NestorBubble>
-          <Pills>
-            {message.check.present.map((item) => (
-              <Pill key={item} $ok>
-                ✓ {item}
-              </Pill>
+          {/* The same five lines every time: what a request says. */}
+          <Grid aria-label={t('What your request says')}>
+            {message.check.grid.map((line) => (
+              <GridRow key={line.part} $ok={!!line.words}>
+                <span aria-hidden="true">{line.words ? '✓' : '○'}</span>
+                <strong>{t(GRID_LABELS[line.part])}</strong>
+                <span>{line.words ? `« ${line.words} »` : t('not said')}</span>
+              </GridRow>
             ))}
-            {message.check.missing.map((item) => (
-              <Pill key={item.short} $ok={false}>
-                ? {item.question}
-              </Pill>
-            ))}
-          </Pills>
+          </Grid>
           <span>{message.check.message}</span>
           {message.check.missing.length > 0 && (
             <strong>{t('Shall we complete them together?')}</strong>

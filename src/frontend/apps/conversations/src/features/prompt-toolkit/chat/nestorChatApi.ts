@@ -9,6 +9,8 @@ import {
 } from '../coach/coachApi';
 
 import {
+  GRID_PARTS,
+  GridLine,
   MissingItem,
   NestorMessage,
   QUESTIONS_MAX,
@@ -23,10 +25,11 @@ List as missing only facts that really change this answer AND only the user know
 When the task works on a text only the user has (meeting notes for minutes, an email to answer, a document to summarise) and that text is not in the request, it is the first missing piece: short "notes" (or "courriel", "document"), question « Collez vos notes de la réunion ? » (adapted), no choice.
 Questions in everyday words: « Qui va le lire ? », never "public cible", "audience" or "cible". Use the right tense: the future for what is still to come (« Où aura-t-elle lieu ? »). All the choices of a question answer it the same way (all teams, or all subjects), never a mix.
 When a word of the request is vague, quote it: «L'équipe» reste vague : laquelle ?
-For each missing piece: one short question (8 words at most) and up to 3 likely short answers the user could pick as is, the most likely first, read from the user's own words (a "réunion de service" is most likely for "Tout le service"); no choice at all when only the user can know it. Never propose a date, a time, a person's name, a place or a figure as a choice: give an empty list, the user will say it.
+For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 likely short answers, the most likely first, read from the user's own words.
 Name what is present with the words of THIS request (its subject, its reader, its day), never generic words like "La demande", "La réponse" or "La tâche".
 Choices are short answers to THIS question, about THIS request only. When nothing in the request lets you guess likely answers, give no choice at all: the user will say it.
-JSON shape: {"present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "choices": ["..."]}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
+Also read the request with the same five lines every time, copying the user's own words exactly (8 words at most each), or "" when the request does not say it: task (what to produce: « une réponse », « un résumé »), reader (for whom: « à un agent »), material (from what: a pasted text, notes, a reference), form (length, layout: « en 3 points »), tone (« cordiale », « simple »).
+JSON shape: {"grid": {"task": "", "reader": "", "material": "", "form": "", "tone": ""}, "present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "fact": true, "choices": []}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
 At most ${QUESTIONS_MAX} missing pieces, the most useful first.`;
 
 const asMissing = (value: unknown): MissingItem[] =>
@@ -38,13 +41,35 @@ const asMissing = (value: unknown): MissingItem[] =>
     .map((item) => ({
       short: typeof item.short === 'string' ? item.short.trim() : '',
       question: typeof item.question === 'string' ? item.question.trim() : '',
-      choices: asStringList(item.choices, 3),
+      // A fact is the user's to say: Nestor never offers one.
+      choices: item.fact === true ? [] : asStringList(item.choices, 3),
+      fact: item.fact === true,
     }))
     .filter((item) => item.short && item.question)
     .slice(0, QUESTIONS_MAX);
 
+const plainText = (text: string) =>
+  text.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
+
+/** The five lines; words not really in the request are dropped. */
+const asGrid = (value: unknown, draft: string): GridLine[] => {
+  const raw =
+    typeof value === 'object' && value !== null
+      ? (value as Record<string, unknown>)
+      : {};
+  const request = plainText(draft);
+  return GRID_PARTS.map((part) => {
+    const words = typeof raw[part] === 'string' ? raw[part].trim() : '';
+    return {
+      part,
+      words: words && request.includes(plainText(words)) ? words : '',
+    };
+  });
+};
+
 export const parseRequestCheck = (
   raw: Record<string, unknown>,
+  draft = '',
 ): RequestCheck => {
   const message = typeof raw.message === 'string' ? raw.message.trim() : '';
   if (!message) {
@@ -52,6 +77,7 @@ export const parseRequestCheck = (
   }
   return {
     present: asStringList(raw.present, 4),
+    grid: asGrid(raw.grid, draft),
     missing: asMissing(raw.missing),
     message,
   };
@@ -79,6 +105,7 @@ export const checkRequest = async (
       signal,
       false,
     ),
+    draft,
   );
 };
 
@@ -149,6 +176,8 @@ export interface VersionInput {
   /** What the user does not know: left out entirely. */
   skipped: string[];
   style?: VersionStyle;
+  /** Lines of the grid the user's request did not say: the lesson's subject. */
+  gaps?: string[];
 }
 
 const STYLE_RULE: Record<VersionStyle, string> = {
@@ -164,7 +193,7 @@ ${COMMON_RULES(language)}
 Rewrite the request into ONE clear request to the assistant that the user can send as is, keeping their own way of addressing the assistant: say what to write, for whom, with which content and in which tone.
 Always begin with the task and who it is for, taken from the user's words (e.g. "Rédige une réponse à un agent qui demande un troisième jour de télétravail : …"); never start with a detail.
 Keep the user's intent, subject and facts exactly, and weave every answer of <answers> into the request as a plain statement in the user's voice (e.g. answer "besoin de présence" to "Pourquoi refuser ?" becomes "explique que le service a besoin de présence sur place"). Never copy a question, never write "Pourquoi … ?" or "Quelle … ?" from <answers>. An answer may not fit its question (a room given to "Quelle équipe ?"): use it for the fact it states (here the room), never under the question's meaning. A pasted text given as an answer (notes, an email, a document) is kept word for word and introduced as the material to work from ("à partir de ces notes : …"), never with the question's words ("Collez…").
-Never write a placeholder, brackets, "à compléter", "to complete" or a blank. Information the user did not give is simply left out, and the wording adapts so that nothing looks missing. Never invent a name, date, place, figure or fact.
+Never write a placeholder, brackets, "à compléter", "to complete" or a blank. Information the user did not give is never invented and never shown as a blank. Never invent a name, date, place, figure, rule or fact.
 ${STYLE_RULE[style]}
 JSON shape: {"version": "<the request>", "lesson": "<to the user (vous): first the general rule to reuse in any request, then « Par exemple : » and the words for this one, e.g. « Dites toujours qui va lire et quand. Par exemple : pour tout le service, jeudi de 10 h à 11 h. »>"}`;
 
@@ -207,7 +236,7 @@ const copiedQuestions = (
  * a blank still there is taken out with its sentence.
  */
 export const writeVersion = async (
-  { draft, answers, skipped, style = 'full' }: VersionInput,
+  { draft, answers, skipped, style = 'full', gaps = [] }: VersionInput,
   language: string,
   signal?: AbortSignal,
 ): Promise<WrittenVersion> => {
@@ -216,7 +245,11 @@ export const writeVersion = async (
     .map(({ question, answer }) => `${question} → ${answer}`)
     .join('\n')}\n</answers>${
     skipped.length
-      ? `\nLeave out entirely, the user does not know them: ${skipped.join(', ')}.`
+      ? `\nThe user does not know these yet: ${skipped.join(', ')}. Never state them and never write a blank: ask the assistant, in one short sentence, not to state them either (e.g. « N'indiquez aucune règle précise sur les RTT. »), so that it invents nothing.`
+      : ''
+  }${
+    gaps.length
+      ? `\nNot said: ${gaps.join(', ')}. The lesson is about one of these, never about what the request already said.`
       : ''
   }`;
   let raw = await complete(system, input, signal, false);

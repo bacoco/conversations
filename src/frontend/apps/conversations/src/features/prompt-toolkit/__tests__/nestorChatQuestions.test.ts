@@ -102,7 +102,7 @@ describe('questionState', () => {
         action: 2,
         kind: 'analysis',
         draft: 'B',
-        check: { present: [], missing: [], message: 'm' },
+        check: { grid: [], present: [], missing: [], message: 'm' },
       },
     ]);
     expect(state.current).toBeNull();

@@ -64,6 +64,7 @@ describe('<NestorThread />', () => {
               kind: 'analysis',
               draft: 'x',
               check: {
+                grid: [],
                 present: ['La tâche'],
                 missing: [
                   { short: 'date', question: 'Quelle date ?', choices: [] },
@@ -82,6 +83,39 @@ describe('<NestorThread />', () => {
     expect(screen.getByText('Il manque la date.')).not.toBeVisible();
     fireEvent.click(line);
     expect(screen.getByText('Il manque la date.')).toBeVisible();
+  });
+
+  it('reads a request with the same five lines, in the user’s words', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'a',
+            action: 1,
+            kind: 'analysis',
+            draft: 'Réponds à un agent',
+            check: {
+              grid: [
+                { part: 'task', words: 'Réponds' },
+                { part: 'reader', words: 'à un agent' },
+                { part: 'material', words: '' },
+                { part: 'form', words: '' },
+                { part: 'tone', words: '' },
+              ],
+              present: [],
+              missing: [],
+              message: 'Claire.',
+            },
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    const grid = screen.getByLabelText('What your request says');
+    expect(grid).toHaveTextContent('What to write');
+    expect(grid).toHaveTextContent('« à un agent »');
+    expect(grid).toHaveTextContent('The information to use');
+    expect(screen.getAllByText('not said')).toHaveLength(3);
   });
 
   it('shows the rounds of the last message only, and sends the click', () => {

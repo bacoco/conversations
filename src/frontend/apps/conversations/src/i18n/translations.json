@@ -3,6 +3,17 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Now improve it yourself: click “Analyser mon texte”, at the bottom. I show you what it does not say yet.": "À vous de l’améliorer : cliquez sur « Analyser mon texte », en bas. Je vous montre ce qu’elle ne dit pas encore.",
+      "A request of your job: first as many write it, then a good one.": "Une demande de votre métier : d’abord comme beaucoup l’écrivent, puis une bonne demande.",
+      "Before": "Avant",
+      "After": "Après",
+      "I practise improving it": "Je m’entraîne à l’améliorer",
+      "Another example": "Un autre exemple",
+      "What your request says": "Ce que dit votre demande",
+      "What to write": "Ce qu’il faut écrire",
+      "The information to use": "Les informations à utiliser",
+      "not said": "pas dit",
+      "Examples, before and after": "Exemples avant / après",
       "One click puts the request in the Assistant’s field.": "Un clic met la demande dans le champ de l’Assistant.",
       "Your requests and models, one click away.": "Vos demandes et modèles, à un clic.",
       "Hide the case of the week": "Masquer le cas de la semaine",

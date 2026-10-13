@@ -39,6 +39,7 @@ export const NestorThread = ({
 }) => {
   const { t } = useTranslation();
   const endRef = useRef<HTMLDivElement | null>(null);
+  const startRef = useRef<HTMLDivElement | null>(null);
   const followRef = useRef(true);
   const parts = useMemo(
     () => foldThread(chat.messages, chat.action),
@@ -62,9 +63,28 @@ export const NestorThread = ({
     scroller.addEventListener('scroll', onScroll);
     return () => scroller.removeEventListener('scroll', onScroll);
   }, []);
+  // What Nestor just said is read from its beginning: when it is taller
+  // than the panel, its first line goes to the top, never out of sight.
   useLayoutEffect(() => {
-    if (followRef.current) endRef.current?.scrollIntoView?.({ block: 'end' });
+    if (!followRef.current) return;
+    const end = endRef.current;
+    const start = startRef.current;
+    const scroller = end?.closest('[data-panel-scroll]');
+    if (
+      start &&
+      end &&
+      scroller &&
+      end.offsetTop - start.offsetTop > scroller.clientHeight
+    ) {
+      start.scrollIntoView?.({ block: 'start' });
+      return;
+    }
+    end?.scrollIntoView?.({ block: 'end' });
   }, [chat.messages.length, chat.busy, pistes.length]);
+  // The first message of the latest step.
+  const firstOfStep = parts.findIndex(
+    (part) => part.kind !== 'fold' && part.message.action === chat.action,
+  );
 
   return (
     <ThreadScroll data-panel-scroll data-testid="nestor-thread">
@@ -96,7 +116,7 @@ export const NestorThread = ({
             onRound={() => chat.runRound('hello', { id: 'examples' })}
           />
         )}
-        {parts.map((part) =>
+        {parts.map((part, index) =>
           part.kind === 'fold' ? (
             <Fold key={part.messages[0].id}>
               <summary>
@@ -111,6 +131,7 @@ export const NestorThread = ({
             </Fold>
           ) : (
             <Fragment key={part.message.id}>
+              {index === firstOfStep && <div ref={startRef} />}
               <MessageView message={part.message} chat={chat} />
             </Fragment>
           ),

@@ -1,5 +1,8 @@
 import type { CoachNote, NextGroup, SessionReview } from '../coach/coachApi';
 
+import type { Author } from './author';
+import type { ExamplePair } from './examples';
+
 /** One piece of information the request lacks, asked as one question. */
 export interface MissingItem {
   /** 1 to 3 words, no article: "équipe", "date", "salle". */
@@ -7,12 +10,32 @@ export interface MissingItem {
   question: string;
   /** Up to 3 likely answers; none when only the user can know. */
   choices: string[];
+  /** A fact (a rule, a date, a name…): never a ready answer, only the user's. */
+  fact?: boolean;
+}
+
+/** The five lines every request is read with: its « grammar ». */
+export const GRID_PARTS = [
+  'task',
+  'reader',
+  'material',
+  'form',
+  'tone',
+] as const;
+export type GridPart = (typeof GRID_PARTS)[number];
+
+/** One line of the grid: the user's own words for it, or '' (not said). */
+export interface GridLine {
+  part: GridPart;
+  words: string;
 }
 
 /** What Nestor reads in a request ("Analyser mon texte"). */
 export interface RequestCheck {
   /** What the request already gives, 1 to 3 words each. */
   present: string[];
+  /** The five lines, read in the user's own words. */
+  grid: GridLine[];
   /** At most QUESTIONS_MAX, the most useful first. */
   missing: MissingItem[];
   /** One or two plain sentences, quoting the user's words. */
@@ -46,7 +69,8 @@ export interface Round {
 }
 
 /** What Nestor says when a bar button has nothing to work on. */
-export type HintKind = 'write-first' | 'review-after-answer' | 'new-request';
+export type HintKind =
+  'write-first' | 'review-after-answer' | 'new-request' | 'improve-it';
 
 /** How the user said something in the thread. */
 export type UserVia =
@@ -67,7 +91,8 @@ interface Base {
 
 export type NestorMessage = Base &
   (
-    | { kind: 'request'; n: number; at: number }
+    | { kind: 'request'; n: number; at: number; by?: Author }
+    | { kind: 'examples'; pairs: ExamplePair[] }
     | {
         kind: 'pistes';
         phrases: string[];

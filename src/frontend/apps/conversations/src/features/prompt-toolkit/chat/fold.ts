@@ -80,6 +80,9 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
       ? t('Idea cancelled: {{text}}', { text: chosen.text })
       : t('Chosen start: {{text}}', { text: chosen.text });
   }
+  if (find('examples')) {
+    return t('Examples, before and after');
+  }
   const pistes = find('pistes');
   if (pistes) {
     return pistes.examples

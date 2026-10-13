@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 
+import type { ExamplePair } from '../chat/examples';
 import { useNestorAuto } from '../chat/useNestorAuto';
 import { useNestorChat } from '../chat/useNestorChat';
-import { jobById } from '../jobs/jobs';
+import { casesOf } from '../jobs/jobs';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { messagesOf, useNestorChatStore } from '../stores/useNestorChatStore';
@@ -58,6 +59,7 @@ describe('useNestorChat', () => {
     vi.spyOn(global, 'fetch')
       .mockResolvedValueOnce(
         completion({
+          grid: [],
           present: ['La tâche'],
           missing: [
             {
@@ -153,7 +155,12 @@ describe('useNestorChat', () => {
     const fetchMock = vi
       .spyOn(global, 'fetch')
       .mockResolvedValueOnce(
-        completion({ present: ['Le résumé'], missing: [], message: 'Claire.' }),
+        completion({
+          grid: [],
+          present: ['Le résumé'],
+          missing: [],
+          message: 'Claire.',
+        }),
       )
       .mockResolvedValueOnce(
         completion({ version: 'Résume ce texte en 5 points.' }),
@@ -197,8 +204,8 @@ describe('useNestorChat', () => {
   it('"Voir des exemples" with no job: three everyday requests', () => {
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.runRound('hello', { id: 'examples' }));
-    expect(thread().at(-1)).toMatchObject({ kind: 'pistes' });
-    expect((thread().at(-1) as { phrases: string[] }).phrases).toHaveLength(3);
+    expect(thread().at(-1)).toMatchObject({ kind: 'examples' });
+    expect((thread().at(-1) as { pairs: unknown[] }).pairs).toHaveLength(3);
   });
 
   it('never offers a way to go on that holds a blank', () => {
@@ -236,6 +243,7 @@ describe('useNestorChat', () => {
       kind: 'analysis',
       draft: 'Demande B sur le budget',
       check: {
+        grid: [],
         present: [],
         missing: [{ short: 'année', question: 'Quelle année ?', choices: [] }],
         message: 'm',
@@ -289,6 +297,7 @@ describe('useNestorChat', () => {
     usePromptToolkitStore.setState({ chatInput: 'aide moi compte rendu' });
     const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
       completion({
+        grid: [],
         present: ['Le compte rendu'],
         missing: [
           { short: 'réunion', question: 'De quelle réunion ?', choices: [] },
@@ -326,6 +335,7 @@ describe('useNestorChat', () => {
       kind: 'analysis',
       draft: 'x',
       check: {
+        grid: [],
         present: [],
         missing: [{ short: 'date', question: 'Quelle date ?', choices: [] }],
         message: 'm',
@@ -449,7 +459,7 @@ describe('useNestorChat', () => {
     store.post('c1', {
       kind: 'analysis',
       draft: 'Fais le compte rendu',
-      check: { present: [], missing: items, message: 'm' },
+      check: { grid: [], present: [], missing: items, message: 'm' },
     });
     store.post('c1', { kind: 'question', index: 0, items });
     const fetchMock = vi
@@ -502,10 +512,30 @@ describe('useNestorChat', () => {
     useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.runRound('hello', { id: 'examples' }));
-    const examples = (thread().at(-1) as { phrases: string[] }).phrases;
-    expect(examples).toHaveLength(3);
-    expect(examples[0]).toBe(jobById('rh')!.examples[0]);
+    const { pairs } = thread().at(-1) as { pairs: ExamplePair[] };
+    const [first] = casesOf('rh');
+    expect(pairs[0]).toMatchObject({
+      before: first.startingRequest,
+      after: first.goodRequest,
+    });
+    // « Essayer »: the vague request and its text go in the field, then
+    // Nestor sends the user to improve it themselves.
+    act(() => result.current.tryExample(pairs[0]));
+    expect(setChatInput).toHaveBeenLastCalledWith(
+      `${first.startingRequest}\n\n${first.material}`,
+    );
+    expect(thread().at(-1)).toMatchObject({ kind: 'hint', hint: 'improve-it' });
     useProfileStore.setState({ job: null });
+  });
+
+  it('a request sent as Nestor gave it is marked as written by Nestor', () => {
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.choosePiste('Rédigez un mot de bienvenue.', []));
+    useMainConversationStore.setState({
+      turns: [{ role: 'user', text: 'Rédigez un mot de bienvenue.' }],
+    } as never);
+    act(() => result.current.postRequest(1));
+    expect(thread().at(-1)).toMatchObject({ kind: 'request', by: 'nestor' });
   });
 });
 

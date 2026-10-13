@@ -49,6 +49,60 @@ describe('parseRequestCheck', () => {
   });
 });
 
+describe('the grid of a request', () => {
+  const draft =
+    'Rédigez une réponse simple et cordiale à un agent sur ses RTT.';
+
+  it('keeps only the words really written in the request', () => {
+    const check = parseRequestCheck(
+      {
+        grid: {
+          task: 'une réponse',
+          reader: 'à un agent',
+          material: 'la note de service',
+          form: '',
+          tone: 'simple et cordiale',
+        },
+        missing: [],
+        message: 'Claire.',
+      },
+      draft,
+    );
+    expect(check.grid).toEqual([
+      { part: 'task', words: 'une réponse' },
+      { part: 'reader', words: 'à un agent' },
+      { part: 'material', words: '' },
+      { part: 'form', words: '' },
+      { part: 'tone', words: 'simple et cordiale' },
+    ]);
+  });
+
+  it('never offers ready answers to a fact only the user knows', () => {
+    const check = parseRequestCheck(
+      {
+        missing: [
+          {
+            short: 'règles RTT',
+            question: 'Quelles sont les règles pour les RTT ?',
+            fact: true,
+            choices: ['Les RTT se posent librement.'],
+          },
+          {
+            short: 'décision',
+            question: 'Vous acceptez ou vous refusez ?',
+            fact: false,
+            choices: ['J’accepte', 'Je refuse'],
+          },
+        ],
+        message: 'Je n’invente pas ce que vous seul savez.',
+      },
+      draft,
+    );
+    expect(check.missing[0].choices).toEqual([]);
+    expect(check.missing[1].choices).toEqual(['J’accepte', 'Je refuse']);
+  });
+});
+
 describe('holes', () => {
   it('finds brackets and blanks', () => {
     expect(hasHoles('Date : [date].')).toBe(true);
@@ -211,6 +265,52 @@ describe('writeVersion — the lesson under the version', () => {
       lesson:
         'Dites dès le début pour qui et quel jour : « pour tout le service, jeudi ».',
     });
+  });
+});
+
+describe('a fact the user does not know', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('is never stated: the assistant is asked not to state it either', async () => {
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version: 'Rédige une réponse à un agent sur ses RTT.',
+        lesson: '',
+      }),
+    );
+    await writeVersion(
+      { draft: 'Réponds sur les RTT', answers: [], skipped: ['règles RTT'] },
+      'French',
+    );
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[1].content).toContain(
+      'The user does not know these yet: règles RTT',
+    );
+    expect(body.messages[1].content).toContain('not to state them either');
+  });
+});
+
+describe('the lesson under a version', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('is about what the request did not say', async () => {
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version: 'Rédige un courriel court pour le service.',
+        lesson: 'x',
+      }),
+    );
+    await writeVersion(
+      {
+        draft: 'Fais un courriel',
+        answers: [],
+        skipped: [],
+        gaps: ['reader', 'form'],
+      },
+      'French',
+    );
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[1].content).toContain('Not said: reader, form');
   });
 });
 

@@ -347,21 +347,27 @@ export const reviewSession = async (
   signal?: AbortSignal,
   /** The coach's advice during the session, in order, to check it. */
   advice: { afterPrompt: number; text: string }[] = [],
+  /** Who wrote each prompt: the user, Nestor (as given), or both. */
+  authors: ('user' | 'nestor' | 'both')[] = [],
 ) => {
+  const first = Math.max(0, prompts.length - SESSION_MAX_PROMPTS);
   const body = prompts
-    .slice(-SESSION_MAX_PROMPTS)
+    .slice(first)
     .map(
       (prompt, index) =>
-        `<prompt n="${index + 1}">\n${prompt.slice(0, SESSION_PROMPT_MAX_CHARS)}\n</prompt>`,
+        `<prompt n="${index + 1}" by="${authors[first + index] ?? 'user'}">\n${prompt.slice(0, SESSION_PROMPT_MAX_CHARS)}\n</prompt>`,
     )
     .join('\n');
+  const written = authors.length
+    ? `\nEach prompt says who wrote it. by="nestor": the coach wrote it, the user only clicked; never praise or judge the user on it, never say they wrote it. by="both": judge only what the user added. When no prompt is by="user" or "both", "summary" says first, plainly, that Nestor wrote the requests this time; "strengths" is empty; the first tip invites them to write the next request themselves, starting with one thing: who will read it, from what, which form or which tone.`
+    : '';
   const coached = advice.length
     ? `\n<advice>\n${advice.map((item) => `After prompt ${item.afterPrompt}: ${item.text}`).join('\n')}\n</advice>\nDuring the session, the coach gave this advice, each marked applied yes, no or unknown. Use these marks as they are, never your own guess: in "summary", mention an advice as applied only when it is marked "applied: yes"; never say an advice marked "no" or "unknown" was applied.`
     : '';
   return parseSessionReview(
     await complete(
       SESSION_SYSTEM_PROMPT(language),
-      `${body}${coached}`,
+      `${body}${coached}${written}`,
       signal,
       false,
     ),
