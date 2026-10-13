@@ -228,13 +228,23 @@ export const RightPanel = ({
   // A transcription kept in this tab belongs to whoever was signed in.
   const { data: user } = useAuthQuery();
   const claimRecorder = useRecorderStore((state) => state.claim);
+  // On a shared computer, Nestor keeps nothing of the previous account:
+  // nothing personal is shown before this account's data is claimed.
+  const [claimedFor, setClaimedFor] = useState<string | null>(null);
   useEffect(() => {
-    if (user?.id) {
-      claimRecorder(user.id);
-      // On a shared computer, Nestor keeps nothing of the previous account.
-      void claimNestorData(user.id);
+    if (!user?.id) {
+      return;
     }
+    claimRecorder(user.id);
+    let live = true;
+    void claimNestorData(user.id).then(() => {
+      if (live) setClaimedFor(user.id);
+    });
+    return () => {
+      live = false;
+    };
   }, [user?.id, claimRecorder]);
+  const isClaimed = !!user?.id && claimedFor === user.id;
   // Without the Albert relay there is no coach: the home cards instead.
   const showHome =
     isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);
@@ -393,54 +403,64 @@ export const RightPanel = ({
           background: var(--c--contextuals--background--surface--primary);
         `}
       >
-        <SharedPromptBanner />
-        <PlacementChoice />
-        {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
-        {showHome && <PanelHome />}
-        {!showHome && fill && (
-          <PromptFillView
-            key={fill.template}
-            template={fill.template}
-            title={fill.title}
-            context={fill.context}
-            mode={fill.mode}
-          />
+        {isClaimed && (
+          <>
+            <SharedPromptBanner />
+            <PlacementChoice />
+            {/* `Box` forces `display: flex`, so hide with $display, not `hidden`. */}
+            {showHome && <PanelHome />}
+            {!showHome && fill && (
+              <PromptFillView
+                key={fill.template}
+                template={fill.template}
+                title={fill.title}
+                context={fill.context}
+                mode={fill.mode}
+              />
+            )}
+            <Box
+              $display={
+                !showHome && !fill && mode === 'coach' ? undefined : 'none'
+              }
+              // The chat scrolls by itself; its bar stays at the bottom.
+              $css="flex: 1; min-height: 0;"
+            >
+              <CoachPanel />
+            </Box>
+            <Box
+              $display={
+                !showHome && !fill && mode === 'learn' ? undefined : 'none'
+              }
+              $css={css`
+                min-height: 100%;
+                /* Short course content reads better in a centred column. */
+                & > * {
+                  width: 100%;
+                  max-width: 480px;
+                  margin-inline: auto;
+                }
+                /* A course screen in its frame uses the whole panel. */
+                & > [data-frame] {
+                  max-width: none;
+                }
+              `}
+            >
+              <LearnPanel />
+            </Box>
+            <Box
+              $display={
+                !showHome && !fill && mode === 'tools' ? undefined : 'none'
+              }
+              $css="min-height: 100%;"
+            >
+              <ToolsPanel />
+            </Box>
+          </>
         )}
-        <Box
-          $display={!showHome && !fill && mode === 'coach' ? undefined : 'none'}
-          // The chat scrolls by itself; its bar stays at the bottom.
-          $css="flex: 1; min-height: 0;"
-        >
-          <CoachPanel />
-        </Box>
-        <Box
-          $display={!showHome && !fill && mode === 'learn' ? undefined : 'none'}
-          $css={css`
-            min-height: 100%;
-            /* Short course content reads better in a centred column. */
-            & > * {
-              width: 100%;
-              max-width: 480px;
-              margin-inline: auto;
-            }
-            /* A course screen in its frame uses the whole panel. */
-            & > [data-frame] {
-              max-width: none;
-            }
-          `}
-        >
-          <LearnPanel />
-        </Box>
-        <Box
-          $display={!showHome && !fill && mode === 'tools' ? undefined : 'none'}
-          $css="min-height: 100%;"
-        >
-          <ToolsPanel />
-        </Box>
       </Box>
       {/* Nestor, on every screen: a round button that opens a sheet. */}
       {/* In the coach, "Demander à Nestor" is in the bar. */}
-      {isAiAvailable && !isNestorChat && (
+      {isClaimed && isAiAvailable && !isNestorChat && (
         <NestorDock language={languageName(i18n.language)} />
       )}
     </Box>

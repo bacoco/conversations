@@ -1,3 +1,4 @@
+import { useCasesStore } from '../learn/cases/casesProgress';
 import { useLearnProgressStore } from '../learn/useLearnProgressStore';
 import { useLibraryStore } from '../library/useLibraryStore';
 import { useMyPromptsStore } from '../library/useMyPromptsStore';
@@ -27,6 +28,7 @@ interface Resettable {
  */
 const PERSONAL_STORES: Resettable[] = [
   useLearnProgressStore,
+  useCasesStore,
   useLibraryStore,
   useMyPromptsStore,
   useRewardsStore,
@@ -49,19 +51,31 @@ const fingerprint = async (account: string) => {
   ).join('');
 };
 
+const eraseAll = () =>
+  PERSONAL_STORES.forEach((store) => {
+    store.persist.clearStorage();
+    store.setState(store.getInitialState(), true);
+  });
+
 /**
- * On a shared computer, each account sees only its own Nestor: when
- * another account signs in, what was kept for the previous one is erased
- * (progress, favorites, settings, thread) before anything is shown.
+ * On a shared computer, each account sees only its own Nestor: unless the
+ * data is known to be this account's, it is erased (progress, favorites,
+ * settings, thread) — including when its owner is unknown or the account's
+ * fingerprint cannot be made. In doubt, nothing is handed on.
  */
 export const claimNestorData = async (account: string) => {
-  const owner = await fingerprint(account);
-  const previous = localStorage.getItem(OWNER_KEY);
-  if (previous && previous !== owner) {
-    PERSONAL_STORES.forEach((store) => {
-      store.persist.clearStorage();
-      store.setState(store.getInitialState(), true);
-    });
+  let owner: string | null = null;
+  try {
+    owner = await fingerprint(account);
+  } catch {
+    owner = null;
   }
-  localStorage.setItem(OWNER_KEY, owner);
+  if (!owner || localStorage.getItem(OWNER_KEY) !== owner) {
+    eraseAll();
+  }
+  if (owner) {
+    localStorage.setItem(OWNER_KEY, owner);
+  } else {
+    localStorage.removeItem(OWNER_KEY);
+  }
 };

@@ -34,4 +34,21 @@ describe('claimNestorData — one account, its own data', () => {
     await claimNestorData('agent-a');
     expect(JSON.stringify({ ...localStorage })).not.toContain('agent-a');
   });
+
+  it('data with no known owner (older version) is erased, never handed on', async () => {
+    useLibraryStore.setState({ favorites: ['meeting-agenda'] });
+    await claimNestorData('agent-a');
+    expect(useLibraryStore.getState().favorites).toEqual([]);
+  });
+
+  it('when the fingerprint cannot be made, everything is erased', async () => {
+    await claimNestorData('agent-a');
+    useLibraryStore.setState({ favorites: ['meeting-agenda'] });
+    const digest = vi
+      .spyOn(crypto.subtle, 'digest')
+      .mockRejectedValueOnce(new Error('no crypto'));
+    await claimNestorData('agent-a');
+    expect(useLibraryStore.getState().favorites).toEqual([]);
+    digest.mockRestore();
+  });
 });
