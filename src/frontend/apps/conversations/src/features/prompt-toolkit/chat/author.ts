@@ -1,3 +1,5 @@
+import type { NestorMessage } from './types';
+
 /** Who wrote a request sent to the Assistant. */
 export type Author = 'user' | 'nestor' | 'both';
 
@@ -20,3 +22,29 @@ export const authorOf = (sent: string, nestorTexts: string[]): Author => {
   }
   return 'user';
 };
+
+/**
+ * Every text Nestor offered in the thread, to send as it is: ideas, ways to
+ * go on, versions, starters, the advice's next request.
+ */
+export const nestorWrote = (messages: NestorMessage[]): string[] =>
+  messages.flatMap((message) => {
+    switch (message.kind) {
+      case 'chosen':
+        return [message.text];
+      case 'version':
+        return [message.version];
+      case 'versions':
+        return message.items.map((item) => item.text);
+      case 'starter':
+        return [message.request];
+      case 'pistes':
+        return message.phrases;
+      case 'suites':
+        return message.groups.flatMap((group) => group.questions);
+      case 'advice':
+        return message.note.prompt ? [message.note.prompt] : [];
+      default:
+        return [];
+    }
+  });

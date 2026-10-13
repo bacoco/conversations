@@ -5,8 +5,10 @@ import styled from 'styled-components';
 import { Icon } from '@/components';
 import { useConversationRouteId } from '@/utils';
 
+import { DIRECTIONS, INTERESTS, directionById } from '../jobs/directions';
 import { JOBS, jobById } from '../jobs/jobs';
 import { useCasesStore } from '../learn/cases/casesProgress';
+import { startNestorAgain } from '../stores/accountScope';
 import {
   AutoPart,
   USUAL_AUDIENCES,
@@ -79,12 +81,6 @@ const HeaderAuto = styled.span`
   font-size: 13px;
   font-weight: 600;
   color: ${C.ink};
-  /* A narrow panel keeps the switch in place, without its word. */
-  @container panel-header (max-width: 520px) {
-    & > span[aria-hidden] {
-      display: none;
-    }
-  }
 `;
 
 const Gear = styled.button`
@@ -112,8 +108,20 @@ export const NestorHeaderTools = ({
   const setAuto = useCoachPrefsStore((state) => state.setAuto);
   return (
     <HeaderAuto>
-      <span aria-hidden="true">{t('Auto')}</span>
-      <span title={t('Auto')}>
+      {/* The word stays: a switch alone says nothing of what it does. */}
+      <span
+        aria-hidden="true"
+        title={t(
+          'Auto: Nestor offers ideas and advice by himself while you work.',
+        )}
+      >
+        {t('Auto')}
+      </span>
+      <span
+        title={t(
+          'Auto: Nestor offers ideas and advice by himself while you work.',
+        )}
+      >
         <Switch label={t('Auto')} on={auto} onChange={setAuto} />
       </span>
       {onSettings && (
@@ -255,6 +263,68 @@ const Select = styled.select`
   cursor: pointer;
 `;
 
+/** A line whose choices go under its words: the work themes. */
+const StackRow = styled(Row)`
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+`;
+
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  & > button {
+    padding: 5px 10px;
+    border: 1px solid ${C.line};
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: ${C.muted};
+    background: #ffffff;
+  }
+  & > button[aria-pressed='true'] {
+    border-color: ${C.brandLine};
+    color: ${C.brandDark};
+    background: ${C.brandSoft};
+  }
+  & > button:focus-visible {
+    outline: 2px solid ${C.brand};
+    outline-offset: 2px;
+  }
+`;
+
+/** The work themes, ticked or not; « Not specified » unticks them all. */
+const InterestChips = ({ label }: { label: string }) => {
+  const { t } = useTranslation();
+  const interests = useProfileStore((state) => state.interests);
+  const toggleInterest = useProfileStore((state) => state.toggleInterest);
+  const clearInterests = useProfileStore((state) => state.clearInterests);
+  return (
+    <Chips role="group" aria-label={label}>
+      <button
+        type="button"
+        aria-pressed={interests.length === 0}
+        onClick={clearInterests}
+      >
+        {t('Not specified')}
+      </button>
+      {INTERESTS.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          aria-pressed={interests.includes(item.id)}
+          onClick={() => toggleInterest(item.id)}
+        >
+          {t(item.label)}
+        </button>
+      ))}
+    </Chips>
+  );
+};
+
 const Danger = styled.button`
   margin-top: 18px;
   width: 100%;
@@ -306,6 +376,8 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
   const prefs = useCoachPrefsStore();
   const job = useProfileStore((state) => state.job);
   const setJob = useProfileStore((state) => state.setJob);
+  const direction = useProfileStore((state) => state.direction);
+  const setDirection = useProfileStore((state) => state.setDirection);
   const isBeginner = useProfileStore((state) => state.isBeginner);
   const setBeginner = useProfileStore((state) => state.setBeginner);
   const conversationId = useConversationRouteId();
@@ -334,6 +406,7 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
   };
   // Erasing asks once more, in place: "Oui, effacer" or "Non, garder".
   const [confirming, setConfirming] = useState(false);
+  const [restarting, setRestarting] = useState(false);
   const erase = () => {
     useNestorChatStore.getState().clear(conversationId ?? NEW_CHAT_KEY);
     setConfirming(false);
@@ -456,6 +529,36 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
               </Select>
             </Line>
             <Line
+              label={t('My direction')}
+              note={t(
+                'Only used to pick examples. Never added to your requests.',
+              )}
+            >
+              <Select
+                aria-label={t('My direction')}
+                value={direction ?? ''}
+                onChange={(event) =>
+                  setDirection(directionById(event.target.value)?.id ?? null)
+                }
+              >
+                <option value="">{t('Not specified')}</option>
+                {DIRECTIONS.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {t(item.label)}
+                  </option>
+                ))}
+              </Select>
+            </Line>
+            <StackRow>
+              <Text>
+                <span>{t('My work themes')}</span>
+                <span>
+                  {t('Tick the ones you like. Only used to pick examples.')}
+                </span>
+              </Text>
+              <InterestChips label={t('My work themes')} />
+            </StackRow>
+            <Line
               label={t('I am a beginner')}
               note={t('Fewer details on screen, simpler words.')}
             >
@@ -489,13 +592,25 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
               </Select>
             </Line>
             <Line
-              label={t('The case of the week on the home page')}
-              note={t('One real task of your job each week.')}
+              label={t('Your week on the home page')}
+              note={t('A few actions for your job each week.')}
             >
               <Switch
-                label={t('The case of the week on the home page')}
+                label={t('Your week on the home page')}
                 on={!weeklyHidden}
                 onChange={(on) => setWeeklyHidden(!on)}
+              />
+            </Line>
+            <Line
+              label={t('Nestor’s round button on the other screens')}
+              note={t(
+                'A question about the panel, from the home page, the course or the tools. In the coach, « Demander à Nestor » is always there.',
+              )}
+            >
+              <Switch
+                label={t('Nestor’s round button on the other screens')}
+                on={prefs.showDock}
+                onChange={prefs.setShowDock}
               />
             </Line>
           </Card>
@@ -520,6 +635,35 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
         <Note>
           {t(
             'Your conversation with the Assistant and your settings are kept. I will ask you to confirm.',
+          )}
+        </Note>
+        {restarting ? (
+          <Group aria-label={t('Erase everything Nestor keeps for you?')}>
+            <Note>{t('Erase everything Nestor keeps for you?')}</Note>
+            <Segments>
+              <button
+                type="button"
+                onClick={() => {
+                  startNestorAgain();
+                  setRestarting(false);
+                  onClose();
+                }}
+              >
+                {t('Yes, erase everything')}
+              </button>
+              <button type="button" onClick={() => setRestarting(false)}>
+                {t('No, keep it')}
+              </button>
+            </Segments>
+          </Group>
+        ) : (
+          <Danger type="button" onClick={() => setRestarting(true)}>
+            {t('Start again from zero')}
+          </Danger>
+        )}
+        <Note>
+          {t(
+            'Your job, direction, themes, progress, cases, favorites, settings and Nestor’s threads are erased. Your conversations with the Assistant stay.',
           )}
         </Note>
         <Note>

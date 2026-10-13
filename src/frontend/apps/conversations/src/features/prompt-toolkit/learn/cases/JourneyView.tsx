@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 import { C, Choice, Lesson, MainButton } from '../../chat/ui';
 import { JobId, casesOf, jobById } from '../../jobs/jobs';
+import { LevelCard } from '../../rewards/LevelCard';
+import { useProgress } from '../../rewards/useProgress';
 import { useProfileStore } from '../../stores/useProfileStore';
-import { useLearnProgressStore } from '../useLearnProgressStore';
 
 import { CasePage, JobChoice } from './CasesView';
+import { attestationText, hasUse, printAttestation } from './attestation';
 import { nextCase, useCasesStore } from './casesProgress';
 import { downloadIcs, weeklySlotIcs } from './ics';
 
@@ -47,37 +49,9 @@ const levelReached = (jobId: JobId, done: Record<string, number>) =>
   );
 
 /**
- * A printable certificate, made in the browser and printed or saved as a
- * PDF by the browser itself: it states the journey, it proves nothing.
+ * « Mon parcours »: my level and badges, where I am in the cases of my
+ * job, what comes next, my weekly slot and my certificate of use.
  */
-const printCertificate = (lines: string[], title: string) => {
-  const page = window.open('', '_blank', 'width=800,height=900');
-  if (!page) {
-    return;
-  }
-  // Built node by node: the texts are set as text, never as markup.
-  const { document: sheet } = page;
-  sheet.title = title;
-  const style = sheet.createElement('style');
-  style.textContent =
-    'body{font-family:Marianne,Arial,sans-serif;margin:64px;color:#1e1e2e}h1{font-size:26px;margin:0 0 32px}p{font-size:16px;line-height:1.6;margin:0 0 12px}.note{margin-top:40px;font-size:12px;color:#5f5f72}';
-  sheet.head.appendChild(style);
-  const heading = sheet.createElement('h1');
-  heading.textContent = title;
-  sheet.body.appendChild(heading);
-  lines.forEach((line, index) => {
-    const paragraph = sheet.createElement('p');
-    paragraph.textContent = line;
-    if (index === lines.length - 1) {
-      paragraph.className = 'note';
-    }
-    sheet.body.appendChild(paragraph);
-  });
-  page.focus();
-  page.print();
-};
-
-/** « Mon parcours »: where I am, what comes next, my weekly slot. */
 export const JourneyView = ({
   onBack,
   onOpen,
@@ -88,9 +62,7 @@ export const JourneyView = ({
   const { t, i18n } = useTranslation();
   const job = jobById(useProfileStore((state) => state.job?.id));
   const done = useCasesStore((state) => state.done);
-  const stepsDone = useLearnProgressStore(
-    (state) => state.completedLessons.length,
-  );
+  const { facts, progress } = useProgress();
 
   if (!job) {
     return (
@@ -102,7 +74,6 @@ export const JourneyView = ({
   }
   const level = levelReached(job.id, done);
   const next = nextCase(job.id, done);
-  const casesDone = casesOf(job.id).filter((item) => done[item.id]).length;
   const bookSlot = () =>
     downloadIcs(
       weeklySlotIcs(new Date(), {
@@ -113,28 +84,24 @@ export const JourneyView = ({
       }),
       'nestor-20-minutes.ics',
     );
+  const canCertify = hasUse(facts, progress);
   const certificate = () =>
-    printCertificate(
-      [
-        t('Job: {{job}}', { job: job.label }),
-        t('Level reached in the practical cases: {{level}} of 3', { level }),
-        t('Practical cases done: {{count}}', { count: casesDone }),
-        t('Steps of the course done: {{count}} of 8', { count: stepsDone }),
-        t('Date: {{date}}', {
-          date: new Intl.DateTimeFormat(i18n.language, {
-            dateStyle: 'long',
-          }).format(new Date()),
-        }),
-        t(
-          'Statement made by the agent from their journey in Nestor, on their own computer. It is not checked.',
-        ),
-      ],
-      t('Nestor journey — the Assistant'),
+    printAttestation(
+      attestationText({
+        t,
+        language: i18n.language,
+        job: job.label,
+        casesLevel: level,
+        facts,
+        progress,
+        date: new Date(),
+      }),
     );
 
   return (
     <CasePage title={t('My journey')} onBack={onBack}>
-      <strong>{job.label}</strong>
+      <LevelCard progress={progress} lessonsTotal={facts.lessonsTotal} />
+      <strong>{t('Practical cases: {{job}}', { job: job.label })}</strong>
       <span>{t('Level reached: {{level}} of 3', { level })}</span>
       <Levels aria-label={t('Levels of the practical cases')}>
         {[1, 2, 3].map((value) => (
@@ -144,7 +111,10 @@ export const JourneyView = ({
         ))}
       </Levels>
       <span>
-        {t('Steps of the course done: {{count}} of 8', { count: stepsDone })}
+        {t('Lessons of the course finished: {{done}} of {{total}}', {
+          done: facts.lessonsDone,
+          total: facts.lessonsTotal,
+        })}
       </span>
       {next ? (
         <Lesson>
@@ -168,15 +138,15 @@ export const JourneyView = ({
           'A diary file to open in Outlook: every Thursday at 10 a.m., changeable. Nothing is sent.',
         )}
       </Note>
-      <Choice type="button" disabled={level === 0} onClick={certificate}>
+      <Choice type="button" disabled={!canCertify} onClick={certificate}>
         {t('Print my certificate')}
       </Choice>
       <Note>
-        {level === 0
-          ? t('Finish a first case to print your certificate.')
-          : t(
-              'Printed or saved as a PDF by your browser. It states your journey; it is not checked.',
-            )}
+        {canCertify
+          ? t(
+              'It states what you did with Nestor, as recorded in this browser: your level, cases, lessons, quizzes and requests. Printed or saved as a PDF by your browser; it is not checked by anyone else.',
+            )
+          : t('Use Nestor first: your certificate will state what you did.')}
       </Note>
     </CasePage>
   );

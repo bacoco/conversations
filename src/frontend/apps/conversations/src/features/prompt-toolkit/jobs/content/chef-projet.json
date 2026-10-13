@@ -145,6 +145,230 @@
         "Les mesures pour réduire les risques sont présentées comme des pistes, pas comme des engagements déjà pris."
       ],
       "lesson": "Pour préparer un arbitrage, donnez vos critères de comparaison et demandez ce qui manque encore pour trancher."
+    },
+    {
+      "id": "chef-projet-4",
+      "jobId": "chef-projet",
+      "level": 1,
+      "task": "annoncer un changement de calendrier aux équipes métier",
+      "title": "Annoncer le report d'une formation",
+      "minutes": 5,
+      "situation": "Le prestataire ne pourra pas livrer à temps l'environnement de formation du nouvel outil de gestion des courriers. La formation des équipes métier est décalée de deux semaines. Vous devez prévenir aujourd'hui les agents inscrits, sans les inquiéter sur la suite du projet.",
+      "material": "Message du prestataire et décisions prises (fictifs)\n- L'environnement de formation du nouvel outil de gestion des courriers ne sera pas prêt pour le 4 novembre.\n- Nouvelle date retenue avec la direction de projet : mardi 18 novembre, mêmes horaires (9 h 30 – 12 h), même salle (salle 204).\n- Les inscriptions sont conservées : aucune démarche à faire pour les agents déjà inscrits.\n- Les agents qui ne sont pas disponibles le 18 novembre doivent le signaler à l'équipe projet avant le 7 novembre ; une session de rattrapage leur sera proposée.\n- La mise en service de l'outil reste prévue le 1er décembre.",
+      "startingRequest": "écris un mail pour dire que la formation est décalée",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un courriel aux agents des équipes métier inscrits à la formation au nouvel outil de gestion des courriers, pour annoncer qu'elle passe du 4 au 18 novembre. Ces agents attendent l'outil et pourraient croire que tout le projet prend du retard : dites dès la première ligne que la mise en service du 1er décembre est maintenue. Format : un objet de courriel clair, puis 100 mots au maximum, avec la nouvelle date, l'horaire, la salle et la démarche à faire en cas d'indisponibilité. Ton simple et rassurant. N'entrez pas dans le détail technique de la cause et n'ajoutez aucune date ni aucune promesse absente du texte.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous dites que les agents pourraient croire à un retard de tout le projet : l'Assistant répond d'emblée à cette inquiétude."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un objet et un courriel de 100 mots avec les informations pratiques : les agents savent tout de suite où et quand venir."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'ajouter des dates ou des promesses : le courriel n'engage pas l'équipe projet sur une session de rattrapage déjà datée."
+        }
+      ],
+      "checkAnswer": [
+        "Les dates du 18 novembre, du 7 novembre et du 1er décembre, l'horaire 9 h 30 – 12 h et la salle 204 sont exacts.",
+        "Le courriel dit clairement que les agents déjà inscrits n'ont rien à faire.",
+        "Aucune date n'est inventée pour la session de rattrapage."
+      ],
+      "lesson": "Quand vous annoncez une mauvaise nouvelle, dites à l'Assistant quelle inquiétude des lecteurs il doit apaiser en premier."
+    },
+    {
+      "id": "chef-projet-5",
+      "jobId": "chef-projet",
+      "level": 1,
+      "task": "préparer l'ordre du jour d'un comité de suivi",
+      "title": "L'ordre du jour d'un comité de suivi",
+      "minutes": 5,
+      "situation": "Vous animez jeudi le comité de suivi mensuel du projet d'archivage électronique, qui dure une heure. Vous avez noté en vrac les sujets à aborder et vous devez envoyer l'ordre du jour aux participants dès ce soir.",
+      "material": "Sujets notés pour le comité de suivi du jeudi 20 novembre, 10 h – 11 h (fictifs)\n- tour de table rapide\n- retour sur la recette du module de versement : 9 anomalies, dont 1 bloquante\n- le bureau des archives demande de revoir la durée de conservation des courriels : à discuter, pas à trancher jeudi\n- point sur la formation des correspondants archives (calendrier à valider)\n- jalon « reprise des données anciennes » en retard de deux semaines\n- questions diverses\n- date du prochain comité",
+      "startingRequest": "fais l'ordre du jour de la réunion",
+      "goodRequest": "À partir du texte ci-dessous, rédigez l'ordre du jour du comité de suivi du projet d'archivage électronique du jeudi 20 novembre, de 10 h à 11 h, envoyé ce soir aux participants. Classez les sujets dans un ordre logique, avec le tour de table au début, les questions diverses et la date du prochain comité à la fin. Indiquez une durée pour chaque point, le total faisant exactement 60 minutes, et ajoutez une ligne qui dit ce qui est attendu : information, échange ou décision. La durée de conservation des courriels est un point d'échange, pas de décision. Présentation en liste numérotée, sans ajouter de sujet.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous demandez une liste numérotée avec une durée par point : les participants voient comment l'heure sera utilisée."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez de dire pour chaque point si l'on attend une information, un échange ou une décision : chacun vient préparé."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous imposez un total de 60 minutes et aucun sujet ajouté : l'ordre du jour reste tenable et fidèle à vos notes."
+        }
+      ],
+      "checkAnswer": [
+        "La somme des durées fait bien 60 minutes.",
+        "La durée de conservation des courriels est présentée comme un échange, sans décision prévue jeudi.",
+        "Tous les sujets des notes sont présents et aucun n'a été ajouté."
+      ],
+      "lesson": "Pour un ordre du jour, demandez la durée de chaque point et ce qu'on attend des participants."
+    },
+    {
+      "id": "chef-projet-6",
+      "jobId": "chef-projet",
+      "level": 2,
+      "task": "commenter un tableau de bord d'avancement",
+      "title": "Commenter le tableau de bord",
+      "minutes": 10,
+      "situation": "Le tableau de bord mensuel du projet de nouvel outil de gestion des subventions est prêt. Il sera projeté au comité de pilotage de la semaine prochaine. Le directeur de projet vous demande un commentaire court qui fait ressortir ce qui doit retenir l'attention des membres du comité.",
+      "material": "Tableau de bord au 31 octobre — outil de gestion des subventions (fictif)\nLot | Avancement prévu | Avancement réel | Météo | Commentaire de l'équipe\nParamétrage | 100 % | 100 % | vert | terminé\nReprise des données | 80 % | 55 % | rouge | fichiers sources incomplets pour 2 directions\nInterfaces avec la comptabilité | 60 % | 60 % | vert | conforme\nRecette | 20 % | 10 % | orange | dépend de la reprise des données\nFormation | 0 % | 0 % | vert | démarrage prévu en janvier\nJalon suivant : début de la recette complète le 1er décembre.\nBudget consommé : 62 % pour 58 % d'avancement global.",
+      "startingRequest": "commente ce tableau",
+      "goodRequest": "À partir du tableau ci-dessous, rédigez le commentaire du tableau de bord mensuel du projet d'outil de gestion des subventions, qui sera projeté au comité de pilotage. Les membres du comité connaissent le projet mais n'ont que quelques minutes : commencez par une phrase sur l'état général, puis traitez en priorité les lots en rouge et en orange, en expliquant le lien entre la reprise des données et la recette. Terminez par ce que ces écarts signifient pour le jalon du 1er décembre, présenté comme un risque et non comme une certitude. Format : 8 à 10 lignes, sans reprendre un par un les lots en vert. Ton factuel. Utilisez uniquement les chiffres du tableau et ne proposez aucune nouvelle date.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que les membres du comité n'ont que quelques minutes : l'Assistant met en avant les écarts au lieu de relire le tableau ligne par ligne."
+        },
+        {
+          "skill": "context",
+          "point": "Vous signalez le lien entre la reprise des données et la recette : le commentaire explique la cause du retard au lieu d'aligner des pourcentages."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant aux chiffres du tableau et lui interdisez une nouvelle date : le comité ne découvre pas une échéance que personne n'a validée."
+        }
+      ],
+      "checkAnswer": [
+        "Les écarts cités sont exacts : 55 % au lieu de 80 % pour la reprise des données, 10 % au lieu de 20 % pour la recette.",
+        "Le jalon du 1er décembre est présenté comme menacé, sans nouvelle date proposée.",
+        "Si le budget est cité, c'est avec les chiffres du tableau (62 % consommés pour 58 % d'avancement), sans conclusion inventée."
+      ],
+      "lesson": "Pour commenter un tableau, dites ce que le lecteur doit en retenir et laissez de côté ce qui va bien."
+    },
+    {
+      "id": "chef-projet-7",
+      "jobId": "chef-projet",
+      "level": 2,
+      "task": "construire un plan d'action",
+      "title": "Construire un plan d'action",
+      "minutes": 10,
+      "situation": "Le bilan de la première phase de recette du nouvel outil de gestion des congés a fait ressortir plusieurs difficultés. Le comité de pilotage vous a demandé un plan d'action pour les traiter avant la mise en production. Vous avez vos notes de la réunion de bilan.",
+      "material": "Notes de la réunion de bilan de recette (fictives)\n- Les testeurs n'ont pas eu assez de temps : 3 demi-journées au lieu des 5 prévues. Proposition : libérer les testeurs une demi-journée par semaine jusqu'à la fin de la recette. Responsables pressentis : les chefs de service concernés.\n- Les cas de temps partiel ne sont pas gérés correctement par l'outil. Le prestataire doit livrer un correctif ; date non connue.\n- Le guide utilisateur n'est pas à jour. L'équipe projet s'en charge pour le 15 décembre.\n- Les gestionnaires RH demandent une démonstration avant la formation. Personne n'a été désigné.\n- Mise en production visée : 2 février.",
+      "startingRequest": "fais un plan d'action",
+      "goodRequest": "À partir du texte ci-dessous, construisez le plan d'action demandé par le comité de pilotage pour traiter les difficultés de la recette du nouvel outil de gestion des congés avant la mise en production du 2 février. Format : un tableau avec les colonnes difficulté, action, responsable, échéance, état, avec une ligne par difficulté des notes. Quand un responsable n'est que pressenti, écrivez « à confirmer » ; quand il manque un responsable ou une échéance, écrivez « à désigner » ou « à fixer », sans rien inventer. Ajoutez sous le tableau deux ou trois lignes sur les actions dont dépend directement la date du 2 février. Ton neutre.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez les colonnes du tableau : chaque difficulté a son action, son responsable et son échéance, faciles à suivre en comité."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous dites quoi écrire quand un responsable ou une échéance manque : le plan montre ce qui reste à décider au lieu de le masquer."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez quelles actions conditionnent la date du 2 février : le comité voit tout de suite où se trouve le risque."
+        }
+      ],
+      "checkAnswer": [
+        "Le correctif du prestataire figure avec l'échéance « à fixer », sans date inventée.",
+        "La démonstration aux gestionnaires RH a un responsable « à désigner ».",
+        "Les chefs de service apparaissent comme responsables « à confirmer » pour la libération des testeurs."
+      ],
+      "lesson": "Dans un plan d'action, demandez que les manques restent visibles : un responsable absent se signale, il ne s'invente pas."
+    },
+    {
+      "id": "chef-projet-8",
+      "jobId": "chef-projet",
+      "level": 2,
+      "task": "préparer une foire aux questions pour accompagner un changement",
+      "title": "Une foire aux questions pour les agents",
+      "minutes": 10,
+      "situation": "Dans trois mois, les agents de votre direction passeront à un nouvel outil de réservation des véhicules de service. Lors des réunions d'information, les mêmes questions reviennent. Vous voulez publier sur l'intranet une foire aux questions avec des réponses sûres.",
+      "material": "Questions entendues en réunion et éléments connus (fictifs)\nQuestions des agents :\n- Est-ce que je pourrai réserver depuis chez moi ?\n- Que deviennent mes réservations déjà faites dans l'ancien outil ?\n- Faudra-t-il encore remplir le carnet de bord papier ?\n- Qui contacter en cas de problème ?\n- Est-ce que l'outil marchera sur téléphone ?\nCe qui est décidé :\n- Mise en service le 2 mars.\n- Accès depuis le poste de travail et en télétravail, avec la connexion habituelle.\n- Les réservations faites avant le 2 mars dans l'ancien outil seront reprises automatiquement.\n- Assistance : le support informatique habituel, rubrique « Véhicules ».\nNon tranché : maintien du carnet de bord papier ; usage sur téléphone.",
+      "startingRequest": "fais une faq sur le nouvel outil",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une foire aux questions pour l'intranet de la direction sur le nouvel outil de réservation des véhicules de service. Elle sera lue par des agents qui ne sont pas à l'aise avec les nouveaux outils. Reprenez les cinq questions des agents, formulées comme ils les posent, avec pour chacune une réponse de deux ou trois phrases en langage clair. Pour le carnet de bord papier et l'usage sur téléphone, qui ne sont pas encore décidés, répondez que la question est à l'étude et que la réponse sera communiquée dès qu'elle sera décidée. N'ajoutez aucune fonction, date ou consigne qui ne figure pas dans le texte. Ton simple et rassurant.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que les lecteurs sont peu à l'aise avec les outils : l'Assistant écrit des réponses courtes, en langage clair."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous séparez ce qui est décidé de ce qui ne l'est pas : l'intranet n'annonce pas une règle que le projet n'a pas encore fixée."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'ajouter une fonction ou une consigne : la foire aux questions ne promet rien que l'outil ne fera pas."
+        }
+      ],
+      "checkAnswer": [
+        "Les réponses sur le carnet de bord papier et sur le téléphone disent que la question est à l'étude, sans trancher.",
+        "La date du 2 mars et la reprise automatique des réservations sont exactes.",
+        "Aucune fonction nouvelle, comme une application mobile ou une alerte par courriel, n'est annoncée."
+      ],
+      "lesson": "Quand une réponse n'est pas encore décidée, dites à l'Assistant comment l'annoncer, sinon il risque de trancher à votre place."
+    },
+    {
+      "id": "chef-projet-9",
+      "jobId": "chef-projet",
+      "level": 3,
+      "task": "analyser les risques d'un projet",
+      "title": "Analyser les risques du projet",
+      "minutes": 15,
+      "situation": "Le projet de regroupement de deux centres de gestion sur un même site entre dans sa phase de préparation. Le directeur de projet veut présenter une analyse des risques au prochain comité de pilotage. Vous avez retiré de vos notes les noms et les appréciations sur des personnes ; il reste des faits et des inquiétudes à trier.",
+      "material": "Notes pour l'analyse des risques (fictives)\n- Les travaux d'aménagement du site d'accueil doivent finir le 15 mai ; le maître d'œuvre annonce déjà deux semaines de retard sur le lot électricité.\n- Le déménagement est prévu du 1er au 12 juin.\n- 14 agents sur 38 n'ont pas encore dit s'ils suivraient le service sur le nouveau site.\n- Les représentants du personnel demandent une réunion sur les temps de trajet ; date non fixée.\n- Le transfert des dossiers papier n'a pas de budget identifié.\n- Les demandes de l'équipe projet au centre B restent souvent sans réponse.\n- Le nouvel outil de téléphonie doit être opérationnel le jour de l'ouverture ; aucun test prévu à ce jour.",
+      "startingRequest": "quels sont les risques du projet ?",
+      "goodRequest": "À partir du texte ci-dessous, préparez l'analyse des risques du projet de regroupement de deux centres de gestion, que le directeur de projet présentera au comité de pilotage. Format : un tableau avec les colonnes risque, cause tirée des notes, conséquence possible sur le calendrier ou sur les agents, mesure envisageable, puis deux lignes de synthèse sur les deux risques qui menacent le plus le déménagement prévu à partir du 1er juin. Les mesures sont des pistes à discuter, pas des décisions. Parlez d'organisation et non de personnes : l'absence de réponse du centre B devient un risque de coordination entre les centres, sans mettre en cause une équipe ni un responsable. N'évaluez ni probabilité ni gravité en chiffres, car les notes ne permettent pas de les mesurer, et listez les informations à obtenir pour compléter l'analyse.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de parler d'organisation et non de personnes : le document projeté en comité ne met en cause aucune équipe ni aucun responsable."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous interdisez de chiffrer probabilité et gravité sans base : le tableau ne donne pas une fausse impression de précision."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez les deux risques principaux et les informations manquantes : le directeur sait sur quoi agir et quoi vérifier avant le comité."
+        }
+      ],
+      "checkAnswer": [
+        "L'absence de réponse du centre B est présentée comme un risque de coordination, sans désigner ni blâmer une équipe ou une personne.",
+        "Les dates (15 mai, du 1er au 12 juin) et le chiffre de 14 agents sur 38 sont exacts.",
+        "Aucune note, aucun pourcentage de probabilité et aucun budget ne sont inventés, et les mesures sont présentées comme des pistes."
+      ],
+      "lesson": "Avant de partager une analyse, demandez à l'Assistant de parler des situations plutôt que des personnes et de ne chiffrer que ce qui est mesuré."
+    },
+    {
+      "id": "chef-projet-10",
+      "jobId": "chef-projet",
+      "level": 3,
+      "task": "rédiger une note de cadrage",
+      "title": "Rédiger une note de cadrage",
+      "minutes": 15,
+      "situation": "Votre directrice envisage de dématérialiser les demandes d'attestation envoyées par les entreprises, qui arrivent encore surtout par courrier. Elle vous demande une première note de cadrage pour décider, au prochain comité de direction, s'il faut lancer le projet. Beaucoup d'éléments ne sont pas encore connus.",
+      "material": "Éléments disponibles (fictifs)\n- Volume : environ 9 000 demandes d'attestation par an, dont 70 % par courrier postal.\n- Délai moyen de réponse actuel : 12 jours ; objectif souhaité par la directrice : 5 jours.\n- Équipe actuelle : 4 agents, qui consacrent environ la moitié de leur temps à la saisie.\n- Une plateforme de démarches en ligne existe déjà au ministère ; on ne sait pas encore si elle peut accueillir cette démarche.\n- Budget : non estimé.\n- Calendrier souhaité : une mise en service avant la fin de l'année prochaine, sans engagement.\n- Parties prenantes : bureau des attestations, service informatique, délégué à la protection des données, représentants des entreprises (à consulter).",
+      "startingRequest": "écris une note de cadrage pour le projet",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une première note de cadrage de deux pages au plus pour ma directrice, qui décidera au comité de direction s'il faut lancer le projet de dématérialisation des demandes d'attestation. Plan : contexte et constat chiffré ; objectifs ; périmètre, en distinguant ce qui est inclus et ce qui reste à préciser ; parties prenantes ; premières étapes possibles ; principaux risques ; questions à trancher par le comité. Séparez toujours ce qui est établi de ce qui est une hypothèse. Le budget n'est pas estimé et le recours à la plateforme existante n'est pas confirmé : dites-le tel quel, sans proposer de montant, de solution technique ni de date ferme. Ton de note administrative, sobre.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez le plan d'une note de cadrage : la directrice trouve à leur place les objectifs, le périmètre et les questions à trancher."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous demandez de séparer les faits établis des hypothèses : la note ne présente pas un souhait comme un engagement."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous dites que le budget et la plateforme ne sont pas connus : l'Assistant n'invente ni montant ni solution technique pour remplir la note."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres repris sont exacts : 9 000 demandes, 70 % par courrier, 12 jours, objectif de 5 jours, 4 agents.",
+        "La note ne propose aucun montant et ne présente pas la plateforme existante comme la solution retenue.",
+        "Les questions à trancher par le comité sont listées à part et correspondent aux points encore ouverts."
+      ],
+      "lesson": "Quand beaucoup de choses sont encore inconnues, demandez à l'Assistant de distinguer ce qui est établi de ce qui est supposé."
     }
   ]
 }

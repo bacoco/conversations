@@ -146,6 +146,230 @@
         "La proposition finale est séparée de la comparaison et reste à votre décision."
       ],
       "lesson": "Pour un arbitrage, demandez une comparaison sur les mêmes critères, des calculs détaillés, puis une proposition distincte."
+    },
+    {
+      "id": "encadrant-4",
+      "jobId": "encadrant",
+      "level": 1,
+      "task": "préparer l'ordre du jour d'une réunion de service",
+      "title": "L'ordre du jour de la réunion de service",
+      "minutes": 5,
+      "situation": "Vous réunissez mardi prochain, pendant une heure, les onze agents de votre bureau. Plusieurs sujets se sont accumulés et vous voulez envoyer dès aujourd'hui un ordre du jour clair, pour que chacun vienne préparé.",
+      "material": "Sujets à aborder (notes fictives)\n- Organisation des congés de fin d'année : il faut au moins 4 agents présents chaque jour entre le 22 décembre et le 2 janvier ; les souhaits sont à envoyer avant le 28 novembre.\n- Arrivée d'un nouvel agent le 1er décembre : qui veut être son tuteur ?\n- Nouvelle version de l'outil de traitement des dossiers : formation obligatoire de 2 heures à suivre avant le 15 décembre.\n- Retour sur les délais de traitement du mois : 27 jours en moyenne, objectif de 30 jours tenu.\n- Tour de table et questions diverses.",
+      "startingRequest": "fais un ordre du jour pour ma réunion",
+      "goodRequest": "À partir du texte ci-dessous, rédigez l'ordre du jour de la réunion de service de mon bureau, mardi prochain de 10 h à 11 h, que j'envoie aujourd'hui aux onze agents. Format : une phrase d'introduction, puis les points numérotés avec une durée pour chacun, le total faisant 60 minutes, et pour chaque point ce que j'attends des agents, par exemple venir avec ses souhaits de congés ou se porter volontaire. Placez en premier les points qui demandent une réponse avant une date. Ton cordial et direct. Gardez exactement les dates et les chiffres, et n'ajoutez aucun sujet.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous demandez une durée par point et un total de 60 minutes : la réunion tient dans l'heure prévue."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous demandez de dire ce que vous attendez des agents : chacun sait ce qu'il doit préparer avant de venir."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de garder les dates et de n'ajouter aucun sujet : l'ordre du jour reste fidèle à ce que vous voulez traiter."
+        }
+      ],
+      "checkAnswer": [
+        "La somme des durées fait bien 60 minutes.",
+        "Les dates du 28 novembre, du 1er décembre et du 15 décembre sont exactes.",
+        "Le point sur les congés rappelle la règle d'au moins 4 agents présents chaque jour."
+      ],
+      "lesson": "Dites à l'Assistant ce que vous attendez des lecteurs : le texte les aidera à agir, pas seulement à s'informer."
+    },
+    {
+      "id": "encadrant-5",
+      "jobId": "encadrant",
+      "level": 1,
+      "task": "organiser l'accueil d'un nouvel agent",
+      "title": "Accueillir un nouvel arrivant",
+      "minutes": 5,
+      "situation": "Un nouvel agent rejoint votre bureau le lundi 1er décembre comme gestionnaire de dossiers. Vous voulez lui envoyer avant son arrivée un courriel de bienvenue avec le programme de sa première semaine, pour qu'il sache à quoi s'attendre.",
+      "material": "Programme de la première semaine (notes fictives)\n- Lundi 9 h : accueil par moi, bureau 214 ; remise du badge et du poste informatique à 10 h 30 au service de la logistique.\n- Lundi après-midi : présentation à l'équipe et visite du site.\n- Mardi et mercredi : travail en binôme avec une gestionnaire expérimentée, qui sera sa tutrice.\n- Jeudi : formation à l'outil de traitement des dossiers, de 9 h à 12 h.\n- Vendredi 16 h : point d'étape avec moi.\n- Télétravail : possible après la période d'intégration ; on en parlera au point d'étape.\n- À apporter lundi : pièce d'identité et RIB pour le service des ressources humaines.",
+      "startingRequest": "écris un mail de bienvenue au nouveau",
+      "goodRequest": "À partir du texte ci-dessous, rédigez le courriel de bienvenue que j'enverrai avant son arrivée à un nouvel agent qui rejoint mon bureau le lundi 1er décembre comme gestionnaire de dossiers. Il ne connaît encore personne et ne sait pas comment se passera sa première semaine : ton chaleureux et simple, avec vouvoiement. Format : deux phrases d'accueil, puis le programme jour par jour en liste, puis ce qu'il doit apporter lundi ; 200 mots au maximum. Gardez exactement les heures et les lieux. Pour le télétravail, dites seulement qu'on en parlera au point d'étape, sans rien promettre de plus.",
+      "keyPoints": [
+        {
+          "skill": "tone",
+          "point": "Vous dites que l'agent ne connaît encore personne : l'Assistant trouve un ton d'accueil, sans le noyer de règles."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez le programme jour par jour en liste : le nouvel agent voit d'un coup d'œil où aller et quand."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous cadrez ce qui est dit du télétravail : le courriel ne crée pas une attente que vous n'avez pas validée."
+        }
+      ],
+      "checkAnswer": [
+        "Les heures et les lieux du lundi sont exacts : 9 h au bureau 214, 10 h 30 au service de la logistique.",
+        "Le télétravail est présenté comme un sujet à aborder au point d'étape, sans date ni nombre de jours promis.",
+        "La pièce d'identité et le RIB à apporter figurent bien."
+      ],
+      "lesson": "Décrivez à l'Assistant ce que le lecteur sait et ignore encore : il choisira le bon ton et les bonnes informations."
+    },
+    {
+      "id": "encadrant-6",
+      "jobId": "encadrant",
+      "level": 2,
+      "task": "rédiger une note à la hiérarchie sur un incident",
+      "title": "Remonter un incident à sa hiérarchie",
+      "minutes": 10,
+      "situation": "Votre bureau a envoyé par erreur des courriers de relance avec une mauvaise date limite de paiement. Votre sous-directeur l'a appris par l'appel d'une fédération professionnelle et vous demande une note d'ici ce soir : ce qui s'est passé, ce que vous avez déjà fait et ce qu'il doit décider.",
+      "material": "Faits établis (notes fictives)\n- Mardi 14 octobre : envoi de 230 courriers de relance à des entreprises, indiquant une date limite au 15 octobre au lieu du 15 novembre.\n- Cause : erreur dans le modèle de courrier lors de sa mise à jour ; la relecture prévue n'a pas été faite.\n- Erreur constatée mercredi à 9 h, après un premier appel d'entreprise.\n- Déjà fait : envoi en cours d'un courriel rectificatif aux 230 entreprises ; message d'accueil téléphonique modifié ; modèle corrigé.\n- 17 appels reçus à midi.\n- À décider : envoyer aussi un courrier papier rectificatif (coût d'affranchissement à chiffrer) ; écrire ou non à la fédération professionnelle.\n- À mettre en place : double relecture obligatoire de tout modèle modifié.",
+      "startingRequest": "écris une note à mon chef sur le problème des courriers",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une note d'une page à mon sous-directeur sur l'envoi de courriers de relance avec une date erronée. Il doit pouvoir décider ce soir. Plan : les faits en trois lignes ; les conséquences connues ; les mesures déjà prises ; les deux décisions qui lui reviennent, chacune avec ses avantages et ses inconvénients ; la mesure pour éviter que cela se reproduise. Style de note administrative, factuel. Présentez la cause comme un défaut de procédure, sans chercher de responsable individuel. N'inventez ni chiffre ni coût : le coût d'affranchissement reste « à chiffrer ».",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez le plan d'une note de remontée d'information : le sous-directeur voit d'abord les faits, puis ce qu'il doit décider."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de parler de procédure et non de personnes : la note met l'accent sur ce qu'il faut corriger, sans désigner un agent."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous dites de laisser le coût « à chiffrer » : la note ne contient aucun montant inventé pour appuyer une décision."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres et les dates sont exacts : 230 courriers, 15 octobre au lieu du 15 novembre, 17 appels à midi.",
+        "La cause est présentée comme un défaut de relecture, sans désigner ni blâmer un agent.",
+        "Les deux décisions à prendre sont séparées des mesures déjà prises, sans montant inventé."
+      ],
+      "lesson": "Dans une note à la hiérarchie, séparez ce qui est fait de ce qui reste à décider, et parlez de procédures plutôt que de personnes."
+    },
+    {
+      "id": "encadrant-7",
+      "jobId": "encadrant",
+      "level": 2,
+      "task": "répartir la charge de travail dans l'équipe",
+      "title": "Répartir le plan de charge",
+      "minutes": 10,
+      "situation": "Une campagne de traitement de 300 demandes de subvention démarre le 3 novembre et doit être terminée le 12 décembre. Vous devez la répartir entre les cinq gestionnaires de votre bureau en tenant compte de leurs disponibilités, puis présenter la répartition à l'équipe.",
+      "material": "Données pour la répartition (fictives, agents désignés par une lettre)\nPériode : du 3 novembre au 12 décembre, soit 6 semaines.\nCharge : 300 demandes ; temps moyen de traitement : 1 heure par demande.\nRègle du bureau : pas plus de 15 heures par semaine sur la campagne pour un agent à temps plein (au prorata pour un temps partiel), pour continuer à traiter les autres dossiers.\nAgent A : temps plein, disponible toute la période.\nAgent B : temps plein, en congés la semaine du 24 novembre.\nAgent C : temps partiel à 80 %.\nAgent D : temps plein, mais assure aussi la permanence téléphonique : 10 heures par semaine au maximum sur la campagne.\nAgent E : temps plein, arrivé en septembre et encore en formation : pas plus de la moitié de ce que fait un agent expérimenté à temps plein.",
+      "startingRequest": "répartis les dossiers entre mes agents",
+      "goodRequest": "À partir du texte ci-dessous, proposez une répartition des 300 demandes de subvention entre les cinq agents de mon bureau, désignés par une lettre. Format : un tableau qui donne pour chaque agent le nombre d'heures disponibles sur les 6 semaines, le nombre de demandes attribuées et la contrainte prise en compte, puis une ligne de total, puis une phrase qui dit si la capacité suffit. Montrez vos calculs. Si la capacité ne suffit pas, dites de combien il manque, sans proposer d'heures supplémentaires ni de renfort. C'est une proposition que je soumettrai à l'équipe : ton neutre, sans commentaire sur les personnes.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous donnez les disponibilités de chacun et la règle des 15 heures : la répartition tient compte de la réalité du bureau."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau et le détail des calculs : vous pouvez vérifier chaque chiffre avant de le présenter à l'équipe."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de proposer des heures supplémentaires ou un renfort : la proposition reste dans vos moyens actuels."
+        }
+      ],
+      "checkAnswer": [
+        "La capacité calculée est de 342 heures (90 pour A, 75 pour B, 72 pour C, 60 pour D, 45 pour E), ce qui suffit pour les 300 demandes.",
+        "Le total des demandes attribuées fait exactement 300 et aucun agent ne dépasse sa capacité.",
+        "Les agents restent désignés par une lettre, sans nom ni détail personnel ajouté."
+      ],
+      "lesson": "Quand la réponse repose sur des calculs, demandez à l'Assistant de les montrer pour pouvoir les vérifier."
+    },
+    {
+      "id": "encadrant-8",
+      "jobId": "encadrant",
+      "level": 2,
+      "task": "rédiger le relevé de décisions d'une réunion de service",
+      "title": "Le relevé de la réunion de service",
+      "minutes": 10,
+      "situation": "Vous avez animé ce matin la réunion de service de votre bureau. Vos notes mélangent décisions, idées lancées et remarques. Vous voulez envoyer aux agents, avec votre chef de service en copie, un relevé clair de ce qui a été décidé.",
+      "material": "Notes de la réunion de service du 4 novembre (fictives)\n- Congés de fin d'année : chacun envoie ses souhaits avant le 28 novembre ; j'arbitre le 1er décembre s'il y a trop de demandes sur la même semaine.\n- Permanence téléphonique : on passe de 2 à 3 agents le lundi matin, jour où les appels sont les plus nombreux. Décidé, à partir du 17 novembre.\n- Idée d'un agent : un tableau partagé des dossiers complexes. Plusieurs collègues sont intéressés ; à étudier, je reviens vers vous en décembre.\n- Formation à la nouvelle version de l'outil : obligatoire, avant le 15 décembre ; inscriptions auprès de l'assistante du service.\n- Remarques sur la chaleur dans les bureaux du 2e étage : je fais remonter à la logistique.\n- Prochaine réunion : mardi 2 décembre, 10 h.",
+      "startingRequest": "fais le compte rendu de la réunion",
+      "goodRequest": "À partir du texte ci-dessous, rédigez le relevé de décisions de la réunion de service du 4 novembre, envoyé aux agents de mon bureau avec mon chef de service en copie. Format : trois parties, « Ce qui est décidé », « Ce qui est à l'étude » et « Ce que je fais remonter », puis la date de la prochaine réunion. Pour chaque décision, indiquez ce que les agents ont à faire et pour quand. L'idée du tableau partagé est à l'étude, pas décidée. N'attribuez aucune idée ni aucune remarque à un agent en particulier. Ton cordial et direct, une demi-page au maximum, sans rien ajouter aux notes.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous imposez trois parties distinctes : les agents voient tout de suite ce qui est décidé et ce qui ne l'est pas encore."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous rappelez que le chef de service est en copie : le relevé reste sobre et n'attribue aucune remarque à un agent."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous précisez que le tableau partagé est seulement à l'étude : le relevé ne transforme pas une idée en engagement."
+        }
+      ],
+      "checkAnswer": [
+        "Le tableau partagé des dossiers complexes figure dans « Ce qui est à l'étude », pas dans les décisions.",
+        "Les dates sont exactes : 28 novembre, 1er décembre, 17 novembre, 15 décembre et 2 décembre à 10 h.",
+        "Aucune idée ni aucune remarque n'est attribuée à une personne."
+      ],
+      "lesson": "Demandez à l'Assistant de séparer ce qui est décidé de ce qui ne l'est pas : c'est ce que vos lecteurs cherchent d'abord."
+    },
+    {
+      "id": "encadrant-9",
+      "jobId": "encadrant",
+      "level": 3,
+      "task": "préparer une réunion difficile",
+      "title": "Préparer une réunion difficile",
+      "minutes": 15,
+      "situation": "Votre hiérarchie vient de confirmer que votre bureau reprendra au 1er mars une activité aujourd'hui assurée par un bureau voisin, sans effectif supplémentaire au départ. L'annonce a été faite hier aux encadrants. Vous devez l'expliquer à votre équipe jeudi et vous vous attendez à des réactions vives.",
+      "material": "Ce qui est décidé et annoncé (fictif)\n- Au 1er mars, le bureau reprend le traitement des demandes de remise gracieuse, aujourd'hui assuré par un bureau voisin : environ 1 200 dossiers par an.\n- Pas d'effectif supplémentaire au 1er mars ; un point sur la charge sera fait en juin avec la sous-direction.\n- Formation des agents du bureau en février, assurée par le bureau voisin.\n- Les procédures et modèles de courrier seront transmis avant le 15 février.\n\nCe qui n'est pas encore décidé\n- Le transfert éventuel d'un ou deux agents du bureau voisin.\n- L'adaptation des objectifs de délai de traitement.\n\nQuestions que l'équipe risque de poser\n- Pourquoi nous ?\n- Comment faire avec le même nombre d'agents ?\n- Est-ce que le télétravail sera remis en cause ?\n- Est-ce que cela comptera dans nos entretiens professionnels ?",
+      "startingRequest": "aide-moi pour ma réunion avec l'équipe",
+      "goodRequest": "À partir du texte ci-dessous, préparez ma réunion de jeudi avec mon équipe, à qui je dois annoncer la reprise d'une nouvelle activité au 1er mars. Je m'attends à du mécontentement. Ce document est pour moi seul. Format : un déroulé de 45 minutes en étapes, avec la durée de chacune ; un message d'introduction de cinq phrases, honnête et qui ne minimise pas l'effort demandé ; puis, pour chaque question probable, une réponse courte tirée uniquement du texte. Quand la réponse n'est pas décidée ou n'est pas dans le texte, dites-le clairement et proposez une formule du type « je n'ai pas encore la réponse, je reviens vers vous ». Pour le télétravail et les entretiens professionnels, qui touchent aux droits des agents, n'affirmez rien et notez que je dois vérifier auprès du service des ressources humaines. Ne promettez aucun renfort.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous dites que l'équipe risque d'être mécontente et que le document est pour vous seul : l'Assistant prépare une conduite de réunion, pas un discours lisse."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez les réponses à ce qui est décidé et demandez de dire ce qui ne l'est pas : vous ne promettez rien que vous devrez démentir."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous écartez toute affirmation sur le télétravail et les entretiens professionnels : un sujet qui touche aux droits des agents passe d'abord par les ressources humaines."
+        }
+      ],
+      "checkAnswer": [
+        "Aucune réponse n'annonce de renfort, de transfert d'agents ou de nouveaux objectifs de délai : ces points restent présentés comme non décidés.",
+        "Les réponses sur le télétravail et sur les entretiens professionnels renvoient à une vérification auprès des ressources humaines, sans rien affirmer.",
+        "La question « Pourquoi nous ? » ne reçoit pas de raison inventée, puisque le texte n'en donne pas."
+      ],
+      "lesson": "Avant une réunion sensible, demandez à l'Assistant de séparer ce que vous savez de ce que vous ignorez, et de vous aider à le dire honnêtement."
+    },
+    {
+      "id": "encadrant-10",
+      "jobId": "encadrant",
+      "level": 3,
+      "task": "répondre à une demande de télétravail supplémentaire",
+      "title": "Répondre à une demande de télétravail",
+      "minutes": 15,
+      "situation": "Un agent de votre bureau vous demande par courriel de passer de deux à trois jours de télétravail par semaine. Les règles du bureau rendent cette demande difficile, mais vous ne voulez ni la refuser sèchement par courriel ni promettre ce que vous ne pourrez pas tenir. Votre réponse écrite engage le service.",
+      "material": "Courriel de l'agent (fictif, anonymisé)\n« Bonjour, je souhaiterais passer à trois jours de télétravail par semaine à partir de janvier, dont le mercredi, car mon temps de trajet a beaucoup augmenté. Je reste bien sûr disponible pour les permanences. Merci de votre réponse. »\n\nExtrait de la note de service du bureau sur le télétravail (fictive)\n- Deux jours de télétravail par semaine au maximum, sauf situations particulières prévues par la réglementation.\n- Présence sur site d'au moins six agents sur neuf chaque jour, pour assurer l'accueil et les permanences.\n- Le mercredi, six agents sont aujourd'hui présents sur site, pas davantage.\n- Toute demande de modification est examinée lors d'un entretien avec l'encadrant.",
+      "startingRequest": "aide-moi à répondre à sa demande de télétravail",
+      "goodRequest": "À partir du texte ci-dessous, rédigez ma réponse par courriel à un agent de mon bureau qui demande un troisième jour de télétravail par semaine, dont le mercredi. Je ne décide pas par courriel : je lui propose un entretien pour examiner sa demande, comme le prévoit la note de service, en lui expliquant honnêtement que les règles du bureau rendent difficile un troisième jour, et en particulier le mercredi. Ton respectueux et bienveillant, sans formule sèche ; 150 mots au maximum. Appuyez-vous uniquement sur la note de service : ne citez aucun texte de loi ni aucun droit qu'elle ne mentionne pas, et ne reprenez pas le détail de sa situation personnelle. Ajoutez ensuite, à part, la liste des points que je dois vérifier auprès du service des ressources humaines avant l'entretien, notamment les situations particulières prévues par la réglementation.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous dites que vous ne décidez pas par courriel et proposez un entretien : la réponse suit la procédure de la note de service sans fermer la porte."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant à la note de service et lui interdisez de citer des textes : il n'invente pas une règle de droit que vous devriez ensuite justifier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de ne pas reprendre la situation personnelle de l'agent : la réponse reste centrée sur l'organisation du service."
+        }
+      ],
+      "checkAnswer": [
+        "Le courriel ne donne ni accord ni refus définitif et propose bien un entretien.",
+        "Les seules règles citées sont celles de la note : deux jours au maximum et au moins six agents présents sur site chaque jour.",
+        "Aucun article de loi, aucun décret ni aucun droit absent de la note n'apparaît, et les situations particulières figurent dans la liste à vérifier auprès des ressources humaines."
+      ],
+      "lesson": "Sur un sujet qui touche aux droits d'un agent, limitez l'Assistant à vos propres textes et faites vérifier le reste par les ressources humaines."
     }
   ]
 }

@@ -12,10 +12,21 @@ describe('the ten jobs of the ministry', () => {
     });
   });
 
-  it('each has three cases, levels 1 to 3, with what makes them good', () => {
+  it('each has ten cases, three of level 1, four of level 2, three of level 3', () => {
     JOB_IDS.forEach((id) => {
       const cases = casesOf(id);
-      expect(cases.map((item) => item.level)).toEqual([1, 2, 3]);
+      // Ten cases, from the easiest to the hardest.
+      expect(cases.map((item) => item.id).sort()).toEqual(
+        Array.from({ length: 10 }, (_, index) => `${id}-${index + 1}`).sort(),
+      );
+      expect(cases.map((item) => item.level)).toEqual(
+        [...cases.map((item) => item.level)].sort(),
+      );
+      expect(cases.filter((item) => item.level === 1)).toHaveLength(3);
+      expect(cases.filter((item) => item.level === 2)).toHaveLength(4);
+      expect(cases.filter((item) => item.level === 3)).toHaveLength(3);
+      // Ten different tasks, never the same case twice.
+      expect(new Set(cases.map((item) => item.title)).size).toBe(10);
       cases.forEach((item) => {
         expect(item.keyPoints).toHaveLength(3);
         expect(item.checkAnswer.length).toBeGreaterThanOrEqual(2);

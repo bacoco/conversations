@@ -30,7 +30,7 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { startTraining, useTrainerStore } from '../stores/useTrainerStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
-import { authorOf } from './author';
+import { authorOf, nestorWrote } from './author';
 import { decideBarAction } from './barGuard';
 import { ExamplePair, examplePairs } from './examples';
 import { requestSays, unfoundNumbers } from './facts';
@@ -1069,6 +1069,7 @@ export const useNestorChat = (language: string) => {
             missing,
             gaps,
             answerId,
+            by: author,
             ...(unfound.length && { unfound }),
           },
           missing.length
@@ -1108,17 +1109,7 @@ export const useNestorChat = (language: string) => {
         useMainConversationStore
           .getState()
           .turns.findLast((turn) => turn.role === 'user')?.text ?? '';
-      const nestorTexts = messagesOf(store().chats, key).flatMap((message) =>
-        message.kind === 'chosen'
-          ? [message.text]
-          : message.kind === 'version'
-            ? [message.version]
-            : message.kind === 'versions'
-              ? message.items.map((item) => item.text)
-              : message.kind === 'starter'
-                ? [message.request]
-                : [],
-      );
+      const nestorTexts = nestorWrote(messagesOf(store().chats, key));
       store().post(key, {
         kind: 'request',
         n,

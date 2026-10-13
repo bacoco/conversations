@@ -9,11 +9,23 @@ export const levelName = (level: LevelId, t: TFunction) =>
     expert: t('Expert'),
   })[level];
 
-export const badgeText = (badge: BadgeId, t: TFunction) =>
+/**
+ * Each badge: its name, and in one sentence what to do to earn it. The
+ * lessons badge says how many lessons the course has.
+ */
+export const badgeText = (
+  badge: BadgeId,
+  t: TFunction,
+  lessonsTotal = 8,
+): { title: string; how: string } =>
   ({
     'first-step': {
       title: t('First step'),
-      how: t('Have a prompt analysed by the coach.'),
+      how: t('Have a request analysed by Nestor.'),
+    },
+    'first-case': {
+      title: t('First practical case'),
+      how: t('Finish a practical case of your job.'),
     },
     'great-prompt': {
       title: t('Great prompt'),
@@ -21,15 +33,17 @@ export const badgeText = (badge: BadgeId, t: TFunction) =>
     },
     rewriter: {
       title: t('Rewriter'),
-      how: t('Use 3 prompts improved by the coach.'),
+      how: t('Ask Nestor to improve 3 requests.'),
     },
     librarian: {
       title: t('Librarian'),
-      how: t('Complete 5 prompts with Nestor.'),
+      how: t('Complete 5 requests of the library with Nestor.'),
     },
     diligent: {
       title: t('Diligent learner'),
-      how: t('Finish the 7 lessons of the course.'),
+      how: t('Finish the {{count}} lessons of the course.', {
+        count: lessonsTotal,
+      }),
     },
     'quiz-master': {
       title: t('Quiz master'),
@@ -37,7 +51,7 @@ export const badgeText = (badge: BadgeId, t: TFunction) =>
     },
     reflective: {
       title: t('Reflective'),
-      how: t('Review a whole working session.'),
+      how: t('Ask Nestor for the review of a working session.'),
     },
     challenger: {
       title: t('Challenger'),

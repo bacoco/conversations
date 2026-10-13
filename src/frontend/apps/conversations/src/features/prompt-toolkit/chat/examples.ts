@@ -12,12 +12,17 @@ export interface ExamplePair {
 }
 
 /**
- * « Voir des exemples »: the three practical cases of the user's job, as
+ * « Voir des exemples »: one case of each level of the user's job, as
  * before / after. Without a job, the first case of three different jobs.
  */
 export const examplePairs = (jobId: JobId | undefined): ExamplePair[] => {
+  // One case of each level of the job: the first of each, in order.
   const cases = jobId
-    ? casesOf(jobId)
+    ? [1, 2, 3].flatMap((level) =>
+        casesOf(jobId)
+          .filter((item) => item.level === level)
+          .slice(0, 1),
+      )
     : (['assistant-direction', 'accueil-usagers', 'encadrant'] as JobId[])
         .filter((id) => JOB_IDS.includes(id))
         .map((id) => casesOf(id)[0]);

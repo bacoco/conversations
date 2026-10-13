@@ -15,6 +15,7 @@ export const PanelHeaderTools = ({
   isExpanded,
   onSettings,
   onReset,
+  resetLabel,
   onExpand,
   onClose,
 }: {
@@ -22,6 +23,8 @@ export const PanelHeaderTools = ({
   isExpanded: boolean;
   onSettings: () => void;
   onReset?: () => void;
+  /** What the bin does here: « Recommencer », or erase Nestor's thread. */
+  resetLabel?: string;
   onExpand?: () => void;
   onClose?: () => void;
 }) => {
@@ -41,8 +44,8 @@ export const PanelHeaderTools = ({
           color="neutral"
           variant="tertiary"
           onClick={onReset}
-          aria-label={t('Start over')}
-          title={t('Start over')}
+          aria-label={resetLabel ?? t('Start over')}
+          title={resetLabel ?? t('Start over')}
           icon={<Icon iconName="delete" $size="20px" />}
         />
       )}

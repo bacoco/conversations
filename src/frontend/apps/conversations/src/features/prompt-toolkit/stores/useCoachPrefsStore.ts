@@ -69,6 +69,9 @@ interface CoachPrefsState {
   /** « Plus tard » to « Quel est votre métier ? »: not asked again. */
   jobLater: boolean;
   setJobLater: (later: boolean) => void;
+  /** Nestor's round button outside the coach: hidden unless asked for. */
+  showDock: boolean;
+  setShowDock: (show: boolean) => void;
   reset: () => void;
 }
 
@@ -88,6 +91,7 @@ const initialPrefs = {
   feltAskedAt: 0,
   knownParts: [] as GridPart[],
   jobLater: false,
+  showDock: false,
 };
 
 /** A part of "Auto" runs only when "Auto" itself is on. */
@@ -130,6 +134,7 @@ export const useCoachPrefsStore = create<CoachPrefsState>()(
             : { knownParts: [...state.knownParts, part] },
         ),
       setJobLater: (jobLater) => set({ jobLater }),
+      setShowDock: (showDock) => set({ showDock }),
       reset: () => set(initialPrefs),
     }),
     {

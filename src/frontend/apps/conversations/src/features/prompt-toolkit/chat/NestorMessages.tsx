@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components';
 
 import { caseById } from '../jobs/jobs';
+import { ReviewLevelLine } from '../rewards/ReviewLevelLine';
 import { startTraining } from '../stores/useTrainerStore';
 
 import { StarRequest } from './StarRequest';
@@ -635,7 +636,10 @@ export const MessageView = ({
       // user did not know yet is a real lack.
       const warn = message.missing.length > 0;
       const unfound = message.unfound ?? [];
-      const { issue, worked, tryNow } = message.note;
+      const { issue, tryNow } = message.note;
+      // Praising a request Nestor wrote would be Nestor praising himself.
+      const worked =
+        !message.by || message.by === 'user' ? message.note.worked : '';
       // One remark first, the most useful; the rest waits behind the link.
       const main = unfound.length
         ? 'unfound'
@@ -644,9 +648,10 @@ export const MessageView = ({
           : worked
             ? 'worked'
             : 'try';
+      // What to do always shows under the remark: a remark alone helps no one.
       const tryLine = tryNow && (
         <span>
-          <strong>{t('To try:')}</strong> {tryNow}
+          <strong>{t('To do:')}</strong> {tryNow}
         </span>
       );
       return (
@@ -664,7 +669,7 @@ export const MessageView = ({
           {main === 'issue' &&
             (warn ? <Warn>⚠ {issue}</Warn> : <span>{issue}</span>)}
           {main === 'worked' && <span>✓ {worked}</span>}
-          {main === 'try' && tryLine}
+          {tryLine}
           <details>
             <summary
               style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
@@ -674,7 +679,6 @@ export const MessageView = ({
             <UnderBubble style={{ paddingLeft: 0, paddingTop: 6 }}>
               {main !== 'issue' && issue && <span>{issue}</span>}
               {main !== 'worked' && worked && <span>✓ {worked}</span>}
-              {main !== 'try' && tryLine}
               {message.note.tryWhy && <span>{message.note.tryWhy}</span>}
               <Choices>
                 <Choice
@@ -765,6 +769,7 @@ export const MessageView = ({
                   })}
             </span>
           ))}
+          <ReviewLevelLine reviewId={message.id} />
           {message.favorite && (
             <>
               <span>{t('A request to keep in your favorites:')}</span>

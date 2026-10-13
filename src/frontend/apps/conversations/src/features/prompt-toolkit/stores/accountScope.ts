@@ -11,6 +11,7 @@ import { useCoachTipsStore } from './useCoachTipsStore';
 import { useMyStyleStore } from './useMyStyleStore';
 import { useNestorChatStore } from './useNestorChatStore';
 import { useProfileStore } from './useProfileStore';
+import { usePromptToolkitStore } from './usePromptToolkitStore';
 import { useTrainerStore } from './useTrainerStore';
 
 /** Whose data this browser holds: a fingerprint, never the account. */
@@ -58,6 +59,16 @@ const eraseAll = () =>
     store.persist.clearStorage();
     store.setState(store.getInitialState(), true);
   });
+
+/**
+ * « Tout recommencer à zéro »: everything Nestor keeps for this person —
+ * job, direction, themes, progress, cases, favorites, settings, thread — and
+ * the welcome shows again. The conversations with the Assistant stay.
+ */
+export const startNestorAgain = () => {
+  eraseAll();
+  usePromptToolkitStore.setState({ hasSeenWelcome: false });
+};
 
 /**
  * On a shared computer, each account sees only its own Nestor: unless the

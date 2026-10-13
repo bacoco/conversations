@@ -1,22 +1,24 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
+import { JobSelect } from '../chat/JobSelect';
 import { useAiAvailable, useAiUnavailable } from '../coach/aiAvailability';
 import { WeeklyCase } from '../learn/cases/WeeklyCase';
+import { useCasesStore } from '../learn/cases/casesProgress';
 import { REVIEW_FIRST_FROM } from '../learn/steps';
 import { useReviewDue } from '../learn/useLearnProgress';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
-import { ProfileSettings } from './ProfileSettings';
 
 type Tone = 'success' | 'brand' | 'info';
 
@@ -359,8 +361,12 @@ export const PanelHome = () => {
   const isAiUnavailable = useAiUnavailable();
   const isAiAvailable = useAiAvailable();
   const openTool = usePromptToolkitStore((state) => state.openTool);
-  const openFavorites = usePromptToolkitStore((state) => state.openFavorites);
   const isBeginner = useProfileStore((state) => state.isBeginner);
+  const job = useProfileStore((state) => state.job);
+  const jobLater = useCoachPrefsStore((state) => state.jobLater);
+  // Each day of use counts: « Votre semaine » waits for a few.
+  const noteDay = useCasesStore((state) => state.noteDay);
+  useEffect(() => noteDay(), [noteDay]);
   const hasUsedCoach = useNestorChatStore(
     (state) => Object.keys(state.chats).length > 0,
   );
@@ -411,15 +417,6 @@ export const PanelHome = () => {
       description: t('Emails, summaries, ready-made templates.'),
       onSelect: () => openSection('tools'),
     },
-    {
-      id: 'favorites',
-      image: NESTOR_FAVORITES_URL,
-      icon: 'star',
-      tone: 'brand',
-      title: t('My favorites'),
-      description: t('Your requests and models, one click away.'),
-      onSelect: () => openFavorites(),
-    },
   ];
 
   if (!hasSeenWelcome) {
@@ -431,7 +428,7 @@ export const PanelHome = () => {
   ).filter((card) => !isAiUnavailable || card.id !== 'coach-manual');
 
   return (
-    <Box $gap="12px" $padding={{ all: 'base' }} $css={homeCss}>
+    <Box $gap="16px" $padding={{ all: 'base' }} $css={homeCss}>
       <NestorHeader />
       {isAiAvailable && TRANSCRIPTION_URL && (
         <ResumeTranscript onResume={() => openTool('minutes')} />
@@ -441,7 +438,7 @@ export const PanelHome = () => {
         $css={css`
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
+          gap: 12px;
           margin: 0;
           padding: 0;
           list-style: none;
@@ -476,7 +473,7 @@ export const PanelHome = () => {
                   }
                   justify-content: ${isWide ? 'center' : 'flex-start'};
                   text-align: ${isWide ? 'left' : 'center'};
-                  padding: 10px 8px;
+                  padding: 14px 10px;
                 `}
               >
                 {card.start && (
@@ -545,9 +542,22 @@ export const PanelHome = () => {
           );
         })}
       </Box>
-      {/* One real task of the user's job each week. */}
-      <WeeklyCase />
-      <ProfileSettings />
+      {/* Until the job is chosen, the question waits under the cards. */}
+      {!job && !jobLater ? (
+        <Box
+          $gap="8px"
+          $align="center"
+          $css="text-align: center; padding-top: 4px;"
+        >
+          <Text $size="sm" $variation="secondary">
+            {t('To speak of your own work, I need one thing:')}
+          </Text>
+          <JobSelect />
+        </Box>
+      ) : (
+        /* After a few days of use: a few actions for the user's job. */
+        <WeeklyCase />
+      )}
     </Box>
   );
 };

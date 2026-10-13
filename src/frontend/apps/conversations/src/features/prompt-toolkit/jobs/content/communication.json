@@ -145,6 +145,230 @@
         "La recommandation mentionne la limite liée aux congés scolaires."
       ],
       "lesson": "Pour préparer une décision, demandez une comparaison, ses limites, puis une recommandation séparée."
+    },
+    {
+      "id": "communication-4",
+      "jobId": "communication",
+      "level": 1,
+      "task": "proposer un post pour un réseau social institutionnel",
+      "title": "Un post pour annoncer une visite",
+      "minutes": 5,
+      "situation": "Le ministère ouvre ses portes au public pendant les Journées européennes du patrimoine. Le service de communication vous demande un post pour le compte institutionnel du ministère, à publier lundi. Vous avez les informations pratiques validées.",
+      "material": "Informations pratiques validées (fictives)\nJournées européennes du patrimoine — visite des bâtiments du ministère\nDates : samedi 20 et dimanche 21 septembre, de 10 h à 18 h.\nAccès gratuit, sur inscription en ligne obligatoire à partir du lundi 8 septembre.\nAu programme : visite des salons historiques, exposition sur l'histoire de la monnaie, rencontre avec des agents de différents métiers.\nPièce d'identité demandée à l'entrée.",
+      "startingRequest": "fais un post pour les journées du patrimoine",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un post pour le compte institutionnel du ministère sur un réseau social, afin d'annoncer la visite ouverte au public pendant les Journées européennes du patrimoine. Le post s'adresse au grand public et doit tenir en 280 caractères au maximum, espaces compris. Ton institutionnel et accueillant, sans émoticône. Mettez d'abord ce qui donne envie de venir, puis les dates et l'inscription obligatoire. Gardez exactement les dates et les horaires, et n'ajoutez aucune activité qui ne figure pas dans le texte. Proposez deux versions.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous fixez 280 caractères et deux versions : vous choisissez sans avoir à couper vous-même."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous dites que le post vise le grand public : l'Assistant met l'envie de venir avant les détails pratiques."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de garder les dates et l'inscription obligatoire : personne ne se présente à l'entrée sans s'être inscrit."
+        }
+      ],
+      "checkAnswer": [
+        "Chaque version tient en 280 caractères, espaces compris.",
+        "Les dates des 20 et 21 septembre et l'inscription obligatoire figurent bien.",
+        "Aucune activité inventée, comme un concert ou une dégustation, n'apparaît."
+      ],
+      "lesson": "Pour un texte court, donnez la longueur exacte et ce qui doit absolument y figurer."
+    },
+    {
+      "id": "communication-5",
+      "jobId": "communication",
+      "level": 1,
+      "task": "proposer des titres et un chapô pour un article intranet",
+      "title": "Trois titres et un chapô",
+      "minutes": 5,
+      "situation": "Un collègue vous envoie un article pour l'intranet sur la nouvelle salle de visioconférence du site. Le texte est correct, mais le titre « Information salle 3B » ne donne pas envie de lire. Vous voulez des titres et un chapô plus engageants.",
+      "material": "Article proposé (fictif)\nTitre : Information salle 3B\nDepuis le 6 octobre, la salle 3B du 3e étage est équipée pour la visioconférence : grand écran, caméra grand angle, micros au plafond. Elle accueille jusqu'à 12 personnes sur place. Elle se réserve comme les autres salles, dans l'outil de réservation habituel. Un guide d'utilisation d'une page est affiché dans la salle. En cas de problème technique, contactez l'assistance informatique au poste 4500. Cet équipement répond aux demandes exprimées par plusieurs services lors de l'enquête sur les conditions de travail du printemps.",
+      "startingRequest": "trouve un meilleur titre",
+      "goodRequest": "À partir du texte ci-dessous, proposez trois titres et un chapô pour cet article de l'intranet sur la salle de visioconférence 3B. Les lecteurs sont les agents du site, qui parcourent le fil d'actualité en quelques secondes. Titres : dix mots au maximum chacun, dans trois styles différents (informatif, pratique, accrocheur). Chapô : deux phrases qui disent ce qui change pour les agents et donnent envie de lire la suite. Ton simple, sans jeu de mots forcé. N'ajoutez aucune information absente de l'article.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous demandez trois titres de styles différents : vous avez un vrai choix au lieu de trois variantes de la même phrase."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous rappelez que les agents parcourent le fil en quelques secondes : l'Assistant met en avant ce qui change pour eux."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez dix mots par titre et deux phrases pour le chapô : la réponse s'insère directement dans la page."
+        }
+      ],
+      "checkAnswer": [
+        "Chaque titre fait dix mots au plus et les trois styles sont réellement différents.",
+        "Le chapô ne dépasse pas deux phrases et dit ce que la salle permet aux agents.",
+        "Aucun chiffre ni équipement n'est ajouté ou modifié, par exemple une capacité différente de 12 personnes."
+      ],
+      "lesson": "Demandez plusieurs propositions de styles différents : choisir est plus facile que corriger."
+    },
+    {
+      "id": "communication-6",
+      "jobId": "communication",
+      "level": 2,
+      "task": "construire le sommaire d'une newsletter interne",
+      "title": "Le sommaire de la newsletter interne",
+      "minutes": 10,
+      "situation": "Vous préparez le numéro de décembre de la newsletter interne de la direction : trois articles et une rubrique « En bref ». Huit sujets vous ont été proposés. Vous devez choisir, ordonner et justifier le sommaire auprès de votre cheffe de service.",
+      "material": "Sujets proposés pour le numéro de décembre (fictifs)\n1. Ouverture des inscriptions au plan de formation de l'an prochain, jusqu'au 15 décembre.\n2. Portrait d'une équipe du service des remboursements (accord de l'équipe obtenu).\n3. Bilan chiffré de la campagne de télédéclaration : publiable seulement après validation par le cabinet, prévue fin décembre.\n4. Rappel des règles de sécurité informatique avant les congés.\n5. Résultats du tournoi de football inter-services.\n6. Nouveau service de prise de rendez-vous en ligne pour les usagers, ouvert depuis le 17 novembre.\n7. Fermeture du restaurant administratif du 24 décembre au 2 janvier.\n8. Retour en images sur la journée d'accueil des nouveaux arrivants.",
+      "startingRequest": "fais le sommaire de la newsletter de décembre",
+      "goodRequest": "À partir du texte ci-dessous, proposez le sommaire du numéro de décembre de notre newsletter interne, lue par les agents de la direction. La lettre comprend trois articles et une rubrique « En bref » de trois ou quatre informations courtes. Choisissez les sujets en donnant la priorité à ce qui demande une action des agents avant une date, puis à ce qui les concerne tous. Le bilan de la campagne de télédéclaration n'est pas encore validé par le cabinet : ne le retenez pas. Format : le sommaire dans l'ordre, avec pour chaque article un titre provisoire et une ligne de justification, puis la liste des sujets écartés avec la raison. Ne modifiez aucune date.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous donnez votre règle de choix, d'abord les actions à faire avant une date : le sommaire sert vraiment les agents."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous écartez le bilan non validé par le cabinet : la newsletter ne publie pas un chiffre avant sa validation."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez une justification et la liste des sujets écartés : votre cheffe de service comprend vos choix et peut les modifier."
+        }
+      ],
+      "checkAnswer": [
+        "Le bilan de la campagne de télédéclaration n'apparaît ni dans les articles ni dans « En bref ».",
+        "Les inscriptions au plan de formation, avec la date limite du 15 décembre, figurent en bonne place.",
+        "Les huit sujets sont tous traités : retenus, ou écartés avec une raison."
+      ],
+      "lesson": "Quand l'Assistant doit choisir, donnez-lui votre règle de priorité et demandez-lui de justifier ce qu'il écarte."
+    },
+    {
+      "id": "communication-7",
+      "jobId": "communication",
+      "level": 2,
+      "task": "écrire un communiqué de presse",
+      "title": "Écrire un communiqué de presse",
+      "minutes": 10,
+      "situation": "Votre direction a publié ce matin sur le site du ministère les résultats de son enquête de satisfaction auprès des usagers de l'accueil. Vous devez préparer le projet de communiqué de presse qui accompagnera leur diffusion aux journalistes. Il sera relu par le cabinet.",
+      "material": "Résultats de l'enquête de satisfaction des usagers de l'accueil, publiés ce matin (fictifs)\n- 12 000 usagers interrogés entre mars et juin, dans 40 sites d'accueil.\n- 84 % se disent satisfaits de l'accueil, contre 79 % lors de l'enquête précédente, il y a deux ans.\n- Point fort : la courtoisie des agents (91 % de satisfaits).\n- Point faible : le temps d'attente au téléphone (61 % de satisfaits).\n- Mesure déjà engagée : rappel des usagers sur rendez-vous, depuis septembre, dans 10 départements.\n- Résultats complets : rapport en ligne sur le site du ministère.",
+      "startingRequest": "écris un communiqué sur l'enquête de satisfaction",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet de communiqué de presse sur les résultats de l'enquête de satisfaction des usagers de l'accueil, destiné aux journalistes et relu ensuite par le cabinet. Format : un titre informatif, un chapô de deux phrases avec le chiffre principal, puis trois courts paragraphes (résultats, point à améliorer, mesure engagée), et une dernière ligne qui renvoie au rapport en ligne ; 250 mots au maximum. Ton factuel et sobre, sans autosatisfaction. Mentionnez le point faible du temps d'attente au téléphone, ne citez que les chiffres du texte, n'inventez aucune citation d'un responsable et terminez par la mention « Contact presse », sans nom ni numéro.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez la structure d'un communiqué, titre, chapô puis paragraphes : le journaliste trouve l'essentiel dans les premières lignes."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton sobre et la mention du point faible : le communiqué reste crédible auprès des journalistes."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute citation inventée et tout chiffre absent du texte : rien ne part au cabinet qu'un responsable n'a pas dit."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres repris sont exacts : 12 000 usagers, 40 sites, 84 % contre 79 %, 91 % et 61 %.",
+        "Le temps d'attente au téléphone est présenté honnêtement comme le point à améliorer.",
+        "Aucune citation de responsable n'est inventée et la mention « Contact presse » ne comporte ni nom ni numéro."
+      ],
+      "lesson": "Pour un texte public, dites ce qu'il ne faut surtout pas inventer, notamment les citations et les chiffres."
+    },
+    {
+      "id": "communication-8",
+      "jobId": "communication",
+      "level": 2,
+      "task": "construire un plan de communication interne",
+      "title": "Un plan de communication interne",
+      "minutes": 10,
+      "situation": "Le nouvel intranet de votre direction ouvre le 2 février et l'ancien fermera peu après. Vous devez informer les 600 agents de la direction au bon moment, sans les noyer de messages. Votre chef vous demande un plan de communication d'ici la fin de la semaine.",
+      "material": "Éléments du projet (fictifs)\n- Ouverture du nouvel intranet de la direction : lundi 2 février. L'ancien intranet sera fermé le 13 février.\n- Public : 600 agents, dont 150 sur deux sites distants ; beaucoup sont en télétravail deux jours par semaine.\n- Canaux disponibles : newsletter interne (envoi un mardi sur deux), courriel de la directrice, écrans d'accueil des sites, réunions de service.\n- Ce qui change pour les agents : nouvelle adresse, favoris à refaire, rubrique « Mes démarches » regroupée sur la page d'accueil.\n- Supports prévus : un guide d'une page et une vidéo de deux minutes, livrés le 20 janvier.\n- À éviter : plus d'un message par semaine sur ce sujet.",
+      "startingRequest": "fais un plan de com pour le nouvel intranet",
+      "goodRequest": "À partir du texte ci-dessous, construisez un plan de communication interne pour l'ouverture du nouvel intranet de la direction le 2 février, que je présenterai à mon chef. Format : un tableau en quatre colonnes, semaine, public, message clé, canal, qui couvre la période du 20 janvier au 13 février, puis trois lignes sur la façon de toucher les agents en télétravail et ceux des sites distants. Respectez la règle d'un message par semaine au maximum, utilisez seulement les canaux et supports cités, et ne prévoyez aucune action qui demande des moyens supplémentaires. Ton professionnel.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau semaine, public, message, canal : le plan se lit d'un coup d'œil et se suit semaine après semaine."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous imposez un message par semaine au maximum : les agents sont informés sans être saturés."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant aux canaux et supports existants : le plan reste réalisable sans moyens nouveaux."
+        }
+      ],
+      "checkAnswer": [
+        "Le tableau ne prévoit jamais plus d'un message par semaine sur le nouvel intranet.",
+        "Les dates du 20 janvier, du 2 février et du 13 février sont exactes, et la fermeture de l'ancien intranet est annoncée avant qu'elle n'ait lieu.",
+        "Aucun canal ou support nouveau n'est inventé, comme une application ou une affiche papier."
+      ],
+      "lesson": "Pour un plan, donnez à l'Assistant vos moyens réels et vos limites : il proposera ce que vous pouvez vraiment faire."
+    },
+    {
+      "id": "communication-9",
+      "jobId": "communication",
+      "level": 3,
+      "task": "rédiger un projet de discours",
+      "title": "Un projet de discours pour la directrice",
+      "minutes": 15,
+      "situation": "Votre directrice ouvrira dans dix jours le séminaire annuel de l'encadrement de la direction, devant 120 cadres. Elle vous demande un projet d'intervention de trois minutes et vous a transmis ses idées en quelques lignes. Le texte ne doit l'engager sur rien qu'elle n'a pas décidé.",
+      "material": "Idées transmises par la directrice (fictives)\n- Remercier les équipes pour l'année : forte charge avec la campagne de déclarations, délais tenus dans l'ensemble.\n- Un chiffre que je veux citer : 96 % des dossiers traités dans les délais cette année.\n- Le thème du séminaire : « Mieux travailler ensemble entre services ».\n- Dire que je compte sur les cadres pour faire remonter les difficultés de terrain.\n- Évoquer la réorganisation du réseau : PAS d'annonce, juste dire que la concertation se poursuit et qu'on en reparlera au printemps.\n- Finir sur une note positive, sans formule toute faite.",
+      "startingRequest": "écris un discours pour ma directrice",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet d'intervention de trois minutes, soit environ 400 mots, que ma directrice prononcera à l'ouverture du séminaire de l'encadrement, devant 120 cadres de la direction. Le texte est fait pour être dit à voix haute : phrases courtes, à la première personne, une idée par paragraphe, dans l'ordre de ses idées. Ton chaleureux et direct, sans formule creuse. Ne citez que le chiffre de 96 %. Sur la réorganisation, n'annoncez rien : dites seulement que la concertation se poursuit et qu'on en reparlera au printemps. N'ajoutez aucun engagement, aucune mesure et aucun exemple inventé, et signalez à la fin les passages qu'elle doit valider.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous dites que le texte sera prononcé et en combien de temps : l'Assistant écrit pour l'oreille, avec des phrases faciles à dire."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous cadrez précisément ce qu'il faut dire de la réorganisation : le discours n'annonce rien que la directrice n'a pas décidé."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant à ses idées et à un seul chiffre : aucun engagement ni exemple inventé ne se retrouve dans sa bouche."
+        }
+      ],
+      "checkAnswer": [
+        "La réorganisation n'est évoquée que pour dire que la concertation se poursuit et qu'on en reparlera au printemps, sans date ni annonce.",
+        "Le seul chiffre cité est 96 % et aucune mesure nouvelle n'est promise.",
+        "Le texte fait environ 400 mots et se lit à voix haute sans buter."
+      ],
+      "lesson": "Quand un texte engage quelqu'un, dites exactement ce qu'il peut dire sur le sujet sensible et demandez ce qui reste à faire valider."
+    },
+    {
+      "id": "communication-10",
+      "jobId": "communication",
+      "level": 3,
+      "task": "répondre à des critiques sur un réseau social institutionnel",
+      "title": "Répondre à des critiques en ligne",
+      "minutes": 15,
+      "situation": "Depuis ce matin, le service en ligne de suivi des remboursements affiche une erreur pour une partie des usagers. Sous le dernier post du compte institutionnel, les commentaires mécontents se multiplient. Votre responsable vous demande dans l'heure une réponse publique à valider, et un point de situation pour la hiérarchie.",
+      "material": "Informations du service informatique, 11 h (fictives)\n- Depuis 8 h 30, environ un usager sur trois reçoit un message d'erreur en se connectant au service en ligne de suivi des remboursements.\n- Cause identifiée : une mise à jour installée cette nuit. Correction en cours ; heure de rétablissement non garantie.\n- Les données des usagers ne sont pas touchées.\n- Aucun dossier n'est perdu : les remboursements en cours continuent d'être traités normalement.\n\nExemples de commentaires publiés (fictifs)\n- « Trois fois que j'essaie, c'est inadmissible ! »\n- « Mon remboursement va être bloqué à cause de vous ? »\n- « Et évidemment personne au téléphone. »\n- « Bravo l'administration… »",
+      "startingRequest": "réponds aux commentaires des gens énervés",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse publique unique, à épingler sous notre dernier post, sur la panne du service en ligne de suivi des remboursements. Elle s'adresse à des usagers mécontents et sera validée par ma responsable avant publication. Format : 400 caractères au maximum. Ton calme, respectueux et direct : reconnaissez la gêne, expliquez simplement ce qui se passe, sans détail technique, et rassurez sur les remboursements en cours. Ne donnez aucune heure de rétablissement, ne promettez aucun dédommagement et ne dites rien de l'accueil téléphonique, sur lequel nous n'avons pas d'information. Ne répondez pas aux attaques une par une. Ajoutez ensuite, à part, un point de situation de cinq lignes pour la hiérarchie, avec les faits connus et ce qui reste incertain.",
+      "keyPoints": [
+        {
+          "skill": "tone",
+          "point": "Vous décrivez le ton attendu face à des usagers en colère : la réponse apaise sans se justifier ni polémiquer."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute heure de rétablissement et tout dédommagement : le ministère ne s'engage pas publiquement sur ce qu'il ne maîtrise pas."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous séparez la réponse aux usagers et le point pour la hiérarchie : chacun reçoit les informations dont il a besoin, dans les mots qui lui conviennent."
+        }
+      ],
+      "checkAnswer": [
+        "La réponse publique tient en 400 caractères, ne donne aucune heure de rétablissement et ne promet aucune compensation.",
+        "Elle dit clairement que les remboursements en cours continuent d'être traités et qu'aucun dossier n'est perdu.",
+        "Le point pour la hiérarchie distingue les faits connus (depuis 8 h 30, un usager sur trois) de ce qui reste incertain, comme l'heure de rétablissement."
+      ],
+      "lesson": "Dans une situation sensible, dites à l'Assistant ce que vous ne pouvez pas promettre : c'est souvent là que se trouve le risque."
     }
   ]
 }

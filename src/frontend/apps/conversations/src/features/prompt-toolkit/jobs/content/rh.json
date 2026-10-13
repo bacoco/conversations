@@ -146,6 +146,230 @@
         "Vérifiez qu'aucun classement ni aucune recommandation n'apparaît dans la note."
       ],
       "lesson": "Pour préparer une décision, demandez une comparaison sur des critères que vous fixez, et gardez le choix pour vous."
+    },
+    {
+      "id": "rh-4",
+      "jobId": "rh",
+      "level": 1,
+      "task": "préparer un courriel de rappel aux chefs de bureau",
+      "title": "Rappeler l'échéance des entretiens professionnels",
+      "minutes": 5,
+      "situation": "La campagne des entretiens professionnels se termine bientôt et un tiers seulement des comptes rendus sont arrivés au bureau RH. Vous devez envoyer un rappel aux chefs de bureau de la direction.",
+      "material": "Point sur la campagne (fictif) :\n- entretiens à mener au plus tard le vendredi 26 mars ;\n- comptes rendus signés à transmettre au bureau RH avant le mercredi 31 mars ;\n- 42 comptes rendus reçus sur 128 ;\n- modèle de compte rendu et guide de l'entretien sur l'intranet, rubrique « Carrière » ;\n- questions : boîte fonctionnelle du bureau RH.",
+      "startingRequest": "fais un rappel pour les entretiens",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un courriel de rappel adressé aux chefs de bureau de la direction sur la campagne des entretiens professionnels. Rappelez les deux dates : entretiens à mener au plus tard le vendredi 26 mars, comptes rendus signés à transmettre avant le mercredi 31 mars. Donnez le point d'avancement (42 comptes rendus reçus sur 128) sans désigner de bureau en retard. Indiquez où trouver le modèle et le guide, et à qui poser ses questions. Objet clair, ton cordial et direct, dix lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous distinguez les deux dates, entretiens puis transmission : les chefs de bureau ne les confondent pas."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de ne désigner aucun bureau en retard : le rappel motive sans mettre personne en cause."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un objet clair et dix lignes : le courriel est lu et compris, même par des destinataires pressés."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les deux dates sont exactes et bien distinguées : 26 mars pour les entretiens, 31 mars pour les comptes rendus.",
+        "Vérifiez que le chiffre de 42 sur 128 est repris exactement et qu'un éventuel pourcentage est juste (environ 33 %).",
+        "Vérifiez qu'aucun bureau n'est nommé comme étant en retard."
+      ],
+      "lesson": "Quand un message contient plusieurs dates, précisez à quoi correspond chacune : l'Assistant ne les mélangera pas."
+    },
+    {
+      "id": "rh-5",
+      "jobId": "rh",
+      "level": 1,
+      "task": "répondre à la question d'un agent sur ses congés",
+      "title": "Répondre sur le compte épargne-temps",
+      "minutes": 5,
+      "situation": "Un agent vous demande s'il peut verser sur son compte épargne-temps les jours qu'il n'aura pas pris à la fin de l'année. Vous avez sous la main l'extrait de la note de service de votre direction sur le sujet.",
+      "material": "Courriel reçu :\n« Bonjour, il me restera 9 jours de congés annuels et 4 jours de RTT au 31 décembre. Est-ce que je peux tout mettre sur mon compte épargne-temps ? Et jusqu'à quand je dois faire la demande ? Merci. Un agent du bureau budget »\n\nExtrait de la note de service de la direction (fictive) :\n« Les jours de congés annuels non pris au 31 décembre peuvent être versés sur le compte épargne-temps, à condition que l'agent ait pris au moins 20 jours de congés annuels dans l'année. Les jours de RTT peuvent être versés sans condition. La demande se fait par le formulaire en ligne entre le 1er et le 31 janvier. Au-delà, les jours non versés sont perdus. »",
+      "startingRequest": "réponds pour le cet",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse courte à un agent qui m'interroge sur son compte épargne-temps. Appuyez-vous uniquement sur l'extrait de la note de service. Traitez séparément ses 9 jours de congés annuels et ses 4 jours de RTT, puis indiquez comment et quand faire la demande. Je ne sais pas combien de jours de congés il a déjà pris cette année : énoncez clairement la condition au lieu de supposer qu'il la remplit. Ton cordial, phrases simples, vouvoiement, sans sigle, dix lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous demandez de s'en tenir à la note de service : la réponse ne cite aucune règle venue d'ailleurs, peut-être périmée."
+        },
+        {
+          "skill": "context",
+          "point": "Vous signalez ce que vous ignorez, les congés déjà pris : l'Assistant énonce la condition au lieu de répondre « oui » à tort."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous demandez des phrases simples et sans sigle : l'agent comprend la règle du premier coup."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les 4 jours de RTT peuvent être versés sans condition, comme le dit la note.",
+        "Vérifiez que le versement des 9 jours de congés annuels est soumis à la condition des 20 jours pris dans l'année.",
+        "Vérifiez que la période de demande, du 1er au 31 janvier, et la perte des jours au-delà sont indiquées."
+      ],
+      "lesson": "Dites à l'Assistant ce que vous ne savez pas : il énoncera une condition au lieu d'inventer la réponse."
+    },
+    {
+      "id": "rh-6",
+      "jobId": "rh",
+      "level": 2,
+      "task": "expliquer une ligne du bulletin de paie",
+      "title": "Expliquer une ligne du bulletin de paie",
+      "minutes": 10,
+      "situation": "Un agent passé à temps partiel à 80 % au 1er septembre s'inquiète : son bulletin de paie d'octobre comporte une retenue qu'il ne comprend pas. Le bureau de la paie vous a donné l'explication technique. Vous devez la traduire en mots simples.",
+      "material": "Question de l'agent (fictive) :\n« Bonjour, sur mon bulletin d'octobre, il y a une ligne \"Régularisation temps partiel septembre\" avec moins 412,30 €. Je n'ai rien compris. Est-ce une erreur ? Est-ce que ça va continuer ? »\n\nExplication du bureau de la paie (fictive) :\n« L'arrêté plaçant l'agent à temps partiel à 80 % à compter du 1er septembre est arrivé au service de paie après la clôture de la paie de septembre. L'agent a donc été payé à temps plein en septembre. La retenue d'octobre correspond à la différence entre le traitement à temps plein et le traitement à 80 % pour le mois de septembre. Le traitement d'octobre est, lui, calculé normalement à 80 %. Il n'y aura plus de régularisation ensuite. Si la retenue pose une difficulté, l'agent peut demander un étalement au bureau de la paie. »",
+      "startingRequest": "explique la ligne de paie à l'agent",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse à un agent qui ne comprend pas une retenue sur son bulletin de paie d'octobre. Appuyez-vous uniquement sur l'explication du bureau de la paie. Répondez dans l'ordre à ses deux questions : est-ce une erreur, et est-ce que cela va continuer. Expliquez le mécanisme en mots simples, sans jargon de paie. Reprenez le montant de 412,30 € tel quel, sans recalculer son traitement ni donner d'autre chiffre. Mentionnez la possibilité de demander un étalement au bureau de la paie. Ton rassurant et cordial, quinze lignes maximum, sans reproche envers le service de paie ni envers l'agent.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous imposez l'explication du bureau de la paie comme seule source : l'Assistant n'invente pas de règle de paie."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous demandez des mots simples, sans jargon de paie : l'agent comprend pourquoi la retenue apparaît."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de recalculer et d'ajouter des chiffres : aucun montant faux ne circule sur sa paie."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la réponse dit clairement que ce n'est pas une erreur, mais le rattrapage du mois de septembre payé à temps plein.",
+        "Vérifiez qu'elle indique que la retenue ne se reproduira pas et qu'un étalement peut être demandé au bureau de la paie.",
+        "Vérifiez qu'aucun autre montant que 412,30 € n'apparaît."
+      ],
+      "lesson": "Pour expliquer un sujet technique, donnez l'explication de l'expert et demandez à l'Assistant de la traduire, pas de la refaire."
+    },
+    {
+      "id": "rh-7",
+      "jobId": "rh",
+      "level": 2,
+      "task": "rédiger une note d'information sur une campagne de formation",
+      "title": "Annoncer la campagne de formation",
+      "minutes": 10,
+      "situation": "Le bureau de la formation ouvre les inscriptions du premier semestre. Vous devez rédiger une note d'information pour tous les agents de la direction, à publier sur l'intranet et à envoyer par courriel. Le bureau vous a transmis ses éléments en vrac.",
+      "material": "Éléments du bureau de la formation (fictifs) :\n- inscriptions du 16 novembre au 15 décembre, sur la plateforme de formation ;\n- domaines proposés : bureautique, rédaction administrative, management, préparation aux concours, sécurité informatique ;\n- l'avis du chef de bureau est obligatoire avant toute inscription ;\n- priorité aux agents qui n'ont suivi aucune formation depuis deux ans ;\n- préparation aux concours : peut être financée au titre du compte personnel de formation, par une demande à part ;\n- réponses envoyées mi-janvier ;\n- contact : boîte fonctionnelle du bureau de la formation.",
+      "startingRequest": "écris une note sur les formations",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une note d'information d'une page destinée à tous les agents de la direction, y compris ceux qui n'ont jamais suivi de formation, sur l'ouverture des inscriptions du premier semestre. Plan : en une phrase, ce qui est ouvert et jusqu'à quand ; les domaines proposés ; comment s'inscrire, étape par étape ; qui est prioritaire ; le cas des préparations aux concours ; quand arrivent les réponses ; le contact. Ton clair et encourageant, phrases courtes, sans sigle. N'ajoutez aucun intitulé de formation, aucune date ni aucune règle qui ne figure pas dans les éléments.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous précisez que des agents qui n'ont jamais suivi de formation liront : la démarche est expliquée pas à pas."
+        },
+        {
+          "skill": "format",
+          "point": "Vous donnez le plan : chaque agent trouve tout de suite la date limite et la démarche."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'ajouter des formations ou des règles : la note n'annonce rien que le bureau ne propose pas."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les dates : inscriptions du 16 novembre au 15 décembre, réponses mi-janvier.",
+        "Vérifiez que l'avis obligatoire du chef de bureau figure dans les étapes d'inscription.",
+        "Vérifiez qu'aucun intitulé de formation, aucun nombre de places ni aucune durée n'a été inventé."
+      ],
+      "lesson": "Pour une note adressée à tous, dites que certains lecteurs découvrent le sujet : l'Assistant n'oubliera aucune étape."
+    },
+    {
+      "id": "rh-8",
+      "jobId": "rh",
+      "level": 2,
+      "task": "organiser l'arrivée d'un nouvel agent",
+      "title": "Organiser l'arrivée d'un nouvel agent",
+      "minutes": 10,
+      "situation": "Une nouvelle gestionnaire arrive au bureau des achats le lundi 4 janvier. Son chef de bureau vous demande un programme pour sa première semaine et un courriel de bienvenue à lui envoyer avant son arrivée.",
+      "material": "Notes du chef de bureau et du bureau RH (fictives) :\n- arrivée le lundi 4 janvier à 9 h, accueil par le chef de bureau ;\n- badge et poste informatique : à retirer le lundi matin à l'accueil du bâtiment ;\n- lundi après-midi : présentation de l'équipe et visite des locaux ;\n- mardi : formation au logiciel de suivi des marchés, journée entière ;\n- jeudi à 10 h : rendez-vous avec le bureau RH pour le dossier administratif ;\n- tutrice : une gestionnaire expérimentée du bureau ;\n- télétravail : possible après trois mois, demande à faire avec le chef de bureau ;\n- à apporter : pièce d'identité et relevé d'identité bancaire.",
+      "startingRequest": "fais un programme pour le nouvel agent",
+      "goodRequest": "À partir du texte ci-dessous, rédigez deux documents pour l'arrivée d'une nouvelle gestionnaire au bureau des achats. 1. Le programme de sa première semaine, du lundi 4 au vendredi 8 janvier, en tableau jour par jour : jour, horaire s'il est connu, activité, avec qui. Pour les moments sans activité prévue, écrivez « prise de poste avec la tutrice » plutôt que d'inventer une activité. 2. Un courriel de bienvenue à lui envoyer avant son arrivée : heure et lieu du rendez-vous, documents à apporter, programme en pièce jointe. Pour le télétravail, reprenez exactement la règle des trois mois, sans rien promettre de plus. Ton chaleureux et simple, sans sigle.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau jour par jour et un courriel séparé : chaque document a sa forme habituelle."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous dites quoi écrire pour les moments sans activité : l'Assistant ne remplit pas la semaine de réunions inventées."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton chaleureux et simple : la nouvelle arrivante se sent attendue."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la formation du mardi et le rendez-vous avec le bureau RH le jeudi à 10 h sont à la bonne place.",
+        "Vérifiez qu'aucune réunion ni aucun horaire absent des notes n'a été ajouté.",
+        "Vérifiez que le courriel demande la pièce d'identité et le relevé d'identité bancaire, et ne promet pas de télétravail avant trois mois."
+      ],
+      "lesson": "Dites à l'Assistant quoi faire des cases vides : sinon il risque de les remplir avec des éléments inventés."
+    },
+    {
+      "id": "rh-9",
+      "jobId": "rh",
+      "level": 3,
+      "task": "répondre à un agent qui n'a pas été promu",
+      "title": "Répondre à un agent non promu",
+      "minutes": 15,
+      "situation": "Un agent vous écrit, déçu de ne pas figurer au tableau d'avancement cette année. Il demande pourquoi et compare sa situation à celle d'un collègue promu. Vous devez préparer une réponse que votre chef de bureau relira, à partir des lignes directrices de gestion de la direction.",
+      "material": "Courriel reçu (fictif) :\n« Bonjour, je ne figure pas au tableau d'avancement alors qu'un collègue du même bureau, arrivé après moi, y est. Je trouve cela injuste. Sur quels critères avez-vous décidé ? Est-ce que je serai promu l'an prochain ? Un agent du bureau des aides »\n\nExtrait des lignes directrices de gestion de la direction (fictif) :\n« L'inscription au tableau d'avancement tient compte de la valeur professionnelle, appréciée notamment à partir des comptes rendus d'entretien professionnel, et des acquis de l'expérience professionnelle. L'ancienneté n'est pas à elle seule un critère suffisant. Le nombre de promotions est limité chaque année. Tout agent peut demander un entretien avec son supérieur hiérarchique pour échanger sur son parcours et ses perspectives. »",
+      "startingRequest": "réponds à l'agent qui conteste sa promotion",
+      "goodRequest": "À partir du texte ci-dessous, préparez une réponse à un agent déçu de ne pas figurer au tableau d'avancement ; mon chef de bureau la relira avant envoi. Appuyez-vous uniquement sur l'extrait des lignes directrices de gestion pour expliquer les critères. Ne parlez pas du collègue promu et ne faites aucune comparaison entre eux. Ne promettez rien pour l'an prochain et ne portez aucune appréciation sur sa valeur professionnelle. Proposez-lui l'entretien prévu par les lignes directrices pour parler de son parcours. Ton respectueux et bienveillant, qui reconnaît sa déception sans la discuter, quinze lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de parler du collègue et de promettre : la réponse ne révèle rien sur un autre agent et n'engage pas la direction."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'explication aux lignes directrices de gestion : les critères cités sont ceux qui s'appliquent vraiment."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de reconnaître la déception sans la discuter : l'agent se sent respecté, même si la réponse ne change pas la décision."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez qu'aucune phrase ne compare l'agent à son collègue ni ne donne d'information sur celui-ci.",
+        "Vérifiez que la réponse ne dit ni qu'il sera promu l'an prochain, ni qu'il a peu de chances de l'être.",
+        "Vérifiez que les critères cités sont seulement ceux de l'extrait : valeur professionnelle, acquis de l'expérience, ancienneté insuffisante à elle seule, nombre de promotions limité."
+      ],
+      "lesson": "Sur une situation individuelle sensible, dites à l'Assistant ce qu'il ne doit ni révéler ni promettre, et faites relire la réponse."
+    },
+    {
+      "id": "rh-10",
+      "jobId": "rh",
+      "level": 3,
+      "task": "répondre aux questions des représentants du personnel",
+      "title": "Répondre aux représentants du personnel",
+      "minutes": 15,
+      "situation": "La direction prépare une nouvelle note de service sur les horaires variables. Les représentants du personnel ont envoyé quatre questions. Votre chef de service vous demande un projet de réponse, qu'il validera, fondé sur le seul projet de note : certains points ne sont pas encore arbitrés.",
+      "material": "Questions des représentants du personnel (fictives) :\n1. Les plages fixes vont-elles changer ?\n2. Les agents à temps partiel seront-ils concernés de la même façon ?\n3. Les heures faites en plus pourront-elles être récupérées ?\n4. Quand la nouvelle note entrera-t-elle en vigueur ?\n\nProjet de note de service (fictif, non définitif) :\n« Les plages fixes sont fixées de 9 h 30 à 11 h 30 et de 14 h à 16 h, au lieu de 9 h à 11 h 30 et de 14 h à 16 h 30. Les agents à temps partiel suivent les mêmes plages fixes les jours travaillés. Le crédit d'heures pouvant être reporté d'un mois sur l'autre est limité à 12 heures. Point en discussion : possibilité de récupérer ce crédit sous forme de demi-journées. Date d'entrée en vigueur : à fixer après le dialogue social. »",
+      "startingRequest": "réponds aux syndicats sur les horaires",
+      "goodRequest": "À partir du texte ci-dessous, préparez un projet de réponse aux quatre questions des représentants du personnel sur les horaires variables ; mon chef de service le validera. Répondez question par question, dans l'ordre, en vous appuyant uniquement sur le projet de note. Quand le projet ne tranche pas, comme pour la récupération en demi-journées ou la date d'entrée en vigueur, dites clairement que le point est encore en discussion et sera abordé lors du dialogue social, sans laisser entendre une décision. Ne commentez pas les avantages ou les inconvénients des changements. Ton neutre, précis et respectueux, une page maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous imposez le projet de note comme seule source : la réponse n'annonce rien que la direction n'a pas écrit."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de signaler ce qui n'est pas arbitré : un point en discussion n'est pas présenté comme une décision."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton neutre, sans commentaire sur les changements : la réponse informe sans prendre parti dans le dialogue social."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les nouvelles plages fixes sont exactes : de 9 h 30 à 11 h 30 et de 14 h à 16 h.",
+        "Vérifiez que la récupération en demi-journées et la date d'entrée en vigueur sont présentées comme non décidées.",
+        "Vérifiez que la limite de 12 heures reportables est reprise sans être confondue avec la récupération."
+      ],
+      "lesson": "Quand un texte n'est pas définitif, demandez à l'Assistant de distinguer ce qui est décidé de ce qui ne l'est pas."
     }
   ]
 }

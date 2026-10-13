@@ -42,7 +42,6 @@ export const BadgesView = ({ onBack }: { onBack: () => void }) => {
 
   const howToEarn: { event: RewardEvent; label: string }[] = [
     { event: 'analysis', label: t('A prompt analysed') },
-    { event: 'great-prompt', label: t('A grade of 80 or more') },
     { event: 'improvement', label: t('An improved prompt used') },
     { event: 'fill', label: t('A prompt completed with Nestor') },
     { event: 'lesson', label: t('A lesson finished') },

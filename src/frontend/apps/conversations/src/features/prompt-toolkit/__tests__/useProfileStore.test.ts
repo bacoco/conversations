@@ -5,7 +5,7 @@ describe('useProfileStore — the job of the ministry', () => {
 
   it('forgets a former choice that is not one of the ten jobs', () => {
     const { migrate, version } = useProfileStore.persist.getOptions();
-    expect(version).toBe(1);
+    expect(version).toBe(2);
     expect(
       migrate?.(
         { job: { id: 'mail', label: 'Courriels' }, isBeginner: true },

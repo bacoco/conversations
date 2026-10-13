@@ -36,6 +36,8 @@ interface PromptToolkitState {
   showHome: boolean;
   /** False while Nestor's welcome is shown: first opening, and each Home. */
   hasSeenWelcome: boolean;
+  /** The coach's bin was clicked: « Effacer le fil ? » waits for a yes. */
+  eraseAsked: boolean;
   dismissWelcome: () => void;
   /** The coaching mode options, folded by default to save room. */
   isCoachOptionsOpen: boolean;
@@ -195,6 +197,7 @@ export const usePromptToolkitStore = create<PromptToolkitState>()(
         }),
       showHome: true,
       hasSeenWelcome: false,
+      eraseAsked: false,
       dismissWelcome: () => set({ hasSeenWelcome: true }),
       resetCount: 0,
       chatInput: '',

@@ -9,11 +9,13 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { useTrainerStore } from '../stores/useTrainerStore';
 
 import { AskNestorSheet } from './AskNestorSheet';
+import { EraseThreadBar } from './EraseThreadBar';
 import { NestorBar } from './NestorBar';
 import { NestorSettings } from './NestorSettings';
 import { NestorThread } from './NestorThread';
 import { TrainerView } from './TrainerView';
 import { ActionButton } from './ui';
+import { useCloseMatches } from './useCloseMatches';
 import { useNestorAuto } from './useNestorAuto';
 import { useNestorChat } from './useNestorChat';
 import { usePistes } from './usePistes';
@@ -60,10 +62,11 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageCount]);
-  const { phrases } = usePistes(
-    chatInput,
-    isActive && pistesOn && !chat.questions.current && chatInput !== answeredOn,
-  );
+  const livePistes =
+    isActive && pistesOn && !chat.questions.current && chatInput !== answeredOn;
+  const { phrases, isSearching } = usePistes(chatInput, livePistes);
+  // At the same pace: a case to practise and a model, when really close.
+  const close = useCloseMatches(chatInput, livePistes, trainer.item?.id);
 
   if (showSettings) {
     return <NestorSettings onClose={() => setShowSettings(false)} />;
@@ -73,6 +76,7 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
       $direction="column"
       $css="flex: 1; min-height: 0; position: relative; background: #ffffff;"
     >
+      <EraseThreadBar />
       {training ? (
         <TrainerView trainer={trainer} onSay={() => chat.setSheetOpen(true)} />
       ) : (
@@ -89,7 +93,12 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
               </ActionButton>
             </Box>
           )}
-          <NestorThread chat={chat} pistes={phrases} />
+          <NestorThread
+            chat={chat}
+            pistes={phrases}
+            close={close}
+            thinking={isSearching}
+          />
         </>
       )}
       {isActive && <NestorBar chat={chat} />}

@@ -13,6 +13,12 @@ describe('useCoachPrefsStore — Auto', () => {
     expect(isAutoOn(state, 'autoPistes')).toBe(true);
   });
 
+  it('Nestor’s round button on the other screens is hidden by default', () => {
+    expect(useCoachPrefsStore.getState().showDock).toBe(false);
+    useCoachPrefsStore.getState().setShowDock(true);
+    expect(useCoachPrefsStore.getState().showDock).toBe(true);
+  });
+
   it('switched off, nothing runs by itself; on again, as it was left', () => {
     useCoachPrefsStore.getState().setAutoPart('autoAdvice', false);
     useCoachPrefsStore.getState().setAuto(false);

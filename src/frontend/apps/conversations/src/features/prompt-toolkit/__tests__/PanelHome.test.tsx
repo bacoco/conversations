@@ -2,8 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PanelHome } from '../components/PanelHome';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
-import { profileRules, useProfileStore } from '../stores/useProfileStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 const VIDEO = 'Presentation of Nestor, your coach for asking AI well';
@@ -98,7 +99,7 @@ describe('<PanelHome />', () => {
   it('offers no card to switch the coach off', () => {
     render(<PanelHome />);
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
     expect(
       screen.getByRole('button', { name: /Record and transcribe/i }),
     ).toBeInTheDocument();
@@ -107,23 +108,13 @@ describe('<PanelHome />', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('keeps the field and the beginner mode chosen by the user', () => {
+  it('stays short: the job and the beginner mode live in Nestor’s settings', () => {
     useProfileStore.setState({ job: null, isBeginner: false });
     render(<PanelHome />);
-
-    // The ten jobs of the ministry, not families of requests.
-    fireEvent.change(screen.getByLabelText('My field'), {
-      target: { value: 'rh' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'I am a beginner' }));
-
-    const { job, isBeginner } = useProfileStore.getState();
-    expect(job).toEqual({ id: 'rh', label: 'Gestionnaire RH' });
-    expect(isBeginner).toBe(true);
-    expect(profileRules()).toContain('Gestionnaire RH');
+    expect(screen.queryByLabelText('My field')).toBeNull();
     expect(
-      screen.getByRole('button', { name: 'I am a beginner' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      screen.queryByRole('button', { name: 'I am a beginner' }),
+    ).toBeNull();
   });
 
   it('greets with the presentation video once, then shows the cards', () => {
@@ -186,13 +177,9 @@ describe('<PanelHome />', () => {
     expect(screen.getByLabelText(VIDEO)).toBeInTheDocument();
   });
 
-  it('opens my favorites from their card', () => {
+  it('no favorites card: they are the round star at the bottom right', () => {
     render(<PanelHome />);
-    fireEvent.click(screen.getByRole('button', { name: /My favorites/ }));
-    expect(usePromptToolkitStore.getState()).toMatchObject({
-      showHome: false,
-      showFavorites: true,
-    });
+    expect(screen.queryByRole('button', { name: /My favorites/ })).toBeNull();
   });
 
   it('shows a beginner where to start: the coach', () => {
@@ -201,5 +188,26 @@ describe('<PanelHome />', () => {
     expect(
       screen.getByRole('button', { name: /Start here.*Coach/ }),
     ).toBeInTheDocument();
+  });
+
+  it('while no job is chosen, the question waits under the cards', () => {
+    useProfileStore.setState({ job: null });
+    useCoachPrefsStore.setState({ jobLater: false });
+    usePromptToolkitStore.setState({ hasSeenWelcome: true });
+    render(<PanelHome />);
+    expect(
+      screen.getByRole('button', { name: /Learning to ask well/ }),
+    ).toBeInTheDocument();
+    // One line under the cards: a list, never ten buttons.
+    fireEvent.change(
+      screen.getByRole('combobox', { name: 'What is your job?' }),
+      {
+        target: { value: 'rh' },
+      },
+    );
+    expect(useProfileStore.getState().job?.id).toBe('rh');
+    expect(
+      screen.queryByRole('combobox', { name: 'What is your job?' }),
+    ).toBeNull();
   });
 });

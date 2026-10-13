@@ -188,6 +188,76 @@ describe('advice, then versions', () => {
     ).not.toContain('⚠');
   });
 
+  it('a request Nestor wrote is never praised: the advice goes to what to try', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'a',
+            action: 9,
+            kind: 'advice',
+            answerId: 'm1',
+            missing: [],
+            by: 'nestor',
+            note: {
+              upTo: 2,
+              exchanges: 1,
+              fromStart: true,
+              followUp: '',
+              applied: null,
+              worked: 'Votre demande est claire, concise et ciblée.',
+              issue: '',
+              tryNow: 'Collez la note qui fixe vos critères.',
+              tryWhy: '',
+              prompt: '',
+              habit: '',
+              competency: null,
+            },
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(screen.queryByText(/claire, concise et ciblée/)).toBeNull();
+    expect(screen.getByText(/Collez la note/)).toBeInTheDocument();
+  });
+
+  it('the remark, then « À faire », both seen without opening anything', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'a',
+            action: 9,
+            kind: 'advice',
+            answerId: 'm1',
+            missing: [],
+            note: {
+              upTo: 2,
+              exchanges: 1,
+              fromStart: true,
+              followUp: '',
+              applied: null,
+              worked: 'Vous avez posé une question précise.',
+              issue:
+                'Les chiffres de la réponse viennent de l’Assistant, pas de vous.',
+              tryNow: 'Demandez d’où viennent ces chiffres.',
+              tryWhy: '',
+              prompt: '',
+              habit: '',
+              competency: null,
+            },
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    // Outside the closed « Voir le conseil complet »: seen at once.
+    expect(screen.getByText(/viennent de l’Assistant/)).toBeVisible();
+    expect(screen.getByText(/d’où viennent ces chiffres/)).toBeVisible();
+    expect(screen.getByText('To do:')).toBeInTheDocument();
+  });
+
   it('« Le dire » looks apart from the other buttons', () => {
     render(
       <NestorThread

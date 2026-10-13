@@ -192,6 +192,8 @@ export type NestorMessage = Base &
         gaps?: string[];
         /** Figures of the answer found nowhere in what the user gave. */
         unfound?: string[];
+        /** Who wrote the request: Nestor's own words are never praised. */
+        by?: Author;
         answerId: string;
       }
     | { kind: 'suites'; groups: NextGroup[]; answerId: string }

@@ -56,6 +56,20 @@ describe('<NestorThread />', () => {
     ).toBeInTheDocument();
   });
 
+  it('while the user types, Nestor shows he is thinking', () => {
+    render(<NestorThread chat={chatWith([])} pistes={[]} thinking />);
+    expect(
+      screen.getByRole('status', { name: 'Nestor is thinking…' }),
+    ).toBeInTheDocument();
+  });
+
+  it('no thinking sign when he is not looking', () => {
+    render(<NestorThread chat={chatWith([])} pistes={[]} />);
+    expect(
+      screen.queryByRole('status', { name: 'Nestor is thinking…' }),
+    ).toBeNull();
+  });
+
   it('folds a past step into one line that reopens', () => {
     render(
       <NestorThread

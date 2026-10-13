@@ -145,6 +145,229 @@
         "Vérifiez que la réponse ne contient ni accusation de fraude ni montant de rectification."
       ],
       "lesson": "Pour préparer une décision, demandez des faits et des questions, et gardez la conclusion pour vous."
+    },
+    {
+      "id": "controle-4",
+      "jobId": "controle",
+      "level": 1,
+      "task": "préparer une liste de points à vérifier avant un contrôle",
+      "title": "Préparer une grille de visite",
+      "minutes": 5,
+      "situation": "Votre pôle lance une enquête sur l'affichage des prix et l'information sur les allergènes dans les boulangeries. Votre chef de pôle a transmis les points du guide d'enquête. Vous voulez une grille à emporter, simple à remplir sur place.",
+      "material": "Points du guide d'enquête, transmis par le chef de pôle (fictifs) :\n- prix affichés de façon visible et lisible pour chaque produit exposé ;\n- prix au kilo affiché pour les produits vendus au poids ;\n- information écrite sur les allergènes disponible pour les produits non préemballés ;\n- dénomination « boulangerie » : vérifier que le pain est pétri, façonné et cuit sur place ;\n- affichage des moyens de paiement acceptés.",
+      "startingRequest": "fais une liste pour contrôler une boulangerie",
+      "goodRequest": "À partir du texte ci-dessous, transformez les points du guide d'enquête en une grille de visite pour un contrôle en boulangerie. Présentez un tableau avec les colonnes : point à vérifier, formulé comme une question courte à laquelle on répond par oui ou non ; conforme ; non conforme ; observations. Gardez exactement les cinq points du guide, dans le même ordre, sans en ajouter ni en changer le sens. Une page, à imprimer et à remplir sur place.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous décrivez les colonnes de la grille : vous pouvez l'imprimer et la remplir pendant la visite."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous demandez de garder exactement les points du guide : la grille correspond à l'enquête de votre pôle, pas à une liste générale."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez des questions courtes, en oui ou non : chaque ligne se coche en quelques secondes."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la grille contient exactement les cinq points du guide, sans point ajouté.",
+        "Vérifiez que chaque question garde le sens du point du guide, par exemple « pétri, façonné et cuit sur place » pour la dénomination."
+      ],
+      "lesson": "Quand vous avez déjà la liste officielle, demandez à l'Assistant de la mettre en forme, pas de la compléter."
+    },
+    {
+      "id": "controle-5",
+      "jobId": "controle",
+      "level": 1,
+      "task": "expliquer une procédure à un particulier",
+      "title": "Expliquer un courrier à un particulier",
+      "minutes": 5,
+      "situation": "Une contribuable inquiète a reçu une demande de justificatifs dans le cadre de l'examen de sa déclaration de revenus. Elle vous écrit pour savoir ce que cela veut dire et ce qu'elle doit faire. Vous voulez lui répondre simplement, sans rien dire de plus que le courrier.",
+      "material": "Message reçu (fictif) :\n« Bonjour, j'ai reçu un courrier qui me demande des justificatifs pour mes frais réels. Est-ce que je suis accusée de fraude ? Qu'est-ce que je dois faire ? Je ne comprends pas tout. »\n\nExtrait du courrier envoyé (modèle fictif) :\n« Dans le cadre de l'examen de votre déclaration de revenus, nous vous remercions de bien vouloir nous adresser, dans un délai de 30 jours, les justificatifs des frais réels déclarés (frais de déplacement et frais de repas). Vous pouvez les transmettre par la messagerie sécurisée de votre espace particulier ou par courrier. Pour toute question, vous pouvez contacter le service dont les coordonnées figurent en haut de ce courrier. »",
+      "startingRequest": "explique à la dame ce qu'est ce courrier",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse simple à une contribuable inquiète qui a reçu une demande de justificatifs. Appuyez-vous uniquement sur l'extrait du courrier. Expliquez avec des mots simples ce qu'on lui demande, dans quel délai et comment envoyer ses justificatifs. Répondez à sa question sur la fraude en restant exact : le courrier demande des justificatifs et ne l'accuse de rien ; mais ne promettez rien sur la suite de l'examen. Ton calme et rassurant, vouvoiement, sans terme technique, dix lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que la lectrice est inquiète et ne connaît pas les termes techniques : la réponse est simple et apaisante."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez la réponse au courrier reçu : aucune règle ni aucune conséquence n'est inventée."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de promettre une issue : la réponse rassure sans engager l'administration."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que le délai de 30 jours et les deux façons d'envoyer les justificatifs sont indiqués.",
+        "Vérifiez que la réponse n'affirme ni qu'il n'y aura aucune conséquence, ni qu'il pourrait y en avoir.",
+        "Vérifiez qu'aucun terme comme « contrôle sur pièces » ou « rectification » n'est employé sans explication."
+      ],
+      "lesson": "Pour rassurer quelqu'un sans rien promettre, dites à l'Assistant ce qu'il peut affirmer et ce qu'il doit taire."
+    },
+    {
+      "id": "controle-6",
+      "jobId": "controle",
+      "level": 2,
+      "task": "rédiger une synthèse de contrôle pour la hiérarchie",
+      "title": "Synthèse de fin de contrôle",
+      "minutes": 10,
+      "situation": "Vous terminez le contrôle d'un site de vente en ligne d'électroménager. Votre chef de pôle veut une synthèse d'une page pour décider des suites. Vos constats et la suite que vous proposez sont déjà arrêtés ; vos notes ont été rendues anonymes.",
+      "material": "Notes de fin de contrôle (fictives) – Société W, vente en ligne d'électroménager\n- Contrôle ouvert le 2 septembre, à la suite de 14 signalements de consommateurs.\n- Constat 1 : délai de livraison affiché « 48 h » ; sur 30 commandes examinées, 19 livrées en plus de 10 jours.\n- Constat 2 : information sur le droit de rétractation absente de 2 pages produits sur 50 vérifiées.\n- Constat 3 : prix barrés : prix de référence non justifié pour 6 produits sur 20.\n- Explications de l'entreprise : difficultés avec son transporteur ; erreurs sur d'anciennes pages, corrigées pendant le contrôle.\n- Ma proposition de suite : avertissement pour les constats 1 et 2 ; transmission du constat 3 au service juridique pour avis.",
+      "startingRequest": "fais une synthèse du contrôle",
+      "goodRequest": "À partir du texte ci-dessous, mes notes de fin de contrôle déjà anonymisées, rédigez une synthèse d'une page pour mon chef de pôle, qui décidera des suites. Plan : 1. Origine et objet du contrôle ; 2. Constats, en tableau : constat, chiffres, explication de l'entreprise ; 3. Ma proposition de suite, reprise telle quelle. Reprenez tous les chiffres exactement, en indiquant chaque fois sur combien de cas ils portent. Présentez les explications de l'entreprise comme ses déclarations, sans les juger. Ne modifiez pas ma proposition, n'en ajoutez pas d'autre et ne qualifiez aucune infraction. Style factuel, phrases courtes.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous imposez un plan avec un tableau des constats : le chef de pôle voit d'un coup d'œil les faits, les chiffres et les explications."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de reprendre votre proposition telle quelle : l'Assistant met en forme, il ne décide pas des suites."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous exigez chaque chiffre avec sa base, comme « 19 sur 30 » : les constats restent exacts et vérifiables."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les chiffres et leurs bases : 14 signalements, 19 commandes sur 30, 2 pages sur 50, 6 produits sur 20.",
+        "Vérifiez que la proposition est exactement la vôtre : avertissement pour les constats 1 et 2, constat 3 transmis au service juridique.",
+        "Vérifiez que la correction des pages pendant le contrôle est présentée comme une déclaration de l'entreprise."
+      ],
+      "lesson": "Quand la décision vous appartient, donnez-la à l'Assistant et demandez-lui seulement de la présenter, sans la changer."
+    },
+    {
+      "id": "controle-7",
+      "jobId": "controle",
+      "level": 2,
+      "task": "préparer la passation d'un dossier à un collègue",
+      "title": "Passer un dossier à un collègue",
+      "minutes": 10,
+      "situation": "Vous partez en mutation à la fin du mois. Un collègue reprend votre dossier de vérification de comptabilité d'une entreprise du bâtiment, encore en cours. Vous voulez lui laisser une fiche de passation claire, à partir de vos notes rendues anonymes.",
+      "material": "Notes sur le dossier (fictives) – Société V, entreprise du bâtiment\n- Vérification de comptabilité sur deux exercices ; avis de vérification envoyé le 1er septembre.\n- Première intervention sur place le 22 septembre ; deux autres rendez-vous ont eu lieu depuis.\n- Documents reçus : grand livre, factures de ventes, relevés bancaires.\n- Documents en attente : contrats de sous-traitance, demandés le 6 octobre, réponse promise « avant fin octobre ».\n- Point à approfondir : écart entre les encaissements bancaires et le chiffre d'affaires déclaré sur le second exercice ; explication de l'entreprise pas encore reçue.\n- Prochain rendez-vous : 12 novembre à 14 h, sur place, avec le gérant et l'expert-comptable.\n- Interlocuteur habituel : l'expert-comptable de la société.",
+      "startingRequest": "fais une fiche pour mon collègue qui reprend le dossier",
+      "goodRequest": "À partir du texte ci-dessous, mes notes déjà anonymisées, rédigez une fiche de passation pour un collègue vérificateur qui reprend ce dossier en cours. Rubriques : où en est le dossier ; ce qui a été reçu ; ce qui est attendu et depuis quand ; le point à approfondir ; la prochaine échéance ; les interlocuteurs, désignés par leur fonction. Terminez par les trois premières actions à mener, tirées seulement des notes. Style télégraphique accepté, une page maximum. N'avancez aucune hypothèse sur l'écart constaté : écrivez seulement qu'il reste à expliquer.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites qu'un vérificateur reprend le dossier : la fiche va à l'essentiel, sans expliquer une procédure qu'il connaît."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez les rubriques et les premières actions : votre collègue sait par où commencer dès le premier jour."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez les hypothèses sur l'écart : votre collègue reprend un constat neutre, pas une conclusion déjà orientée."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les dates : avis du 1er septembre, première intervention le 22 septembre, documents demandés le 6 octobre, rendez-vous le 12 novembre à 14 h.",
+        "Vérifiez que les contrats de sous-traitance figurent bien parmi les documents encore attendus.",
+        "Vérifiez que l'écart d'encaissements est présenté comme « à expliquer », sans montant ni explication inventés."
+      ],
+      "lesson": "Quand quelqu'un reprend votre travail, demandez à l'Assistant de séparer ce qui est fait, ce qui est attendu et ce qui reste à faire."
+    },
+    {
+      "id": "controle-8",
+      "jobId": "controle",
+      "level": 2,
+      "task": "rédiger une contribution au bilan d'activité",
+      "title": "Rédiger le bilan d'activité du pôle",
+      "minutes": 10,
+      "situation": "La direction demande à chaque pôle un paragraphe pour son bilan d'activité annuel. Votre chef de pôle vous a transmis les chiffres de l'année écoulée et ceux de l'année précédente. Vous devez rédiger un texte court, chiffré et exact.",
+      "material": "Activité du pôle (chiffres fictifs)\n\nIndicateur | Année précédente | Année écoulée\nÉtablissements contrôlés | 420 | 465\nDont contrôles à la suite d'un signalement | 120 | 150\nÉtablissements avec au moins un manquement | 160 | 170\nAvertissements | 110 | 105\nInjonctions | 30 | 42\nProcès-verbaux transmis | 12 | 14\n\nPriorités de l'année fixées par la direction : affichage des prix, sécurité des jouets, vente en ligne.",
+      "startingRequest": "écris le bilan de l'année avec ces chiffres",
+      "goodRequest": "À partir du texte ci-dessous, rédigez le paragraphe de notre pôle pour le bilan d'activité annuel de la direction : quinze lignes maximum, suivies de trois chiffres clés. Comparez l'année écoulée à la précédente pour chaque indicateur, en donnant l'évolution en nombre et, quand c'est utile, en pourcentage arrondi à l'unité. Après le texte, montrez vos calculs dans une liste à part, pour que je les vérifie. Mentionnez les trois priorités de l'année en une phrase, sans les présenter comme la cause des évolutions. N'expliquez aucune évolution : le tableau ne donne pas les causes, je les ajouterai. Style sobre et factuel.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'expliquer les évolutions : le bilan n'avance aucune cause que vous ne pourriez pas justifier."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez les calculs dans une liste à part : vous vérifiez chaque pourcentage avant d'envoyer le texte."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous dites que le texte va dans le bilan de la direction : il reste court, sobre et chiffré."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les évolutions : 465 établissements contrôlés contre 420, soit 45 de plus (environ 11 %) ; 42 injonctions contre 30, soit 40 % de plus.",
+        "Vérifiez que les avertissements (105 contre 110) sont bien présentés comme en baisse.",
+        "Vérifiez qu'aucune phrase n'explique une évolution par une cause absente du tableau, pas même par les priorités de la direction."
+      ],
+      "lesson": "Avec des chiffres, demandez à l'Assistant de montrer ses calculs et de ne pas inventer d'explication."
+    },
+    {
+      "id": "controle-9",
+      "jobId": "controle",
+      "level": 3,
+      "task": "répondre aux observations d'une entreprise contrôlée",
+      "title": "Répondre aux observations d'une entreprise",
+      "minutes": 15,
+      "situation": "Après votre contrôle, la société W a reçu vos constats et vous adresse ses observations écrites. Vous avez déjà arrêté votre position sur chaque point. Vous voulez un projet de réponse argumenté, point par point, que votre chef de pôle validera avant l'envoi.",
+      "material": "Observations de la société W (fictives) :\n1. « Les retards de livraison sont dus à notre transporteur : nous n'en sommes pas responsables. »\n2. « Les deux pages sans information sur la rétractation étaient anciennes et ont été corrigées immédiatement. »\n3. « Nos prix de référence correspondent aux prix conseillés par les fabricants. »\n\nMa position sur chaque point :\n1. Constat maintenu : le délai de 48 h est affiché par la société elle-même sur son site ; c'est cet engagement qui est en cause, quel que soit le transporteur.\n2. Correction prise en compte et à mentionner, mais constat maintenu, car il porte sur la période contrôlée.\n3. Demander les justificatifs : les prix conseillés n'ont pas été fournis pendant le contrôle ; délai de 15 jours pour les transmettre.",
+      "startingRequest": "réponds à l'entreprise qui conteste",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet de réponse aux observations écrites de la société W ; mon chef de pôle le validera avant l'envoi. Répondez point par point, dans l'ordre de ses observations, en reprenant fidèlement ma position sur chacun, sans l'adoucir ni la durcir. Pour chaque point, résumez d'abord en une phrase l'observation de l'entreprise, puis donnez ma réponse et sa raison. Ne mentionnez aucune sanction ni aucune suite, ne qualifiez aucune infraction et ne citez aucun texte. Ton courtois, neutre et ferme, une page et demie maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous fournissez votre position sur chaque point : l'Assistant rédige votre réponse, il ne refait pas l'analyse."
+        },
+        {
+          "skill": "format",
+          "point": "Vous imposez la structure observation, réponse, raison : l'entreprise voit que chacun de ses arguments a été lu."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de parler de sanctions et de textes : le projet respecte l'échange contradictoire sans annoncer de suites que votre chef n'a pas décidées."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que chaque position est la vôtre : point 1 maintenu, point 2 correction prise en compte mais constat maintenu, point 3 justificatifs demandés sous 15 jours.",
+        "Vérifiez que l'argument du transporteur reçoit bien la réponse sur l'engagement de 48 h affiché par la société.",
+        "Vérifiez qu'aucune sanction, aucune suite et aucun article de loi n'apparaît."
+      ],
+      "lesson": "Dans un échange contradictoire, donnez votre position point par point et demandez à l'Assistant de la rédiger, pas de la refaire."
+    },
+    {
+      "id": "controle-10",
+      "jobId": "controle",
+      "level": 3,
+      "task": "préparer un entretien avec une entreprise contrôlée",
+      "title": "Préparer un entretien avec une entreprise",
+      "minutes": 15,
+      "situation": "Pour vous entraîner, vous utilisez un dossier entièrement fictif, construit sur le modèle d'une vérification de comptabilité. Vous préparez le prochain rendez-vous avec le gérant et l'expert-comptable de l'entreprise. Vous voulez une trame de questions qui laisse l'entreprise s'expliquer, sans questions orientées, à faire relire par votre chef de brigade.",
+      "material": "Dossier d'entraînement (fictif) – Société U, entreprise de travaux paysagers (montants en milliers d'euros)\n- Encaissements bancaires du second exercice : 1 240 ; chiffre d'affaires déclaré : 1 090.\n- Plusieurs virements reçus d'un même client, sans facture correspondante dans les factures de ventes.\n- Factures de sous-traitants : 310 ; contrats de sous-traitance demandés, pas encore reçus.\n- Lors du dernier rendez-vous, le gérant a déclaré oralement que certains encaissements seraient des remboursements d'un prêt consenti à une autre société.",
+      "startingRequest": "prépare des questions pour le rendez-vous",
+      "goodRequest": "À partir du texte ci-dessous, dossier entièrement fictif, préparez la trame d'un entretien avec le gérant et l'expert-comptable de la société U ; mon chef de brigade la relira. Commencez par rappeler l'écart entre encaissements et chiffre d'affaires, en montrant le calcul. Puis présentez un tableau en trois colonnes : point à aborder, deux ou trois questions ouvertes et neutres qui permettent à l'entreprise de donner sa version, pièces à demander. Aucune question ne doit supposer une fraude, une dissimulation ou une faute. Présentez l'explication donnée oralement sur le prêt comme une déclaration à vérifier, pas comme un fait. Terminez par la liste des points sur lesquels mon chef de brigade devra se prononcer après l'entretien.",
+      "keyPoints": [
+        {
+          "skill": "tone",
+          "point": "Vous exigez des questions ouvertes et neutres : l'entreprise peut s'expliquer et l'entretien reste loyal."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute question qui suppose une fraude et faites traiter l'explication orale comme une déclaration : rien n'est tenu pour acquis avant vérification."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez aussi les pièces à demander et les points à trancher : la trame prépare la suite sans la décider."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez le calcul de l'écart : 1 240 moins 1 090, soit 150 milliers d'euros.",
+        "Vérifiez qu'aucune question n'emploie des mots comme « fraude », « dissimulation » ou « vous avez caché ».",
+        "Vérifiez que le prêt à une autre société est présenté comme une explication à vérifier, avec des pièces à demander pour le faire."
+      ],
+      "lesson": "Pour préparer un échange sensible, demandez des questions ouvertes et neutres : c'est l'entretien qui établira les faits, pas l'Assistant."
     }
   ]
 }

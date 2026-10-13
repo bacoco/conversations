@@ -59,6 +59,34 @@ describe('Nestor’s settings', () => {
     expect(screen.getByText(/Nestor can be wrong/)).toBeInTheDocument();
   });
 
+  it('brings back Nestor’s round button on the other screens', () => {
+    render(<NestorSettings onClose={vi.fn()} />);
+    const toggle = screen.getByRole('switch', {
+      name: 'Nestor’s round button on the other screens',
+    });
+    expect(toggle).not.toBeChecked();
+    fireEvent.click(toggle);
+    expect(useCoachPrefsStore.getState().showDock).toBe(true);
+  });
+
+  it('« Start again from zero »: everything of Nestor erased, after a yes', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    useCoachPrefsStore.getState().addKnownPart('form');
+    usePromptToolkitStore.setState({ hasSeenWelcome: true });
+    render(<NestorSettings onClose={vi.fn()} />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Start again from zero' }),
+    );
+    // Nothing yet: a yes first.
+    expect(useProfileStore.getState().job?.id).toBe('rh');
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Yes, erase everything' }),
+    );
+    expect(useProfileStore.getState().job).toBeNull();
+    expect(useCoachPrefsStore.getState().knownParts).toEqual([]);
+    expect(usePromptToolkitStore.getState().hasSeenWelcome).toBe(false);
+  });
+
   it('has no bottom bar', () => {
     render(<NestorSettings onClose={vi.fn()} />);
     expect(screen.queryByRole('toolbar')).toBeNull();

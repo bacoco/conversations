@@ -19,10 +19,15 @@ describe('practical cases — progress', () => {
   });
 
   it('the next case is the first not done whose level is open', () => {
-    expect(nextCase('rh', {})?.id).toBe(one.id);
-    expect(nextCase('rh', { [one.id]: 1 })?.id).toBe(two.id);
+    const cases = casesOf('rh');
+    expect(nextCase('rh', {})?.id).toBe(cases[0].id);
+    expect(nextCase('rh', { [cases[0].id]: 1 })?.id).toBe(cases[1].id);
+    // Every case done: none left.
     expect(
-      nextCase('rh', { [one.id]: 1, [two.id]: 2, [three.id]: 3 }),
+      nextCase(
+        'rh',
+        Object.fromEntries(cases.map((item, index) => [item.id, index + 1])),
+      ),
     ).toBeNull();
   });
 

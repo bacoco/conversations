@@ -28,6 +28,7 @@ export const usePistes = (text: string, enabled: boolean) => {
 
   useEffect(() => {
     setPhrases([]);
+    setIsSearching(false);
     if (
       !enabled ||
       query.length < PISTES_MIN_CHARS ||
@@ -37,9 +38,10 @@ export const usePistes = (text: string, enabled: boolean) => {
     ) {
       return;
     }
+    // Seen from the first key: Nestor is looking, through the pause too.
+    setIsSearching(true);
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      setIsSearching(true);
       suggestPistes(query, languageName(i18n.language), controller.signal)
         .then((found) => {
           if (!controller.signal.aborted) setPhrases(found);

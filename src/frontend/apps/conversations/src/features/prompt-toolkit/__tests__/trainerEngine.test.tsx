@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { useTrainer } from '../chat/useTrainer';
-import { caseById } from '../jobs/jobs';
+import { caseById, casesOf } from '../jobs/jobs';
 import { useCasesStore } from '../learn/cases/casesProgress';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { useProfileStore } from '../stores/useProfileStore';
@@ -156,9 +156,11 @@ describe('the trainer, step by step', () => {
     act(() => result.current.verified());
     expect(trainer().step).toBe('done');
     expect(useCasesStore.getState().done['rh-1']).toBeDefined();
-    expect(result.current.nextCaseId).toBe('rh-2');
+    // The next case of the job, from the easiest not done.
+    const next = casesOf('rh').find((item) => item.id !== 'rh-1')!.id;
+    expect(result.current.nextCaseId).toBe(next);
     act(() => result.current.nextCase());
-    expect(trainer()).toMatchObject({ caseId: 'rh-2', step: 'read' });
+    expect(trainer()).toMatchObject({ caseId: next, step: 'read' });
   });
 
   it('« Revenir au coach » ends the case, back where the user was', () => {
@@ -166,5 +168,21 @@ describe('the trainer, step by step', () => {
     act(() => result.current.leave());
     expect(trainer().caseId).toBeNull();
     expect(usePromptToolkitStore.getState().mode).toBe('learn');
+  });
+
+  it('a finished case closes once the user goes elsewhere', () => {
+    useTrainerStore.getState().update({ step: 'done' });
+    const { rerender } = renderHook(() => useTrainer('French'));
+    act(() => usePromptToolkitStore.getState().goHome());
+    rerender();
+    expect(trainer().caseId).toBeNull();
+  });
+
+  it('a case not finished waits, even when the user goes elsewhere', () => {
+    useTrainerStore.getState().update({ step: 'advice' });
+    const { rerender } = renderHook(() => useTrainer('French'));
+    act(() => usePromptToolkitStore.getState().goHome());
+    rerender();
+    expect(trainer()).toMatchObject({ caseId: 'rh-1', step: 'advice' });
   });
 });

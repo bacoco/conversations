@@ -144,6 +144,230 @@
         "La réponse présente deux options équilibrées et ne conclut pas à la place de votre chef de bureau."
       ],
       "lesson": "Pour préparer une décision, demandez des options comparées selon vos critères, pas un verdict."
+    },
+    {
+      "id": "etudes-stats-4",
+      "jobId": "etudes-stats",
+      "level": 1,
+      "task": "proposer un titre pour un graphique",
+      "title": "Titrer un graphique",
+      "minutes": 5,
+      "situation": "Vous finalisez un graphique pour la note mensuelle de votre bureau. Votre chef vous fait remarquer que le titre actuel, « Évolution des créations d'entreprises », ne dit rien du message. Vous voulez trois propositions de titre informatif.",
+      "material": "Graphique (données fictives) : créations d'entreprises dans l'industrie de la région, nombre mensuel, de janvier 2025 à septembre 2026.\nPrincipaux repères : environ 520 créations par mois en 2025 ; baisse régulière depuis janvier 2026 ; 430 créations en septembre 2026, soit -17 % sur un an. Données brutes, provisoires pour les trois derniers mois.",
+      "startingRequest": "trouve un titre pour mon graphique",
+      "goodRequest": "À partir de la description ci-dessous, proposez trois titres informatifs pour ce graphique de notre note mensuelle, lue par la hiérarchie et par des bureaux non statisticiens. Chaque titre doit dire en douze mots maximum ce que montre la courbe, et l'un d'eux doit citer le chiffre de -17 % sur un an. Ton neutre : ni « effondrement » ni « chute brutale ». Utilisez uniquement les chiffres de la description, sans en calculer d'autres.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous demandez un titre qui dit le message, pas le sujet : le lecteur comprend le graphique avant même de le regarder."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous écartez les mots dramatiques : le titre reste fidèle aux chiffres et à la neutralité attendue d'une note statistique."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous limitez la longueur et les chiffres utilisables : les titres tiennent sur une ligne et ne contiennent aucun pourcentage inventé."
+        }
+      ],
+      "checkAnswer": [
+        "Le chiffre cité est exactement -17 % sur un an, sans aucun autre chiffre ajouté.",
+        "Les titres décrivent une baisse sans mot dramatique et précisent le champ : l'industrie de la région.",
+        "Chaque titre tient en douze mots maximum."
+      ],
+      "lesson": "Un bon titre dit ce qu'il faut retenir : demandez un message, pas un sujet."
+    },
+    {
+      "id": "etudes-stats-5",
+      "jobId": "etudes-stats",
+      "level": 1,
+      "task": "simplifier le vocabulaire d'une note avant diffusion",
+      "title": "Simplifier un paragraphe technique",
+      "minutes": 5,
+      "situation": "Un paragraphe de votre note sur la consommation des ménages va être repris dans la lettre d'information de la direction, lue par tous les agents. Il est juste, mais trop technique. Vous voulez le simplifier sans changer aucun chiffre ni le sens.",
+      "material": "Paragraphe d'origine (fictif) :\n\nEn données CVS-CJO, la consommation des ménages en biens progresse de 0,3 % au deuxième trimestre, après -0,2 % au premier. En glissement annuel, elle demeure en repli de 0,6 %. L'acquis de croissance pour l'année s'établit à +0,1 % à l'issue du deuxième trimestre. Ces résultats sont provisoires et susceptibles de révision.",
+      "startingRequest": "simplifie ce paragraphe",
+      "goodRequest": "À partir du paragraphe ci-dessous, réécrivez-le pour la lettre d'information de la direction, lue par des agents qui ne sont pas statisticiens. Remplacez les termes techniques par des mots simples : « CVS-CJO », « glissement annuel » et « acquis de croissance » doivent être expliqués en quelques mots ou reformulés. Gardez tous les chiffres exactement, avec les mêmes périodes, ainsi que le rappel que les résultats sont provisoires. Six lignes maximum, ton neutre. N'ajoutez aucune explication sur les causes.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que les lecteurs ne sont pas statisticiens : l'Assistant traduit chaque terme technique au lieu de le recopier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous exigez de garder tous les chiffres et leurs périodes : la version simple dit exactement la même chose que l'originale."
+        },
+        {
+          "skill": "task",
+          "point": "Vous nommez les trois termes à expliquer : aucun n'est oublié et vous pouvez vérifier chaque explication."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres +0,3 %, -0,2 %, -0,6 % et +0,1 % sont repris avec les bonnes périodes.",
+        "L'acquis de croissance est expliqué correctement : la croissance qu'aurait l'année si la consommation restait à son niveau du deuxième trimestre jusqu'à la fin de l'année.",
+        "Le caractère provisoire des résultats est toujours mentionné."
+      ],
+      "lesson": "Quand vous faites simplifier, dites ce qui doit rester exact au mot près."
+    },
+    {
+      "id": "etudes-stats-6",
+      "jobId": "etudes-stats",
+      "level": 2,
+      "task": "rédiger le paragraphe d'une note de conjoncture",
+      "title": "Rédiger le paragraphe sur les exportations",
+      "minutes": 10,
+      "situation": "Vous rédigez la partie « commerce extérieur » de la note de conjoncture trimestrielle. Vos chiffres sont prêts, mais il vous manque le paragraphe. Il sera lu par la hiérarchie et transmis au cabinet.",
+      "material": "Notes de travail (données fictives, CVS-CJO, en milliards d'euros) :\nExportations de biens de la région : T1 2026 : 14,2 ; T2 2026 : 14,6 ; T3 2026 : 14,3.\nVariation T3/T2 : -2,1 %. Glissement annuel T3 2026/T3 2025 : +1,4 %.\nPar produit, au T3 : aéronautique -6,0 % sur le trimestre (livraisons décalées selon les industriels) ; agroalimentaire +2,5 % ; chimie stable.\nDonnées du T3 provisoires.",
+      "startingRequest": "écris le paragraphe sur les exports",
+      "goodRequest": "À partir de mes notes ci-dessous, rédigez le paragraphe « commerce extérieur » de notre note de conjoncture trimestrielle, lu par la hiérarchie et transmis au cabinet. Commencez par une phrase de message principal sur le troisième trimestre, donnez ensuite la variation sur le trimestre puis le glissement annuel, enfin le détail par produit. Huit lignes maximum, ton neutre, présent de l'indicatif, chiffres avec une décimale comme dans les notes. Reprenez uniquement les chiffres fournis sans en calculer d'autres, attribuez le recul de l'aéronautique aux industriels comme dans les notes, et terminez en signalant que les données du troisième trimestre sont provisoires.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous imposez l'ordre (message principal, trimestre, année, produits) et la longueur : le paragraphe a la forme habituelle d'une note de conjoncture."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous demandez d'attribuer l'explication de l'aéronautique à sa source : la note ne présente pas comme un fait établi ce que disent les industriels."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez tout nouveau calcul : chaque chiffre du paragraphe se retrouve dans vos notes."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres -2,1 % sur le trimestre et +1,4 % sur un an sont exacts et bien distingués.",
+        "Le recul de l'aéronautique est présenté comme une explication des industriels, pas comme une certitude.",
+        "Le paragraphe signale que les données du troisième trimestre sont provisoires."
+      ],
+      "lesson": "Dites d'où vient chaque explication : l'Assistant ne doit pas transformer un avis en fait."
+    },
+    {
+      "id": "etudes-stats-7",
+      "jobId": "etudes-stats",
+      "level": 2,
+      "task": "résumer une étude longue en une page",
+      "title": "Résumer une étude pour le cabinet",
+      "minutes": 10,
+      "situation": "Avant une réunion avec des fédérations professionnelles, le cabinet veut connaître les résultats d'une étude de votre direction sur le télétravail dans les PME. L'étude fait quarante pages ; vous en avez extrait les passages essentiels ci-dessous et devez en faire un résumé d'une page.",
+      "material": "Extraits de l'étude (fictive) « Le télétravail dans les PME en 2026 »\n\nMéthode : enquête auprès de 4 500 PME de 10 à 249 salariés, taux de réponse de 38 %, résultats pondérés. Champ : France métropolitaine, hors agriculture et administrations.\n\nRésultat 1 : 46 % des PME pratiquent le télétravail au moins un jour par semaine, contre 29 % en 2022.\nRésultat 2 : la pratique dépend beaucoup du secteur : 71 % dans l'information-communication, 12 % dans la construction.\nRésultat 3 : parmi les PME qui pratiquent le télétravail, 54 % déclarent des difficultés de cohésion d'équipe et 31 % une hausse des coûts informatiques.\nRésultat 4 : 18 % des PME qui pratiquaient le télétravail en 2022 l'ont réduit depuis.\n\nLimites : les données sont déclaratives ; les PME qui télétravaillent ont pu répondre plus volontiers ; l'étude ne mesure pas l'effet du télétravail sur la productivité.",
+      "startingRequest": "résume cette étude",
+      "goodRequest": "À partir des extraits ci-dessous, rédigez un résumé d'une page de cette étude pour le cabinet, qui rencontre bientôt des fédérations professionnelles et lira le document en quelques minutes. Structure : le message principal en deux phrases ; trois résultats chiffrés repris tels quels, sous forme de liste ; un paragraphe « Ce que l'étude ne dit pas » qui reprend les limites ; une ligne de méthode avec la taille de l'échantillon et le taux de réponse. Ton neutre, phrases courtes, aucun sigle. N'utilisez que les chiffres des extraits, ne tirez aucune conclusion sur la productivité et ne faites aucune recommandation.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous indiquez que le cabinet prépare une réunion et lit vite : le résumé commence par le message principal et tient sur une page."
+        },
+        {
+          "skill": "format",
+          "point": "Vous imposez une partie « Ce que l'étude ne dit pas » : les limites ne disparaissent pas du résumé."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute conclusion sur la productivité : le cabinet ne cite pas devant les fédérations un résultat que l'étude n'a pas mesuré."
+        }
+      ],
+      "checkAnswer": [
+        "Les trois résultats chiffrés sont repris à l'identique, par exemple 46 % contre 29 % en 2022.",
+        "Les limites figurent bien, notamment le caractère déclaratif des données et l'absence de mesure de la productivité.",
+        "Le résumé ne contient aucune recommandation ni aucun chiffre absent des extraits."
+      ],
+      "lesson": "Réservez une place aux limites dans tout résumé : sinon l'Assistant les oublie souvent."
+    },
+    {
+      "id": "etudes-stats-8",
+      "jobId": "etudes-stats",
+      "level": 2,
+      "task": "rédiger un encadré de méthode pour le grand public",
+      "title": "Écrire un encadré de méthode",
+      "minutes": 10,
+      "situation": "Votre direction publie sur son site une étude sur les délais de paiement entre entreprises. Il manque l'encadré « Sources et méthode », qui doit être compris par le grand public. Vous partez de la fiche technique interne ci-dessous.",
+      "material": "Fiche technique interne (fictive) :\nSource : enquête annuelle par échantillon auprès des entreprises de 10 salariés ou plus, réalisée de février à avril 2026.\nÉchantillon : 6 000 entreprises interrogées ; 2 700 répondantes (taux de réponse : 45 %).\nPondération : calage sur le nombre d'entreprises par secteur et par taille.\nChamp : entreprises marchandes, hors secteur financier et agriculture, France entière.\nIndicateur : délai moyen entre la date de facture et le paiement effectif, déclaré par l'entreprise, pour les factures de 2025.\nPrécision : marge d'erreur de plus ou moins 1,2 jour sur le délai moyen national ; résultats par secteur moins précis.",
+      "startingRequest": "fais l'encadré méthodo",
+      "goodRequest": "À partir de la fiche technique ci-dessous, rédigez l'encadré « Sources et méthode » de notre étude sur les délais de paiement, publiée sur le site de la direction et lue par le grand public. Quatre rubriques courtes avec un intertitre chacune : « D'où viennent les chiffres ? », « Quelles entreprises ? », « Que mesure l'indicateur ? », « Quelle précision ? ». Expliquez « pondération » et « marge d'erreur » en une phrase chacune, avec des mots simples et sans formule mathématique. Douze lignes maximum, ton neutre. Reprenez tous les chiffres de la fiche sans en modifier aucun et n'ajoutez aucune information de méthode qui n'y figure pas.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous précisez que le lecteur est le grand public : l'Assistant explique les termes techniques au lieu de recopier la fiche."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez quatre rubriques sous forme de questions : le lecteur trouve directement la réponse à ce qu'il se demande."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'encadré à la fiche technique : aucune précision de méthode n'est inventée dans un document publié."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres sont exacts : 6 000 entreprises interrogées, 2 700 répondantes, 45 %, plus ou moins 1,2 jour.",
+        "Le champ est complet, avec l'exclusion du secteur financier et de l'agriculture.",
+        "L'explication de la marge d'erreur est juste et rappelle que les résultats par secteur sont moins précis."
+      ],
+      "lesson": "Pour un document publié, donnez votre fiche de référence et interdisez toute information qui n'y figure pas."
+    },
+    {
+      "id": "etudes-stats-9",
+      "jobId": "etudes-stats",
+      "level": 3,
+      "task": "expliquer une révision des chiffres",
+      "title": "Expliquer une révision au cabinet",
+      "minutes": 15,
+      "situation": "Le mois dernier, votre direction a publié une hausse de 0,4 % de l'activité régionale au deuxième trimestre. Les nouvelles données ramènent ce chiffre à 0,1 %. Le cabinet, qui avait cité 0,4 % dans un discours, demande une explication. Votre sous-directrice veut une note courte, exacte et sans langue de bois, qu'elle relira.",
+      "material": "Éléments du bureau (fictifs) :\n- Première estimation du T2 2026, publiée le 15 septembre : +0,4 % sur le trimestre (CVS-CJO).\n- Estimation révisée, publiée le 15 octobre : +0,1 %.\n- Raison de la révision : intégration des déclarations de chiffre d'affaires de juin, arrivées après la première estimation ; elles montrent une activité plus faible dans le commerce de gros.\n- Le premier trimestre est aussi révisé, de +0,2 % à +0,3 %.\n- Au cours des trois dernières années, l'écart moyen entre première estimation et estimation révisée a été de 0,2 point, dans un sens ou dans l'autre.\n- La méthode de révision est décrite dans la note méthodologique publiée sur le site.",
+      "startingRequest": "explique au cabinet pourquoi le chiffre a changé",
+      "goodRequest": "À partir des éléments ci-dessous, rédigez une note d'une demi-page pour le cabinet, qui avait cité +0,4 % dans un discours et découvre que le chiffre est révisé à +0,1 %. Ma sous-directrice la relira avant l'envoi. 1) Donnez d'abord les deux chiffres et leurs dates de publication. 2) Expliquez en mots simples pourquoi la première estimation a changé : ne parlez pas d'erreur, car réviser une estimation provisoire est normal, mais ne minimisez pas l'écart non plus. 3) Situez cet écart par rapport à l'écart moyen observé ces trois dernières années. 4) Proposez une phrase que le cabinet pourrait utiliser s'il est interrogé. Ton factuel, sans langue de bois ni jargon. N'avancez aucune autre raison que celle des éléments et ne faites aucune prévision pour le trimestre suivant.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous découpez la note en quatre étapes, jusqu'à la phrase prête à l'emploi : le cabinet repart avec une explication et une réponse s'il est interrogé."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez d'expliquer sans parler d'erreur ni minimiser : la note reste honnête sans affoler le cabinet."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez les raisons à celles du bureau et interdisez toute prévision : rien de ce qui part au cabinet n'est supposé."
+        }
+      ],
+      "checkAnswer": [
+        "L'écart est bien de 0,3 point, et la note dit honnêtement qu'il est plus grand que l'écart moyen de 0,2 point.",
+        "La seule raison donnée est l'intégration des déclarations de chiffre d'affaires de juin, qui montrent un commerce de gros plus faible.",
+        "La phrase proposée au cabinet est exacte, ne parle pas d'erreur et ne promet rien sur les prochains chiffres."
+      ],
+      "lesson": "Sur un sujet sensible, demandez une explication honnête et une phrase prête à l'emploi, puis faites-la relire."
+    },
+    {
+      "id": "etudes-stats-10",
+      "jobId": "etudes-stats",
+      "level": 3,
+      "task": "répondre à une demande de chiffre qui n'existe pas",
+      "title": "Répondre sans inventer de chiffre",
+      "minutes": 15,
+      "situation": "Le cabinet vous demande pour demain « le nombre d'emplois créés grâce au dispositif d'aide à l'embauche », pour un discours. Ce chiffre n'existe pas : vous avez seulement le nombre d'aides versées et une enquête déclarative. Vous voulez répondre utilement, en proposant ce qu'on peut dire honnêtement, sans fabriquer d'estimation. Votre chef de bureau validera la réponse.",
+      "material": "Demande du cabinet (fictive) : « Pouvez-vous nous donner pour demain le nombre d'emplois créés grâce au dispositif Embauche PME, pour le discours du ministre ? »\n\nDonnées disponibles (fictives) :\n- Aides versées depuis le lancement en janvier 2025 : 38 200, pour 29 500 entreprises.\n- Enquête auprès de 1 800 entreprises bénéficiaires (taux de réponse : 35 %) : 41 % déclarent que l'aide a « joué un rôle décisif » dans leur décision d'embaucher.\n- Aucune évaluation de l'effet propre du dispositif, c'est-à-dire comparant les entreprises aidées à des entreprises comparables non aidées, n'a encore été réalisée ; une évaluation est prévue pour 2027.\n- Une aide correspond à une embauche, mais certaines de ces embauches auraient eu lieu sans l'aide.",
+      "startingRequest": "combien d'emplois créés par le dispositif ?",
+      "goodRequest": "À partir de la demande et des données ci-dessous, rédigez une réponse au cabinet, que mon chef de bureau validera. 1) Expliquez en trois lignes, sans jargon, pourquoi on ne peut pas donner aujourd'hui un nombre d'emplois créés grâce au dispositif : une aide versée n'est pas forcément un emploi créé, et l'évaluation n'est prévue que pour 2027. 2) Indiquez les chiffres qui existent et ce qu'ils disent exactement. 3) Proposez deux ou trois formulations justes que le ministre pourrait utiliser dans son discours. Ne calculez et n'estimez aucun nombre d'emplois, même approximatif, et ne combinez pas les 38 200 aides avec les 41 % de l'enquête. Ton cordial et constructif, quinze lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute estimation, y compris le calcul qui semble évident (38 200 fois 41 %) : aucun chiffre fragile ne se retrouve dans un discours ministériel."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez de dire ce qui existe et de proposer des formulations : la réponse aide le cabinet au lieu de seulement refuser."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous rappelez que la réponse sert à un discours : l'Assistant explique sans jargon et propose des phrases prêtes à prononcer."
+        }
+      ],
+      "checkAnswer": [
+        "La réponse ne contient aucun nombre d'emplois créés, ni calculé ni estimé, et ne multiplie pas les aides par les 41 %.",
+        "Les formulations proposées sont exactes : par exemple « 38 200 aides versées à 29 500 entreprises », et les 41 % sont présentés comme une déclaration des entreprises interrogées.",
+        "Elle dit clairement qu'une évaluation de l'effet du dispositif est prévue pour 2027, sans en annoncer le résultat."
+      ],
+      "lesson": "Quand un chiffre n'existe pas, demandez à l'Assistant de le dire et de proposer ce qu'on peut affirmer, jamais une estimation."
     }
   ]
 }

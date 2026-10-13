@@ -14,7 +14,9 @@ vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }));
 
-const [one, two] = casesOf('rh');
+// The first case of level 1, and the first of level 2 (locked until then).
+const one = casesOf('rh').find((item) => item.level === 1)!;
+const two = casesOf('rh').find((item) => item.level === 2)!;
 
 describe('practical cases of my job', () => {
   const setChatInput = vi.fn();
@@ -33,7 +35,7 @@ describe('practical cases of my job', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the three cases of the job; level 2 opens after level 1', () => {
+  it('shows the cases of the job; level 2 opens after a case of level 1', () => {
     const onOpen = vi.fn();
     const { rerender } = render(<CasesView onBack={vi.fn()} onOpen={onOpen} />);
     expect(screen.getByText(one.title)).toBeInTheDocument();
@@ -99,13 +101,18 @@ describe('practical cases of my job', () => {
     ).toBeEnabled();
   });
 
-  it('the case of the week, on the home page: one click opens the trainer', () => {
+  it('your week, on the home page: one click on the case opens the trainer', () => {
     const openSection = vi.fn();
     usePromptToolkitStore.setState({ openSection });
+    useCasesStore.setState({
+      daysUsed: ['2026-10-01', '2026-10-05', '2026-10-08'],
+    });
     render(<WeeklyCase />);
-    expect(screen.getByText('The case of the week')).toBeInTheDocument();
+    expect(screen.getByText(/^Your week ·/)).toBeInTheDocument();
     expect(screen.getByText(one.title)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Start this case' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: new RegExp(one.title) }),
+    );
     expect(useTrainerStore.getState()).toMatchObject({
       caseId: one.id,
       step: 'read',
@@ -114,20 +121,20 @@ describe('practical cases of my job', () => {
     useTrainerStore.getState().stop();
   });
 
-  it('the case of the week asks for the job first', () => {
+  it('your week asks for the job first', () => {
     useProfileStore.setState({ job: null });
     render(<WeeklyCase />);
     expect(
-      screen.getByText('Choose your job below: each week, a case of your job.'),
+      screen.getByText(
+        'Choose your job below: each week, a few actions for your job.',
+      ),
     ).toBeInTheDocument();
   });
 
-  it('the case of the week can be hidden, and comes back from the settings', () => {
+  it('your week can be hidden, and comes back from the settings', () => {
     useCasesStore.setState({ weeklyHidden: false });
     const { container } = render(<WeeklyCase />);
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Hide the case of the week' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Hide your week' }));
     expect(useCasesStore.getState().weeklyHidden).toBe(true);
     expect(container).toBeEmptyDOMElement();
     useCasesStore.getState().setWeeklyHidden(false);

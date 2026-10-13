@@ -146,6 +146,230 @@
         "Vérifiez que la note propose des options sans désigner elle-même la solution retenue."
       ],
       "lesson": "Pour préparer une décision, donnez vos critères et demandez des options, pas un choix à la place de celui qui décide."
+    },
+    {
+      "id": "assistant-direction-4",
+      "jobId": "assistant-direction",
+      "level": 1,
+      "task": "préparer une convocation à une réunion",
+      "title": "Convoquer à une réunion de service",
+      "minutes": 5,
+      "situation": "Le directeur vous demande de convoquer les chefs de bureau à une réunion sur la préparation du budget de l'an prochain. Il vous a laissé un petit mot avec les informations utiles. La convocation doit partir aujourd'hui par courriel.",
+      "material": "Mot du directeur (fictif) :\n« Merci de convoquer les chefs de bureau mardi 17 novembre, de 9 h 30 à 11 h, salle 3012, ou en visio pour ceux qui sont en télétravail. Sujet : préparation du budget de l'an prochain. Chacun apporte les besoins chiffrés de son bureau. Points : 1) calendrier budgétaire ; 2) besoins des bureaux ; 3) priorités de la direction. Confirmation de présence souhaitée avant vendredi. »",
+      "startingRequest": "fais une convocation pour la réunion budget",
+      "goodRequest": "À partir du texte ci-dessous (le mot de mon directeur), rédigez un courriel de convocation adressé aux chefs de bureau, signé « Le secrétariat du directeur ». Indiquez dans l'objet la date et le sujet de la réunion. Dans le corps : la date, l'horaire, la salle et la possibilité de suivre la réunion en visioconférence, puis l'ordre du jour en trois points numérotés, ce que chacun doit apporter et la date limite pour confirmer sa présence. Ton courtois et direct, dix lignes maximum. Ne modifiez ni la date, ni l'horaire, ni la salle, et n'ajoutez aucun point à l'ordre du jour.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous listez ce que la convocation doit contenir, dans l'ordre : aucun élément pratique n'est oublié."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de changer la date, l'horaire ou la salle : l'Assistant ne « corrige » pas les informations du directeur."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton courtois et direct, en dix lignes : la convocation se lit d'un coup d'œil."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez la date, l'horaire et la salle : mardi 17 novembre, de 9 h 30 à 11 h, salle 3012.",
+        "Vérifiez que l'ordre du jour compte exactement les trois points du directeur.",
+        "Vérifiez que la demande des besoins chiffrés et la confirmation avant vendredi figurent bien dans le courriel."
+      ],
+      "lesson": "Pour un document à la forme bien établie, comme une convocation, listez les éléments qu'il doit contenir : rien ne manquera."
+    },
+    {
+      "id": "assistant-direction-5",
+      "jobId": "assistant-direction",
+      "level": 1,
+      "task": "relancer les signataires d'un parapheur en retard",
+      "title": "Relancer un parapheur en retard",
+      "minutes": 5,
+      "situation": "Un parapheur contenant une note pour le cabinet du ministre attend depuis plus d'une semaine les visas de deux chefs de bureau. Le directeur doit le signer jeudi au plus tard. Vous voulez envoyer une relance aimable mais claire.",
+      "material": "Suivi du parapheur (fictif) :\n- Objet : note au cabinet sur le bilan des aides aux entreprises\n- Arrivé au secrétariat le lundi 2 novembre\n- Visa du chef du bureau budget : fait\n- Visa du chef du bureau des aides : en attente\n- Visa du chef du bureau des études : en attente\n- Signature du directeur prévue le jeudi 12 novembre, départ au cabinet le vendredi 13 novembre au matin",
+      "startingRequest": "relance les chefs pour le parapheur",
+      "goodRequest": "À partir du texte ci-dessous (le suivi d'un parapheur), rédigez un courriel de relance adressé uniquement aux deux chefs de bureau dont le visa est en attente : celui du bureau des aides et celui du bureau des études. Rappelez l'objet du parapheur, depuis quand il attend au secrétariat, et la raison de l'urgence : signature du directeur le jeudi 12 novembre, départ au cabinet le lendemain matin. Demandez leur visa au plus tard le mardi 10 novembre à 17 h, et proposez de leur apporter le parapheur s'ils le souhaitent. Ton cordial et sans reproche, six lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites précisément qui relancer : le chef du bureau budget, qui a déjà visé, ne reçoit pas de relance inutile."
+        },
+        {
+          "skill": "context",
+          "point": "Vous expliquez pourquoi c'est urgent : la relance donne une raison concrète d'agir vite."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton cordial et sans reproche : la relance reste aimable envers des collègues."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que le courriel ne s'adresse qu'aux chefs du bureau des aides et du bureau des études.",
+        "Vérifiez les dates : arrivée le lundi 2 novembre, visa attendu le mardi 10 novembre à 17 h, signature le jeudi 12 novembre.",
+        "Vérifiez qu'aucune phrase ne sonne comme un reproche."
+      ],
+      "lesson": "Dans une relance, donnez la raison de l'urgence et la date limite : le lecteur sait pourquoi et pour quand agir."
+    },
+    {
+      "id": "assistant-direction-6",
+      "jobId": "assistant-direction",
+      "level": 2,
+      "task": "préparer des réponses types pour l'accueil téléphonique",
+      "title": "Réponses types pour le téléphone",
+      "minutes": 10,
+      "situation": "Vous et votre collègue répondez au téléphone du secrétariat de direction. Beaucoup d'appels se ressemblent et chacun répond à sa façon. Vous voulez une fiche de réponses types, à garder près du téléphone, que vous pourrez aussi donner aux remplaçants.",
+      "material": "Appels les plus fréquents, notés pendant deux semaines (fictifs) :\n1. Un partenaire veut parler au directeur, qui est en réunion.\n2. Un agent de la direction demande où en est la signature de son dossier.\n3. Un usager a été mal orienté : sa question concerne un autre service.\n4. Un journaliste demande une réaction du directeur.\n5. Le cabinet du ministre appelle pour une demande urgente.\n\nConsignes du directeur : ne jamais donner son numéro de portable ni son emploi du temps ; toujours noter le nom, le numéro et l'objet de l'appel ; renvoyer tous les journalistes vers le service de communication ; prévenir immédiatement l'adjointe si le cabinet appelle en l'absence du directeur.",
+      "startingRequest": "donne moi des phrases pour répondre au téléphone",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une fiche de réponses types pour l'accueil téléphonique d'un secrétariat de direction, à utiliser par les assistants et par leurs remplaçants. Pour chacun des cinq appels, donnez la phrase à dire, en une ou deux phrases polies et naturelles à l'oral, puis ce qu'il faut faire ensuite (noter, transmettre, prévenir). Respectez strictement les consignes du directeur. Présentez le tout en tableau à trois colonnes : situation, phrase à dire, à faire ensuite. Vouvoiement, formules courtes, et ne promettez jamais de rappel à une heure précise.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous demandez de respecter les consignes du directeur : aucune réponse ne révèle son emploi du temps ni ne répond elle-même à un journaliste."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous précisez que des remplaçants utiliseront la fiche : les phrases sont complètes et prêtes à dire."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau situation, phrase, suite : on trouve la bonne réponse en quelques secondes, téléphone en main."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que l'appel du journaliste est renvoyé vers le service de communication, sans aucune réaction au nom du directeur.",
+        "Vérifiez que l'appel du cabinet prévoit de prévenir l'adjointe si le directeur est absent.",
+        "Vérifiez qu'aucune phrase ne promet un rappel à une heure précise ni ne dit où se trouve le directeur."
+      ],
+      "lesson": "Quand vos réponses doivent suivre des consignes, collez-les dans la demande : l'Assistant les applique à chaque cas."
+    },
+    {
+      "id": "assistant-direction-7",
+      "jobId": "assistant-direction",
+      "level": 2,
+      "task": "préparer l'ordre du jour d'un comité de direction",
+      "title": "Ordre du jour du comité de direction",
+      "minutes": 10,
+      "situation": "Le comité de direction mensuel dure une heure trente. Les chefs de bureau vous ont envoyé leurs propositions de points, plus nombreuses que le temps disponible. Le directeur veut un projet d'ordre du jour minuté, qu'il validera avant l'envoi.",
+      "material": "Comité de direction du lundi 7 décembre, de 10 h à 11 h 30, sans pause.\n\nPropositions reçues (fictives) :\n- Directeur : point d'actualité (10 min), toujours en premier.\n- Bureau budget : exécution budgétaire à fin novembre (15 min) ; préparation du gel de fin d'année (10 min).\n- Bureau RH de proximité : campagne des entretiens professionnels (10 min) ; organisation des congés de fin d'année (5 min).\n- Bureau informatique : migration de la messagerie, avec démonstration (30 min).\n- Bureau des achats : nouveau circuit de validation des avenants (10 min).\n- Adjointe : questions diverses (10 min), toujours en dernier.",
+      "startingRequest": "fais l'ordre du jour du codir",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet d'ordre du jour pour le comité de direction du lundi 7 décembre, prévu de 10 h à 11 h 30. Présentez un tableau : heure de début, point, bureau qui le présente, durée. Gardez le point d'actualité du directeur en premier et les questions diverses en dernier, et n'ajoutez aucun point. Les demandes dépassent la durée prévue : ne coupez rien vous-même, mais indiquez sous le tableau de combien de minutes elles dépassent, puis proposez deux façons de tenir dans le temps, pour que le directeur choisisse.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous fixez ce qui ne bouge pas (premier et dernier points, aucun ajout) : l'ordre du jour respecte les habitudes du directeur."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez de signaler le dépassement et deux options, sans couper vous-même : c'est le directeur qui arbitre."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau minuté : chacun voit à quelle heure son point passe."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que le dépassement annoncé est bien de 10 minutes : 100 minutes demandées pour 90 prévues.",
+        "Vérifiez que les heures s'enchaînent sans erreur de calcul, de 10 h à 11 h 40 tant que rien n'est coupé.",
+        "Vérifiez qu'aucun point n'a été supprimé ou raccourci, sauf dans les deux propositions présentées au directeur."
+      ],
+      "lesson": "Quand les chiffres ne tiennent pas, demandez à l'Assistant de le signaler plutôt que de les arranger en silence."
+    },
+    {
+      "id": "assistant-direction-8",
+      "jobId": "assistant-direction",
+      "level": 2,
+      "task": "répartir le courrier arrivée entre les bureaux",
+      "title": "Répartir le courrier arrivée",
+      "minutes": 10,
+      "situation": "Ce matin, le courrier arrivée de la direction compte six plis. Vous devez préparer pour le directeur un tableau de répartition : quel bureau traite quoi, et pour quand. Vous disposez de la liste des attributions des bureaux et de la règle du secrétariat.",
+      "material": "Attributions des bureaux (fictives) :\n- Bureau budget : crédits, dépenses, factures.\n- Bureau des aides : dossiers de demande d'aide des entreprises.\n- Bureau RH de proximité : questions des agents de la direction.\n- Bureau des achats : marchés et fournisseurs.\n\nCourrier arrivée du jeudi 5 novembre (fictif) :\n1. Une entreprise demande où en est son dossier d'aide déposé en juin.\n2. Un fournisseur réclame le paiement d'une facture de septembre.\n3. Le cabinet du ministre demande une note sur les aides versées, pour le 20 novembre.\n4. Un agent de la direction demande une attestation d'emploi.\n5. Une association invite le directeur à un colloque le 4 décembre.\n6. Un candidat évincé demande les motifs du rejet de son offre pour un marché de nettoyage.\n\nRègle du secrétariat : réponse sous 15 jours pour tout courrier extérieur ; le directeur traite lui-même les invitations et les demandes du cabinet.",
+      "startingRequest": "trie le courrier",
+      "goodRequest": "À partir du texte ci-dessous, préparez pour le directeur un tableau de répartition du courrier arrivée du jeudi 5 novembre. Une ligne par courrier, avec les colonnes : numéro, expéditeur désigné par sa qualité, objet en quelques mots, bureau proposé, date limite de réponse. Attribuez chaque courrier en vous fondant uniquement sur la liste des attributions et sur la règle du secrétariat, en comptant les 15 jours à partir du 5 novembre. Quand un courrier relève du directeur, écrivez « directeur » ; quand aucune règle ne permet de trancher, écrivez « à arbitrer » plutôt que de deviner. Aucun commentaire sur le fond des demandes.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous demandez de s'en tenir à la liste des attributions : l'Assistant n'invente ni bureau ni compétence."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous prévoyez « à arbitrer » pour les cas douteux : l'Assistant signale une hésitation au lieu de deviner."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez les colonnes du tableau : le directeur valide la répartition d'un coup d'œil."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que l'invitation au colloque et la demande du cabinet sont attribuées au directeur, avec la date du 20 novembre pour le cabinet.",
+        "Vérifiez que la demande du candidat évincé va au bureau des achats et la facture au bureau budget.",
+        "Vérifiez que la demande de l'agent (courrier 4), qui n'est pas un courrier extérieur, n'a pas reçu un délai inventé."
+      ],
+      "lesson": "Donnez à l'Assistant les règles de tri que vous appliquez vous-même : il les suit au lieu d'improviser."
+    },
+    {
+      "id": "assistant-direction-9",
+      "jobId": "assistant-direction",
+      "level": 3,
+      "task": "répondre à une réclamation adressée au directeur",
+      "title": "Répondre à une réclamation au directeur",
+      "minutes": 15,
+      "situation": "Un chef d'entreprise écrit directement au directeur, très mécontent : son dossier d'aide n'avance pas et il menace d'écrire au ministre. Le directeur vous demande de préparer une réponse qu'il signera. Le bureau des aides vous a donné l'état du dossier.",
+      "material": "Courriel reçu (fictif, nom retiré) :\n« Monsieur le Directeur, j'ai déposé en juin une demande d'aide pour moderniser ma boutique. Cinq mois plus tard, rien ! Personne ne répond au téléphone. C'est inadmissible. Si je n'ai pas de réponse cette semaine, j'écris au ministre et à la presse. Le gérant de la société X »\n\nÉtat du dossier, selon le bureau des aides (fictif) :\n- dossier complet depuis le 15 septembre seulement : une pièce manquait, demandée en juillet ;\n- instruction en cours, décision prévue lors de la commission du 10 décembre ;\n- aucune garantie que l'aide sera accordée ;\n- contact : la boîte fonctionnelle du bureau des aides.",
+      "startingRequest": "réponds à ce monsieur énervé",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse au gérant de la société X, que le directeur signera. Objectif : apaiser et informer, sans se justifier longuement. Reconnaissez son attente et son mécontentement, sans admettre de faute. Donnez l'état du dossier uniquement à partir des éléments du bureau des aides : dossier complet depuis le 15 septembre, décision prévue lors de la commission du 10 décembre. Rappelez sobrement, sans reproche, qu'une pièce manquait jusqu'en septembre. Ne promettez ni l'aide, ni son montant, ni une date de versement, et ne répondez pas à la menace d'écrire au ministre ou à la presse. Indiquez le contact du bureau des aides. Ton courtois, calme et ferme, quinze lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'état du dossier aux éléments du bureau des aides : le directeur ne signe aucune information inexacte."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute promesse et toute réponse à la menace : la lettre n'engage pas la direction et n'envenime pas la situation."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de reconnaître l'attente sans admettre de faute : le lecteur se sent entendu sans que la direction s'excuse à tort."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les deux dates sont exactes : dossier complet le 15 septembre, commission du 10 décembre.",
+        "Vérifiez que la réponse ne laisse jamais entendre que l'aide sera accordée.",
+        "Vérifiez que la pièce manquante est mentionnée sans reproche, et qu'aucune phrase ne parle du ministre ou de la presse."
+      ],
+      "lesson": "Face à un lecteur mécontent, dites à l'Assistant ce qu'il peut dire, ce qu'il ne doit pas promettre et le ton à garder."
+    },
+    {
+      "id": "assistant-direction-10",
+      "jobId": "assistant-direction",
+      "level": 3,
+      "task": "annoncer l'organisation du secrétariat pendant une absence",
+      "title": "Annoncer un intérim au secrétariat",
+      "minutes": 15,
+      "situation": "Votre collègue du secrétariat sera absente plusieurs semaines. Vous connaissez la raison, mais elle relève de sa vie privée : elle ne doit être ni écrite ni confiée à l'Assistant. Le directeur vous demande d'informer le service et les partenaires habituels de l'organisation prévue pendant son absence.",
+      "material": "Organisation prévue pendant l'absence (fictive) :\n- à partir du lundi 16 novembre, jusqu'à nouvel ordre ;\n- agenda du directeur et rendez-vous : traités par moi-même ;\n- courrier arrivée et chrono : traités par l'assistante de l'adjointe ;\n- parapheurs : déposés au secrétariat de l'adjointe, qui les transmet ;\n- téléphone du secrétariat : renvoyé sur mon poste, le numéro ne change pas ;\n- la boîte fonctionnelle du secrétariat reste la seule adresse à utiliser.",
+      "startingRequest": "écris un mail pour dire que ma collègue est absente longtemps",
+      "goodRequest": "À partir du texte ci-dessous, rédigez deux messages courts annonçant l'organisation du secrétariat du directeur à partir du lundi 16 novembre : l'un pour les agents de la direction, l'autre pour les partenaires extérieurs habituels. Ne donnez ni la raison de l'absence, ni sa durée, ni le nom de la collègue : écrivez seulement que le secrétariat s'organise autrement jusqu'à nouvel ordre. Pour les agents, détaillez qui traite quoi : agenda, courrier, parapheurs, téléphone. Pour les partenaires, dites seulement que les demandes continuent de passer par la boîte fonctionnelle et le numéro habituel du secrétariat. Ton neutre et pratique, huit lignes maximum chacun.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez la raison, la durée et le nom : rien de la vie privée de votre collègue ne circule, même par maladresse."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous demandez deux messages, l'un pour les agents, l'autre pour les partenaires : chacun ne reçoit que ce qui lui sert."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton neutre et pratique : l'annonce parle de l'organisation, pas de la personne."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez qu'aucun des deux messages ne laisse deviner la raison de l'absence, même par une formule comme « pour raisons personnelles » ou « nous lui souhaitons un bon rétablissement ».",
+        "Vérifiez que le message aux agents reprend les quatre points : agenda, courrier, parapheurs, téléphone.",
+        "Vérifiez que le message aux partenaires ne détaille pas l'organisation interne et renvoie seulement vers la boîte fonctionnelle et le numéro habituel."
+      ],
+      "lesson": "Quand un sujet touche à la vie privée, dites à l'Assistant ce qui ne doit jamais apparaître, et ne lui confiez pas l'information elle-même."
     }
   ]
 }

@@ -146,6 +146,230 @@
         "Vérifiez qu'aucune règle ou décision de justice précise n'est citée sans que vous puissiez la retrouver dans les textes."
       ],
       "lesson": "Pour une analyse, dites à l'Assistant quoi vérifier et demandez-lui de montrer ses calculs."
+    },
+    {
+      "id": "juriste-achat-4",
+      "jobId": "juriste-achat",
+      "level": 1,
+      "task": "répondre à une question d'acheteur",
+      "title": "Répondre sur une offre arrivée en retard",
+      "minutes": 5,
+      "situation": "Un acheteur vous écrit en urgence : une offre est arrivée sur la plateforme vingt minutes après l'heure limite, et le candidat assure avoir eu un problème de connexion. L'acheteur veut savoir s'il peut l'analyser. Vous voulez lui répondre vite, à partir du règlement de consultation.",
+      "material": "Question de l'acheteur :\n« Une offre est arrivée sur la plateforme à 12 h 20, alors que l'heure limite était 12 h. Le candidat dit qu'il a eu un problème de connexion. Est-ce que je peux quand même l'analyser ? Le support de la plateforme confirme qu'il n'y a eu aucune panne ce jour-là. »\n\nExtrait du règlement de consultation, article 6 (fictif) :\n« Les offres sont déposées sur la plateforme de dématérialisation avant le jeudi 15 octobre à 12 h. Les offres reçues après la date et l'heure limites ne sont pas examinées. Il appartient au candidat de prévoir un délai suffisant pour le téléchargement de son offre. »",
+      "startingRequest": "est-ce qu'on peut accepter l'offre en retard ?",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse courte à un acheteur qui me demande s'il peut analyser une offre arrivée vingt minutes après l'heure limite. Appuyez-vous uniquement sur l'article 6 du règlement de consultation et sur l'absence de panne de la plateforme. Donnez la réponse en une phrase dès le début, puis justifiez-la en deux ou trois phrases. Proposez ensuite une phrase qu'il pourra reprendre pour informer le candidat. Ne citez aucun autre texte ni aucune décision de justice. Ton cordial, huit lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous limitez la réponse au règlement de consultation et aux faits connus : l'Assistant ne s'appuie pas sur une règle approximative."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez la réponse en une phrase dès le début : l'acheteur pressé a l'essentiel tout de suite."
+        },
+        {
+          "skill": "context",
+          "point": "Vous donnez le fait décisif, l'absence de panne de la plateforme : la réponse tient compte de l'argument du candidat."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la réponse dit clairement que l'offre ne doit pas être examinée.",
+        "Vérifiez que l'absence de panne de la plateforme est utilisée pour répondre à l'argument du candidat.",
+        "Vérifiez qu'aucun article de loi ni aucune décision de justice n'a été ajouté."
+      ],
+      "lesson": "Pour une question pressée, demandez la réponse dès la première phrase, appuyée sur le texte que vous fournissez."
+    },
+    {
+      "id": "juriste-achat-5",
+      "jobId": "juriste-achat",
+      "level": 1,
+      "task": "rédiger une lettre de rejet à un candidat",
+      "title": "Rédiger une lettre de rejet",
+      "minutes": 5,
+      "situation": "La procédure adaptée pour le nettoyage des locaux d'un site régional est terminée. Vous devez préparer la lettre informant un candidat que son offre n'est pas retenue. Les noms ont été remplacés par des lettres et les éléments viennent du rapport d'analyse signé.",
+      "material": "Éléments du rapport d'analyse signé (fictifs) :\n- marché : nettoyage des locaux du site régional, procédure adaptée ;\n- 4 offres reçues ;\n- destinataire de la lettre : candidat B, classé 2e ;\n- attributaire : société X, classée 1re ;\n- critères : valeur technique 60 %, prix 40 % ;\n- notes du candidat B : technique 14/20, prix 18/20, note finale 15,6/20 ;\n- notes de la société X : technique 17/20, prix 16/20, note finale 16,6/20 ;\n- motif principal : organisation des équipes et contrôle de la qualité moins détaillés dans le mémoire technique du candidat B.",
+      "startingRequest": "écris une lettre de refus au candidat",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une lettre informant le candidat B que son offre n'est pas retenue pour le marché de nettoyage des locaux du site régional. Indiquez son classement, le nom de l'attributaire, les notes des deux offres pour chaque critère et le motif principal, tels qu'ils figurent dans les éléments. N'ajoutez aucune mention juridique (délai, voie de recours, article) : je les compléterai moi-même après vérification. Ton courtois et sobre, une page maximum, signature du chef du bureau des achats.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous demandez de reprendre exactement les notes et le motif du rapport : la lettre correspond à l'analyse signée."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous écartez les mentions juridiques, que vous vérifierez vous-même : aucun délai ni aucune voie de recours inexacts ne partent chez le candidat."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton courtois et sobre : le candidat est informé avec respect, sans formule qui prête à discussion."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les notes : candidat B 14, 18 et 15,6 ; société X 17, 16 et 16,6.",
+        "Vérifiez que le classement (2e) et le motif principal sont repris sans être transformés en critique.",
+        "Vérifiez qu'aucun délai, aucune voie de recours et aucun article n'apparaît, puisque vous les ajouterez vous-même."
+      ],
+      "lesson": "Quand une mention engage juridiquement, demandez à l'Assistant de la laisser de côté et ajoutez-la vous-même après vérification."
+    },
+    {
+      "id": "juriste-achat-6",
+      "jobId": "juriste-achat",
+      "level": 2,
+      "task": "rédiger une note juridique",
+      "title": "Préparer une note juridique",
+      "minutes": 10,
+      "situation": "Votre directeur veut ajouter un nouveau bâtiment au marché de maintenance des ascenseurs en cours. Il vous demande une note : est-ce possible sans nouvelle procédure ? Le CCAP contient une clause qui semble répondre. Vous voulez un premier projet de note, que vous compléterez avec les textes.",
+      "material": "Éléments du dossier (fictifs) :\n- marché de maintenance des ascenseurs, notifié il y a 18 mois pour une durée de 4 ans ;\n- montant initial : 200 000 € HT ;\n- ajout envisagé : un bâtiment de 2 ascenseurs, coût estimé à 18 000 € HT sur la durée restante ;\n- aucun avenant passé à ce jour.\n\nExtrait du CCAP, article 14 – Clause de réexamen (fictif) :\n« Le pouvoir adjudicateur peut, par avenant, ajouter au marché de nouveaux bâtiments dans la limite de 15 % du montant initial. Les prix appliqués sont ceux du bordereau des prix unitaires. Le titulaire est informé au moins un mois avant la prise en charge. »",
+      "startingRequest": "fais une note sur l'ajout du bâtiment au marché",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet de note juridique de deux pages au plus, destinée à mon directeur, qui n'est pas juriste, sur la possibilité d'ajouter un bâtiment au marché de maintenance des ascenseurs. Plan : 1. La question posée ; 2. Les faits ; 3. Ce que prévoit la clause de réexamen du CCAP, en calculant la part que représente l'ajout dans le montant initial ; 4. Les conditions à respecter ; 5. Une proposition de réponse, avec les points à faire valider. Fondez-vous uniquement sur l'extrait du CCAP. Ne citez aucun article de loi ni aucune jurisprudence : là où un texte général serait utile, écrivez « à vérifier dans les textes » pour que je le complète.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous imposez le plan d'une note juridique : le raisonnement va de la question à la proposition."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'analyse à la clause du CCAP et demandez de marquer les textes à vérifier : aucune référence inventée ne se glisse dans la note."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous dites que le directeur n'est pas juriste : la note explique la clause au lieu de la recopier."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez le calcul : 18 000 € sur 200 000 € représentent 9 %, sous la limite de 15 %.",
+        "Vérifiez que les trois conditions de la clause sont reprises : avenant, prix du bordereau, information du titulaire un mois avant.",
+        "Vérifiez qu'aucun article de loi ni aucune décision de justice n'est cité, et repérez les mentions « à vérifier dans les textes » pour les compléter."
+      ],
+      "lesson": "Pour une note juridique, faites travailler l'Assistant sur votre texte de référence et gardez pour vous la recherche des sources."
+    },
+    {
+      "id": "juriste-achat-7",
+      "jobId": "juriste-achat",
+      "level": 2,
+      "task": "répondre à la question d'un candidat pendant une consultation",
+      "title": "Répondre à la question d'un candidat",
+      "minutes": 10,
+      "situation": "Pendant une consultation pour l'achat de mobilier de bureau, un candidat pose une question sur la plateforme. La réponse sera publiée et lue par tous les candidats : elle doit être exacte, neutre et ne rien ajouter au dossier de consultation.",
+      "material": "Question d'un candidat (fictive) :\n« Le CCTP demande des sièges conformes à la norme de confort indiquée. Peut-on proposer un modèle équivalent d'une autre gamme ? Par ailleurs, la livraison doit-elle se faire en une seule fois ? »\n\nExtrait du CCTP, article 3 (fictif) :\n« Les sièges proposés respectent la norme de confort indiquée en annexe ou une norme équivalente. Le candidat qui propose une solution équivalente en apporte la preuve dans son offre. »\n\nExtrait du CCAP, article 5 (fictif) :\n« Les livraisons sont effectuées en deux fois au maximum, selon le calendrier fixé au bon de commande. »",
+      "startingRequest": "réponds au candidat sur la plateforme",
+      "goodRequest": "À partir du texte ci-dessous, rédigez la réponse à une question posée par un candidat pendant une consultation pour du mobilier de bureau. Cette réponse sera publiée et lue par tous les candidats : n'écrivez rien qui s'adresse à ce candidat en particulier. Répondez à ses deux questions, dans l'ordre, en vous appuyant uniquement sur les extraits du CCTP et du CCAP et en indiquant chaque fois l'article concerné. N'ajoutez aucune précision, aucune tolérance ni aucun conseil qui ne figure pas dans ces extraits. Ton neutre et précis, dix lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que tous les candidats liront : la réponse reste neutre et ne favorise personne."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous demandez d'indiquer l'article de chaque extrait : chaque réponse renvoie au dossier de consultation."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez tout ajout : la réponse ne modifie pas le dossier de consultation sans le dire."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la réponse sur l'équivalence rappelle que la preuve doit être apportée dans l'offre.",
+        "Vérifiez que la réponse sur la livraison dit « en deux fois au maximum, selon le calendrier fixé au bon de commande », sans autre précision.",
+        "Vérifiez qu'aucune phrase ne s'adresse personnellement au candidat ni ne lui donne de conseil."
+      ],
+      "lesson": "Quand une réponse sera lue par plusieurs personnes, dites-le à l'Assistant : il écrira pour tous, sans favoriser personne."
+    },
+    {
+      "id": "juriste-achat-8",
+      "jobId": "juriste-achat",
+      "level": 2,
+      "task": "préparer un aide-mémoire d'exécution pour un service demandeur",
+      "title": "Aide-mémoire d'exécution d'un marché",
+      "minutes": 10,
+      "situation": "Le service de la logistique va suivre l'exécution d'un nouveau marché de transport de documents. Il connaît mal le CCAP et vous demande une fiche simple : ce qu'il doit faire, dans quels délais, et ce qui se passe en cas de problème.",
+      "material": "Extraits du CCAP – Marché de transport de documents (fictifs) :\nArticle 4 : les enlèvements sont demandés par courriel au titulaire au moins 24 heures à l'avance.\nArticle 6 : le service demandeur vérifie chaque livraison et signe le bon de livraison. Les réserves sont notées sur le bon et confirmées par courriel au titulaire dans les 2 jours ouvrés.\nArticle 8 : pénalité de 50 € HT par livraison effectuée avec plus de 4 heures de retard, sauf retard dû à l'administration.\nArticle 10 : les factures sont déposées sur la plateforme de facturation ; le service demandeur atteste le service fait dans les 5 jours ouvrés.\nArticle 12 : toute modification du marché passe par le bureau des achats.",
+      "startingRequest": "résume le ccap pour la logistique",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un aide-mémoire d'une page pour le service de la logistique, qui va suivre l'exécution de ce marché et n'est pas juriste. Présentez un tableau en quatre colonnes : étape (commande, livraison, retard, facture, modification), ce que doit faire le service, délai, article du CCAP. Ajoutez en bas trois réflexes à retenir. Mots simples, sans jargon juridique. Reprenez exactement les délais et les montants du texte, sans rien ajouter.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que le lecteur suit l'exécution et n'est pas juriste : la fiche dit quoi faire, pas ce que dit le droit."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau par étape avec le numéro d'article : le service trouve vite la règle et peut la vérifier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous exigez les délais et montants exacts : aucune erreur ne se glisse dans les chiffres du marché."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les délais : 24 heures pour commander, 2 jours ouvrés pour confirmer les réserves, 5 jours ouvrés pour attester le service fait.",
+        "Vérifiez que la pénalité est de 50 € HT par livraison au-delà de 4 heures de retard, sauf retard dû à l'administration.",
+        "Vérifiez que chaque ligne renvoie au bon article du CCAP."
+      ],
+      "lesson": "Pour rendre un texte accessible, demandez de garder la référence de chaque règle : la simplicité n'empêche pas la vérification."
+    },
+    {
+      "id": "juriste-achat-9",
+      "jobId": "juriste-achat",
+      "level": 3,
+      "task": "demander des précisions sur une offre qui paraît anormalement basse",
+      "title": "Interroger un candidat sur un prix bas",
+      "minutes": 15,
+      "situation": "Dans une consultation pour la maintenance de photocopieurs, une offre est nettement moins chère que les autres. Avant toute décision, vous préparez un modèle de courrier demandant au candidat de justifier son prix. Pour travailler avec l'Assistant, vous utilisez des chiffres fictifs et non les prix réels de la consultation.",
+      "material": "Éléments pour préparer un modèle de courrier (fictifs) :\n- marché de maintenance de photocopieurs, durée 3 ans ;\n- offre du candidat C : 60 000 € HT ; offres des autres candidats : entre 95 000 et 110 000 € HT ;\n- l'offre de C prévoit, comme les autres, une intervention sous 4 heures, mais avec un seul technicien pour toute la région ;\n- le coût des pièces détachées n'apparaît pas dans sa décomposition du prix ;\n- délai souhaité pour la réponse : 8 jours.",
+      "startingRequest": "écris au candidat que son prix est trop bas",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un courrier demandant au candidat C de justifier le prix de son offre pour la maintenance de photocopieurs. Le courrier ne doit pas qualifier l'offre d'anormalement basse ni laisser entendre qu'elle sera rejetée : il s'agit seulement de demander des précisions. Ne révélez ni les prix des autres candidats ni leur nombre. Posez des questions précises et numérotées sur les deux points du texte : les moyens humains prévus pour tenir le délai d'intervention de 4 heures, et le coût des pièces détachées. Demandez une réponse sous 8 jours, avec les justificatifs utiles. Ne citez aucun texte ni aucune jurisprudence : je compléterai les références après vérification. Ton courtois, neutre et précis, une page maximum.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de révéler les autres offres et de préjuger du rejet : le courrier respecte l'égalité entre candidats et le secret des affaires."
+        },
+        {
+          "skill": "task",
+          "point": "Vous ciblez les questions sur deux points précis : le candidat doit s'expliquer sur ce qui fait douter, pas en généralités."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton neutre : le courrier ouvre un échange au lieu d'accuser le candidat."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez qu'aucun prix d'un autre candidat, aucune moyenne et aucun nombre d'offres n'apparaît dans le courrier.",
+        "Vérifiez que le courrier ne qualifie pas l'offre d'« anormalement basse » et n'annonce aucun rejet.",
+        "Vérifiez que les questions portent bien sur le technicien unique face au délai de 4 heures et sur les pièces détachées, avec une réponse demandée sous 8 jours."
+      ],
+      "lesson": "Quand un écrit touche à l'égalité entre candidats, dites à l'Assistant ce qui ne doit être ni révélé ni présumé."
+    },
+    {
+      "id": "juriste-achat-10",
+      "jobId": "juriste-achat",
+      "level": 3,
+      "task": "répondre à un candidat évincé qui conteste",
+      "title": "Répondre à un candidat évincé qui conteste",
+      "minutes": 15,
+      "situation": "Un candidat évincé d'un marché de formation conteste la note technique qu'il a reçue et annonce qu'il pourrait saisir le juge. Votre hiérarchie veut une réponse factuelle, qui donne les motifs sans dévoiler le contenu de l'offre retenue. Les noms ont été remplacés par des lettres.",
+      "material": "Courriel du candidat évincé, la société Y (fictif) :\n« Notre note technique de 11/20 est incompréhensible : notre mémoire faisait 40 pages et détaillait toute notre méthode. Nous demandons à connaître précisément ce qui manquait, ainsi que le détail de l'offre de l'attributaire. À défaut de réponse satisfaisante, nous saisirons le juge. »\n\nExtrait du rapport d'analyse (fictif) :\n- critère valeur technique, noté sur 20, apprécié selon trois sous-critères annoncés dans le règlement de consultation : méthode pédagogique (8 points), qualification des formateurs (8 points), suivi des stagiaires (4 points) ;\n- société Y : méthode 6/8 (« méthode claire et détaillée ») ; formateurs 3/8 (« CV non fournis, qualifications non justifiées ») ; suivi 2/4 (« évaluation en fin de formation seulement, aucun suivi ensuite ») ;\n- attributaire, la société X : 17/20 au total ; ses CV et sa méthode relèvent du secret des affaires.",
+      "startingRequest": "réponds à la société y qui menace d'aller au tribunal",
+      "goodRequest": "À partir du texte ci-dessous, rédigez un projet de réponse à la société Y, candidat évincé qui conteste sa note technique ; ma hiérarchie le validera. Expliquez sa note de 11/20 sous-critère par sous-critère, en reprenant exactement les points et les appréciations du rapport d'analyse. Indiquez la note totale de l'attributaire, mais ne donnez aucun élément du contenu de son offre : expliquez sobrement que ces éléments sont couverts par le secret des affaires. Sur la longueur du mémoire, rappelez seulement que la note dépend des sous-critères annoncés, pas du nombre de pages. Ne répondez pas à l'annonce d'une saisine du juge, n'admettez aucune erreur et ne citez aucun texte ni aucune jurisprudence. Ton courtois, factuel et ferme, une page maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous imposez les points et les appréciations du rapport : la réponse justifie la note avec les éléments de l'analyse, sans en inventer."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous protégez le contenu de l'offre retenue et interdisez de répondre à la menace : la réponse ne crée pas de nouveau risque."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton courtois, factuel et ferme : le candidat comprend sa note sans que la direction se mette sur la défensive."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les points de la société Y : 6/8, 3/8 et 2/4, soit 11/20, avec les appréciations du rapport.",
+        "Vérifiez qu'aucun élément de l'offre de la société X n'apparaît, seulement sa note de 17/20.",
+        "Vérifiez que la réponse ne mentionne pas le juge et ne reconnaît aucune erreur de notation."
+      ],
+      "lesson": "Dans un écrit qui peut finir devant un juge, dites à l'Assistant sur quel document s'appuyer et ce qui doit rester confidentiel."
     }
   ]
 }

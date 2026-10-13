@@ -146,6 +146,230 @@
         "Les hypothèses de l'Assistant sont clairement séparées des informations de la liste."
       ],
       "lesson": "Pour une décision, demandez plusieurs options chiffrées avec leurs conséquences, et gardez le choix final."
+    },
+    {
+      "id": "comptable-4",
+      "jobId": "comptable",
+      "level": 1,
+      "task": "relancer un service pour une attestation de service fait",
+      "title": "Relancer pour un service fait",
+      "minutes": 5,
+      "situation": "Une facture de 7 450 euros pour des travaux de peinture attend depuis trois semaines, car le service prescripteur n'a pas attesté le service fait. Le délai global de paiement de trente jours court depuis la réception de la facture, le 22 septembre. Vous voulez relancer le service, courtoisement mais fermement.",
+      "material": "Éléments du dossier (fictifs) :\nFacture n° 2026-117 du fournisseur A, reçue le 22 septembre, 7 450 euros TTC.\nObjet : travaux de peinture des bureaux du 3e étage, terminés le 15 septembre selon le fournisseur.\nService prescripteur : bureau de la logistique.\nPremière demande d'attestation de service fait : 25 septembre, sans réponse.\nDélai global de paiement : 30 jours à compter de la réception de la facture, soit jusqu'au 22 octobre ; au-delà, des intérêts moratoires sont dus au fournisseur.",
+      "startingRequest": "relance la logistique pour le service fait",
+      "goodRequest": "À partir des éléments ci-dessous, rédigez un courriel de relance au bureau de la logistique pour obtenir l'attestation de service fait de la facture n° 2026-117 de 7 450 euros. Rappelez la première demande du 25 septembre, expliquez en une phrase qu'au-delà du 22 octobre l'administration devra payer des intérêts moratoires au fournisseur, et demandez l'attestation au plus tard le 17 octobre. Si les travaux ne sont pas conformes, invitez le service à le signaler par retour. Ton courtois et ferme, sans reproche, huit lignes maximum, objet du courriel compris. N'indiquez aucun montant d'intérêts moratoires.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous donnez le numéro, le montant et les dates du dossier : le service sait tout de suite de quelle facture il s'agit."
+        },
+        {
+          "skill": "task",
+          "point": "Vous fixez une date de réponse et expliquez l'enjeu des intérêts moratoires : la relance donne une vraie raison d'agir vite."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez un ton ferme sans reproche : vous obtenez l'attestation sans abîmer la relation avec un service avec qui vous travaillez tous les jours."
+        }
+      ],
+      "checkAnswer": [
+        "Le numéro de facture, le montant de 7 450 euros et les dates du 25 septembre, du 17 et du 22 octobre sont exacts.",
+        "Le courriel propose bien de signaler un défaut des travaux, au lieu de pousser à attester sans vérifier.",
+        "Il ne cite aucun montant d'intérêts moratoires."
+      ],
+      "lesson": "Une relance obtient une réponse quand elle donne une date et la raison de cette date."
+    },
+    {
+      "id": "comptable-5",
+      "jobId": "comptable",
+      "level": 1,
+      "task": "expliquer une notion budgétaire à un collègue",
+      "title": "Expliquer AE et CP à un nouveau collègue",
+      "minutes": 5,
+      "situation": "Un collègue arrivé la semaine dernière dans le service ne comprend pas pourquoi un marché de trois ans apparaît pour 90 000 euros en autorisations d'engagement cette année, mais seulement pour 30 000 euros en crédits de paiement. Vous voulez lui envoyer une explication simple, à partir de cet exemple du service.",
+      "material": "Exemple du service (fictif) :\nMarché de maintenance du système de chauffage, signé en janvier 2026 pour trois ans, montant total 90 000 euros.\nAutorisations d'engagement consommées en 2026 : 90 000 euros (engagement juridique de la totalité du marché à la signature).\nCrédits de paiement consommés : 30 000 euros en 2026, prévus 30 000 euros en 2027 et 30 000 euros en 2028, au rythme des factures annuelles.\nReste à payer fin 2026 : 60 000 euros.",
+      "startingRequest": "c'est quoi la différence entre AE et CP",
+      "goodRequest": "À partir de l'exemple ci-dessous, rédigez un court message pour un collègue arrivé la semaine dernière dans le service comptable, qui ne connaît pas encore les règles budgétaires. Expliquez en mots simples la différence entre autorisations d'engagement et crédits de paiement, montrez-la ensuite sur ce marché de trois ans, année par année, et terminez par ce que signifie le reste à payer de 60 000 euros. Dix lignes maximum, ton amical et simple, sigles écrits en toutes lettres la première fois. Utilisez uniquement les chiffres de l'exemple.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que le lecteur vient d'arriver : l'Assistant part de zéro et évite les sigles."
+        },
+        {
+          "skill": "examples",
+          "point": "Vous donnez un exemple réel du service : l'explication s'appuie sur un cas que votre collègue retrouvera dans ses dossiers."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous limitez l'Assistant aux chiffres de l'exemple : les montants restent cohérents d'un bout à l'autre."
+        }
+      ],
+      "checkAnswer": [
+        "Les montants sont justes : 90 000 euros engagés en 2026, 30 000 euros payés chaque année, 60 000 euros restant à payer fin 2026.",
+        "La différence est dite simplement : l'engagement de la totalité à la signature d'un côté, les paiements au fil des factures de l'autre.",
+        "Les sigles AE et CP sont écrits en toutes lettres au moins une fois."
+      ],
+      "lesson": "Pour faire comprendre une notion, donnez à l'Assistant un exemple concret tiré de votre travail."
+    },
+    {
+      "id": "comptable-6",
+      "jobId": "comptable",
+      "level": 2,
+      "task": "expliquer un écart entre la prévision et l'exécution",
+      "title": "Expliquer un écart à la prévision",
+      "minutes": 10,
+      "situation": "Pour le compte rendu de gestion du troisième trimestre, votre cheffe de bureau doit expliquer à la direction pourquoi les dépenses de déplacements sont très en dessous de la prévision, alors que celles d'énergie la dépassent. Elle vous demande un paragraphe à partir du tableau et des explications recueillies auprès des services.",
+      "material": "Prévision et exécution au 30 septembre (fictives, en milliers d'euros)\n\nPoste | Prévision à fin septembre | Exécution à fin septembre | Écart\nDéplacements et missions | 340 | 210 | -130\nÉnergie (électricité, chauffage) | 520 | 585 | +65\nFournitures | 110 | 105 | -5\n\nExplications des services :\n- déplacements : deux séminaires régionaux annulés en mai et juin ; davantage de réunions en visioconférence ;\n- énergie : hausse du prix de l'électricité au 1er février, prévue à +5 % dans la prévision mais de +15 % en réalité selon le nouveau contrat ;\n- fournitures : aucune remarque.",
+      "startingRequest": "explique les écarts",
+      "goodRequest": "À partir du tableau et des explications ci-dessous, rédigez le paragraphe du compte rendu de gestion du troisième trimestre qui explique les écarts entre la prévision et l'exécution, pour ma cheffe de bureau qui le présentera à la direction. Traitez d'abord les deux écarts importants, les déplacements puis l'énergie, avec pour chacun le montant de l'écart, sa cause selon les services et ce qu'il faudra surveiller d'ici la fin de l'année. Mentionnez les fournitures en une phrase. Ton factuel, montants en milliers d'euros, douze lignes maximum. N'avancez aucune cause qui ne figure pas dans les explications des services et ne calculez aucune projection de fin d'année.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous limitez les causes à celles données par les services : la direction lit des explications vérifiées, pas des suppositions de l'Assistant."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez l'ordre (écart, cause, point à surveiller) et la longueur : le paragraphe se lit d'une traite et va à l'essentiel."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez les projections chiffrées : aucun montant de fin d'année ne part à la direction sans que vous l'ayez calculé."
+        }
+      ],
+      "checkAnswer": [
+        "Les écarts sont exacts : -130 pour les déplacements, +65 pour l'énergie, -5 pour les fournitures, et vous les avez recalculés.",
+        "Les causes sont celles des services, notamment la hausse de 15 % au lieu des 5 % prévus pour l'électricité.",
+        "Aucune estimation de fin d'année n'est donnée sous forme de chiffre."
+      ],
+      "lesson": "Pour expliquer un écart, donnez les causes connues et interdisez d'en inventer d'autres."
+    },
+    {
+      "id": "comptable-7",
+      "jobId": "comptable",
+      "level": 2,
+      "task": "mettre en forme un tableau de suivi des dépenses",
+      "title": "Mettre au propre le suivi des factures",
+      "minutes": 10,
+      "situation": "Vos notes de suivi des factures en attente sont devenues illisibles. Votre chef de bureau veut, pour la réunion de service de vendredi, un tableau clair qui montre les factures bloquées et celles qui ont dépassé le délai global de paiement. Vous partez de vos notes ci-dessous.",
+      "material": "Notes de suivi au 13 octobre (fictives) :\nfact. fournisseur A, 2 300 €, reçue 1/09, en attente service fait (bureau logistique)\nfournisseur B 12 800 € reçue 18/09 – payée le 10/10\nfournisseur C, 640 €, reçue 25/09, rejetée le 30/09 (pas de bon de commande), pas renvoyée\nfourn. D 5 150 € reçue le 29/09 service fait OK le 8/10, à mettre en paiement\nfournisseur E 980 €, reçue 3/10, en attente service fait (bureau informatique)\nfournisseur F 3 420 €, reçue 10/09, service fait OK le 6/10, à mettre en paiement\n\nRègles du service : délai global de paiement de 30 jours à partir de la réception de la facture ; une facture rejetée n'entre pas dans le suivi du délai tant qu'elle n'a pas été renvoyée corrigée.",
+      "startingRequest": "fais-moi un tableau propre avec ça",
+      "goodRequest": "À partir de mes notes ci-dessous, présentez les factures sous forme de tableau pour mon chef de bureau, qui le projettera en réunion de service vendredi. Colonnes : fournisseur, montant, date de réception, situation, service concerné, nombre de jours écoulés au 13 octobre. Classez les factures de la plus ancienne à la plus récente, signalez celles qui ont dépassé 30 jours et donnez le total des montants restant à payer, hors facture rejetée. Sous le tableau, ajoutez trois lignes sur les actions à mener. Montrez le calcul du nombre de jours et du total. Ne modifiez aucun montant ni aucune date, et laissez la case vide quand une information manque.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez les colonnes et l'ordre de tri : le tableau répond aux questions de la réunion sans retouche."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez une case vide quand l'information manque : l'Assistant ne comble pas les trous par des suppositions."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez de repérer les factures au-delà de 30 jours et de montrer les calculs : les urgences ressortent et vous pouvez tout vérifier."
+        }
+      ],
+      "checkAnswer": [
+        "Les factures A (42 jours) et F (33 jours) sont signalées comme ayant dépassé 30 jours au 13 octobre.",
+        "Le total restant à payer hors facture rejetée est de 11 850 euros, et la facture B, déjà payée, n'y figure pas.",
+        "La colonne du service est vide pour les factures D et F, au lieu d'un service inventé."
+      ],
+      "lesson": "Demandez une case vide plutôt qu'une information devinée : un tableau faux est pire qu'un tableau incomplet."
+    },
+    {
+      "id": "comptable-8",
+      "jobId": "comptable",
+      "level": 2,
+      "task": "informer un fournisseur d'un titre de recette",
+      "title": "Récupérer un paiement fait en double",
+      "minutes": 10,
+      "situation": "Par erreur, une facture de 2 350 euros du fournisseur B a été payée deux fois, le 4 et le 18 septembre. Un titre de recette a été émis le 9 octobre pour récupérer la somme versée en trop. Vous devez écrire au fournisseur pour l'en informer avant qu'il reçoive le titre, en reconnaissant l'erreur du service.",
+      "material": "Éléments du dossier (fictifs) :\nFacture n° B-5521 de 2 350 euros TTC, prestation de nettoyage de juillet.\nPremier paiement : 4 septembre. Second paiement, par erreur : 18 septembre (facture saisie deux fois).\nTitre de recette émis le 9 octobre pour 2 350 euros, qui sera adressé au fournisseur par courrier.\nLe délai de paiement, les modalités de paiement et les voies de recours figurent sur le titre.\nDans ce dossier, une déduction sur une prochaine facture n'est pas possible.",
+      "startingRequest": "écris au fournisseur pour qu'il rembourse",
+      "goodRequest": "À partir des éléments ci-dessous, rédigez un courriel au fournisseur B pour l'informer que sa facture de 2 350 euros lui a été payée deux fois et qu'un titre de recette va lui être adressé pour récupérer cette somme. Reconnaissez simplement l'erreur du service et présentez des excuses, indiquez les deux dates de paiement, puis précisez que le délai, les modalités de paiement et les voies de recours figurent sur le titre qu'il recevra par courrier. Dites aussi qu'une déduction sur une prochaine facture n'est pas possible. Ton courtois et clair, dix lignes maximum. Ne citez aucun délai, aucun texte de loi et aucune coordonnée bancaire : ces informations figurent uniquement sur le titre officiel.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous donnez les dates et le numéro de facture : le fournisseur comprend tout de suite d'où vient le trop-payé."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de reconnaître l'erreur du service : le fournisseur coopère plus facilement quand on ne lui fait pas porter la faute."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez délai, texte de loi et coordonnées bancaires : le courriel ne contredit pas le titre officiel et n'invente aucune règle."
+        }
+      ],
+      "checkAnswer": [
+        "Le montant de 2 350 euros, le numéro B-5521 et les dates du 4 et du 18 septembre sont exacts.",
+        "Le courriel renvoie au titre pour le délai et les voies de recours, sans en inventer.",
+        "Il dit clairement que la somme ne peut pas être déduite d'une prochaine facture."
+      ],
+      "lesson": "Quand un document officiel fait foi, demandez à l'Assistant d'y renvoyer au lieu de le résumer."
+    },
+    {
+      "id": "comptable-9",
+      "jobId": "comptable",
+      "level": 3,
+      "task": "répondre au contrôleur budgétaire",
+      "title": "Répondre au contrôleur budgétaire",
+      "minutes": 15,
+      "situation": "Le contrôleur budgétaire pose trois questions sur votre exécution avant la fin de gestion. Les réponses engagent votre direction : votre chef de bureau veut un projet précis, qu'il validera, qui sépare ce qui est certain de ce qui reste à confirmer.",
+      "material": "Courriel du contrôleur budgétaire (fictif) :\n1. Le taux de consommation des crédits de paiement n'est que de 58 % au 30 septembre. Comment prévoyez-vous d'atteindre la prévision de fin d'année ?\n2. Le reste à payer sur le marché de rénovation énergétique passe de 1,2 à 1,6 million d'euros. Pouvez-vous expliquer cette hausse ?\n3. Confirmez-vous qu'aucun dépassement n'est attendu sur les dépenses de personnel vacataire ?\n\nInformations du bureau :\n- 2,1 millions d'euros de factures du marché informatique sont attendues en novembre et décembre ; service fait déjà attesté pour 0,6 million ;\n- un avenant de 0,4 million d'euros a été signé en juillet sur le marché de rénovation énergétique (travaux supplémentaires d'isolation) ;\n- vacataires : le service des ressources humaines n'a pas encore transmis ses prévisions de fin d'année ; demande faite le 6 octobre.",
+      "startingRequest": "aide-moi à répondre au contrôleur",
+      "goodRequest": "À partir du courriel et des informations ci-dessous, préparez un projet de réponse au contrôleur budgétaire, que mon chef de bureau validera avant l'envoi. Répondez aux trois questions dans l'ordre, chacune sous son numéro, en trois à cinq lignes. Pour chaque réponse, appuyez-vous uniquement sur les informations du bureau et distinguez clairement ce qui est acquis de ce qui reste à confirmer. Pour la question 3, n'apportez aucune confirmation : indiquez que les prévisions sont attendues du service des ressources humaines et qu'une réponse complète suivra. Ton factuel et précis, montants en millions d'euros. Ne calculez aucun taux de fin d'année et ne prenez aucun engagement au nom de la direction. Ajoutez à la fin, à part, la liste des points que mon chef doit vérifier avant l'envoi.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous limitez les réponses aux informations du bureau et demandez de séparer l'acquis de l'incertain : le contrôleur ne reçoit que des affirmations que vous pouvez justifier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez toute confirmation sur les vacataires et tout engagement : la direction ne se retrouve pas liée par une phrase de l'Assistant."
+        },
+        {
+          "skill": "format",
+          "point": "Vous imposez une réponse numérotée par question et une liste de vérification à part : le contrôleur s'y retrouve et votre chef relit vite."
+        }
+      ],
+      "checkAnswer": [
+        "La hausse du reste à payer est expliquée par l'avenant de 0,4 million d'euros, ce qui correspond bien au passage de 1,2 à 1,6 million.",
+        "La réponse à la question 3 ne confirme rien et renvoie aux prévisions attendues des ressources humaines.",
+        "Aucun taux de consommation de fin d'année n'est avancé, et la liste des points à vérifier est bien séparée du projet de réponse."
+      ],
+      "lesson": "Quand la réponse engage votre direction, faites séparer le certain de l'incertain et gardez la validation."
+    },
+    {
+      "id": "comptable-10",
+      "jobId": "comptable",
+      "level": 3,
+      "task": "analyser les retards de paiement pour proposer des mesures",
+      "title": "Analyser les retards de paiement",
+      "minutes": 15,
+      "situation": "Les intérêts moratoires versés par votre direction ont doublé en un an. Votre chef de bureau doit proposer en comité de direction des mesures pour réduire les retards de paiement. Il vous demande une analyse à partir des délais mesurés par service, sans mettre en cause des personnes.",
+      "material": "Délais de paiement au troisième trimestre (fictifs)\n\nService prescripteur | Factures | Délai moyen avant attestation du service fait | Délai moyen de traitement comptable | Délai global moyen | Intérêts moratoires versés\nLogistique | 210 | 24 jours | 9 jours | 33 jours | 4 100 €\nInformatique | 95 | 12 jours | 8 jours | 20 jours | 300 €\nFormation | 60 | 31 jours | 10 jours | 41 jours | 2 900 €\nCommunication | 40 | 9 jours | 7 jours | 16 jours | 0 €\nTotal | 405 | | | | 7 300 €\n\nRemarques : le délai global de paiement réglementaire est de 30 jours ; au service de la formation, une seule personne est habilitée à attester le service fait ; la logistique reçoit encore beaucoup de factures papier.",
+      "startingRequest": "pourquoi on paye en retard ?",
+      "goodRequest": "À partir du tableau et des remarques ci-dessous, préparez une note d'une page pour mon chef de bureau, qui doit proposer en comité de direction des mesures pour réduire les retards de paiement. 1) Identifiez les services dont le délai global dépasse 30 jours et, pour chacun, l'étape qui pèse le plus, attestation du service fait ou traitement comptable, chiffres à l'appui. 2) Proposez des causes possibles en vous appuyant seulement sur les remarques, présentées comme des hypothèses à vérifier. 3) Proposez trois mesures concrètes avec leurs avantages et leurs limites, puis indiquez celle que vous recommandez en premier et pourquoi. Ton neutre et constructif : parlez d'organisation et de circuits, jamais de personnes. N'utilisez aucun chiffre absent du tableau et montrez vos calculs.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous découpez l'analyse en trois temps (constater, expliquer, proposer) : l'Assistant raisonne dans l'ordre au lieu de commenter au hasard."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de parler de circuits et non de personnes : la note peut être présentée en comité de direction sans mettre un service en accusation."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous séparez les chiffres du tableau et les hypothèses : votre chef sait ce qui est établi et ce qui reste à vérifier avant d'en parler."
+        }
+      ],
+      "checkAnswer": [
+        "Seules la logistique (33 jours) et la formation (41 jours) sont signalées au-delà de 30 jours, avec l'attestation du service fait comme étape la plus longue.",
+        "Les causes avancées sont présentées comme des hypothèses tirées des remarques, sans nommer ni blâmer personne.",
+        "Le total de 7 300 euros d'intérêts moratoires est repris sans erreur et aucun chiffre nouveau n'apparaît."
+      ],
+      "lesson": "Pour une analyse qui va circuler, demandez de parler des circuits, pas des personnes, et de séparer faits et hypothèses."
     }
   ]
 }

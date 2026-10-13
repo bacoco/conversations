@@ -145,6 +145,230 @@
         "La recommandation finale est claire et justifiée en une ou deux phrases."
       ],
       "lesson": "Pour préparer une décision, demandez des options comparées et une recommandation, en séparant les faits des hypothèses."
+    },
+    {
+      "id": "accueil-usagers-4",
+      "jobId": "accueil-usagers",
+      "level": 1,
+      "task": "écrire un message d'attente ou un accusé de réception",
+      "title": "Faire patienter un usager qui relance",
+      "minutes": 5,
+      "situation": "Une usagère relance pour la deuxième fois sa demande d'attestation, envoyée il y a trois semaines. Son dossier est en cours d'examen : il manque la validation d'un autre service, et votre chef vous indique qu'une réponse pourra partir sous dix jours ouvrés. Vous voulez lui envoyer un message d'attente court et rassurant.",
+      "material": "Courriel reçu (fictif) :\n\nObjet : Deuxième relance – ma demande d'attestation\n\nBonjour,\n\nJ'ai envoyé le 22 septembre une demande d'attestation par la messagerie sécurisée. Je n'ai reçu aucun accusé de réception et je vous ai déjà relancés le 3 octobre, sans réponse. Cette attestation m'est demandée par ma banque pour un prêt et je dois la fournir avant la fin du mois. Pouvez-vous au moins me dire où en est ma demande ?\n\nMme X",
+      "startingRequest": "fais un message d'attente pour cette dame",
+      "goodRequest": "À partir du courriel ci-dessous, rédigez un message d'attente pour cette usagère qui relance pour la deuxième fois sa demande d'attestation. Faits à reprendre : sa demande du 22 septembre est bien enregistrée et en cours d'examen, il manque la validation d'un autre service, et une réponse lui sera envoyée sous dix jours ouvrés. Commencez par présenter des excuses pour l'absence d'accusé de réception et de réponse à sa relance. Ton chaleureux et simple, vouvoiement, huit lignes maximum. Ne promettez pas que l'attestation sera prête avant la fin du mois et n'ajoutez aucune information qui ne figure pas ici.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous donnez l'état réel du dossier et le délai validé par votre chef : le message rassure avec des faits au lieu de formules creuses."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de promettre l'attestation avant la fin du mois : la réponse n'engage pas le service sur un délai qu'il ne maîtrise pas."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez de commencer par des excuses : l'usagère, qui attend depuis trois semaines, se sent enfin entendue."
+        }
+      ],
+      "checkAnswer": [
+        "Le message cite la demande du 22 septembre et le délai de dix jours ouvrés, sans aucune autre date.",
+        "Il ne promet pas que l'attestation sera prête pour la banque avant la fin du mois.",
+        "Il tient en huit lignes et ne contient aucun jargon administratif."
+      ],
+      "lesson": "Un message d'attente rassure quand il donne un fait et un délai vrais, jamais une promesse."
+    },
+    {
+      "id": "accueil-usagers-5",
+      "jobId": "accueil-usagers",
+      "level": 1,
+      "task": "reformuler une réponse trop administrative",
+      "title": "Traduire une réponse administrative",
+      "minutes": 5,
+      "situation": "Un collègue vous demande de relire la réponse qu'il a préparée pour un usager qui voulait savoir pourquoi sa demande de remboursement n'avance pas. Le contenu est juste, mais le texte est incompréhensible pour un particulier. Vous voulez le reformuler en langage simple, sans rien changer au fond.",
+      "material": "Projet de réponse (fictif) :\n\nMadame, Monsieur,\n\nNous accusons réception de votre demande susvisée. Nous vous informons que l'instruction de votre dossier ne peut être poursuivie en l'état, les pièces justificatives requises n'ayant pas été produites à l'appui de votre demande. Il vous appartient en conséquence de transmettre, dans un délai de trente jours à compter de la réception du présent courrier, une copie de la facture acquittée ainsi qu'un relevé d'identité bancaire à votre nom. À défaut, votre demande fera l'objet d'un classement sans suite.\n\nNous vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.",
+      "startingRequest": "rends ce texte plus simple",
+      "goodRequest": "À partir du projet de réponse ci-dessous, réécrivez ce courrier en langage simple pour un usager particulier qui n'est pas habitué au vocabulaire administratif. Gardez exactement le même contenu : les deux pièces à envoyer, le délai de trente jours et ce qui se passe si elles ne sont pas envoyées. Phrases courtes, mots de tous les jours, vouvoiement, une liste à puces pour les deux pièces. Ton courtois, sans être sec. N'ajoutez et ne retirez aucune information, et ne changez aucun délai.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que le lecteur n'est pas habitué au vocabulaire administratif : l'Assistant remplace « susvisée » ou « classement sans suite » par des mots de tous les jours."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous listez ce qui ne doit pas bouger (pièces, délai, conséquence) : la reformulation simplifie la forme sans changer la décision."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez une liste pour les deux pièces : l'usager voit d'un coup d'œil ce qu'il doit envoyer."
+        }
+      ],
+      "checkAnswer": [
+        "Les deux pièces (la facture payée et le relevé d'identité bancaire à son nom) et le délai de trente jours sont bien présents.",
+        "La conséquence d'un envoi manquant est dite clairement, ni adoucie ni durcie.",
+        "Il ne reste aucune expression administrative comme « susvisée », « en l'état » ou « il vous appartient »."
+      ],
+      "lesson": "Quand vous faites reformuler, dites ce qui ne doit surtout pas changer."
+    },
+    {
+      "id": "accueil-usagers-6",
+      "jobId": "accueil-usagers",
+      "level": 2,
+      "task": "expliquer une démarche en langage simple",
+      "title": "Expliquer une demande de délai de paiement",
+      "minutes": 10,
+      "situation": "Une usagère âgée vous écrit qu'elle ne pourra pas payer en une fois la somme qu'elle doit et qu'elle ne sait pas comment demander un délai. Vous voulez lui expliquer la démarche par écrit, à partir de la fiche interne ci-dessous, pour qu'elle puisse la faire seule ou avec un proche.",
+      "material": "Fiche interne (exemple fictif, propre à ce service) – Demande de délai de paiement\n\nL'usager peut demander un délai de paiement depuis son espace en ligne, rubrique « Mes paiements », puis « Demander un délai ». Il indique le montant qu'il peut verser chaque mois et joint un justificatif de ressources (avis d'imposition, relevé de pension ou bulletin de salaire). La demande doit être faite avant la date limite de paiement indiquée sur l'avis. Le service répond sous quinze jours par la messagerie sécurisée. Un échéancier accordé doit être respecté : en cas d'échéance non payée, il peut être annulé. Les usagers sans internet peuvent prendre rendez-vous au guichet ou par téléphone, avec les mêmes justificatifs. L'agent d'accueil ne peut pas dire à l'avance si le délai sera accordé.",
+      "startingRequest": "explique-lui comment demander un délai",
+      "goodRequest": "À partir de la fiche interne ci-dessous, rédigez une réponse à une usagère âgée, peu à l'aise avec internet, qui veut demander un délai pour payer ce qu'elle doit. Expliquez la démarche en ligne en étapes numérotées, une action par étape, en reprenant les noms exacts des rubriques. Ajoutez ensuite un court paragraphe « Si vous n'avez pas internet » et rappelez qu'il faut faire la demande avant la date limite indiquée sur son avis. Vouvoiement, phrases de quinze mots maximum, ton bienveillant, aucun sigle. Ne laissez pas entendre que le délai sera accordé et n'ajoutez aucune règle absente de la fiche.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous précisez que la lectrice est âgée et peu à l'aise avec internet : l'Assistant choisit des phrases courtes et n'oublie pas la solution sans internet."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez des étapes numérotées avec une action chacune : l'usagère peut suivre la démarche pas à pas, devant son écran."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez la réponse à la fiche interne : aucun justificatif, délai ou nom de rubrique n'est inventé."
+        }
+      ],
+      "checkAnswer": [
+        "Les noms des rubriques « Mes paiements » et « Demander un délai » sont repris exactement.",
+        "La réponse cite les justificatifs de ressources, le délai de réponse de quinze jours et l'obligation de faire la demande avant la date limite.",
+        "Elle ne laisse jamais croire que le délai est déjà accordé."
+      ],
+      "lesson": "Pour expliquer une démarche, demandez une étape par action, avec les mots exacts que la personne verra à l'écran."
+    },
+    {
+      "id": "accueil-usagers-7",
+      "jobId": "accueil-usagers",
+      "level": 2,
+      "task": "préparer une réponse type pour les demandes fréquentes",
+      "title": "Réponse type : attestation à télécharger",
+      "minutes": 10,
+      "situation": "Chaque semaine, votre service reçoit des dizaines de messages d'usagers qui demandent une attestation qu'ils pourraient télécharger eux-mêmes dans leur espace en ligne. Votre chef de service vous demande une réponse type que toute l'équipe pourra réutiliser, à partir des consignes ci-dessous.",
+      "material": "Consignes du service (fictives) :\n- L'attestation de paiement de l'année en cours et des deux années précédentes est téléchargeable dans l'espace particulier, rubrique « Mes documents ».\n- Pour les années plus anciennes, l'usager fait une demande par la messagerie sécurisée, en précisant l'année ; délai de traitement : dix jours ouvrés.\n- Si l'usager n'arrive pas à se connecter, il peut réinitialiser son mot de passe depuis la page de connexion, ou appeler le numéro d'assistance.\n- Les attestations ne sont jamais envoyées par courriel classique.\n\nQuestions fréquentes reçues :\n« Pouvez-vous m'envoyer mon attestation de paiement de cette année ? »\n« J'ai besoin d'une attestation pour 2021, comment faire ? »\n« Je n'arrive pas à me connecter, envoyez-moi l'attestation par mail. »",
+      "startingRequest": "fais une réponse type pour les attestations",
+      "goodRequest": "À partir des consignes et des questions ci-dessous, rédigez une réponse type que les agents de l'accueil pourront envoyer par la messagerie sécurisée aux usagers qui demandent une attestation de paiement. Elle doit couvrir les trois cas des questions fréquentes : attestation récente, attestation ancienne, problème de connexion. Format : une phrase d'accueil, puis trois courts paragraphes avec un intertitre chacun, puis une formule de politesse. Vouvoiement, ton aimable, phrases courtes, sans aucun nom ni aucune date propre à un usager, pour qu'elle soit réutilisable telle quelle. N'ajoutez aucune règle ni aucun délai absent des consignes.",
+      "keyPoints": [
+        {
+          "skill": "examples",
+          "point": "Vous joignez les questions réellement reçues : la réponse type couvre les vrais cas de l'accueil, pas des cas imaginés."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez la structure, avec un paragraphe par cas : l'usager trouve vite la partie qui le concerne."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez tout élément propre à un usager : la réponse reste réutilisable sans risque de laisser le nom d'un précédent envoi."
+        }
+      ],
+      "checkAnswer": [
+        "Les trois cas sont traités, avec la rubrique « Mes documents » et le délai de dix jours ouvrés pour les années anciennes.",
+        "La réponse dit clairement que l'attestation n'est pas envoyée par courriel classique, sans ton sec.",
+        "Elle ne contient aucun nom, aucune date ni aucun numéro de téléphone inventé."
+      ],
+      "lesson": "Montrez à l'Assistant les vraies questions reçues : sa réponse répondra à vos usagers, pas à des cas imaginaires."
+    },
+    {
+      "id": "accueil-usagers-8",
+      "jobId": "accueil-usagers",
+      "level": 2,
+      "task": "orienter une demande vers le bon service",
+      "title": "Transmettre une demande au bon service",
+      "minutes": 10,
+      "situation": "Un professionnel écrit à votre service pour contester une majoration appliquée à son entreprise. Ce sujet relève du service chargé des professionnels, pas du vôtre. Vous devez transmettre sa demande à un collègue de ce service avec les éléments utiles, et prévenir l'usager de cette transmission.",
+      "material": "Message reçu (fictif) :\n\nBonjour,\n\nGérant d'une petite entreprise de menuiserie, j'ai reçu le 2 octobre un avis avec une majoration de 10 % pour paiement tardif. Or j'ai payé le 14 septembre, avant la date limite du 15 septembre, par virement depuis mon espace professionnel. Je joins la copie de mon relevé bancaire. Je demande l'annulation de cette majoration.\n\nCordialement,\nM. X, entreprise A\n\nInformation interne : les contestations de majoration des professionnels sont traitées par le service des professionnels, qui répond en général sous un mois.",
+      "startingRequest": "transfère ça au bon service",
+      "goodRequest": "À partir du message ci-dessous, rédigez deux textes courts. 1) Une note de transmission pour un collègue du service des professionnels : un objet clair, un résumé de la demande en trois lignes (date de l'avis, date du paiement, date limite, demande d'annulation), la pièce jointe signalée et une demande d'accusé de réception. 2) Une réponse à l'usager pour lui dire que sa demande a été transmise au service compétent, qui lui répondra directement, en général sous un mois. Pour le collègue, ton direct et factuel ; pour l'usager, ton courtois et vouvoiement. Ne donnez aucun avis sur le bien-fondé de la contestation et ne promettez pas l'annulation de la majoration.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous distinguez deux lecteurs, le collègue et l'usager : chacun reçoit le ton et le niveau de détail qui lui conviennent."
+        },
+        {
+          "skill": "task",
+          "point": "Vous dites ce que le collègue doit trouver dans la note (dates, demande, pièce jointe) : il peut traiter le dossier sans revenir vers vous."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de juger la contestation : votre service ne s'engage pas sur un dossier qu'il ne traite pas."
+        }
+      ],
+      "checkAnswer": [
+        "Les dates du 2 octobre, du 14 septembre et du 15 septembre sont reprises sans erreur dans la note au collègue.",
+        "La réponse à l'usager ne dit pas que la majoration sera annulée et présente le délai d'un mois comme habituel, pas comme garanti.",
+        "La note au collègue tient en quelques lignes et signale bien la copie du relevé bancaire jointe."
+      ],
+      "lesson": "Quand un même sujet a deux lecteurs, demandez deux textes : un pour chacun."
+    },
+    {
+      "id": "accueil-usagers-9",
+      "jobId": "accueil-usagers",
+      "level": 3,
+      "task": "répondre à un élu qui transmet une demande",
+      "title": "Répondre à un élu sans rompre le secret",
+      "minutes": 15,
+      "situation": "Le cabinet d'un élu écrit à votre service pour appuyer la demande d'un habitant de sa commune, dont il décrit la situation. La règle de votre service est claire : les informations sur un dossier ne sont communiquées qu'à l'usager lui-même, ou à une personne qu'il a mandatée par écrit. Votre cheffe de service vous demande un projet de réponse à l'élu et un projet de message à l'usager, qu'elle validera.",
+      "material": "Courrier reçu (fictif) :\n\nMadame la Cheffe de service,\n\nJe me permets d'appeler votre attention sur la situation de M. X, habitant de notre commune, qui a déposé en juin une demande de remise gracieuse de pénalités et n'a toujours pas de réponse. Il traverse une période difficile après la fermeture de son commerce. Je vous serais reconnaissant de bien vouloir m'indiquer où en est son dossier et dans quel délai une décision sera prise.\n\nPour l'élu, son collaborateur\n\nInformations internes : le dossier de M. X est en cours d'instruction ; une décision est attendue en novembre ; aucun mandat écrit de M. X au profit de l'élu ne figure au dossier ; règle du service : les informations sur un dossier ne sont communiquées qu'à l'usager ou à une personne mandatée par écrit.",
+      "startingRequest": "réponds à l'élu sur le dossier de ce monsieur",
+      "goodRequest": "À partir du courrier et des informations internes ci-dessous, préparez deux projets que ma cheffe de service validera. 1) Une réponse au cabinet de l'élu : remerciez-le de son attention, accusez réception de son courrier, expliquez en une phrase que les informations sur un dossier ne peuvent être communiquées qu'à l'intéressé ou à une personne qu'il a mandatée par écrit, et indiquez que le service répondra directement à l'usager. Aucune information sur le dossier : ni état d'avancement, ni date de décision. Ton respectueux et cordial, dix lignes maximum. 2) Un message à l'usager qui lui donne l'état de son dossier et la date de décision attendue en novembre, sans promettre l'issue. Vouvoiement, ton bienveillant. Enfin, listez en deux lignes les points que ma cheffe doit vérifier avant l'envoi.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous écrivez noir sur blanc ce qui ne doit pas figurer dans la réponse à l'élu : l'Assistant, qui cherche à être serviable, ne livre pas l'état du dossier à un tiers non mandaté."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous séparez l'élu et l'usager : chacun reçoit ce qu'il a le droit de savoir, avec le ton qui lui convient."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez aussi la liste des points à vérifier : votre cheffe relit en sachant où regarder avant de signer."
+        }
+      ],
+      "checkAnswer": [
+        "La réponse à l'élu ne mentionne ni l'instruction en cours, ni le mois de novembre, ni la fermeture du commerce.",
+        "La règle de communication est expliquée en une phrase, sans ton sec et sans citer d'article de loi inventé.",
+        "Le message à l'usager présente novembre comme une date attendue et ne promet pas la remise."
+      ],
+      "lesson": "Sur un sujet couvert par le secret, dites à l'Assistant ce que chaque lecteur a le droit de savoir."
+    },
+    {
+      "id": "accueil-usagers-10",
+      "jobId": "accueil-usagers",
+      "level": 3,
+      "task": "répondre à un usager en grande difficulté",
+      "title": "Répondre à un usager en détresse",
+      "minutes": 15,
+      "situation": "Un usager écrit qu'il ne peut pas payer la somme qu'il doit et laisse entendre qu'il est à bout. Votre service a une consigne pour ces situations. Vous voulez lui répondre avec humanité, l'orienter vers les bonnes démarches et ne rien promettre que le service ne puisse tenir. Votre chef relira la réponse avant l'envoi.",
+      "material": "Message reçu (fictif) :\n\nBonjour,\n\nJ'ai reçu une relance pour 1 240 euros à payer avant le 31 octobre. Depuis mon licenciement en juin, je n'ai presque plus rien. J'ai déjà trois factures en retard et je ne dors plus. Je ne vois pas comment m'en sortir, je ne sais plus quoi faire.\n\nM. X\n\nConsigne interne (fictive) – Usager en grande difficulté :\n- répondre sous 48 heures, avec des mots simples et sans formule administrative ;\n- proposer une demande de délai de paiement (espace en ligne, rubrique « Mes paiements », ou rendez-vous au guichet) avec un justificatif de ressources ;\n- proposer un rendez-vous téléphonique avec un agent, à demander depuis l'espace en ligne ;\n- indiquer que les services sociaux de sa commune peuvent l'accompagner ;\n- si le message évoque une forte détresse : prévenir le chef de service le jour même et indiquer le 3114, numéro national de prévention du suicide, gratuit et joignable 24 heures sur 24 ;\n- ne jamais promettre l'accord d'un délai ou l'annulation de la dette.",
+      "startingRequest": "il va pas bien, réponds-lui gentiment",
+      "goodRequest": "À partir du message et de la consigne interne ci-dessous, rédigez un projet de réponse à cet usager en grande difficulté, que mon chef relira avant l'envoi. Commencez par montrer que vous avez entendu sa situation, avec des mots simples et sincères, sans formule toute faite. Présentez ensuite, en trois points courts, ce qu'il peut faire : demander un délai de paiement avec un justificatif de ressources, demander un rendez-vous téléphonique avec un agent, se faire accompagner par les services sociaux de sa commune. Comme son message évoque une forte détresse, indiquez aussi avec délicatesse le 3114, numéro national de prévention du suicide, gratuit et joignable 24 heures sur 24. Vouvoiement, ton chaleureux et calme, quinze lignes maximum. Ne promettez ni l'accord d'un délai ni l'annulation de la somme, et n'ajoutez aucune aide, aucun numéro ni aucun montant absent de la consigne.",
+      "keyPoints": [
+        {
+          "skill": "tone",
+          "point": "Vous demandez de reconnaître d'abord sa situation, sans formule toute faite : l'usager se sent écouté avant de recevoir des démarches."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous vous appuyez sur la consigne du service : les aides et le numéro proposés existent vraiment, aucun n'est inventé."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez de promettre un délai ou une annulation : la réponse soutient l'usager sans lui donner un faux espoir."
+        }
+      ],
+      "checkAnswer": [
+        "La réponse ne promet ni l'accord d'un délai ni l'annulation des 1 240 euros, et ne contient aucun autre numéro ni montant.",
+        "Le 3114 est indiqué avec délicatesse, sans dramatiser ni minimiser.",
+        "Vous avez prévenu votre chef de service le jour même, comme le demande la consigne : l'Assistant ne le fera pas à votre place."
+      ],
+      "lesson": "Face à une personne en difficulté, appuyez-vous sur la consigne de votre service et gardez la main : l'Assistant aide à écrire, pas à décider."
     }
   ]
 }

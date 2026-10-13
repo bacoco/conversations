@@ -1,8 +1,9 @@
 import { RewardEvent, useRewardsStore } from './useRewardsStore';
 
 /**
- * Records what the user did, silently: points and badges are kept in the
- * browser but not shown for now (no pop-up).
+ * Records what the user did, quietly: no pop-up. Points, level and badges
+ * are kept in this browser and shown in « Mon parcours » and in the
+ * session review (`LevelCard`, `ReviewLevelLine`).
  */
 export const useReward = () => {
   const record = useRewardsStore((state) => state.record);

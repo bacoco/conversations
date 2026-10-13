@@ -20,12 +20,17 @@ import {
   useAiUnavailable,
 } from '../coach/aiAvailability';
 import { languageName } from '../coach/language';
+import {
+  FavoritesButton,
+  favoritesCornerShown,
+} from '../favorites/FavoritesButton';
 import { FavoritesPage } from '../favorites/FavoritesPage';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
 import { useRecorderStore } from '../speech/useRecorderStore';
 import { claimNestorData } from '../stores/accountScope';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   RightPanelMode,
@@ -270,6 +275,8 @@ export const RightPanel = ({
   const title = showHome ? 'Nestor' : current.label;
   // The coach is a chat with Nestor: his name, Auto and the gear on top.
   const isNestorChat = mode === 'coach' && !showHome && !showFavorites;
+  // Nestor's round button outside the coach: only when asked for.
+  const showDock = useCoachPrefsStore((state) => state.showDock);
   // A case in training: the coach is the trainer for now.
   const training = useTrainerStore((state) => !!state.caseId && !state.paused);
 
@@ -330,13 +337,25 @@ export const RightPanel = ({
               type="button"
               // From a space, Home shows the cards; from the cards, the welcome.
               onClick={showHome ? goWelcome : goHome}
+              aria-label={t('Home')}
+              title={t('Home')}
               $direction="row"
               $align="center"
               $gap="6px"
               $css={homeButtonCss}
             >
               <Icon iconName="home" $size="18px" $withThemeInherited />
-              {t('Home')}
+              {/* Narrow: the house alone, so the screen's title stays whole. */}
+              <Box
+                as="span"
+                $css={css`
+                  @container panel-header (max-width: 520px) {
+                    display: none;
+                  }
+                `}
+              >
+                {t('Home')}
+              </Box>
             </Box>
             {isNestorChat && (
               <Box
@@ -379,10 +398,13 @@ export const RightPanel = ({
           isDesktop={isDesktop}
           isExpanded={isExpanded}
           onSettings={openNestorSettings}
+          resetLabel={isNestorChat ? t('Erase Nestor’s thread') : undefined}
           onReset={
-            !showHome && !isNestorChat && !showFavorites
-              ? resetSection
-              : undefined
+            isNestorChat
+              ? () => usePromptToolkitStore.setState({ eraseAsked: true })
+              : !showHome && !showFavorites
+                ? resetSection
+                : undefined
           }
           onExpand={toggleExpanded}
           onClose={close}
@@ -463,7 +485,22 @@ export const RightPanel = ({
       </Box>
       {/* Nestor, on every screen: a round button that opens a sheet. */}
       {/* In the coach, "Demander à Nestor" is in the bar. */}
-      {isClaimed && isAiAvailable && !isNestorChat && (
+      {/* « Mes favoris »: a round star, bottom right, outside the coach. */}
+      {isClaimed &&
+        favoritesCornerShown({ welcomeShown, isNestorChat, showFavorites }) && (
+          <Box
+            $css={css`
+              position: absolute;
+              /* Above the field at the bottom of the course and the tools. */
+              bottom: ${showHome ? 16 : 84}px;
+              right: ${showDock ? 84 : 16}px;
+              pointer-events: auto;
+            `}
+          >
+            <FavoritesButton />
+          </Box>
+        )}
+      {isClaimed && isAiAvailable && !isNestorChat && showDock && (
         <NestorDock language={languageName(i18n.language)} />
       )}
     </Box>

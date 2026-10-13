@@ -185,6 +185,17 @@ export const useTrainer = (language: string) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answerId, isResponding]);
 
+  // A finished case closes once the user goes elsewhere: back in the
+  // coach, the thread, not « Bravo » again.
+  const showHome = usePromptToolkitStore((panel) => panel.showHome);
+  const mode = usePromptToolkitStore((panel) => panel.mode);
+  useEffect(() => {
+    const now = useTrainerStore.getState();
+    if (now.caseId && now.step === 'done' && (showHome || mode !== 'coach')) {
+      now.stop();
+    }
+  }, [showHome, mode]);
+
   const check = useCallback(
     (index: number, yes: boolean) =>
       update({
