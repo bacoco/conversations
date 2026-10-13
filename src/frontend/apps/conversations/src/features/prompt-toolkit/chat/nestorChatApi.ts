@@ -221,12 +221,29 @@ const normalized = (text: string) =>
 /** Below this, what follows a blank line is part of the request, not a pasted text. */
 const PASTED_MIN_CHARS = 80;
 
-/** What follows the request's first blank line, when it is a pasted text. */
-const pastedText = (draft: string) => {
+/**
+ * What follows the request's first blank line, when it is a pasted text,
+ * as its blocks (an email, an extract…), each kept whole.
+ */
+const pastedBlocks = (draft: string) => {
   const cut = draft.indexOf('\n\n');
   const rest = cut < 0 ? '' : draft.slice(cut).trim();
-  return rest.length >= PASTED_MIN_CHARS ? rest : '';
+  return rest.length >= PASTED_MIN_CHARS
+    ? rest
+        .split(/\n\s*\n/)
+        .map((block) => block.trim())
+        .filter(Boolean)
+    : [];
 };
+
+/** A block's body: its longest line (the label line above it may be dropped). */
+const longestLine = (block: string) =>
+  block
+    .split('\n')
+    .reduce(
+      (longest, line) => (line.length > longest.length ? line : longest),
+      '',
+    );
 
 /** Questions of the round copied into the version instead of answered. */
 const copiedQuestions = (
@@ -256,7 +273,7 @@ export const writeVersion = async (
     .map(({ question, answer }) => `${question} → ${answer}`)
     .join('\n')}\n</answers>${
     skipped.length
-      ? `\nThe user does not know these yet: ${skipped.join(', ')}. Never state them and never write a blank: ask the assistant, in one short sentence, not to state them either (e.g. « N'indiquez aucune règle précise sur les RTT. »), so that it invents nothing.`
+      ? `\nThe user does not know these yet: ${skipped.join(', ')}. Never state them and never write a blank: ask the assistant, in one short sentence naming exactly these items and nothing else, not to state them either (for « date » : « N'indiquez pas de date. »), so that it invents nothing.`
       : ''
   }${
     gaps.length
@@ -309,12 +326,13 @@ export const writeVersion = async (
   const clean = hasHoles(version) ? withoutHoles(version) : version;
   // A text pasted under the request (an email, notes) is what the answer
   // works from: when the version left it out, it comes back word for word.
-  const pasted = pastedText(draft);
+  const missingBlocks = pastedBlocks(draft).filter(
+    (block) => !normalized(clean).includes(normalized(longestLine(block))),
+  );
   return {
-    version:
-      pasted && !normalized(clean).includes(normalized(pasted))
-        ? `${clean.trimEnd()}\n\n${pasted}`
-        : clean,
+    version: missingBlocks.length
+      ? `${clean.trimEnd()}\n\n${missingBlocks.join('\n\n')}`
+      : clean,
     lesson: lessonOf(raw),
   };
 };

@@ -290,6 +290,30 @@ describe('a pasted text', () => {
   });
 });
 
+describe('a pasted text already quoted by the version', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('is not repeated: only the blocks left out come back', async () => {
+    const email =
+      'Courriel reçu :\n« Bonjour, puis-je déplacer mon jour de télétravail du mardi au mercredi la semaine prochaine ? »';
+    const note =
+      'Extrait de la note :\n« Un changement ponctuel est possible avec l’accord préalable du chef de bureau. »';
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version:
+          'Répondez à l’agent. À partir de cette note : « Un changement ponctuel est possible avec l’accord préalable du chef de bureau. »',
+        lesson: '',
+      }),
+    );
+    const { version } = await writeVersion(
+      { draft: `réponds\n\n${email}\n\n${note}`, answers: [], skipped: [] },
+      'French',
+    );
+    expect(version.match(/accord préalable/g)).toHaveLength(1);
+    expect(version.endsWith(email)).toBe(true);
+  });
+});
+
 describe('a fact the user does not know', () => {
   afterEach(() => vi.restoreAllMocks());
 
