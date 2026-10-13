@@ -7,10 +7,14 @@ import { C } from '../chat/ui';
 
 import { useFavorites } from './useFavorites';
 
+// Centred in the panel, never stuck to the top.
 const Page = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 12px;
+  min-height: 100%;
+  box-sizing: border-box;
   padding: 20px 16px;
   color: ${C.ink};
   & > p {
@@ -50,10 +54,6 @@ const Use = styled.button`
   text-align: left;
   color: ${C.ink};
   cursor: pointer;
-  & > span {
-    flex: 1;
-    min-width: 0;
-  }
   &:hover {
     border-color: ${C.brandLine};
     background: #f7f6ff;
@@ -62,6 +62,11 @@ const Use = styled.button`
     outline: 2px solid ${C.brand};
     outline-offset: 2px;
   }
+`;
+
+const Title = styled.span`
+  flex: 1;
+  min-width: 0;
 `;
 
 const Remove = styled.button`
@@ -111,7 +116,7 @@ export const FavoritesPage = () => {
                     aria-hidden="true"
                     $theme="brand"
                   />
-                  <span>{favorite.title}</span>
+                  <Title>{favorite.title}</Title>
                 </Use>
                 <Remove
                   type="button"
