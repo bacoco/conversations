@@ -27,6 +27,7 @@ import {
 } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { startTraining, useTrainerStore } from '../stores/useTrainerStore';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
 import { authorOf } from './author';
@@ -78,7 +79,9 @@ export const withWords = (field: string, words: string) => {
   const rest = cut < 0 ? '' : field.slice(cut);
   const ended = /[.!?]$/.test(request);
   const body = ended ? request.slice(0, -1) : request;
-  return `${body} ${words}${ended ? request.slice(-1) : ''}${rest}`;
+  // « …au chef de bureau, en 5 lignes, sur un ton courtois. »
+  const joint = /[\p{L}\p{N})»]$/u.test(body) ? ', ' : ' ';
+  return `${body}${joint}${words}${ended ? request.slice(-1) : ''}${rest}`;
 };
 
 /** The lines of the grid said in the session's analysed requests. */
@@ -494,6 +497,8 @@ export const useNestorChat = (language: string) => {
   const runBar = useCallback(
     /** From words said to Nestor: the words already show, no echo. */
     (bar: BarAction, fromWords = false) => {
+      // The coach used during a case: the case waits, « Reprendre ».
+      if (bar !== 'ask') useTrainerStore.getState().pause();
       const all = messagesOf(store().chats, key);
       const {
         latestCompletedAssistantMessageId: answerId,
@@ -626,20 +631,10 @@ export const useNestorChat = (language: string) => {
     [key, post, store],
   );
 
-  /** « Essayer avec cette demande »: the vague one, to improve oneself. */
-  const tryExample = useCallback(
-    (pair: ExamplePair) => {
-      const previous = usePromptToolkitStore.getState().chatInput;
-      const text = pair.material
-        ? `${pair.before}\n\n${pair.material}`
-        : pair.before;
-      placePrompt(text, { replaceDraft: true });
-      store().beginAction(key);
-      post({ kind: 'chosen', text, previous }, [{ id: 'undo' }]);
-      post({ kind: 'hint', hint: 'improve-it' });
-    },
-    [key, placePrompt, post, store],
-  );
+  /** « Je m'entraîne à l'améliorer »: the trainer, on this very case. */
+  const tryExample = useCallback((pair: ExamplePair) => {
+    startTraining(pair.caseId);
+  }, []);
 
   /**
    * Nestor called: he sees the field, the conversation and his own steps.
@@ -797,6 +792,7 @@ export const useNestorChat = (language: string) => {
   const askNestor = useCallback(
     (text: string, via: 'voice' | 'keyboard') => {
       setSheetOpen(false);
+      useTrainerStore.getState().pause();
       store().beginAction(key);
       store().post(key, { kind: 'user', text, via });
       replyAsCoach();

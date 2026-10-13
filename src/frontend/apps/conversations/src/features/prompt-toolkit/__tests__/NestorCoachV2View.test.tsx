@@ -7,6 +7,7 @@ import type { NestorMessage } from '../chat/types';
 import type { NestorChat } from '../chat/useNestorChat';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useProfileStore } from '../stores/useProfileStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -279,9 +280,9 @@ describe('the coach, as the agent sees it', () => {
     expect(
       screen.getByText('Réponds en 5 lignes à l’agent.'),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Practise on a case/ }),
-    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Practise on a case/ }));
+    expect(useTrainerStore.getState().caseId).toBe('rh-1');
+    useTrainerStore.getState().stop();
   });
 
   it('examples come with « Say it »', () => {

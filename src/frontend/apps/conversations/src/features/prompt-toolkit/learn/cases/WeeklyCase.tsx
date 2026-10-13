@@ -6,7 +6,7 @@ import { Icon } from '@/components';
 import { C, Choice, MainButton } from '../../chat/ui';
 import { jobById } from '../../jobs/jobs';
 import { useProfileStore } from '../../stores/useProfileStore';
-import { usePromptToolkitStore } from '../../stores/usePromptToolkitStore';
+import { startTraining } from '../../stores/useTrainerStore';
 
 import { useCasesStore, weeklyCase } from './casesProgress';
 import { downloadIcs, weeklySlotIcs } from './ics';
@@ -75,8 +75,6 @@ export const WeeklyCase = () => {
   const { t } = useTranslation();
   const job = jobById(useProfileStore((state) => state.job?.id));
   const done = useCasesStore((state) => state.done);
-  const request = useCasesStore((state) => state.request);
-  const openSection = usePromptToolkitStore((state) => state.openSection);
   const hidden = useCasesStore((state) => state.weeklyHidden);
   const setHidden = useCasesStore((state) => state.setWeeklyHidden);
 
@@ -134,13 +132,7 @@ export const WeeklyCase = () => {
         {done[item.id] ? ` · ${t('to practise again')}` : ''}
       </small>
       <Actions>
-        <MainButton
-          type="button"
-          onClick={() => {
-            request(item.id);
-            openSection('learn');
-          }}
-        >
+        <MainButton type="button" onClick={() => startTraining(item.id)}>
           {t('Start this case')}
         </MainButton>
         <Choice type="button" onClick={bookSlot}>

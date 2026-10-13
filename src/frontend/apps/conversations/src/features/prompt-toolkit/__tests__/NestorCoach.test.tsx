@@ -4,6 +4,7 @@ import { CoachPanel } from '../components/CoachPanel';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -30,6 +31,27 @@ describe('the coach is one chat with Nestor', () => {
       latestCompletedAssistantMessageId: null,
       isAssistantResponding: false,
     });
+  });
+
+  it('a case in training: its card instead of the thread, the bar below', () => {
+    useTrainerStore.getState().start('rh-1', 'coach');
+    render(<CoachPanel />);
+    expect(
+      screen.getByRole('list', { name: 'Steps of the case' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('toolbar', { name: 'Nestor’s buttons' }),
+    ).toBeInTheDocument();
+    // The coach used meanwhile: the thread, and « Reprendre » to go back.
+    fireEvent.click(screen.getByRole('button', { name: 'Analyse my text' }));
+    expect(
+      screen.queryByRole('list', { name: 'Steps of the case' }),
+    ).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Resume the case/ }));
+    expect(
+      screen.getByRole('list', { name: 'Steps of the case' }),
+    ).toBeInTheDocument();
+    act(() => useTrainerStore.getState().stop());
   });
 
   it('welcome, the fixed bar, and no mode tabs', () => {

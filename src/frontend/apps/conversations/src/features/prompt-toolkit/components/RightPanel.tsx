@@ -32,6 +32,7 @@ import {
   clampPanelWidth,
   usePromptToolkitStore,
 } from '../stores/usePromptToolkitStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 
 import { CoachPanel } from './CoachPanel';
@@ -269,6 +270,8 @@ export const RightPanel = ({
   const title = showHome ? 'Nestor' : current.label;
   // The coach is a chat with Nestor: his name, Auto and the gear on top.
   const isNestorChat = mode === 'coach' && !showHome && !showFavorites;
+  // A case in training: the coach is the trainer for now.
+  const training = useTrainerStore((state) => !!state.caseId && !state.paused);
 
   return (
     <Box
@@ -340,7 +343,9 @@ export const RightPanel = ({
                 as="h2"
                 $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;"
               >
-                <span style={ellipsis}>Nestor</span>
+                <span style={ellipsis}>
+                  {training ? t('Training') : 'Nestor'}
+                </span>
               </Box>
             )}
             {!showHome && !isNestorChat && (

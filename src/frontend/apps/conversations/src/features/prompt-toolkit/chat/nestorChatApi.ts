@@ -782,6 +782,7 @@ export const checkFix = async (
   tips: string[],
   language: string,
   signal?: AbortSignal,
+  model = COACH_MODEL,
 ): Promise<FixCheck> =>
   parseCheckFix(
     await complete(
@@ -791,7 +792,7 @@ export const checkFix = async (
         .join('\n')}\n</advice>`,
       signal,
       false,
-      COACH_MODEL,
+      model,
     ),
     tips.length,
   );

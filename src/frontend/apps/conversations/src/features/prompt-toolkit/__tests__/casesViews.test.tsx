@@ -8,6 +8,7 @@ import { WeeklyCase } from '../learn/cases/WeeklyCase';
 import { useCasesStore } from '../learn/cases/casesProgress';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -98,15 +99,19 @@ describe('practical cases of my job', () => {
     ).toBeEnabled();
   });
 
-  it('the case of the week, on the home page: one click opens it in the course', () => {
+  it('the case of the week, on the home page: one click opens the trainer', () => {
     const openSection = vi.fn();
     usePromptToolkitStore.setState({ openSection });
     render(<WeeklyCase />);
     expect(screen.getByText('The case of the week')).toBeInTheDocument();
     expect(screen.getByText(one.title)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Start this case' }));
-    expect(useCasesStore.getState().requested).toBe(one.id);
-    expect(openSection).toHaveBeenCalledWith('learn');
+    expect(useTrainerStore.getState()).toMatchObject({
+      caseId: one.id,
+      step: 'read',
+    });
+    expect(openSection).toHaveBeenCalledWith('coach');
+    useTrainerStore.getState().stop();
   });
 
   it('the case of the week asks for the job first', () => {

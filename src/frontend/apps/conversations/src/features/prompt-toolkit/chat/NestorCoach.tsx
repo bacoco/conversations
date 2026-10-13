@@ -6,20 +6,26 @@ import { Box } from '@/components';
 import { languageName } from '../coach/language';
 import { isAutoOn, useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 
 import { AskNestorSheet } from './AskNestorSheet';
 import { NestorBar } from './NestorBar';
 import { NestorSettings } from './NestorSettings';
 import { NestorThread } from './NestorThread';
+import { TrainerView } from './TrainerView';
+import { ActionButton } from './ui';
 import { useNestorAuto } from './useNestorAuto';
 import { useNestorChat } from './useNestorChat';
 import { usePistes } from './usePistes';
+import { useTrainer } from './useTrainer';
 
 /** The coach: one chat with Nestor, a fixed bar, settings behind the gear. */
 export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const language = languageName(i18n.language);
   const chat = useNestorChat(language);
+  const trainer = useTrainer(language);
+  const training = !!trainer.item && !trainer.paused;
   useNestorAuto(chat, language);
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const showSettings = usePromptToolkitStore(
@@ -67,7 +73,25 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
       $direction="column"
       $css="flex: 1; min-height: 0; position: relative; background: #ffffff;"
     >
-      <NestorThread chat={chat} pistes={phrases} />
+      {training ? (
+        <TrainerView trainer={trainer} onSay={() => chat.setSheetOpen(true)} />
+      ) : (
+        <>
+          {/* A case put on hold while the coach was used: one click back. */}
+          {trainer.item && (
+            <Box $align="center" $css="padding: 8px 12px 0; flex: none;">
+              <ActionButton
+                type="button"
+                $primary
+                onClick={() => useTrainerStore.getState().resume()}
+              >
+                {t('Resume the case: {{title}}', { title: trainer.item.title })}
+              </ActionButton>
+            </Box>
+          )}
+          <NestorThread chat={chat} pistes={phrases} />
+        </>
+      )}
       {isActive && <NestorBar chat={chat} />}
       <AskNestorSheet chat={chat} />
     </Box>

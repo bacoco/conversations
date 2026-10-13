@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components';
 
 import { caseById } from '../jobs/jobs';
-import { useCasesStore } from '../learn/cases/casesProgress';
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { startTraining } from '../stores/useTrainerStore';
 
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
@@ -778,10 +777,7 @@ export const MessageView = ({
           {message.caseId && caseById(message.caseId) && (
             <ActionButton
               type="button"
-              onClick={() => {
-                useCasesStore.getState().request(message.caseId ?? '');
-                usePromptToolkitStore.getState().openSection('learn');
-              }}
+              onClick={() => startTraining(message.caseId ?? '')}
             >
               {t('Practise on a case: {{title}}', {
                 title: caseById(message.caseId)?.title,

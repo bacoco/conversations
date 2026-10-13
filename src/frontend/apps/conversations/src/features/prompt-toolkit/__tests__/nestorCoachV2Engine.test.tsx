@@ -97,7 +97,7 @@ describe('the coach, step by step', () => {
       .post('c1', { kind: 'counsel', draft: field, advice: ADVICE });
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.tipAction(id, 0, 'added'));
-    expect(field).toBe('Réponds à l’agent sur son télétravail en 5 lignes.');
+    expect(field).toBe('Réponds à l’agent sur son télétravail, en 5 lignes.');
     expect(thread()[0]).toMatchObject({ tipStates: { 0: 'added' } });
   });
 
@@ -110,7 +110,7 @@ describe('the coach, step by step', () => {
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.tipAction(id, 1, 'added'));
     expect(field).toBe(
-      'Réponds à l’agent sur un ton courtois.\n\nCourriel reçu :\n« Bonjour… »',
+      'Réponds à l’agent, sur un ton courtois.\n\nCourriel reçu :\n« Bonjour… »',
     );
   });
 

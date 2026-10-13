@@ -11,6 +11,7 @@ import {
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
+import { startTraining } from '../stores/useTrainerStore';
 
 import { CourseFrame, ScreenActions } from './CourseFrame';
 import { ILLUSTRATION_BACKGROUND, weekStats } from './CourseParts';
@@ -521,12 +522,7 @@ export const LearnPanel = () => {
 
   // The practical cases of the user's job, and the journey through them.
   if (view.name === 'cases') {
-    return (
-      <CasesView
-        onBack={back}
-        onOpen={(caseId) => setView({ name: 'case', caseId })}
-      />
-    );
+    return <CasesView onBack={back} onOpen={startTraining} />;
   }
   if (view.name === 'case') {
     return (
@@ -538,12 +534,7 @@ export const LearnPanel = () => {
     );
   }
   if (view.name === 'journey') {
-    return (
-      <JourneyView
-        onBack={back}
-        onOpen={(caseId) => setView({ name: 'case', caseId })}
-      />
-    );
+    return <JourneyView onBack={back} onOpen={startTraining} />;
   }
 
   if (view.name === 'review') {

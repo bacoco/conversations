@@ -9,6 +9,7 @@ import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { messagesOf, useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTrainerStore } from '../stores/useTrainerStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -449,14 +450,22 @@ describe('useNestorChat', () => {
       before: first.startingRequest,
       after: first.goodRequest,
     });
-    // « Essayer »: the vague request and its text go in the field, then
-    // Nestor sends the user to improve it themselves.
+    // « Je m'entraîne à l'améliorer »: the trainer opens on that case.
     act(() => result.current.tryExample(pairs[0]));
-    expect(setChatInput).toHaveBeenLastCalledWith(
-      `${first.startingRequest}\n\n${first.material}`,
-    );
-    expect(thread().at(-1)).toMatchObject({ kind: 'hint', hint: 'improve-it' });
+    expect(useTrainerStore.getState()).toMatchObject({
+      caseId: first.id,
+      step: 'read',
+    });
+    useTrainerStore.getState().stop();
     useProfileStore.setState({ job: null });
+  });
+
+  it('using the coach while training puts the case on hold', () => {
+    useTrainerStore.getState().start('rh-1', 'coach');
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runBar('analyse'));
+    expect(useTrainerStore.getState().paused).toBe(true);
+    useTrainerStore.getState().stop();
   });
 
   it('a request sent as Nestor gave it is marked as written by Nestor', () => {

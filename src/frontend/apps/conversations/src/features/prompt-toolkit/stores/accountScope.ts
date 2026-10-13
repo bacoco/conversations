@@ -11,6 +11,7 @@ import { useCoachTipsStore } from './useCoachTipsStore';
 import { useMyStyleStore } from './useMyStyleStore';
 import { useNestorChatStore } from './useNestorChatStore';
 import { useProfileStore } from './useProfileStore';
+import { useTrainerStore } from './useTrainerStore';
 
 /** Whose data this browser holds: a fingerprint, never the account. */
 export const OWNER_KEY = 'nestor-owner';
@@ -39,6 +40,7 @@ const PERSONAL_STORES: Resettable[] = [
   useMyStyleStore,
   useProfileStore,
   useNestorChatStore,
+  useTrainerStore,
 ] as unknown as Resettable[];
 
 const fingerprint = async (account: string) => {
