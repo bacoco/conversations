@@ -1,4 +1,3 @@
-import { Button } from '@gouvfr-lasuite/cunningham-react';
 import {
   KeyboardEvent,
   PointerEvent,
@@ -15,7 +14,6 @@ import { useAuthQuery } from '@/features/auth';
 import { HEADER_HEIGHT } from '@/features/header/conf';
 import { useResponsiveStore } from '@/stores';
 
-import { NestorHeaderTools } from '../chat/NestorSettings';
 import {
   useAiAvailability,
   useAiAvailable,
@@ -38,6 +36,7 @@ import { ToolsPanel } from '../tools/ToolsPanel';
 
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
+import { PanelHeaderTools } from './PanelHeaderTools';
 import { PanelHome } from './PanelHome';
 import { PlacementChoice } from './PlacementChoice';
 import { SharedPromptBanner } from './SharedPromptBanner';
@@ -145,6 +144,14 @@ const useSections = () => {
   }[];
 };
 
+/** A title that shortens with « … » when the tools need the room. */
+const ellipsis = {
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  minWidth: 0,
+} as const;
+
 const homeButtonCss = css`
   flex: none;
   height: 32px;
@@ -203,7 +210,6 @@ export const RightPanel = ({
     showHome: isHomeRequested,
     goHome,
     goWelcome,
-    setShowNestorSettings,
     openNestorSettings,
     showFavorites,
   } = usePromptToolkitStore();
@@ -286,6 +292,7 @@ export const RightPanel = ({
         $justify="space-between"
         $css={css`
           flex: none;
+          container: panel-header / inline-size;
           height: ${isDesktop ? HEADER_HEIGHT : 48}px;
           padding: 0 ${isDesktop ? accountToolsWidth + 16 : 8}px 0 12px;
           pointer-events: none;
@@ -311,8 +318,9 @@ export const RightPanel = ({
           <Box
             $direction="row"
             $align="center"
-            $gap="10px"
-            $css="min-width: 0;"
+            $gap="6px"
+            // The title gives way to the tools: it shortens, never overlaps.
+            $css="min-width: 0; flex: 1 1 auto; overflow: hidden;"
           >
             <Box
               as="button"
@@ -328,16 +336,11 @@ export const RightPanel = ({
               {t('Home')}
             </Box>
             {isNestorChat && (
-              <Box $direction="row" $align="center" $gap="10px">
-                <Box
-                  as="h2"
-                  $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap;"
-                >
-                  Nestor
-                </Box>
-                <NestorHeaderTools
-                  onSettings={() => setShowNestorSettings(true)}
-                />
+              <Box
+                as="h2"
+                $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;"
+              >
+                <span style={ellipsis}>Nestor</span>
               </Box>
             )}
             {!showHome && !isNestorChat && (
@@ -346,67 +349,39 @@ export const RightPanel = ({
                 $direction="row"
                 $align="center"
                 $gap="6px"
-                $css="margin: 0; font-size: 0.9375rem; font-weight: 700; min-width: 0; white-space: nowrap;"
+                $css={css`
+                  margin: 0;
+                  font-size: 0.9375rem;
+                  font-weight: 700;
+                  min-width: 0;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  /* Narrow: the words of the title before its icon. */
+                  @container panel-header (max-width: 520px) {
+                    & > :first-child {
+                      display: none;
+                    }
+                  }
+                `}
               >
                 <Icon iconName={current.icon} $size="18px" $theme="brand" />
-                {current.label}
+                <span style={ellipsis}>{current.label}</span>
               </Box>
             )}
           </Box>
         )}
-        <Box $direction="row" $gap="4px">
-          {/* On the home cards too: the settings never hide in the coach. */}
-          {showHome && !welcomeShown && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={openNestorSettings}
-              aria-label={t('Nestor’s settings')}
-              title={t('Nestor’s settings')}
-              icon={<Icon iconName="settings" $size="20px" />}
-            />
-          )}
-          {!showHome && !isNestorChat && !showFavorites && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={resetSection}
-              aria-label={t('Start over')}
-              title={t('Start over')}
-              icon={<Icon iconName="delete" $size="20px" />}
-            />
-          )}
-          {isDesktop && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={toggleExpanded}
-              aria-label={
-                isExpanded ? t('Reduce the panel') : t('Expand the panel')
-              }
-              icon={
-                <Icon
-                  iconName={isExpanded ? 'close_fullscreen' : 'open_in_full'}
-                  $size="18px"
-                />
-              }
-            />
-          )}
-          {/* On desktop the panel button next to it already closes it. */}
-          {!isDesktop && (
-            <Button
-              size="small"
-              color="neutral"
-              variant="tertiary"
-              onClick={close}
-              aria-label={t('Close the panel')}
-              icon={<Icon iconName="close" $size="20px" />}
-            />
-          )}
-        </Box>
+        <PanelHeaderTools
+          isDesktop={isDesktop}
+          isExpanded={isExpanded}
+          onSettings={openNestorSettings}
+          onReset={
+            !showHome && !isNestorChat && !showFavorites
+              ? resetSection
+              : undefined
+          }
+          onExpand={toggleExpanded}
+          onClose={close}
+        />
       </Box>
       <Box
         data-panel-scroll

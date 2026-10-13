@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Box, Icon } from '@/components';
 
-import { RECORD_RED } from '../speech/RecorderView';
+import { Listening, RECORD_RED, pulse } from '../speech/RecordingSigns';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
@@ -78,10 +78,16 @@ const Record = styled.button<{ $on: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: ${({ $on }) =>
-    $on
-      ? `0 0 0 8px rgba(208, 52, 44, 0.18), 0 4px 12px rgba(208, 52, 44, 0.35)`
-      : '0 4px 12px rgba(208, 52, 44, 0.35)'};
+  box-shadow: 0 4px 12px rgba(208, 52, 44, 0.35);
+  /* Recording: it pulses, as in the recorder. */
+  ${({ $on }) =>
+    $on &&
+    css`
+      animation: ${pulse} 1.4s infinite;
+    `}
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
   &:focus-visible {
     outline: 2px solid ${C.brand};
     outline-offset: 3px;
@@ -236,6 +242,7 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
             <Record
               type="button"
               $on={isRecording}
+              data-recording={isRecording || undefined}
               aria-label={
                 isRecording ? t('Stop listening') : t('Press to speak')
               }
@@ -255,6 +262,12 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
                 ? t('I am listening…')
                 : t('Press the red button to speak')}
             </Status>
+            {isRecording && (
+              <Listening
+                seconds={capture.seconds}
+                readLevel={capture.readLevel}
+              />
+            )}
             <Legend $center>
               {t('The microphone only turns on when you press.')}
             </Legend>

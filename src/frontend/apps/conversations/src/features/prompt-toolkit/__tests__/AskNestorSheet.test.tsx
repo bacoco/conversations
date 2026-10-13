@@ -9,11 +9,17 @@ vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }));
 
-const speech = vi.hoisted(() => ({ error: null as CaptureError }));
+const speech = vi.hoisted(() => ({
+  error: null as CaptureError,
+  status: 'idle',
+  seconds: 0,
+}));
 vi.mock('../speech/useSpeechCapture', () => ({
   useSpeechCapture: () => ({
-    status: 'idle',
+    status: speech.status,
     error: speech.error,
+    seconds: speech.seconds,
+    readLevel: () => 0.5,
     liveText: '',
     start: vi.fn(),
     stop: vi.fn(),
@@ -31,6 +37,8 @@ const chat = () =>
 describe('<AskNestorSheet /> says what one can say', () => {
   beforeEach(() => {
     speech.error = null;
+    speech.status = 'idle';
+    speech.seconds = 0;
     useMainConversationStore.setState({
       latestCompletedAssistantMessageId: null,
       isAssistantResponding: false,
@@ -67,5 +75,17 @@ describe('<AskNestorSheet /> says what one can say', () => {
     expect(
       screen.getByRole('textbox', { name: 'Your question to Nestor' }),
     ).toBeInTheDocument();
+  });
+
+  it('while it records, the button pulses, the time and the bars show it', () => {
+    speech.status = 'recording';
+    speech.seconds = 12;
+    render(<AskNestorSheet chat={chat()} />);
+    expect(screen.getByText('I am listening…')).toBeInTheDocument();
+    expect(screen.getByText('00:12')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Your voice' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Stop listening' }),
+    ).toHaveAttribute('data-recording', 'true');
   });
 });

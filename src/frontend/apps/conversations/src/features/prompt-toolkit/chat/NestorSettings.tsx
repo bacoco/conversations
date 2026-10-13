@@ -75,11 +75,16 @@ const HeaderAuto = styled.span`
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Room before the panel's own buttons on the right. */
-  margin-right: 12px;
+  margin-right: 2px;
   font-size: 13px;
   font-weight: 600;
   color: ${C.ink};
+  /* A narrow panel keeps the switch in place, without its word. */
+  @container panel-header (max-width: 520px) {
+    & > span[aria-hidden] {
+      display: none;
+    }
+  }
 `;
 
 const Gear = styled.button`
@@ -108,7 +113,9 @@ export const NestorHeaderTools = ({
   return (
     <HeaderAuto>
       <span aria-hidden="true">{t('Auto')}</span>
-      <Switch label={t('Auto')} on={auto} onChange={setAuto} />
+      <span title={t('Auto')}>
+        <Switch label={t('Auto')} on={auto} onChange={setAuto} />
+      </span>
       {onSettings && (
         <Gear
           type="button"

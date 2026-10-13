@@ -1,7 +1,7 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { css, keyframes } from 'styled-components';
+import { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 import { useResponsiveStore } from '@/stores';
@@ -18,6 +18,7 @@ import {
 import { buildToolPrompt, getDailyTools } from '../tools/tools';
 import { usePlacePrompt } from '../tools/usePlacePrompt';
 
+import { RECORD_RED, Wave, formatTime, pulse } from './RecordingSigns';
 import { AudioFileTooLargeError, splitAudioFile } from './audioFile';
 import {
   TRANSCRIPTION_URL,
@@ -28,16 +29,11 @@ import {
 import { useRecorderStore } from './useRecorderStore';
 import { useSpeechCapture } from './useSpeechCapture';
 
+export { RECORD_RED };
+
 /** Pieces of a recording: the text arrives about every half minute. */
 const CHUNK_SECONDS = 30;
-export const RECORD_RED = '#d0342c';
-const WAVE_BARS = 28;
 const NESTOR_TRANSCRIPTION_URL = '/assets/nestor-transcription.webp';
-
-const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(208, 52, 44, 0.45); }
-  100% { box-shadow: 0 0 0 14px rgba(208, 52, 44, 0); }
-`;
 
 const cardCss = css`
   padding: 14px;
@@ -75,60 +71,6 @@ const actionCss = (isMain: boolean, isWide = isMain) => css`
     outline-offset: 2px;
   }
 `;
-
-const formatTime = (seconds: number) =>
-  `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(
-    seconds % 60,
-  ).padStart(2, '0')}`;
-
-/** Bars that follow the microphone level while recording. */
-const Wave = ({ readLevel }: { readLevel: () => number }) => {
-  const barsRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    let timer = 0;
-    let isStopped = false;
-    const history = new Array<number>(WAVE_BARS).fill(0);
-    const draw = () => {
-      if (isStopped) return;
-      history.shift();
-      history.push(readLevel());
-      barsRef.current?.childNodes.forEach((bar, index) => {
-        (bar as HTMLElement).style.height = `${4 + history[index] * 28}px`;
-      });
-      timer = window.setTimeout(() => requestAnimationFrame(draw), 90);
-    };
-    draw();
-    return () => {
-      isStopped = true;
-      window.clearTimeout(timer);
-    };
-  }, [readLevel]);
-
-  return (
-    <Box
-      ref={barsRef}
-      aria-hidden="true"
-      $direction="row"
-      $align="center"
-      $gap="3px"
-      $css="height: 32px;"
-    >
-      {Array.from({ length: WAVE_BARS }, (_, index) => (
-        <Box
-          key={index}
-          $css={css`
-            width: 4px;
-            height: 4px;
-            border-radius: 2px;
-            background: ${RECORD_RED};
-            transition: height 0.1s ease;
-          `}
-        />
-      ))}
-    </Box>
-  );
-};
 
 /**
  * Record or paste: a meeting, an idea, a voice note. The text arrives while

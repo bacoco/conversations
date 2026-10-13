@@ -3,6 +3,8 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Panel tools": "Outils du panneau",
+      "Your voice": "Votre voix",
       "Show the texts you pasted": "Voir les textes collés",
       "Hide the texts you pasted": "Masquer les textes collés",
       "Give me the right text": "Me donner le bon texte",

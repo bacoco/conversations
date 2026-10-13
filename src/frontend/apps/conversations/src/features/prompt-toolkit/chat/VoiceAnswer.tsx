@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Listening } from '../speech/RecordingSigns';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
 
@@ -79,6 +80,9 @@ export const VoiceAnswer = ({
                 ? t('I am writing down what you said…')
                 : t('Ready')}
         </strong>
+      )}
+      {!typing && !error && status === 'recording' && (
+        <Listening seconds={capture.seconds} readLevel={capture.readLevel} />
       )}
       {!typing && shown && <span>« {shown} »</span>}
       {typing && (

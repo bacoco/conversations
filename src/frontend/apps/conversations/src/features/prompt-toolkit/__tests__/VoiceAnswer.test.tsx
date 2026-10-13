@@ -6,6 +6,8 @@ const capture = vi.hoisted(() => ({
   status: 'idle',
   error: 'microphone',
   liveText: '',
+  seconds: 0,
+  readLevel: () => 0.5,
   start: vi.fn(() => Promise.resolve()),
   stop: vi.fn(),
 }));
@@ -28,5 +30,15 @@ describe('<VoiceAnswer />', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Send my answer' }));
     expect(onSend).toHaveBeenCalledWith('Tout le service', 'keyboard');
+  });
+
+  it('while it records, the time and the bars show it listens', () => {
+    capture.status = 'recording';
+    capture.error = null;
+    capture.seconds = 7;
+    render(<VoiceAnswer onSend={vi.fn()} onCancel={vi.fn()} />);
+    expect(screen.getByText('I am listening…')).toBeInTheDocument();
+    expect(screen.getByText('00:07')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Your voice' })).toBeInTheDocument();
   });
 });
