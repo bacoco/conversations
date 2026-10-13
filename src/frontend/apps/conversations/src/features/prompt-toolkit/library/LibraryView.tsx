@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { Box, Icon, Text, useToast } from '@/components';
 
+import { jobById } from '../jobs/jobs';
 import { useProfileStore } from '../stores/useProfileStore';
 
 import { PromptActions } from './PromptActions';
@@ -369,6 +370,7 @@ export const LibraryView = ({
   );
   const favorites = useLibraryStore((state) => state.favorites);
   const jobId = useProfileStore((state) => state.job?.id);
+  const jobFamilies = jobById(jobId)?.library ?? [];
   const myPrompts = useMyPromptsStore((state) => state.prompts);
   const removeMine = useMyPromptsStore((state) => state.remove);
   const renameMine = useMyPromptsStore((state) => state.rename);
@@ -449,9 +451,13 @@ export const LibraryView = ({
     ...(favorites.length > 0
       ? [{ id: FAVORITES, icon: 'star', title: t('My favorites') }]
       : []),
-    // The user's own field comes first.
-    ...library.categories.filter((category) => category.id === jobId),
-    ...library.categories.filter((category) => category.id !== jobId),
+    // The families of the user's own job come first, in their order.
+    ...jobFamilies.flatMap((family) =>
+      library.categories.filter((category) => category.id === family),
+    ),
+    ...library.categories.filter(
+      (category) => !jobFamilies.includes(category.id),
+    ),
   ];
   const promptCount = (count: number) =>
     count === 0

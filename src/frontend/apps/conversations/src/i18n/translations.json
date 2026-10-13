@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Fewer details on screen, simpler words.": "Moins de détails à l’écran, des mots plus simples.",
       "Version prepared: {{how}}": "Version préparée : {{how}}",
       "Next time, write it yourself:": "La prochaine fois, écrivez vous-même :",
       "Automatic help": "Aide automatique",

@@ -1,0 +1,151 @@
+{
+  "job": {
+    "id": "comptable",
+    "label": "Comptable / finances publiques",
+    "who": "Agents des services financiers et comptables qui suivent l'exécution du budget, contrôlent et paient les dépenses, recouvrent les recettes et rendent compte à leur hiérarchie.",
+    "vocabulary": [
+      "crédits de paiement",
+      "autorisations d'engagement",
+      "engagement juridique",
+      "service fait",
+      "demande de paiement",
+      "mise en paiement",
+      "délai global de paiement",
+      "intérêts moratoires",
+      "taux de consommation",
+      "reste à payer",
+      "écart à la prévision",
+      "titre de recette",
+      "rejet de facture",
+      "fin de gestion",
+      "compte rendu de gestion"
+    ],
+    "readers": [
+      "le chef de bureau ou la cheffe de bureau",
+      "la direction",
+      "un service prescripteur",
+      "un fournisseur",
+      "le contrôleur budgétaire",
+      "un collègue du service comptable"
+    ],
+    "tasks": [
+      "expliquer un écart entre la prévision et l'exécution",
+      "rédiger une note d'exécution budgétaire",
+      "relancer un service pour une attestation de service fait",
+      "répondre à un fournisseur qui réclame un paiement",
+      "mettre en forme un tableau de suivi des dépenses",
+      "préparer les arbitrages de fin de gestion"
+    ],
+    "examples": [
+      "Rédige un courriel courtois à un service prescripteur pour obtenir sous cinq jours l'attestation de service fait d'une facture de 3 200 euros.",
+      "Explique en trois phrases simples à un fournisseur que sa facture a été rejetée parce que le numéro de bon de commande est absent.",
+      "Résume ce tableau d'exécution en cinq points pour ma cheffe de bureau, en citant le taux de consommation des crédits de paiement.",
+      "Propose un plan de note d'exécution budgétaire à fin septembre, avec une partie sur les écarts à la prévision et une sur les risques.",
+      "Explique simplement à un collègue nouvellement arrivé la différence entre autorisation d'engagement et crédit de paiement, avec un exemple de marché sur trois ans."
+    ],
+    "cautions": [
+      "Ne copiez pas dans l'Assistant de coordonnées bancaires, de numéros d'identification d'entreprise ou de données nominatives : remplacez-les par « le fournisseur A ».",
+      "Les informations sur les marchés et les fournisseurs peuvent relever du secret des affaires : ne donnez que ce qui est nécessaire, sans nom d'entreprise.",
+      "Recalculez toujours vous-même les totaux, taux et écarts : l'Assistant peut faire des erreurs de calcul.",
+      "Les documents budgétaires non publiés, comme les prévisions ou les arbitrages en cours, ne doivent pas sortir des outils autorisés par votre direction."
+    ]
+  },
+  "cases": [
+    {
+      "id": "comptable-1",
+      "jobId": "comptable",
+      "level": 1,
+      "task": "répondre à un fournisseur qui réclame un paiement",
+      "title": "Répondre à un fournisseur impatient",
+      "minutes": 5,
+      "situation": "Un fournisseur vous écrit pour réclamer le paiement d'une facture de 4 860 euros. Vous vérifiez le dossier : la facture a été suspendue le 2 août faute de numéro de bon de commande, renvoyée corrigée le 25 septembre et mise en paiement le 6 octobre ; le virement devrait arriver d'ici le 15 octobre. Vous devez lui répondre de façon claire et professionnelle.",
+      "material": "Objet : Facture FA-2026-0815 impayée\n\nMadame, Monsieur,\n\nNous vous avons adressé le 28 juillet notre facture FA-2026-0815 d'un montant de 4 860 euros TTC pour la maintenance des photocopieurs du deuxième trimestre. À ce jour, soit plus de 60 jours plus tard, nous n'avons reçu aucun règlement, alors que le délai de paiement est de 30 jours. Nous vous demandons de procéder au paiement sans délai et nous nous réservons le droit de réclamer les intérêts moratoires correspondants.\n\nLe service comptabilité du fournisseur A",
+      "startingRequest": "réponds au fournisseur pour sa facture",
+      "goodRequest": "À partir du courriel ci-dessous, rédige une réponse au fournisseur qui réclame le paiement de sa facture de 4 860 euros. Voici les faits : la facture reçue le 28 juillet a été suspendue le 2 août car le numéro de bon de commande manquait, le fournisseur l'a renvoyée corrigée le 25 septembre, la demande de paiement est partie le 6 octobre et le virement devrait arriver d'ici le 15 octobre. Explique ces étapes simplement, dans l'ordre et sans reproche. Ne te prononce pas sur les intérêts moratoires : écris seulement que ce point sera examiné par le service. Ton professionnel et courtois, douze lignes maximum, signature « Le service comptable ».",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Elle donne les dates du dossier, car l'Assistant ne connaît pas l'historique de la facture et inventerait sinon une explication."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle interdit de prendre position sur les intérêts moratoires, un sujet qui engage l'administration et que vous devez faire valider."
+        },
+        {
+          "skill": "tone",
+          "point": "Elle demande d'expliquer sans reproche, pour garder une bonne relation avec un fournisseur dont vous aurez encore besoin."
+        }
+      ],
+      "checkAnswer": [
+        "Les dates du 2 août, du 25 septembre, du 6 octobre et du 15 octobre, ainsi que le montant, sont exacts.",
+        "La réponse ne reconnaît ni ne refuse les intérêts moratoires.",
+        "Le 15 octobre est présenté comme une date prévue, pas comme une garantie."
+      ],
+      "lesson": "Ce que l'Assistant ne doit pas dire compte autant que ce qu'il doit dire : écrivez-le dans votre demande."
+    },
+    {
+      "id": "comptable-2",
+      "jobId": "comptable",
+      "level": 2,
+      "task": "rédiger une note d'exécution budgétaire",
+      "title": "Note d'exécution à fin septembre",
+      "minutes": 10,
+      "situation": "Votre cheffe de bureau doit présenter à la direction l'exécution du budget de fonctionnement à fin septembre. Elle vous demande une note de deux pages au plus, à partir du tableau de suivi ci-dessous et des informations recueillies auprès des services.",
+      "material": "Exécution du budget de fonctionnement au 30 septembre (en milliers d'euros)\n\nPoste | Crédits ouverts | Consommés au 30/09 | Taux\nInformatique et logiciels | 1 200 | 960 | 80 %\nDéplacements et missions | 450 | 210 | 47 %\nFormation | 300 | 120 | 40 %\nFournitures et impressions | 150 | 105 | 70 %\nEntretien des locaux | 600 | 465 | 78 %\nTotal | 2 700 | 1 860 | 69 %\n\nInformations du bureau : le renouvellement des licences de logiciels prévu en novembre coûtera environ 300 ; deux sessions de formation ont été reportées à l'an prochain ; un marché d'entretien a été relancé et son coût devrait dépasser la prévision d'environ 40.",
+      "startingRequest": "fais une note sur le budget",
+      "goodRequest": "À partir du tableau et des informations ci-dessous, rédige une note d'exécution budgétaire à fin septembre pour la direction, qui la lira en quelques minutes. Plan imposé : 1) l'essentiel en trois lignes avec le taux de consommation global ; 2) un tableau par poste avec crédits ouverts, montants consommés et taux ; 3) les postes à surveiller, notamment l'informatique où le renouvellement des licences risque de dépasser les crédits ; 4) les marges possibles, comme la formation ; 5) les points à décider avant la fin de gestion. Montants en milliers d'euros, ton factuel, deux pages maximum. Utilise uniquement les chiffres fournis et montre le calcul de chaque dépassement.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Elle impose un plan qui commence par l'essentiel, adapté à une direction qui n'a que quelques minutes."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle limite l'Assistant aux chiffres fournis et lui demande de montrer ses calculs, pour que vous puissiez les vérifier."
+        },
+        {
+          "skill": "audience",
+          "point": "Elle indique que la note va à la direction, ce qui oriente l'Assistant vers les décisions à prendre plutôt que vers le détail des opérations."
+        }
+      ],
+      "checkAnswer": [
+        "Le taux global de 69 % et les taux par poste correspondent au tableau.",
+        "Le dépassement prévu en informatique est bien calculé : 960 + 300 = 1 260, soit environ 60 au-delà des 1 200 ouverts.",
+        "Aucun chiffre n'apparaît qui ne soit pas dans le tableau ou dans les informations du bureau."
+      ],
+      "lesson": "Donnez le plan de votre document et demandez à voir les calculs pour pouvoir les vérifier."
+    },
+    {
+      "id": "comptable-3",
+      "jobId": "comptable",
+      "level": 3,
+      "task": "préparer les arbitrages de fin de gestion",
+      "title": "Arbitrer les dépenses de fin d'année",
+      "minutes": 15,
+      "situation": "Vous disposez de 180 000 euros de crédits de paiement pour finir l'année, mais les services ont transmis 225 000 euros de demandes. Votre chef de bureau doit arbitrer en réunion jeudi et vous demande de préparer des scénarios chiffrés à partir de la liste ci-dessous.",
+      "material": "Fin de gestion – crédits de paiement disponibles au 15 novembre : 180 000 euros\n\nDemandes en attente transmises par les services :\nA. Remplacement de 40 postes de travail informatiques en fin de garantie : 96 000 euros. Commande possible jusqu'au 5 décembre.\nB. Factures d'entretien du deuxième semestre déjà engagées, service fait attesté : 52 000 euros. Un retard de paiement expose à des intérêts moratoires.\nC. Mobilier pour l'aménagement d'un nouvel espace de réunion : 38 000 euros. Peut être reporté à l'an prochain.\nD. Formation des agents au nouveau logiciel comptable : 24 000 euros. Le logiciel sera déployé en février.\nE. Abonnements de documentation pour l'année suivante, à payer d'avance : 15 000 euros.\n\nTotal des demandes : 225 000 euros.",
+      "startingRequest": "qu'est-ce qu'on paye en priorité ?",
+      "goodRequest": "À partir de la liste ci-dessous, prépare une aide à la décision pour mon chef de bureau, qui doit choisir jeudi les dépenses à financer avec les 180 000 euros restants, alors que les demandes s'élèvent à 225 000 euros. 1) Classe les cinq demandes selon leur caractère obligatoire, leur urgence et le risque en cas de report, en t'appuyant seulement sur les informations de la liste. 2) Propose deux scénarios qui respectent l'enveloppe de 180 000 euros, avec pour chacun le total, les demandes reportées et leurs conséquences. 3) Indique le scénario que tu recommandes et pourquoi. Présente le tout sous forme de tableau suivi de dix lignes de commentaire, ton neutre. Signale toute hypothèse que tu fais et vérifie chaque total.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Elle demande des scénarios comparés et une recommandation, pas une réponse unique : c'est votre chef qui décide."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle fixe l'enveloppe de 180 000 euros et demande de vérifier chaque total, pour éviter un scénario qui dépasse les crédits."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle oblige l'Assistant à s'appuyer sur la liste et à signaler ses hypothèses, pour distinguer les faits de son raisonnement."
+        }
+      ],
+      "checkAnswer": [
+        "Chaque scénario totalise au plus 180 000 euros, et vous avez refait l'addition vous-même.",
+        "Les factures d'entretien déjà engagées ne sont pas reportées sans que le risque d'intérêts moratoires soit signalé.",
+        "Les hypothèses de l'Assistant sont clairement séparées des informations de la liste."
+      ],
+      "lesson": "Pour une décision, demandez plusieurs options chiffrées avec leurs conséquences, et gardez le choix final."
+    }
+  ]
+}

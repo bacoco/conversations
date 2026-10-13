@@ -2,9 +2,11 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useNestorAuto } from '../chat/useNestorAuto';
 import { useNestorChat } from '../chat/useNestorChat';
+import { jobById } from '../jobs/jobs';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { messagesOf, useNestorChatStore } from '../stores/useNestorChatStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/components/ToastProvider', () => ({
@@ -494,6 +496,16 @@ describe('useNestorChat', () => {
         (message) => message.kind === 'user' && message.via === 'action',
       ),
     ).toBe(false);
+  });
+
+  it('"Voir des exemples" with a job: everyday requests of that job', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runRound('hello', { id: 'examples' }));
+    const examples = (thread().at(-1) as { phrases: string[] }).phrases;
+    expect(examples).toHaveLength(3);
+    expect(examples[0]).toBe(jobById('rh')!.examples[0]);
+    useProfileStore.setState({ job: null });
   });
 });
 

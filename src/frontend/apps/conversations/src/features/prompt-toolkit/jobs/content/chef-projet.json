@@ -1,0 +1,150 @@
+{
+  "job": {
+    "id": "chef-projet",
+    "label": "Chef(fe) de projet / pilotage",
+    "who": "Agents qui conduisent ou coordonnent des projets (nouvel outil, réorganisation, nouvelle procédure) et animent les instances de suivi entre directions, prestataires et équipes métier.",
+    "vocabulary": [
+      "comité de pilotage (COPIL)",
+      "comité de suivi",
+      "relevé de décisions",
+      "jalon",
+      "livrable",
+      "note de cadrage",
+      "plan d'action",
+      "analyse de risques",
+      "maîtrise d'ouvrage",
+      "maîtrise d'œuvre",
+      "recette",
+      "mise en production",
+      "tableau de bord",
+      "conduite du changement",
+      "parties prenantes"
+    ],
+    "readers": [
+      "le directeur ou la directrice de projet",
+      "les membres du comité de pilotage",
+      "les équipes métier",
+      "le prestataire",
+      "la hiérarchie",
+      "les agents concernés par le changement"
+    ],
+    "tasks": [
+      "rédiger le compte rendu d'un comité",
+      "préparer l'ordre du jour et le support d'un comité",
+      "construire un plan d'action",
+      "analyser les risques d'un projet",
+      "rédiger une note de cadrage",
+      "commenter un tableau de bord d'avancement"
+    ],
+    "examples": [
+      "Rédige l'ordre du jour d'un comité de pilotage d'une heure : point d'avancement, deux jalons en retard, arbitrage sur la date de recette.",
+      "À partir des notes ci-dessous, rédige un relevé de décisions sous forme de tableau : décision, responsable, échéance, sans rien ajouter.",
+      "Propose le plan d'une note de cadrage pour un projet de dématérialisation des demandes de congés, avec une phrase d'explication par partie.",
+      "Liste les questions à poser au prestataire avant d'accepter le report de trois semaines de la mise en production.",
+      "Rédige un courriel court aux équipes métier annonçant que la formation au nouvel outil passe du 4 au 18 novembre, ton rassurant."
+    ],
+    "cautions": [
+      "Ne collez pas d'éléments contractuels ou financiers confidentiels d'un prestataire (offres, prix détaillés) : ils relèvent du secret des affaires.",
+      "Un compte rendu engage : relisez chaque décision et chaque échéance, car l'Assistant peut transformer une piste évoquée en décision actée.",
+      "Retirez des notes de réunion les noms et les appréciations sur des personnes (manière de servir d'un agent, tensions entre équipes) avant de les coller."
+    ]
+  },
+  "cases": [
+    {
+      "id": "chef-projet-1",
+      "jobId": "chef-projet",
+      "level": 1,
+      "task": "résumer l'avancement d'un projet pour la hiérarchie",
+      "title": "Faire un point d'avancement",
+      "minutes": 5,
+      "situation": "Votre directrice vous demande par courriel où en est le projet de nouvel outil de réservation des salles. Vous avez vos notes du point hebdomadaire avec l'équipe et vous voulez lui répondre en quelques lignes avant midi.",
+      "material": "Notes du point hebdomadaire — projet d'outil de réservation des salles (fictif)\n- Paramétrage : terminé à 90 %, restent les salles du site annexe.\n- Recette : commencée lundi avec 6 agents testeurs ; 14 anomalies remontées, dont 2 bloquantes (réservation récurrente impossible, mauvais horaire sur l'export vers l'agenda).\n- Le prestataire s'engage à corriger les 2 anomalies bloquantes d'ici le 24 octobre.\n- Mise en service prévue le 3 novembre : maintenue si les corrections arrivent à temps, sinon décalage probable d'une semaine.\n- Formation des assistantes et assistants de direction : 2 sessions calées les 28 et 30 octobre.\n- Point d'attention : le site annexe n'a toujours pas désigné de référent.",
+      "startingRequest": "fais un résumé du projet pour ma chef",
+      "goodRequest": "À partir du texte ci-dessous, rédige une réponse courte à ma directrice, qui m'a demandé où en est le projet d'outil de réservation des salles. Elle veut l'essentiel en 30 secondes : commence par une phrase sur la date de mise en service (maintenue ou à risque), puis 3 ou 4 puces sur la recette, les corrections attendues, la formation et le point d'attention du site annexe. Reprends les dates telles qu'elles figurent dans les notes, sans en ajouter. Ton factuel, avec vouvoiement.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Elle dit que la lectrice est la directrice et qu'elle veut l'essentiel en 30 secondes : l'Assistant trie au lieu de tout recopier."
+        },
+        {
+          "skill": "format",
+          "point": "Elle demande une phrase d'ouverture sur la date puis quelques puces : l'information décisive arrive en premier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle exige de reprendre les dates des notes sans en ajouter : aucune échéance inventée ne part chez la directrice."
+        }
+      ],
+      "checkAnswer": [
+        "La date du 3 novembre et le risque de décalage d'une semaine sont bien mentionnés dès la première phrase.",
+        "Les dates citées (24, 28 et 30 octobre) sont exactement celles des notes.",
+        "La réponse tient en quelques lignes et n'invente ni cause ni solution."
+      ],
+      "lesson": "Commencez par dire ce que le lecteur veut savoir en premier : l'Assistant construira la réponse autour."
+    },
+    {
+      "id": "chef-projet-2",
+      "jobId": "chef-projet",
+      "level": 2,
+      "task": "rédiger le compte rendu d'un comité de pilotage",
+      "title": "Compte rendu de comité de pilotage",
+      "minutes": 10,
+      "situation": "Vous avez animé hier le comité de pilotage du projet de dématérialisation des frais de déplacement. Vos notes sont en vrac ; le compte rendu doit partir demain aux membres du comité, qui s'en servent pour suivre leurs actions.",
+      "material": "Notes du COPIL du 12 octobre — dématérialisation des frais de déplacement (fictif)\nPrésents : directeur de projet, représentante RH, bureau du budget, prestataire, 2 représentants des services.\n- Avancement : module de saisie livré ; module de validation en retard de 3 semaines.\n- Le bureau du budget demande que les plafonds de remboursement soient vérifiés avant la recette. Accord du comité. Action : prestataire, pour le 30 octobre.\n- Débat sur une ouverture à tous les services en janvier. Pas de décision : à revoir au prochain COPIL avec un bilan du pilote.\n- RH : prévoir un guide utilisateur de 4 pages. Action : équipe projet, pour le 15 novembre.\n- Question d'un service sur l'accès depuis le télétravail : réponse attendue du prestataire.\n- Prochain COPIL : 9 décembre.",
+      "startingRequest": "fais le compte rendu du copil",
+      "goodRequest": "À partir du texte ci-dessous, rédige le compte rendu du comité de pilotage du 12 octobre, destiné à ses membres qui s'en serviront pour suivre leurs actions. Plan : 1. Participants ; 2. Point d'avancement en 3 lignes ; 3. Décisions prises ; 4. Points non tranchés ; 5. Tableau des actions avec les colonnes action, responsable, échéance ; 6. Date du prochain comité. Ne transforme pas un débat en décision : l'ouverture à tous les services en janvier reste un point non tranché. Si une action n'a pas d'échéance dans les notes, écris « échéance non fixée ». Ton neutre, une page au maximum.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Elle donne le plan et les colonnes du tableau des actions : chaque membre retrouve tout de suite ce qu'il doit faire et pour quand."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle sépare décisions et points non tranchés : le compte rendu n'acte pas ce que le comité n'a pas décidé."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle prévoit quoi écrire quand une échéance manque : l'Assistant ne comble pas le vide avec une date inventée."
+        }
+      ],
+      "checkAnswer": [
+        "L'ouverture à tous les services en janvier figure dans les points non tranchés, pas dans les décisions.",
+        "Chaque action du tableau correspond à une ligne des notes, avec le bon responsable et la bonne échéance.",
+        "La question sur le télétravail apparaît avec la mention « échéance non fixée », sans date inventée."
+      ],
+      "lesson": "Dites à l'Assistant quoi écrire quand une information manque, sinon il risque de l'inventer."
+    },
+    {
+      "id": "chef-projet-3",
+      "jobId": "chef-projet",
+      "level": 3,
+      "task": "analyser des options et leurs risques pour préparer un arbitrage",
+      "title": "Préparer un arbitrage de calendrier",
+      "minutes": 15,
+      "situation": "Le module de validation du projet de frais de déplacement a pris du retard. Le directeur de projet doit choisir entre deux options au prochain comité de pilotage et vous demande une note d'aide à la décision d'une page, avec les risques de chaque option.",
+      "material": "Éléments pour l'arbitrage (fictif)\nOption 1 — Reporter la mise en service complète du 5 janvier au 2 mars.\n- Les 2 services pilotes continuent sur l'ancienne procédure papier pour la validation.\n- Coût supplémentaire estimé par le prestataire : 18 000 euros.\n- Les services attendent l'outil depuis un an ; risque de démobilisation signalé par la RH.\n\nOption 2 — Ouvrir le 5 janvier avec la saisie dématérialisée, la validation restant sur papier jusqu'en mars.\n- Pas de coût supplémentaire annoncé.\n- Double circuit pendant 2 mois : risque d'erreurs et de pièces perdues selon le bureau du budget.\n- Formation à organiser en deux temps.\n\nContrainte : la clôture budgétaire impose que les frais de décembre soient traités avant le 31 janvier.",
+      "startingRequest": "quelle option choisir ?",
+      "goodRequest": "À partir du texte ci-dessous, prépare une note d'aide à la décision d'une page pour le directeur de projet, qui arbitrera au prochain comité de pilotage. Plan : un rappel de l'enjeu en 3 lignes ; un tableau comparant les deux options selon le calendrier, le coût, la charge pour les services et les risques ; pour chaque risque, une mesure possible pour le réduire, présentée comme une piste ; l'effet de la contrainte de clôture budgétaire du 31 janvier sur chaque option. Ne recommande aucune option : présente les arguments de façon équilibrée. N'ajoute aucun coût, aucune date ni aucun risque absent du texte, et liste les informations qui manquent pour décider.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Elle demande de préparer l'arbitrage, pas de le rendre : le directeur garde la décision et dispose d'arguments équilibrés."
+        },
+        {
+          "skill": "context",
+          "point": "Elle rappelle la contrainte de clôture du 31 janvier : l'Assistant l'applique à chaque option au lieu de l'oublier."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle demande la liste des informations manquantes : vous savez ce qu'il faut encore vérifier avant le comité."
+        }
+      ],
+      "checkAnswer": [
+        "Le coût de 18 000 euros n'est attribué qu'à l'option 1 et aucun autre montant n'apparaît.",
+        "La note dit clairement ce que la contrainte du 31 janvier change pour chaque option.",
+        "Les mesures pour réduire les risques sont présentées comme des pistes, pas comme des engagements déjà pris."
+      ],
+      "lesson": "Pour préparer un arbitrage, donnez vos critères de comparaison et demandez ce qui manque encore pour trancher."
+    }
+  ]
+}

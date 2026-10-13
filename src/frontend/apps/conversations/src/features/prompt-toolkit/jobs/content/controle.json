@@ -1,0 +1,150 @@
+{
+  "job": {
+    "id": "controle",
+    "label": "Contrôleur / inspecteur",
+    "who": "Agents de contrôle de la DGFiP, de la DGCCRF ou de la douane qui préparent et mènent des contrôles, consignent leurs constats et rédigent courriers, synthèses et rapports.",
+    "vocabulary": [
+      "contrôle sur pièces",
+      "vérification de comptabilité",
+      "proposition de rectification",
+      "redevable",
+      "débat oral et contradictoire",
+      "procès-verbal",
+      "fiche de constat",
+      "manquement",
+      "avertissement",
+      "injonction",
+      "suites contentieuses",
+      "prélèvement d'échantillons",
+      "visite physique des marchandises",
+      "programmation des contrôles",
+      "secret professionnel"
+    ],
+    "readers": [
+      "un contribuable ou une entreprise contrôlée",
+      "le chef de brigade ou de pôle",
+      "le service juridique ou contentieux",
+      "un collègue qui reprend le dossier",
+      "la direction, pour le bilan d'activité"
+    ],
+    "tasks": [
+      "préparer une liste de points à vérifier avant un contrôle",
+      "mettre au propre des notes de visite",
+      "rédiger un courrier de demande de documents",
+      "expliquer une procédure à un particulier ou à une entreprise",
+      "rédiger une synthèse de contrôle pour la hiérarchie",
+      "analyser un dossier fictif pour s'entraîner à repérer des incohérences"
+    ],
+    "examples": [
+      "Rédigez un modèle de courrier courtois demandant à une entreprise de transmettre ses factures d'achat du dernier exercice sous trente jours.",
+      "Proposez sous forme de tableau une liste de points à vérifier lors d'un contrôle de l'affichage des prix dans une boulangerie.",
+      "Expliquez en langage simple, pour un particulier, ce qu'est un contrôle sur pièces et comment il peut y répondre.",
+      "Expliquez en dix lignes, pour un nouvel agent, la différence entre un contrôle documentaire et une visite physique des marchandises en douane.",
+      "Proposez un plan en six parties maximum pour un rapport d'enquête sur les mentions « fait maison » dans la restauration."
+    ],
+    "cautions": [
+      "Ne saisissez jamais de données réelles d'un dossier : nom, adresse, numéro fiscal, SIREN, montants ou constats concernant une personne ou une entreprise réelle sont couverts par le secret professionnel et fiscal.",
+      "Travaillez sur des modèles ou des textes rendus anonymes (« société X », « contribuable A ») et réintroduisez vous-même les données réelles dans vos outils métier, hors de l'Assistant.",
+      "Ne confiez pas à l'Assistant une décision de rectification, de sanction ou de suite à donner : il aide à rédiger, la décision et sa motivation restent les vôtres.",
+      "Vérifiez dans la documentation officielle de votre administration toute règle de procédure citée par l'Assistant : une erreur de procédure peut fragiliser tout un contrôle."
+    ]
+  },
+  "cases": [
+    {
+      "id": "controle-1",
+      "jobId": "controle",
+      "level": 1,
+      "task": "reformuler un courrier de demande de documents",
+      "title": "Adoucir un courrier trop sec",
+      "minutes": 5,
+      "situation": "Vous contrôlez un restaurant sur la mention « fait maison » et l'information sur les allergènes. Un collègue vous a laissé un brouillon de demande de documents, très sec et sans délai précis. Vous l'avez rendu anonyme (« société X ») avant de le coller dans l'Assistant.",
+      "material": "Brouillon de courrier (données anonymisées)\n\nObjet : contrôle – demande de documents\n\nMadame, Monsieur,\n\nDans le cadre du contrôle diligenté à l'encontre de votre établissement, la société X, il vous est enjoint de produire sans délai l'intégralité des pièces justificatives afférentes aux ventes réalisées. À défaut, les suites appropriées seront données. Les éléments suivants sont requis :\n- les factures fournisseurs de janvier à juin ;\n- les fiches techniques des plats vendus avec la mention « fait maison » ;\n- le support d'information sur les allergènes remis à la clientèle.\nTransmission par voie postale ou dématérialisée.\n\nL'enquêteur",
+      "startingRequest": "rends ce courrier plus sympa",
+      "goodRequest": "À partir du texte ci-dessous, reformulez ce courrier adressé au gérant d'un restaurant contrôlé, la « société X ». Gardez exactement la liste des trois documents demandés. Remplacez « sans délai » par un délai de quinze jours à compter de la réception. Conservez l'idée qu'une absence de réponse aura des suites, mais sans ton menaçant. Ajoutez qu'il peut me contacter pour toute question. Ton courtois, ferme et neutre, sans jargon administratif, une page maximum.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Dire que le lecteur est le gérant d'un restaurant pousse l'Assistant à écrire simplement, sans formules administratives."
+        },
+        {
+          "skill": "constraints",
+          "point": "Imposer de garder la liste exacte et de fixer vous-même le délai empêche l'Assistant de retirer, d'ajouter ou d'inventer quoi que ce soit."
+        },
+        {
+          "skill": "tone",
+          "point": "Demander un ton « courtois, ferme et neutre » donne un courrier respectueux qui reste clair sur l'obligation de répondre."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les trois documents demandés sont tous présents, sans ajout.",
+        "Vérifiez que le délai indiqué est bien de quinze jours à compter de la réception.",
+        "Vérifiez qu'aucun nom réel, aucune adresse et aucune sanction précise n'apparaît dans le courrier."
+      ],
+      "lesson": "Pour adoucir un texte sans le dénaturer, dites clairement ce qui ne doit pas bouger."
+    },
+    {
+      "id": "controle-2",
+      "jobId": "controle",
+      "level": 2,
+      "task": "rédiger un compte rendu de constats pour la hiérarchie",
+      "title": "Compte rendu de visite",
+      "minutes": 10,
+      "situation": "Vous avez participé, lors d'un contrôle conjoint, à une visite dans l'entrepôt d'un importateur de jouets. Vous devez remettre un compte rendu propre à votre chef de pôle. Vos notes ont été rendues anonymes avant d'être collées dans l'Assistant.",
+      "material": "Notes de visite (anonymisées) – Entreprise Y, importateur de jouets\n- Visite le 3 octobre, de 9 h 30 à 12 h, en présence du responsable logistique.\n- Facture commerciale : 600 cartons de « jouets en plastique », valeur déclarée 18 000 €.\n- 40 cartons ouverts sur 600 : 12 contiennent des jouets sans marquage CE visible.\n- Notice uniquement en langue étrangère sur 2 références.\n- Le responsable déclare que le marquage sera ajouté en France par un sous-traitant ; aucun contrat présenté.\n- 4 échantillons prélevés et placés sous scellés.\n- Documents demandés : contrat de sous-traitance et certificats de conformité, réponse attendue sous 10 jours.",
+      "startingRequest": "fais un rapport de la visite",
+      "goodRequest": "À partir du texte ci-dessous, qui reprend mes notes de visite déjà anonymisées, rédigez un compte rendu de constats destiné à mon chef de pôle. Plan : 1. Contexte de la visite ; 2. Constats, en séparant ce que nous avons vu de ce que l'entreprise a déclaré ; 3. Prélèvements et documents demandés ; 4. Points restant à vérifier. Style factuel et neutre, phrases courtes, sans appréciation sur la bonne foi de l'entreprise et sans qualification juridique. Une page maximum. N'ajoutez aucun fait absent des notes.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Le plan en quatre parties donne un compte rendu que votre chef de pôle lit en deux minutes."
+        },
+        {
+          "skill": "constraints",
+          "point": "Séparer ce qui a été vu de ce qui a été déclaré protège la valeur de vos constats si le dossier a des suites."
+        },
+        {
+          "skill": "tone",
+          "point": "Exiger un style factuel, sans appréciation ni qualification juridique, évite que l'Assistant tire des conclusions à votre place."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les chiffres sont ceux des notes : 40 cartons ouverts sur 600, 12 sans marquage, 4 échantillons, 18 000 € déclarés.",
+        "Vérifiez que l'histoire du sous-traitant est présentée comme une déclaration du responsable, pas comme un fait établi.",
+        "Vérifiez qu'aucune infraction n'est qualifiée et qu'aucune sanction n'est proposée."
+      ],
+      "lesson": "Dans un écrit de contrôle, demandez toujours de séparer les faits constatés de ce qui a été dit."
+    },
+    {
+      "id": "controle-3",
+      "jobId": "controle",
+      "level": 3,
+      "task": "analyser un dossier pour préparer un contrôle sur pièces",
+      "title": "Préparer un contrôle sur pièces",
+      "minutes": 15,
+      "situation": "Vous préparez un contrôle sur pièces. Pour vous entraîner sans exposer de données couvertes par le secret fiscal, vous utilisez un dossier entièrement fictif, construit sur le modèle d'un cas courant. Vous voulez repérer les incohérences et préparer les questions à poser, avant que votre chef de brigade décide de la suite.",
+      "material": "Dossier fictif d'entraînement – Société Z, commerce de détail de vêtements (montants en milliers d'euros)\n\nExercice | Chiffre d'affaires | Achats de marchandises | Marge brute | Salaires | Résultat\nN-2 | 820 | 410 | 50 % | 160 | 45\nN-1 | 790 | 450 | 43 % | 165 | 12\nN | 610 | 455 | 25 % | 170 | -38\n\nAutres éléments :\n- un second point de vente a ouvert en N, d'après le site internet de la société ;\n- les stocks déclarés passent de 120 à 125 entre N-1 et N ;\n- les salaires augmentent alors que l'activité déclarée baisse.",
+      "startingRequest": "analyse ce dossier",
+      "goodRequest": "À partir du texte ci-dessous, dossier entièrement fictif, aidez-moi à préparer un contrôle sur pièces. 1. Recalculez la marge brute de chaque exercice, en simplifiant ainsi : chiffre d'affaires moins achats, divisé par le chiffre d'affaires, et signalez tout écart avec le tableau. 2. Relevez les incohérences entre les chiffres et les autres éléments, en expliquant pourquoi chacune pose question. 3. Proposez une liste de questions et de documents à demander à l'entreprise, classés par priorité. Présentez les points 1 et 2 en tableau. La réponse servira à mon chef de brigade pour décider de la suite : ne concluez ni à une fraude ni à un montant de rectification, parlez seulement de points à éclaircir.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Découper la demande en trois étapes numérotées oblige l'Assistant à traiter chaque point au lieu de faire un résumé général."
+        },
+        {
+          "skill": "audience",
+          "point": "Préciser que votre chef de brigade décidera de la suite oriente la réponse vers des éléments utiles à une décision."
+        },
+        {
+          "skill": "constraints",
+          "point": "Interdire de conclure à une fraude ou à un montant garde l'Assistant dans son rôle : vous aider à préparer, pas décider."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les marges recalculées sont d'environ 50 %, 43 % et 25 %, comme dans le tableau.",
+        "Vérifiez que l'ouverture d'un second point de vente, alors que le chiffre d'affaires baisse et que les achats se maintiennent, est relevée comme un point à éclaircir.",
+        "Vérifiez que la réponse ne contient ni accusation de fraude ni montant de rectification."
+      ],
+      "lesson": "Pour préparer une décision, demandez des faits et des questions, et gardez la conclusion pour vous."
+    }
+  ]
+}

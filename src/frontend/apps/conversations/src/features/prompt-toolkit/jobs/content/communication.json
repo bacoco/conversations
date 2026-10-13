@@ -1,0 +1,150 @@
+{
+  "job": {
+    "id": "communication",
+    "label": "Chargé(e) de communication",
+    "who": "Des agents des services de communication des directions et du secrétariat général, qui écrivent pour l'intranet, les réseaux sociaux institutionnels, la presse et les discours des responsables.",
+    "vocabulary": [
+      "éléments de langage",
+      "communiqué de presse",
+      "dossier de presse",
+      "brève intranet",
+      "chapô",
+      "accroche",
+      "fil d'actualité",
+      "newsletter interne",
+      "ligne éditoriale",
+      "plan de communication",
+      "relecture validée par le cabinet",
+      "langage clair",
+      "taux d'ouverture",
+      "embargo"
+    ],
+    "readers": [
+      "les agents du ministère",
+      "le grand public",
+      "les journalistes",
+      "la hiérarchie et le cabinet",
+      "un responsable qui prononcera un discours",
+      "les partenaires institutionnels"
+    ],
+    "tasks": [
+      "rédiger une brève pour l'intranet",
+      "préparer des éléments de langage",
+      "écrire un communiqué de presse",
+      "proposer un post pour un réseau social institutionnel",
+      "rédiger un projet de discours",
+      "construire le sommaire d'une newsletter interne"
+    ],
+    "examples": [
+      "Rédigez trois propositions de titre pour une brève intranet annonçant l'ouverture de la nouvelle cafétéria du site, ton chaleureux, dix mots maximum.",
+      "Reformulez ce paragraphe administratif en langage clair pour un agent qui découvre le sujet, en gardant toutes les dates et sans rien ajouter.",
+      "Proposez un post de 280 caractères maximum pour annoncer une journée portes ouvertes du ministère, ton institutionnel et accueillant, sans émoticône.",
+      "Rédigez le chapô de cet article intranet en deux phrases, pour donner envie de lire la suite aux agents pressés.",
+      "Listez cinq questions qu'un journaliste pourrait poser sur ce communiqué, avec pour chacune une réponse courte tirée uniquement du texte."
+    ],
+    "cautions": [
+      "Ne collez jamais un communiqué ou des chiffres encore sous embargo dans l'Assistant avant leur publication officielle.",
+      "Faites toujours valider par le circuit habituel tout texte qui engage le ministre ou la direction : l'Assistant propose, il ne valide pas.",
+      "Vérifiez chaque chiffre, date et nom de dispositif repris par l'Assistant, car une erreur publiée est difficile à rattraper.",
+      "Ne mettez pas de photo ou de nom d'agent dans une demande sans l'accord de la personne concernée."
+    ]
+  },
+  "cases": [
+    {
+      "id": "communication-1",
+      "jobId": "communication",
+      "level": 1,
+      "task": "réécrire une note de service en brève intranet",
+      "title": "Une brève intranet en langage clair",
+      "minutes": 5,
+      "situation": "Vous recevez une note de service sur le changement des horaires du restaurant administratif de votre site. Elle est juste mais très administrative. Vous devez la transformer en brève lisible pour l'intranet, publiée demain matin.",
+      "material": "Objet : modification des modalités d'accès au restaurant administratif.\nÀ compter du mardi 3 novembre, les plages d'ouverture du restaurant administratif du site sont modifiées comme suit : service du déjeuner de 11 h 30 à 14 h 00 (au lieu de 11 h 45 à 13 h 45). Afin de fluidifier la fréquentation, il est recommandé aux agents dont les contraintes de service le permettent de privilégier les créneaux de 11 h 30 à 12 h 00 et de 13 h 15 à 14 h 00. Le paiement par badge demeure la seule modalité acceptée. Les agents ne disposant pas d'un badge en état de fonctionnement sont invités à se rapprocher du service de la logistique (bureau 112) avant le 31 octobre. Les dispositions relatives à l'accueil des personnes extérieures sont inchangées.",
+      "startingRequest": "fais un article sur la cantine",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une brève pour l'intranet de notre site. Elle sera lue par tous les agents, souvent sur téléphone et en quelques secondes. Format : un titre de dix mots maximum, puis un texte de 80 à 100 mots en phrases courtes. Ton simple et chaleureux, en langage clair. Gardez exactement les horaires, les dates et le numéro de bureau, et n'ajoutez aucune information qui n'est pas dans la note.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que les agents lisent vite et sur téléphone, ce qui pousse l'Assistant vers des phrases courtes et l'essentiel en premier."
+        },
+        {
+          "skill": "format",
+          "point": "Vous fixez un titre court et une longueur précise, donc la réponse tient dans l'espace d'une brève sans retouche."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de garder les horaires et dates à l'identique et de ne rien ajouter, ce qui évite une erreur publiée."
+        }
+      ],
+      "checkAnswer": [
+        "Les horaires 11 h 30 à 14 h 00 et la date du 3 novembre sont exacts.",
+        "La démarche pour les badges, avant le 31 octobre au bureau 112, n'a pas disparu.",
+        "Aucune nouveauté inventée, comme un nouveau menu ou un nouveau moyen de paiement."
+      ],
+      "lesson": "Dites toujours qui va lire, sur quel support et en combien de mots."
+    },
+    {
+      "id": "communication-2",
+      "jobId": "communication",
+      "level": 2,
+      "task": "préparer des éléments de langage",
+      "title": "Éléments de langage pour un lancement",
+      "minutes": 10,
+      "situation": "Votre direction lance la semaine prochaine un service en ligne de prise de rendez-vous pour les usagers. Votre responsable vous demande des éléments de langage pour les personnes qui répondront à la presse et aux partenaires. Vous disposez de la fiche projet interne.",
+      "material": "Fiche projet (usage interne) – Service de prise de rendez-vous en ligne\nDate d'ouverture : mardi 17 novembre.\nObjectif : permettre aux usagers de réserver un rendez-vous (téléphone, visio ou accueil physique) avec un agent, sans attente au guichet.\nPérimètre : phase pilote dans 12 départements, généralisation prévue courant de l'année prochaine si le bilan est positif.\nChiffres : pendant le test interne de six semaines, 2 400 rendez-vous pris ; 87 % des usagers interrogés se disent satisfaits.\nAccès : depuis l'espace personnel en ligne, rubrique « Contact ».\nPoints de vigilance : l'accueil sans rendez-vous est maintenu ; pas de collecte de données supplémentaire ; le service ne remplace pas la messagerie sécurisée.\nQuestion sensible : coût du projet, non communiqué à ce stade.",
+      "startingRequest": "fais-moi des éléments de langage sur le nouveau service",
+      "goodRequest": "À partir du texte ci-dessous, préparez des éléments de langage sur le lancement de notre service de prise de rendez-vous en ligne. Ils serviront aux personnes qui répondront aux journalistes et aux partenaires institutionnels. Format : un message clé en une phrase, puis trois à cinq arguments en puces, puis les questions difficiles probables avec une réponse courte pour chacune. Ton factuel, rassurant, sans formule publicitaire. Utilisez uniquement les informations du texte ; pour le coût du projet, proposez une réponse qui indique qu'il n'est pas communiqué à ce stade. Signalez à la fin les points que je dois faire valider.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant à la fiche projet, ce qui l'empêche d'inventer un chiffre ou une date de généralisation."
+        },
+        {
+          "skill": "format",
+          "point": "Vous imposez message clé, arguments puis questions difficiles, l'ordre dans lequel un porte-parole en a besoin."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous dites comment traiter la question du coût, ce qui évite une réponse improvisée sur un sujet sensible."
+        }
+      ],
+      "checkAnswer": [
+        "Les chiffres repris sont bien 12 départements, 2 400 rendez-vous et 87 % de satisfaits, sans arrondi ni ajout.",
+        "Il est dit clairement que l'accueil sans rendez-vous est maintenu.",
+        "Aucun montant ni calendrier précis de généralisation n'apparaît."
+      ],
+      "lesson": "Donnez vos sources et dites ce que l'Assistant ne doit pas dire."
+    },
+    {
+      "id": "communication-3",
+      "jobId": "communication",
+      "level": 3,
+      "task": "comparer deux formules de newsletter interne pour préparer une décision",
+      "title": "Choisir une formule de newsletter",
+      "minutes": 15,
+      "situation": "Pendant trois mois, votre service a testé deux formules de newsletter interne. Votre cheffe de service doit choisir laquelle garder et vous demande une analyse courte. Vous avez les statistiques et quelques retours d'agents.",
+      "material": "Bilan du test (septembre à novembre)\nFormule A – lettre longue mensuelle (8 articles, envoi le 1er du mois)\n- Taux d'ouverture moyen : 41 %\n- Taux de clic moyen : 6 %\n- Temps de préparation : environ 3 jours par numéro\n- Retours d'agents : « complète », « trop longue à lire », « je la garde pour plus tard et je l'oublie »\nFormule B – lettre courte bimensuelle (3 articles, envoi un mardi sur deux)\n- Taux d'ouverture moyen : 58 %\n- Taux de clic moyen : 11 %\n- Temps de préparation : environ 1,5 jour par numéro, soit 3 jours par mois\n- Retours d'agents : « rapide à lire », « j'aime le format », « on rate parfois les sujets de fond »\nRemarque : 2 envois de la formule B ont coïncidé avec des congés scolaires.",
+      "startingRequest": "quelle newsletter est la meilleure ?",
+      "goodRequest": "À partir du texte ci-dessous, comparez les deux formules de newsletter interne testées pendant trois mois, pour aider ma cheffe de service à choisir. Format : un tableau qui compare ouverture, clics, temps de préparation par mois et retours des agents, puis les avantages et limites de chaque formule, puis une recommandation argumentée en cinq lignes maximum. Ton neutre et factuel. Appuyez-vous uniquement sur ces chiffres et ces retours, dites si certains résultats peuvent être faussés, et proposez une solution pour les sujets de fond si vous recommandez la formule B.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous demandez une comparaison puis une recommandation, et non un simple avis, ce qui donne une réponse utile pour décider."
+        },
+        {
+          "skill": "context",
+          "point": "Vous précisez qui décide et pourquoi, donc l'Assistant écrit une analyse courte et argumentée pour une responsable."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de signaler les résultats fragiles, comme les envois pendant les congés, ce qui évite une conclusion trop rapide."
+        }
+      ],
+      "checkAnswer": [
+        "Le temps de préparation est comparé sur un mois, soit 3 jours pour chaque formule, et non par numéro.",
+        "Les chiffres du tableau correspondent exactement au bilan.",
+        "La recommandation mentionne la limite liée aux congés scolaires."
+      ],
+      "lesson": "Pour préparer une décision, demandez une comparaison, ses limites, puis une recommandation séparée."
+    }
+  ]
+}

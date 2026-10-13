@@ -1,0 +1,150 @@
+{
+  "job": {
+    "id": "accueil-usagers",
+    "label": "Accueil et relation aux usagers",
+    "who": "Agents qui reçoivent, orientent et répondent aux usagers, particuliers comme professionnels, au guichet, au téléphone ou par messagerie, dans les services de la direction.",
+    "vocabulary": [
+      "usager",
+      "réclamation",
+      "messagerie sécurisée",
+      "accusé de réception",
+      "délai de réponse",
+      "demande de rappel",
+      "pièce justificative",
+      "orientation vers le bon service",
+      "démarche en ligne",
+      "espace particulier",
+      "prise de rendez-vous",
+      "fiche pratique",
+      "message d'attente",
+      "relance",
+      "réponse type"
+    ],
+    "readers": [
+      "un usager particulier",
+      "un professionnel ou une association",
+      "un collègue d'un autre service",
+      "le chef de service",
+      "un médiateur ou un élu qui transmet une demande"
+    ],
+    "tasks": [
+      "répondre à une réclamation d'usager",
+      "expliquer une démarche en langage simple",
+      "rédiger une fiche pratique pour le guichet",
+      "écrire un message d'attente ou un accusé de réception",
+      "reformuler une réponse trop administrative",
+      "préparer une réponse type pour les demandes fréquentes"
+    ],
+    "examples": [
+      "Reformule ce courriel en langage simple pour un usager âgé, en gardant toutes les dates et sans ajouter d'information.",
+      "Rédige un message d'attente poli pour un usager qui a écrit il y a trois semaines, en annonçant une réponse sous dix jours.",
+      "Explique en cinq étapes numérotées comment prendre rendez-vous en ligne, pour une fiche affichée à l'accueil, avec des phrases courtes.",
+      "Propose trois formulations courtes et courtoises pour dire à un usager que son dossier est incomplet et qu'il manque un justificatif de domicile.",
+      "Rédige une réponse type courtoise pour les usagers qui demandent les horaires d'accueil, en renvoyant aussi vers la prise de rendez-vous en ligne."
+    ],
+    "cautions": [
+      "Ne copiez jamais dans l'Assistant le nom, l'adresse, le numéro fiscal ou la situation personnelle d'un usager : remplacez-les par « l'usager » ou « M. X ».",
+      "Les informations couvertes par le secret professionnel ou le secret fiscal ne doivent pas sortir des outils autorisés par votre direction.",
+      "Vérifiez chaque délai, montant ou démarche cité dans la réponse auprès des sources officielles avant l'envoi : l'Assistant peut se tromper.",
+      "Une réponse à un usager engage l'administration : relisez-la et validez-la vous-même, ne l'envoyez jamais telle quelle."
+    ]
+  },
+  "cases": [
+    {
+      "id": "accueil-usagers-1",
+      "jobId": "accueil-usagers",
+      "level": 1,
+      "task": "répondre à une réclamation d'usager",
+      "title": "Répondre à un usager mécontent",
+      "minutes": 5,
+      "situation": "Vous recevez par la messagerie le courriel mécontent d'un usager prélevé deux fois de la même mensualité. Votre service a bien traité le dossier : le virement de remboursement est parti le 7 octobre et arrivera sous cinq jours ouvrés. Vous voulez lui répondre vite, poliment et sans jargon.",
+      "material": "Objet : Toujours aucune nouvelle de mon remboursement\n\nBonjour,\n\nLe 9 septembre, je vous ai signalé que ma mensualité d'août avait été prélevée deux fois sur mon compte, soit deux fois 184 euros. On m'a répondu que ce serait régularisé « rapidement ». Un mois plus tard, je n'ai toujours rien reçu et personne ne me répond au téléphone. Je trouve inadmissible de devoir avancer de l'argent à l'administration. Si je n'ai pas de nouvelles cette semaine, je saisirai le médiateur.\n\nM. X",
+      "startingRequest": "fais une réponse à ce mail de réclamation",
+      "goodRequest": "À partir du courriel ci-dessous, rédige la réponse de notre service à cet usager mécontent. Contexte : le prélèvement en double de 184 euros a bien été traité, le virement de remboursement est parti le 7 octobre et arrivera sous cinq jours ouvrés. Commence par reconnaître le retard et présenter nos excuses, puis donne la date du virement et le délai d'arrivée. Ton courtois et calme, sans jargon administratif, phrases courtes, vouvoiement. Dix lignes maximum avec une formule de politesse simple. N'ajoute aucune information qui ne figure pas dans ce message ou dans le courriel.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Elle donne les faits que vous seul connaissez (date du virement, délai) : sans eux, l'Assistant écrirait une réponse vague ou inventerait."
+        },
+        {
+          "skill": "tone",
+          "point": "Elle demande de reconnaître le retard et de rester calme, ce qui apaise un usager en colère au lieu de le braquer."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle interdit d'ajouter des informations et fixe une longueur, pour éviter des promesses que votre service ne pourrait pas tenir."
+        }
+      ],
+      "checkAnswer": [
+        "La date du 7 octobre, le montant de 184 euros et le délai de cinq jours ouvrés sont exacts, sans aucun autre chiffre.",
+        "La réponse ne promet rien de plus que ce que vous avez indiqué : ni geste particulier, ni délai inventé.",
+        "Le ton reste poli et posé, même face à la menace de saisir le médiateur."
+      ],
+      "lesson": "Donnez à l'Assistant les faits du dossier : il ne peut pas les deviner."
+    },
+    {
+      "id": "accueil-usagers-2",
+      "jobId": "accueil-usagers",
+      "level": 2,
+      "task": "rédiger une fiche pratique pour le guichet",
+      "title": "Fiche pratique : changer de compte",
+      "minutes": 10,
+      "situation": "Au guichet, beaucoup d'usagers demandent comment changer le compte bancaire sur lequel sont prélevées leurs mensualités. Votre chef de service vous demande une fiche pratique d'une page, à remettre aux usagers et à publier en ligne, à partir de la note interne ci-dessous.",
+      "material": "Note interne (exemple fictif, propre à ce service) – Modification des coordonnées bancaires des usagers\n\nDepuis le 1er septembre, les demandes de modification de coordonnées bancaires doivent être faites par l'usager lui-même depuis son espace en ligne, rubrique « Mes paiements ». Les agents d'accueil ne saisissent plus ces modifications au guichet, sauf pour les usagers qui n'ont pas accès à internet, sur présentation d'un relevé d'identité bancaire et d'une pièce d'identité. Toute modification enregistrée avant le 20 du mois s'applique au prélèvement du mois suivant ; après le 20, elle s'applique au prélèvement du mois d'après. En cas de difficulté de connexion, l'usager peut appeler le numéro d'assistance ou demander un rendez-vous téléphonique. Rappel : l'administration ne demande jamais de coordonnées bancaires par courriel ou par SMS.",
+      "startingRequest": "fais une fiche sur le changement de RIB",
+      "goodRequest": "À partir de la note interne ci-dessous, rédige une fiche pratique d'une page pour les usagers qui veulent changer le compte bancaire de leurs prélèvements. Elle sera remise au guichet et publiée en ligne, et doit être comprise par des personnes peu à l'aise avec l'administration et le numérique. Structure : un titre sous forme de question, puis les rubriques « Qui est concerné », « Les étapes » en liste numérotée, « Quand le changement s'applique » avec un exemple simple, « Si vous n'avez pas internet », et un encadré d'alerte sur les messages frauduleux. Vouvoie le lecteur, phrases de quinze mots maximum, aucun sigle. Reprends uniquement les règles de la note, sans rien ajouter.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Elle précise que les lecteurs sont des usagers peu à l'aise avec l'administration, ce qui pousse l'Assistant vers des mots simples et des phrases courtes."
+        },
+        {
+          "skill": "format",
+          "point": "Elle fixe les rubriques et la liste numérotée, ce qui donne une fiche lisible d'un coup d'œil au lieu d'un bloc de texte."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle demande de s'en tenir à la note, pour que la fiche ne contienne aucune règle inventée."
+        }
+      ],
+      "checkAnswer": [
+        "La règle du 20 du mois est reprise exactement, avec un exemple juste.",
+        "L'exception pour les usagers sans internet cite bien les deux pièces demandées.",
+        "La fiche tient sur une page et ne contient ni sigle ni terme interne au service."
+      ],
+      "lesson": "Décrivez les rubriques attendues : la forme de votre demande devient la forme du document."
+    },
+    {
+      "id": "accueil-usagers-3",
+      "jobId": "accueil-usagers",
+      "level": 3,
+      "task": "analyser les motifs de contact pour décider des priorités",
+      "title": "Analyser la hausse des contacts",
+      "minutes": 15,
+      "situation": "Votre chef de service prépare la réunion d'équipe de lundi : le nombre de contacts a fortement augmenté en septembre et les délais de réponse s'allongent. Il vous demande une analyse courte des chiffres ci-dessous et des pistes concrètes pour soulager l'accueil, qu'il pourra arbitrer.",
+      "material": "Contacts reçus par motif – août / septembre\n\nMotif | Août | Septembre | Délai moyen de réponse en septembre\nChangement de coordonnées bancaires | 120 | 410 | 9 jours\nQuestion sur un avis reçu | 380 | 395 | 6 jours\nDemande de délai de paiement | 95 | 160 | 12 jours\nPrise de rendez-vous | 210 | 230 | 2 jours\nAttestation ou document à fournir | 140 | 150 | 4 jours\nRéclamation sur un remboursement | 60 | 115 | 15 jours\nTotal | 1 005 | 1 460 |\n\nRemarques de l'équipe : deux agents absents en septembre ; la nouvelle procédure de changement de compte bancaire en ligne est entrée en vigueur le 1er septembre ; de nombreux usagers disent ne pas trouver la rubrique « Mes paiements ».",
+      "startingRequest": "analyse ces chiffres",
+      "goodRequest": "À partir du tableau et des remarques ci-dessous, prépare une note d'une page pour mon chef de service, qui doit choisir lundi les actions prioritaires de l'accueil. 1) Compare août et septembre par motif et identifie les trois motifs qui expliquent le plus la hausse, avec les écarts chiffrés. 2) Pour chacun, propose une cause possible en t'appuyant seulement sur les remarques de l'équipe, et indique clairement quand c'est une hypothèse. 3) Propose trois actions concrètes, par exemple une réponse type, une fiche pratique ou un message d'attente, avec leurs avantages et leurs limites, puis indique celle que tu recommandes et pourquoi. Ton neutre et factuel, titres courts, aucun chiffre qui ne vient pas du tableau.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Elle découpe le travail en trois étapes (comparer, expliquer, proposer), ce qui oblige l'Assistant à raisonner dans l'ordre au lieu de commenter au hasard."
+        },
+        {
+          "skill": "audience",
+          "point": "Elle dit que le lecteur est un chef qui doit trancher, d'où une recommandation finale avec avantages et limites."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle sépare les faits du tableau et les hypothèses, pour que votre chef sache ce qui est établi et ce qui reste à vérifier."
+        }
+      ],
+      "checkAnswer": [
+        "Les écarts sont justes : par exemple 290 contacts de plus pour les coordonnées bancaires et 455 de plus au total.",
+        "Les causes avancées sont présentées comme des hypothèses et s'appuient sur les remarques de l'équipe.",
+        "La recommandation finale est claire et justifiée en une ou deux phrases."
+      ],
+      "lesson": "Pour préparer une décision, demandez des options comparées et une recommandation, en séparant les faits des hypothèses."
+    }
+  ]
+}

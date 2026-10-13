@@ -110,15 +110,16 @@ describe('<PanelHome />', () => {
     useProfileStore.setState({ job: null, isBeginner: false });
     render(<PanelHome />);
 
+    // The ten jobs of the ministry, not families of requests.
     fireEvent.change(screen.getByLabelText('My field'), {
-      target: { value: 'meetings' },
+      target: { value: 'rh' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'I am a beginner' }));
 
     const { job, isBeginner } = useProfileStore.getState();
-    expect(job?.id).toBe('meetings');
+    expect(job).toEqual({ id: 'rh', label: 'Gestionnaire RH' });
     expect(isBeginner).toBe(true);
-    expect(profileRules()).toContain(job?.label);
+    expect(profileRules()).toContain('Gestionnaire RH');
     expect(
       screen.getByRole('button', { name: 'I am a beginner' }),
     ).toHaveAttribute('aria-pressed', 'true');

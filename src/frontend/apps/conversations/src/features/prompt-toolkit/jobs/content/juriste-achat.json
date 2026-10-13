@@ -1,0 +1,151 @@
+{
+  "job": {
+    "id": "juriste-achat",
+    "label": "Juriste commande publique",
+    "who": "Juristes et conseillers en commande publique qui sécurisent les marchés de leur direction, répondent aux questions des acheteurs, analysent les clauses et relisent les rapports d'analyse des offres.",
+    "vocabulary": [
+      "marché public",
+      "procédure adaptée",
+      "appel d'offres",
+      "DCE",
+      "CCAP",
+      "CCTP",
+      "règlement de consultation",
+      "critères d'attribution",
+      "pondération",
+      "offre anormalement basse",
+      "pénalités de retard",
+      "avenant",
+      "rapport d'analyse des offres",
+      "candidat évincé",
+      "référé précontractuel"
+    ],
+    "readers": [
+      "un acheteur",
+      "un service demandeur (prescripteur)",
+      "la hiérarchie",
+      "le comité des achats",
+      "un candidat évincé",
+      "un autre bureau juridique"
+    ],
+    "tasks": [
+      "répondre à une question d'acheteur",
+      "expliquer une clause d'un CCAP",
+      "rédiger une note juridique",
+      "préparer une fiche de veille ou d'information pour les acheteurs",
+      "relire un rapport d'analyse des offres",
+      "rédiger une lettre de rejet à un candidat"
+    ],
+    "examples": [
+      "Expliquez en dix lignes, pour un acheteur débutant, la différence entre une procédure adaptée et un appel d'offres, sans citer de seuil chiffré.",
+      "Listez sous forme de tableau les points à vérifier dans une clause de pénalités de retard d'un marché de prestations informatiques.",
+      "Résumez en cinq puces, pour ma hiérarchie, la démarche à suivre face à une offre qui paraît anormalement basse.",
+      "Rédigez un modèle de lettre courtoise informant un candidat que son offre est classée deuxième et n'est pas retenue.",
+      "Proposez un plan de note juridique sur la modification d'un marché en cours d'exécution, destinée à des acheteurs non juristes."
+    ],
+    "cautions": [
+      "Ne collez jamais dans l'Assistant le contenu d'offres réelles en cours d'analyse : elles relèvent du secret des affaires et de la confidentialité de la procédure.",
+      "Remplacez le nom des candidats et des titulaires par « candidat A », « société X », et ne donnez pas les prix réels d'une consultation en cours.",
+      "Vérifiez toujours dans les textes officiels toute règle, tout seuil ou toute jurisprudence que l'Assistant cite : il peut se tromper ou s'appuyer sur une version dépassée.",
+      "L'Assistant aide à rédiger et à repérer des points d'attention, il ne remplace ni votre analyse juridique ni la validation par votre hiérarchie."
+    ]
+  },
+  "cases": [
+    {
+      "id": "juriste-achat-1",
+      "jobId": "juriste-achat",
+      "level": 1,
+      "task": "expliquer une clause de pénalités à un service demandeur",
+      "title": "Expliquer une clause de pénalités",
+      "minutes": 5,
+      "situation": "Le service informatique de votre direction vous écrit : son prestataire a livré une application avec 12 jours de retard et il veut savoir ce que prévoit le marché. Vous voulez lui répondre vite, en mots simples, à partir de la clause du CCAP.",
+      "material": "Question reçue du service informatique :\n« Le prestataire a livré l'application avec 12 jours de retard. Que dit le marché ? Peut-on lui retenir quelque chose ? »\n\nExtrait du CCAP, article 9 – Pénalités :\n« En cas de dépassement du délai d'exécution fixé au bon de commande, le titulaire encourt, sans mise en demeure préalable, une pénalité journalière égale à 1/1000e du montant hors taxes du bon de commande concerné. Les pénalités ne sont pas appliquées lorsque leur montant total est inférieur ou égal à 1 000 € HT pour l'ensemble du marché. Le retard imputable à l'administration, dûment constaté, n'est pas pris en compte. »\n\nMontant du bon de commande concerné : 85 000 € HT.\nAucune autre pénalité n'a été appliquée sur ce marché.",
+      "startingRequest": "explique cette clause",
+      "goodRequest": "À partir du texte ci-dessous, expliquez simplement au service informatique, qui n'est pas juriste, ce que prévoit la clause de pénalités de retard du marché et ce qu'elle donnerait pour un retard de 12 jours sur un bon de commande de 85 000 € HT. Montrez le calcul étape par étape. Rappelez qu'il faut d'abord vérifier que le retard n'est pas dû à l'administration. Réponse en 10 lignes maximum, ton cordial, sans terme juridique non expliqué.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "En précisant que le lecteur n'est pas juriste, vous obtenez une explication en mots simples plutôt qu'une paraphrase de la clause."
+        },
+        {
+          "skill": "context",
+          "point": "Donner le nombre de jours de retard et le montant du bon de commande permet une réponse chiffrée au lieu d'une généralité."
+        },
+        {
+          "skill": "format",
+          "point": "Demander le calcul étape par étape vous permet de le contrôler en quelques secondes avant d'envoyer la réponse."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que le calcul donne 85 € par jour, soit 1 020 € HT pour 12 jours.",
+        "Vérifiez que la réponse signale que ce montant dépasse de peu le seuil de 1 000 € HT prévu par la clause.",
+        "Vérifiez que la condition du retard imputable à l'administration est bien rappelée."
+      ],
+      "lesson": "Dites toujours si la personne qui va lire est juriste ou non : c'est ce qui fixe le niveau de langage."
+    },
+    {
+      "id": "juriste-achat-2",
+      "jobId": "juriste-achat",
+      "level": 2,
+      "task": "préparer une fiche d'information pour les acheteurs",
+      "title": "Fiche d'information aux acheteurs",
+      "minutes": 10,
+      "situation": "Votre direction a diffusé une note interne qui change le circuit de validation des avenants. Votre bureau doit envoyer aux acheteurs une fiche pratique d'une page. Vous avez pris des notes en vrac et vous voulez les transformer en fiche claire.",
+      "material": "Mes notes sur la note interne du 2 septembre (circuit de validation des avenants) :\n- à compter du 1er novembre, tout avenant qui augmente le montant du marché de plus de 10 % passe devant le comité des achats\n- dossier à déposer au moins 15 jours avant la séance du comité\n- pièces : projet d'avenant, note de justification, avis écrit du service demandeur\n- avenant de 10 % ou moins : le visa du chef de bureau suffit\n- avenant qui prolonge seulement le délai, sans effet sur le prix : visa du chef de bureau\n- modèle de note de justification disponible sur l'intranet de la direction\n- question souvent posée : faut-il additionner les avenants successifs ? Oui, on regarde le total des augmentations depuis la notification\n- contact : boîte fonctionnelle du bureau juridique",
+      "startingRequest": "fais une fiche sur les nouveaux avenants",
+      "goodRequest": "À partir du texte ci-dessous, qui reprend mes notes sur une note interne de ma direction, rédigez une fiche d'information d'une page destinée aux acheteurs de la direction, sur le nouveau circuit de validation des avenants. Structure : un titre, ce qui change et à partir de quand, un tableau « type d'avenant / qui valide / délai / pièces à fournir », une rubrique « questions fréquentes » et le contact. Ton clair et pratique, phrases courtes. Reprenez uniquement les informations des notes, sans rien ajouter, et signalez-moi à la fin s'il manque une information utile.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Dire que la fiche s'adresse à des acheteurs donne un document pratique, centré sur ce qu'ils doivent faire."
+        },
+        {
+          "skill": "format",
+          "point": "Le plan imposé, avec un tableau, évite une page de paragraphes que personne ne lit jusqu'au bout."
+        },
+        {
+          "skill": "constraints",
+          "point": "Interdire tout ajout empêche l'Assistant d'inventer une règle ou un délai qui ne figure pas dans la note interne."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que le seuil de 10 %, la date du 1er novembre et le délai de 15 jours sont repris exactement.",
+        "Vérifiez que le cas de la simple prolongation de délai et celui des avenants successifs figurent bien dans la fiche.",
+        "Vérifiez qu'aucune pièce, date ou règle n'a été ajoutée par rapport à vos notes."
+      ],
+      "lesson": "Quand vous avez déjà le contenu, donnez le plan voulu et demandez à l'Assistant de ne rien ajouter."
+    },
+    {
+      "id": "juriste-achat-3",
+      "jobId": "juriste-achat",
+      "level": 3,
+      "task": "relire un rapport d'analyse des offres avant signature",
+      "title": "Relire un rapport d'analyse",
+      "minutes": 15,
+      "situation": "Un acheteur vous transmet, avant signature, le rapport d'analyse des offres d'un marché de formation bureautique. Vous devez repérer les fragilités juridiques et dire à votre hiérarchie si le rapport peut être signé en l'état. Les noms des candidats ont été remplacés par des lettres.",
+      "material": "Extrait du rapport d'analyse des offres – Marché de formation bureautique (procédure adaptée)\nCritères annoncés dans le règlement de consultation : valeur technique 60 %, prix 40 %.\n\nCandidat A : prix 48 000 € HT ; note technique 15/20 ; note prix 16/20 ; note finale (pondération 50/50) 15,5.\nCandidat B : prix 29 000 € HT ; note technique 12/20 ; note prix 20/20 ; note finale (pondération 50/50) 16.\nCandidat C : prix 52 000 € HT ; note technique 17/20 ; note prix 14,8/20 ; note finale (pondération 50/50) 15,9.\n\nProposition : attribuer le marché au candidat B.\nCommentaire technique sur B : « mémoire succinct, moyens humains peu détaillés ».\nAucune demande de précision n'a été adressée au candidat B sur son prix.",
+      "startingRequest": "est-ce que ce rapport est bon ?",
+      "goodRequest": "À partir du texte ci-dessous, extrait d'un rapport d'analyse des offres pour un marché de formation bureautique en procédure adaptée, relevez les fragilités juridiques avant que je le soumette à ma hiérarchie pour signature. Vérifiez en particulier : la pondération réellement appliquée par rapport à celle annoncée, en recalculant les notes finales avec les chiffres du texte ; l'écart de prix du candidat B et ce qu'il faudrait faire face à une offre qui paraît anormalement basse ; la précision des motifs. Présentez le résultat en tableau (point relevé, risque, action proposée), puis une conclusion de trois lignes. N'utilisez que les chiffres du texte et signalez ce qui vous manque pour conclure.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "La demande dit précisément quoi vérifier (pondération, prix bas, motifs) : l'Assistant analyse au lieu de résumer."
+        },
+        {
+          "skill": "sources",
+          "point": "Exiger les seuls chiffres du texte et le recalcul des notes vous permet de contrôler chaque résultat vous-même."
+        },
+        {
+          "skill": "format",
+          "point": "Le tableau « point relevé, risque, action proposée » vous donne directement la base de votre avis à la hiérarchie."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez les notes recalculées avec 60 % et 40 % : A 15,4 ; B 15,2 ; C 16,12, ce qui change le classement.",
+        "Vérifiez que l'Assistant propose d'interroger le candidat B sur son prix, sans conclure seul que l'offre doit être écartée.",
+        "Vérifiez qu'aucune règle ou décision de justice précise n'est citée sans que vous puissiez la retrouver dans les textes."
+      ],
+      "lesson": "Pour une analyse, dites à l'Assistant quoi vérifier et demandez-lui de montrer ses calculs."
+    }
+  ]
+}

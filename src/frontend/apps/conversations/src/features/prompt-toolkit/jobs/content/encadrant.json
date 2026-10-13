@@ -1,0 +1,151 @@
+{
+  "job": {
+    "id": "encadrant",
+    "label": "Encadrant(e) / manager",
+    "who": "Des chefs de bureau, chefs de service et responsables d'équipe des directions du ministère, qui organisent le travail de leurs agents et rendent compte à leur hiérarchie.",
+    "vocabulary": [
+      "entretien professionnel",
+      "fiche de poste",
+      "objectifs de l'année",
+      "plan de charge",
+      "note à la hiérarchie",
+      "arbitrage",
+      "renfort",
+      "vacance de poste",
+      "réunion de service",
+      "dialogue social",
+      "télétravail",
+      "permanence",
+      "délégation de signature",
+      "compte rendu",
+      "remontée d'information"
+    ],
+    "readers": [
+      "les agents de l'équipe",
+      "la hiérarchie",
+      "un autre chef de bureau",
+      "le service des ressources humaines",
+      "les représentants du personnel",
+      "un agent reçu en entretien"
+    ],
+    "tasks": [
+      "annoncer une décision à l'équipe",
+      "préparer un entretien professionnel",
+      "rédiger une note à la hiérarchie",
+      "présenter des options pour un arbitrage",
+      "préparer l'ordre du jour d'une réunion de service",
+      "préparer une réunion difficile"
+    ],
+    "examples": [
+      "Rédigez un message court à mon équipe de huit agents pour annoncer le report de la réunion de service à jeudi 10 h, ton cordial.",
+      "Proposez un ordre du jour d'une heure pour une réunion de service sur l'organisation des congés de fin d'année, avec la durée de chaque point.",
+      "Reformulez ce compte rendu de réunion en cinq décisions claires, avec pour chacune qui s'en occupe et pour quand, sans rien ajouter.",
+      "Listez les questions que je peux poser en entretien professionnel pour aider un agent à exprimer ses souhaits de formation, en restant bienveillant.",
+      "Proposez trois façons de dire à mon équipe qu'une demande de renfort a été refusée, sur un ton honnête et sans démotiver."
+    ],
+    "cautions": [
+      "N'écrivez pas de nom, de situation de santé ou de difficulté personnelle d'un agent dans une demande : décrivez la situation sans permettre de reconnaître la personne.",
+      "Une appréciation dans un entretien professionnel engage l'encadrant : relisez et réécrivez avec vos mots tout ce que l'Assistant propose.",
+      "Ne collez pas de documents internes non diffusables, comme un projet de réorganisation non annoncé, si l'outil n'est pas autorisé pour ce niveau de confidentialité.",
+      "Pour un sujet qui touche au droit des agents, vérifiez auprès du service des ressources humaines ce que l'Assistant affirme."
+    ]
+  },
+  "cases": [
+    {
+      "id": "encadrant-1",
+      "jobId": "encadrant",
+      "level": 1,
+      "task": "annoncer un changement de planning à l'équipe",
+      "title": "Annoncer un changement de planning",
+      "minutes": 5,
+      "situation": "Vous encadrez une équipe qui assure l'accueil téléphonique des usagers. À cause de deux départs non remplacés, vous devez modifier le planning des permanences à partir du mois prochain. Vous avez écrit un premier jet trop sec et voulez un message clair et respectueux.",
+      "material": "Mon premier jet :\nÀ partir du 1er décembre, nouvelle organisation des permanences téléphoniques. Les permanences passent de 9 h-12 h / 14 h-17 h à 9 h-12 h 30 / 13 h 30-16 h 30. Chaque agent fera 3 demi-journées de permanence par semaine au lieu de 2. C'est lié aux 2 départs de septembre non remplacés à ce jour. Le planning nominatif sera affiché vendredi. Les demandes d'échange se font entre vous puis me sont signalées par courriel 48 h avant. Pas de changement pour les jours de télétravail déjà validés. Je ferai un point en réunion de service le 2 décembre pour voir si ça tient.",
+      "startingRequest": "réécris ce message pour qu'il passe mieux",
+      "goodRequest": "À partir du texte ci-dessous, réécrivez mon message à mon équipe d'accueil téléphonique, envoyé par courriel. Les agents vont avoir plus de permanences et risquent d'être mécontents. Ton respectueux et direct : reconnaissez l'effort demandé, expliquez la raison, sans promettre de renfort. Format : un courriel de 150 mots maximum, avec les nouveaux horaires et les règles d'échange présentés en liste. Gardez exactement toutes les dates, heures et règles de mon texte.",
+      "keyPoints": [
+        {
+          "skill": "context",
+          "point": "Vous expliquez que l'équipe risque d'être mécontente, ce qui aide l'Assistant à trouver le bon équilibre entre fermeté et considération."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous dites précisément le ton voulu et ce qu'il ne faut pas promettre, ce qui évite un message trop sec ou un engagement que vous ne pouvez pas tenir."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous demandez de garder toutes les dates et règles, ce qui évite qu'une heure ou un délai soit modifié en route."
+        }
+      ],
+      "checkAnswer": [
+        "Les horaires 9 h-12 h 30 et 13 h 30-16 h 30 et la date du 1er décembre sont exacts.",
+        "La règle des 48 h pour signaler un échange est toujours présente.",
+        "Le message ne promet aucun recrutement ni aucun renfort."
+      ],
+      "lesson": "Quand le message est délicat, dites comment les lecteurs risquent de réagir et ce que vous ne voulez pas promettre."
+    },
+    {
+      "id": "encadrant-2",
+      "jobId": "encadrant",
+      "level": 2,
+      "task": "préparer la trame d'un entretien professionnel",
+      "title": "Préparer un entretien professionnel",
+      "minutes": 10,
+      "situation": "Vous menez dans une semaine l'entretien professionnel annuel d'une agente de votre bureau, gestionnaire de dossiers depuis trois ans. Vous avez pris quelques notes au fil de l'année, sans nom. Vous voulez une trame claire pour conduire l'échange.",
+      "material": "Mes notes (agente gestionnaire, 3 ans dans le poste) :\nObjectifs de l'année : 1) traiter 90 % des dossiers en moins de 30 jours : atteint à 93 % ; 2) mettre à jour le guide interne de traitement : fait en juin, très utilisé par l'équipe ; 3) former un nouvel arrivant : fait, bon retour du collègue.\nPoints forts : rigueur, entraide, a assuré l'intérim de la coordination en août.\nPoint à travailler : prise de parole en réunion, reste en retrait.\nCe qu'elle a dit en cours d'année : souhaite évoluer vers des fonctions de coordination ; intéressée par une formation sur la conduite de réunion.\nContexte : réorganisation possible du bureau l'an prochain, rien d'annoncé.",
+      "startingRequest": "prépare l'entretien annuel de mon agente",
+      "goodRequest": "À partir du texte ci-dessous, préparez la trame de l'entretien professionnel annuel que je mène avec une agente gestionnaire de dossiers. Ce document est pour moi seul, pour conduire l'échange. Format : les grandes parties de l'entretien dans l'ordre, avec pour chacune deux ou trois questions ouvertes à poser et les faits de mes notes sur lesquels m'appuyer. Prévoyez une partie sur ses souhaits d'évolution et de formation. Ton bienveillant et concret. N'écrivez pas d'appréciation définitive à ma place et ne mentionnez pas la réorganisation, qui n'est pas annoncée.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous précisez que la trame est pour vous seul, donc l'Assistant écrit un support de conduite et non un compte rendu à signer."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez des parties, des questions ouvertes et les faits à citer, ce qui donne un document directement utilisable pendant l'entretien."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'évoquer la réorganisation non annoncée et de rédiger l'appréciation, ce qui protège l'agente et vous laisse juge."
+        }
+      ],
+      "checkAnswer": [
+        "Les résultats cités, comme les 93 % de dossiers traités en moins de 30 jours, sont bien ceux de vos notes.",
+        "La réorganisation possible n'apparaît nulle part dans la trame.",
+        "Les questions sont ouvertes et laissent l'agente s'exprimer, notamment sur la coordination et la formation."
+      ],
+      "lesson": "Dites à l'Assistant ce qui doit rester hors du document, surtout quand il touche une personne."
+    },
+    {
+      "id": "encadrant-3",
+      "jobId": "encadrant",
+      "level": 3,
+      "task": "présenter deux options à la hiérarchie pour un arbitrage",
+      "title": "Proposer un arbitrage à sa hiérarchie",
+      "minutes": 15,
+      "situation": "Votre bureau accumule du retard dans le traitement des dossiers depuis deux mois. Votre sous-directeur vous demande une note pour choisir entre deux options d'ici vendredi. Vous avez rassemblé les éléments chiffrés.",
+      "material": "Situation : 640 dossiers en stock au 1er octobre, contre 380 au 1er août. Délai moyen de traitement : 41 jours, pour un objectif de 30 jours. Équipe : 9 gestionnaires, dont 1 poste vacant depuis juillet.\nOption 1 – Renfort temporaire : recruter 2 vacataires pour 4 mois. Délai de recrutement estimé : 6 semaines. Formation : 3 semaines, assurée par 2 gestionnaires expérimentés (donc moins de dossiers traités pendant ce temps). Gain attendu ensuite : environ 120 dossiers par mois.\nOption 2 – Réorganisation interne : spécialiser 3 gestionnaires sur les dossiers simples (60 % du stock) et suspendre pendant 3 mois la mise à jour des fiches de procédure. Mise en place : 2 semaines. Gain attendu : environ 70 dossiers par mois. Risque : lassitude des agents spécialisés ; fiches de procédure moins à jour.\nPoint commun : la vacance de poste reste à pourvoir dans tous les cas.",
+      "startingRequest": "aide-moi à choisir entre les deux options",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une note d'une page à mon sous-directeur pour l'aider à choisir entre deux options face au retard de mon bureau. Format : rappel de la situation en trois lignes, puis un tableau qui compare les deux options sur le délai de mise en place, le gain attendu, la charge pour l'équipe et les risques, puis une proposition argumentée. Indiquez pour chaque option la réduction mensuelle permise par le gain annoncé, et dites ce qui manque pour estimer le stock dans quatre mois. Ton factuel et sobre, style note administrative. N'utilisez que les chiffres du texte et signalez les hypothèses incertaines.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Vous dites que la note est pour le sous-directeur et tient sur une page, ce qui oblige l'Assistant à aller à l'essentiel."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez un calcul du stock dans quatre mois en montrant le détail, ce qui rend la comparaison vérifiable au lieu d'une impression."
+        },
+        {
+          "skill": "sources",
+          "point": "Vous limitez l'Assistant aux chiffres fournis et lui demandez de signaler les hypothèses, ce qui évite une décision fondée sur des chiffres inventés."
+        }
+      ],
+      "checkAnswer": [
+        "La réponse signale qu'on ne peut pas calculer le stock dans quatre mois avec les seules données du texte (entrées de dossiers, effet de la formation).",
+        "Les chiffres du tableau sont exactement ceux du texte : 640 dossiers, 41 jours, 120 et 70 dossiers par mois.",
+        "La proposition finale est séparée de la comparaison et reste à votre décision."
+      ],
+      "lesson": "Pour un arbitrage, demandez une comparaison sur les mêmes critères, des calculs détaillés, puis une proposition distincte."
+    }
+  ]
+}

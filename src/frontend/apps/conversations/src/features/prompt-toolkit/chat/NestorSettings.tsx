@@ -1,11 +1,11 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { Icon } from '@/components';
 import { useConversationRouteId } from '@/utils';
 
-import { getPromptLibrary } from '../library/content';
+import { JOBS, jobById } from '../jobs/jobs';
 import {
   AutoPart,
   USUAL_AUDIENCES,
@@ -292,14 +292,12 @@ const Line = ({
 
 /** Nestor's settings (E11): no bottom bar, back to the chat on top. */
 export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const prefs = useCoachPrefsStore();
   const job = useProfileStore((state) => state.job);
   const setJob = useProfileStore((state) => state.setJob);
-  const categories = useMemo(
-    () => getPromptLibrary(i18n.language).categories,
-    [i18n.language],
-  );
+  const isBeginner = useProfileStore((state) => state.isBeginner);
+  const setBeginner = useProfileStore((state) => state.setBeginner);
   const conversationId = useConversationRouteId();
   const parts: { part: AutoPart; label: string; note: string }[] = [
     {
@@ -438,23 +436,29 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
                 aria-label={t('My field')}
                 value={job?.id ?? ''}
                 onChange={(event) => {
-                  const category = categories.find(
-                    (item) => item.id === event.target.value,
-                  );
+                  const chosen = jobById(event.target.value);
                   setJob(
-                    category
-                      ? { id: category.id, label: category.title }
-                      : null,
+                    chosen ? { id: chosen.id, label: chosen.label } : null,
                   );
                 }}
               >
                 <option value="">{t('Not specified')}</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.title}
+                {JOBS.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.label}
                   </option>
                 ))}
               </Select>
+            </Line>
+            <Line
+              label={t('I am a beginner')}
+              note={t('Fewer details on screen, simpler words.')}
+            >
+              <Switch
+                label={t('I am a beginner')}
+                on={isBeginner}
+                onChange={setBeginner}
+              />
             </Line>
             <Line
               label={t('My usual readers')}

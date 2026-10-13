@@ -1,0 +1,149 @@
+{
+  "job": {
+    "id": "etudes-stats",
+    "label": "Chargé(e) d'études, statistiques",
+    "who": "Agents qui produisent, analysent et commentent des chiffres (notes de conjoncture, études, tableaux statistiques) et doivent les rendre compréhensibles par des décideurs qui ne sont pas statisticiens.",
+    "vocabulary": [
+      "note de conjoncture",
+      "données CVS-CJO",
+      "glissement annuel",
+      "variation trimestrielle",
+      "acquis de croissance",
+      "données provisoires",
+      "révision",
+      "enquête par échantillon",
+      "taux de réponse",
+      "marge d'erreur",
+      "source administrative",
+      "indice base 100",
+      "champ de l'étude",
+      "série longue"
+    ],
+    "readers": [
+      "le cabinet du ministre",
+      "la hiérarchie",
+      "un bureau métier non statisticien",
+      "les collègues statisticiens",
+      "le grand public lors d'une publication"
+    ],
+    "tasks": [
+      "commenter un tableau ou un graphique",
+      "rédiger le paragraphe d'une note de conjoncture",
+      "résumer une étude longue en une page",
+      "expliquer une méthode à un non-spécialiste",
+      "comparer deux sources ou deux séries",
+      "simplifier le vocabulaire d'une note avant diffusion"
+    ],
+    "examples": [
+      "Explique en cinq lignes, pour un chef de bureau non statisticien, la différence entre un glissement annuel et une variation trimestrielle.",
+      "Propose trois titres informatifs et neutres pour un graphique montrant la baisse des créations d'entreprises dans le commerce depuis un an.",
+      "À partir du tableau ci-dessous, rédige trois phrases de commentaire pour une note de conjoncture, en utilisant uniquement les chiffres fournis.",
+      "Relis le paragraphe ci-dessous et remplace les termes techniques par des mots simples, sans modifier aucun chiffre ni le sens.",
+      "Résume en une page l'étude ci-dessous pour le cabinet : message principal, trois résultats chiffrés repris tels quels, limites de la méthode."
+    ],
+    "cautions": [
+      "Ne demandez jamais à l'Assistant de produire ou d'estimer un chiffre : il peut l'inventer de façon très crédible ; il met en forme vos données, il ne les crée pas.",
+      "Ne collez pas de données individuelles ou de fichiers de détail couverts par le secret statistique : travaillez sur des résultats agrégés.",
+      "Les résultats sous embargo avant publication restent soumis aux règles de diffusion de votre direction, y compris dans l'Assistant.",
+      "Vérifiez chaque chiffre de la réponse contre votre source : un arrondi différent ou une virgule déplacée suffit à fausser une note."
+    ]
+  },
+  "cases": [
+    {
+      "id": "etudes-stats-1",
+      "jobId": "etudes-stats",
+      "level": 1,
+      "task": "expliquer une méthode à un non-spécialiste",
+      "title": "Expliquer la correction saisonnière",
+      "minutes": 5,
+      "situation": "Votre sous-directrice vous transfère le courriel d'un chef de bureau qui ne comprend pas pourquoi deux chiffres sur l'emploi intérimaire se contredisent. Vous devez lui répondre en quelques lignes claires, sans jargon, avant sa réunion de l'après-midi.",
+      "material": "Courriel reçu :\nBonjour,\nDans votre note de conjoncture, vous indiquez que l'emploi intérimaire de la région a baissé de 0,8 % au quatrième trimestre. Or le tableau que m'a transmis l'antenne régionale montre une hausse de 2,1 % sur la même période. Lequel est le bon ? Je dois présenter ces chiffres au comité de direction cet après-midi.\nCordialement,\nLe chef du bureau des politiques territoriales\n\nPrécision de votre part : le chiffre de la note est corrigé des variations saisonnières et des jours ouvrables (CVS-CJO) ; le tableau régional est en données brutes. Chaque année, le quatrième trimestre connaît un pic d'intérim lié aux fêtes de fin d'année.",
+      "startingRequest": "explique ce que veut dire CVS",
+      "goodRequest": "À partir du texte ci-dessous, rédige une réponse courte (6 à 8 lignes) au courriel de ce chef de bureau, qui n'est pas statisticien et doit présenter ces chiffres en comité de direction cet après-midi. Explique avec des mots simples pourquoi les deux chiffres diffèrent : l'un est corrigé des variations saisonnières, l'autre est brut. Appuie-toi sur l'exemple du pic d'intérim des fêtes. Dis clairement lequel utiliser pour parler de la tendance. N'ajoute aucun chiffre qui n'est pas dans le texte. Ton cordial et professionnel, avec vouvoiement.",
+      "keyPoints": [
+        {
+          "skill": "audience",
+          "point": "Elle précise que le lecteur n'est pas statisticien et doit présenter en comité : l'Assistant choisit des mots simples et va à l'essentiel."
+        },
+        {
+          "skill": "task",
+          "point": "Elle demande d'expliquer l'écart et de dire quel chiffre utiliser, pas seulement de définir un sigle : la réponse sert vraiment au lecteur."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle interdit d'ajouter des chiffres absents du texte : vous évitez qu'un pourcentage inventé parte en comité de direction."
+        }
+      ],
+      "checkAnswer": [
+        "Les deux chiffres cités sont exactement -0,8 % et +2,1 %, sans aucun autre chiffre ajouté.",
+        "L'explication tient en quelques lignes et ne laisse aucun sigle sans explication.",
+        "La réponse dit clairement quel chiffre utiliser pour parler de la tendance."
+      ],
+      "lesson": "Dites qui va lire et ce qu'il doit faire de la réponse : l'explication s'adapte alors à son niveau."
+    },
+    {
+      "id": "etudes-stats-2",
+      "jobId": "etudes-stats",
+      "level": 2,
+      "task": "commenter un tableau pour une note de conjoncture",
+      "title": "Commenter un tableau de conjoncture",
+      "minutes": 10,
+      "situation": "Vous préparez la note de conjoncture trimestrielle de votre direction. Le tableau sur les défaillances d'entreprises est prêt ; il vous manque le commentaire qui l'accompagne, pour des membres du cabinet qui lisent vite.",
+      "material": "Défaillances d'entreprises dans la région (données fictives, cumul sur 12 mois à fin septembre, en nombre)\nSecteur | Sept. 2025 | Sept. 2026 | Évolution\nConstruction | 1 240 | 1 410 | +13,7 %\nCommerce | 1 580 | 1 650 | +4,4 %\nHébergement-restauration | 860 | 990 | +15,1 %\nIndustrie | 410 | 395 | -3,7 %\nServices aux entreprises | 1 020 | 1 080 | +5,9 %\nEnsemble | 5 110 | 5 525 | +8,1 %\n\nNote de méthode : données provisoires au 30 septembre 2026, susceptibles d'être révisées ; les défaillances sont comptées à la date du jugement d'ouverture de la procédure.",
+      "startingRequest": "commente ce tableau",
+      "goodRequest": "À partir du texte ci-dessous, rédige le commentaire du tableau sur les défaillances d'entreprises pour notre note de conjoncture trimestrielle, lue par des membres du cabinet qui lisent vite. Format : un titre informatif d'une ligne, puis un paragraphe de 8 à 10 lignes qui commence par le message principal (l'évolution d'ensemble), présente ensuite les secteurs les plus touchés, puis l'exception de l'industrie. Utilise uniquement les chiffres du tableau, sans en calculer de nouveaux et sans avancer de causes. Termine par une phrase rappelant que les données sont provisoires. Ton neutre et factuel.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Elle impose un titre informatif puis un paragraphe qui commence par le message principal : c'est la forme attendue dans une note de conjoncture."
+        },
+        {
+          "skill": "audience",
+          "point": "Elle dit que le cabinet lit vite : l'Assistant va droit au message au lieu de décrire le tableau ligne par ligne."
+        },
+        {
+          "skill": "sources",
+          "point": "Elle limite l'Assistant aux chiffres du tableau et lui interdit d'avancer des causes : vous gardez la maîtrise de l'interprétation."
+        }
+      ],
+      "checkAnswer": [
+        "Chaque chiffre du commentaire se retrouve à l'identique dans le tableau (par exemple +8,1 % pour l'ensemble).",
+        "Aucune cause (taux d'intérêt, consommation, météo…) n'a été ajoutée sans source.",
+        "Le caractère provisoire des données est bien mentionné à la fin."
+      ],
+      "lesson": "Fournissez vos chiffres et interdisez d'en ajouter : l'Assistant met en forme, vous restez garant des données."
+    },
+    {
+      "id": "etudes-stats-3",
+      "jobId": "etudes-stats",
+      "level": 3,
+      "task": "comparer deux sources pour préparer un choix de publication",
+      "title": "Arbitrer entre deux sources divergentes",
+      "minutes": 15,
+      "situation": "Votre chef de bureau doit choisir quelle source retenir pour publier le taux de recours à un dispositif d'aide aux PME. Les deux sources disponibles ne donnent pas le même résultat. Il vous demande de quoi trancher, sans entrer dans la technique.",
+      "material": "Taux de recours au dispositif fictif « Prêt rebond PME » parmi les entreprises éligibles, année 2025\n\nSource A — Enquête annuelle auprès des PME (échantillon de 3 200 entreprises, taux de réponse de 41 %) : 18 % des entreprises éligibles déclarent avoir eu recours au dispositif. Marge d'erreur : plus ou moins 1,5 point. Résultats disponibles en mars.\n\nSource B — Données de gestion des banques partenaires (exhaustives sur les prêts accordés) : 9 400 prêts accordés pour environ 62 000 entreprises éligibles, soit environ 15 %. Le nombre d'entreprises éligibles est lui-même une estimation. Données disponibles dès janvier.\n\nRemarque d'un collègue : les entreprises bénéficiaires répondent sans doute plus volontiers à l'enquête que les autres.",
+      "startingRequest": "quelle source est la meilleure ?",
+      "goodRequest": "Mon chef de bureau doit choisir quelle source retenir pour publier le taux de recours au dispositif « Prêt rebond PME ». À partir du texte ci-dessous, compare d'abord les deux sources dans un tableau avec ces lignes : couverture, précision du résultat, biais possibles, date de disponibilité. Explique ensuite en 5 lignes, pour un lecteur non statisticien, pourquoi les deux chiffres (18 % et 15 %) peuvent différer. Termine par deux options possibles avec leurs avantages et leurs inconvénients, sans trancher à sa place. N'utilise aucun chiffre absent du texte et signale clairement ce qui reste incertain.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Elle découpe le travail en trois étapes (comparer, expliquer l'écart, présenter des options) : l'Assistant prépare la décision sans la prendre."
+        },
+        {
+          "skill": "format",
+          "point": "Elle impose les lignes du tableau : la comparaison porte sur les critères qui comptent pour vous, pas sur ceux que l'Assistant imagine."
+        },
+        {
+          "skill": "constraints",
+          "point": "Elle interdit tout chiffre nouveau et demande de signaler les incertitudes : la note reste fidèle aux données et honnête sur leurs limites."
+        }
+      ],
+      "checkAnswer": [
+        "Le biais signalé par le collègue (les bénéficiaires répondent plus volontiers) apparaît dans le tableau ou dans l'explication.",
+        "Aucun chiffre, délai ou effectif absent du texte n'apparaît dans la réponse.",
+        "La réponse présente deux options équilibrées et ne conclut pas à la place de votre chef de bureau."
+      ],
+      "lesson": "Pour préparer une décision, demandez des options comparées selon vos critères, pas un verdict."
+    }
+  ]
+}

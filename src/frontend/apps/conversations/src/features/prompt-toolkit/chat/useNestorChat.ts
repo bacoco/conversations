@@ -13,6 +13,7 @@ import {
 } from '../coach/coachApi';
 import { detectSensitiveData } from '../coach/sensitiveData';
 import { answerGaps } from '../coach/useAfterAnswer';
+import { jobById } from '../jobs/jobs';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { searchPhrases } from '../library/embeddingSearch';
 import { getPhrases } from '../phrases';
@@ -414,6 +415,16 @@ export const useNestorChat = (language: string) => {
         post({
           kind: 'pistes',
           phrases: firsts.filter(Boolean),
+          examples: true,
+        });
+        return;
+      }
+      // The everyday requests of the user's own job.
+      const profile = jobById(job.id);
+      if (profile) {
+        post({
+          kind: 'pistes',
+          phrases: profile.examples.slice(0, 3),
           examples: true,
         });
         return;

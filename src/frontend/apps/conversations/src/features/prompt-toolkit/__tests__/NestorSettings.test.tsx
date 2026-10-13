@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { NestorHeaderTools, NestorSettings } from '../chat/NestorSettings';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { messagesOf, useNestorChatStore } from '../stores/useNestorChatStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/utils', async (importOriginal) => ({
@@ -66,5 +67,16 @@ describe('Nestor’s settings', () => {
       leave();
       expect(store().showNestorSettings).toBe(false);
     }
+  });
+
+  it('offers the ten jobs of the ministry, and the beginner mode', () => {
+    render(<NestorSettings onClose={vi.fn()} />);
+    const jobs = screen.getByRole('combobox', { name: 'My field' });
+    // "Not specified", then the ten jobs.
+    expect(within(jobs).getAllByRole('option')).toHaveLength(11);
+    fireEvent.change(jobs, { target: { value: 'controle' } });
+    expect(useProfileStore.getState().job?.id).toBe('controle');
+    fireEvent.click(screen.getByRole('switch', { name: 'I am a beginner' }));
+    expect(useProfileStore.getState().isBeginner).toBe(true);
   });
 });

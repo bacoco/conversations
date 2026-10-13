@@ -4,6 +4,7 @@ import { LibraryView, normalize } from '../library/LibraryView';
 import { LIBRARY_EN } from '../library/content/en';
 import { LIBRARY_FR } from '../library/content/fr';
 import { useLibraryStore } from '../library/useLibraryStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 vi.mock('@/components/ToastProvider', () => ({
@@ -79,5 +80,18 @@ describe('<LibraryView />', () => {
     expect(screen.getAllByRole('button', { name: /favorites/ })).toHaveLength(
       1,
     );
+  });
+
+  it('puts the families of the user’s job first', () => {
+    useProfileStore.setState({ job: { id: 'rh', label: 'Gestionnaire RH' } });
+    render(<LibraryView onBack={vi.fn()} />);
+    const names = screen
+      .getAllByRole('button')
+      .map((button) => button.textContent ?? '');
+    const hr = names.findIndex((name) => name.includes('HR and management'));
+    const meetings = names.findIndex((name) => name.includes('Meetings'));
+    expect(hr).toBeGreaterThan(-1);
+    expect(hr).toBeLessThan(meetings);
+    useProfileStore.setState({ job: null });
   });
 });

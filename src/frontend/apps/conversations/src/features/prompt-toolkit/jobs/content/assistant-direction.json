@@ -1,0 +1,151 @@
+{
+  "job": {
+    "id": "assistant-direction",
+    "label": "Assistant(e) de direction",
+    "who": "Les assistantes et assistants de direction qui tiennent l'agenda, le courrier, les réunions, les parapheurs et l'accueil téléphonique d'un chef de service, d'une sous-direction ou d'une direction.",
+    "vocabulary": [
+      "parapheur",
+      "ordre du jour",
+      "convocation",
+      "relevé de décisions",
+      "compte rendu",
+      "bordereau d'envoi",
+      "courrier arrivée",
+      "chrono",
+      "délégation de signature",
+      "agenda partagé",
+      "réunion de service",
+      "comité de direction",
+      "visa",
+      "note pour le directeur",
+      "relance"
+    ],
+    "readers": [
+      "le directeur ou la directrice",
+      "les chefs de bureau",
+      "un autre service ou une autre direction",
+      "un partenaire extérieur",
+      "un usager au téléphone ou par courriel",
+      "le cabinet du ministre"
+    ],
+    "tasks": [
+      "répondre à une demande de rendez-vous",
+      "mettre au propre un compte rendu à partir de notes",
+      "préparer une convocation à une réunion",
+      "relancer les signataires d'un parapheur en retard",
+      "préparer des réponses types pour l'accueil téléphonique",
+      "organiser l'agenda d'une semaine chargée"
+    ],
+    "examples": [
+      "Rédigez une convocation courte pour la réunion de service du jeudi 5 novembre à 10 h, salle 2045, sur le bilan du premier semestre.",
+      "Rédigez un courriel bref et poli pour décaler le rendez-vous du directeur avec un partenaire de mardi 14 h à mercredi 14 h.",
+      "Proposez trois formulations polies pour répondre au téléphone quand le directeur est en réunion et ne peut pas être dérangé.",
+      "Rédigez un courriel de relance cordial aux chefs de bureau dont les notes sont attendues dans le parapheur avant vendredi midi.",
+      "Rédigez un modèle d'ordre du jour en cinq points pour un comité de direction mensuel d'une heure trente, avec la durée de chaque point."
+    ],
+    "cautions": [
+      "Ne collez pas l'agenda nominatif du directeur ni les coordonnées personnelles des participants : remplacez les noms par des fonctions.",
+      "Ne transmettez pas à l'Assistant les notes en parapheur ni les documents marqués « Diffusion restreinte » ou non publics.",
+      "Relisez tout courrier avant signature : l'Assistant peut se tromper de date, de titre ou de formule de politesse.",
+      "N'indiquez jamais dans une demande des éléments sur la santé ou la vie privée d'un collègue, même pour expliquer une absence."
+    ]
+  },
+  "cases": [
+    {
+      "id": "assistant-direction-1",
+      "jobId": "assistant-direction",
+      "level": 1,
+      "task": "répondre à une demande de rendez-vous",
+      "title": "Répondre à une demande de rendez-vous",
+      "minutes": 5,
+      "situation": "Vous êtes assistant(e) d'un directeur. Une fédération professionnelle demande par courriel à le rencontrer la semaine prochaine. Le directeur vous a dit : « jeudi 10 h ou vendredi 15 h, une demi-heure, à Bercy ou en visio ».",
+      "material": "Objet : Demande de rendez-vous\n\nMadame, Monsieur,\n\nJe me permets de vous solliciter au nom de la Fédération des petits commerces de l'Ouest. Nous souhaiterions rencontrer votre directeur au sujet des délais de paiement des aides au commerce de proximité, qui inquiètent beaucoup nos adhérents. Une rencontre la semaine prochaine nous conviendrait, idéalement en présentiel à Bercy, mais nous pouvons nous adapter. Nous serions trois représentants : notre présidente, notre délégué général et moi-même.\n\nPourriez-vous me proposer un ou deux créneaux ?\n\nBien cordialement,\n\nLa chargée des relations institutionnelles\nFédération des petits commerces de l'Ouest",
+      "startingRequest": "réponds à ce mail pour le rdv",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse courte et courtoise à cette fédération, signée « Le secrétariat du directeur ». Proposez exactement deux créneaux d'une demi-heure : jeudi 10 h ou vendredi 15 h, à Bercy ou en visioconférence. Demandez-leur de confirmer le créneau choisi et de donner les noms des trois participants pour l'accès au bâtiment. N'abordez pas le fond du sujet et ne prenez aucun engagement au nom du directeur.",
+      "keyPoints": [
+        {
+          "skill": "task",
+          "point": "Vous donnez les deux créneaux exacts : l'Assistant n'a pas à inventer de dates ni d'horaires."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'aborder le fond : la réponse ne promet rien que le directeur n'a pas décidé."
+        },
+        {
+          "skill": "tone",
+          "point": "Vous demandez une réponse courte et courtoise : c'est le ton attendu avec un partenaire extérieur."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que les créneaux sont bien jeudi 10 h et vendredi 15 h, sans autre date ajoutée.",
+        "Vérifiez que le courriel ne dit rien sur les délais de paiement des aides.",
+        "Vérifiez que la demande des noms des participants figure bien dans la réponse."
+      ],
+      "lesson": "Donnez à l'Assistant les informations exactes à reprendre (dates, heures, lieux) : il ne peut pas les deviner."
+    },
+    {
+      "id": "assistant-direction-2",
+      "jobId": "assistant-direction",
+      "level": 2,
+      "task": "mettre au propre un compte rendu à partir de notes",
+      "title": "Compte rendu de réunion de service",
+      "minutes": 10,
+      "situation": "Vous avez pris des notes rapides pendant la réunion de service de mardi. Le directeur vous demande d'envoyer le relevé de décisions à tout le service avant jeudi. Vos notes sont en vrac et pleines d'abréviations.",
+      "material": "Réunion de service – mardi 13 h 30 – salle 4B\nPrésents : directeur, adjointe, chefs de bureau budget, achats, RH de proximité, courrier. Excusé : chef du bureau informatique.\n- déménagement 3e étage reporté à janvier (travaux pas finis), cartons à prévoir mi-décembre, bureau achats commande les cartons\n- budget : 80 % consommé fin sept., gel des dépenses non urgentes à partir du 1er nov., validation du directeur au-dessus de 1 500 €\n- adjointe envoie la note sur le gel des dépenses avant vendredi\n- télétravail : rappel, plannings à déposer avant le 25 de chaque mois, plusieurs oublis\n- pot de fin d'année : 18 déc. ? à confirmer, bureau RH de proximité s'en occupe\n- prochaine réunion : 10 nov., même heure",
+      "startingRequest": "fais un compte rendu avec mes notes",
+      "goodRequest": "À partir du texte ci-dessous (mes notes de la réunion de service de mardi), rédigez un relevé de décisions d'une page maximum, destiné aux agents du service et au directeur. Structure : présents et excusés, désignés par leur fonction ; puis un court paragraphe par sujet ; puis un tableau des actions en trois colonnes : qui, quoi, pour quand. Style neutre, phrases complètes, sans abréviations. Signalez clairement ce qui reste à confirmer, comme la date du pot de fin d'année. N'ajoutez aucune information qui ne figure pas dans mes notes.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous décrivez les rubriques et le tableau des actions : l'Assistant range vos notes exactement comme vous le voulez."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous dites que tout le service et le directeur liront : le texte doit être complet, clair et tenir sur une page."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'ajouter des informations et demandez de signaler ce qui est incertain : rien n'est présenté comme décidé à tort."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que chaque action du tableau a un responsable et une date tirés des notes, sans date inventée.",
+        "Vérifiez que le seuil de 1 500 € et la date du 1er novembre sont repris exactement.",
+        "Vérifiez que le pot du 18 décembre est bien présenté comme « à confirmer »."
+      ],
+      "lesson": "Décrivez la forme attendue (rubriques, tableau, longueur) : l'Assistant met alors vos notes au propre sans les déformer."
+    },
+    {
+      "id": "assistant-direction-3",
+      "jobId": "assistant-direction",
+      "level": 3,
+      "task": "organiser l'agenda d'une semaine chargée",
+      "title": "Arbitrer les conflits d'agenda",
+      "minutes": 15,
+      "situation": "La semaine du 16 novembre de votre directeur est surchargée : plusieurs rendez-vous se chevauchent et des demandes attendent une place. Vous voulez lui présenter les conflits et des solutions pour qu'il tranche en cinq minutes. Ce n'est pas à vous de décider à sa place.",
+      "material": "Agenda du directeur – semaine du 16 novembre\nLundi 9 h-12 h : comité de direction (présence obligatoire)\nLundi 11 h : rendez-vous avec la fédération des petits commerces (confirmé)\nMardi 14 h-16 h : réunion interministérielle (convocation reçue hier, représentation possible par l'adjointe)\nMardi 15 h : entretien annuel d'un chef de bureau (déjà reporté une fois)\nMercredi 9 h-17 h : formation au management (inscription depuis juin)\nMercredi 16 h 30 : demande du cabinet pour un point d'étape de 30 minutes (date souhaitée, non imposée)\nJeudi 10 h-11 h : réunion de service\nVendredi : congé posé\nDemandes sans créneau : visite d'un bureau régional (2 heures, n'importe quel jour) ; signature d'environ 40 courriers en parapheur (1 heure)",
+      "startingRequest": "aide moi à organiser l'agenda du directeur",
+      "goodRequest": "À partir du texte ci-dessous (l'agenda de mon directeur pour la semaine du 16 novembre), repérez tous les chevauchements et toutes les demandes qui n'ont pas encore de créneau. Pour chacun, proposez deux solutions possibles en suivant cet ordre de priorité : demandes du cabinet, comité de direction, rendez-vous extérieurs confirmés, réunions internes. Ne touchez ni au congé du vendredi ni à la formation du mercredi. Présentez le résultat comme une courte note au directeur : un tableau en trois colonnes (conflit, solution 1, solution 2), puis la liste des questions qu'il doit trancher. Ne choisissez pas à sa place.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous donnez l'ordre de priorité et ce qui ne bouge pas : les solutions proposées respectent les règles de votre directeur."
+        },
+        {
+          "skill": "task",
+          "point": "Vous demandez deux solutions par conflit, pas un choix : la décision reste au directeur."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau et une liste de questions : le directeur peut trancher d'un coup d'œil."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que tous les chevauchements sont relevés, notamment lundi 11 h, mardi 15 h et mercredi 16 h 30.",
+        "Vérifiez qu'aucune solution ne déplace le congé du vendredi ni la formation du mercredi.",
+        "Vérifiez que la note propose des options sans désigner elle-même la solution retenue."
+      ],
+      "lesson": "Pour préparer une décision, donnez vos critères et demandez des options, pas un choix à la place de celui qui décide."
+    }
+  ]
+}

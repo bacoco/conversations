@@ -1,11 +1,10 @@
 import { Button } from '@gouvfr-lasuite/cunningham-react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { css } from 'styled-components';
 
 import { Box, Icon, Text } from '@/components';
 
-import { getPromptLibrary } from '../library/content';
+import { JOBS, jobById } from '../jobs/jobs';
 import { useProfileStore } from '../stores/useProfileStore';
 
 const selectCss = css`
@@ -25,15 +24,11 @@ const selectCss = css`
  * Nestor's examples and the library fit their work, and a beginner mode.
  */
 export const ProfileSettings = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const job = useProfileStore((state) => state.job);
   const setJob = useProfileStore((state) => state.setJob);
   const isBeginner = useProfileStore((state) => state.isBeginner);
   const setBeginner = useProfileStore((state) => state.setBeginner);
-  const categories = useMemo(
-    () => getPromptLibrary(i18n.language).categories,
-    [i18n.language],
-  );
 
   return (
     <Box
@@ -56,19 +51,15 @@ export const ProfileSettings = () => {
           id="nestor-job"
           value={job?.id ?? ''}
           onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-            const category = categories.find(
-              (item) => item.id === event.target.value,
-            );
-            setJob(
-              category ? { id: category.id, label: category.title } : null,
-            );
+            const chosen = jobById(event.target.value);
+            setJob(chosen ? { id: chosen.id, label: chosen.label } : null);
           }}
           $css={selectCss}
         >
           <option value="">{t('Not specified')}</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
+          {JOBS.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.label}
             </option>
           ))}
         </Box>

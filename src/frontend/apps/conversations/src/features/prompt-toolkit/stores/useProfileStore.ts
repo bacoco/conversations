@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-/** The user's job, as one of the prompt library's categories. */
+import { jobById, jobRules } from '../jobs/jobs';
+
+/** The user's job, one of the ten typical jobs of the ministry. */
 export interface Job {
   id: string;
   label: string;
@@ -23,17 +25,29 @@ export const useProfileStore = create<ProfileState>()(
       setJob: (job) => set({ job }),
       setBeginner: (isBeginner) => set({ isBeginner }),
     }),
-    { name: 'prompt-profile' },
+    {
+      name: 'prompt-profile',
+      // v1: the job is one of the ministry's ten jobs; a former choice (a
+      // family of the library) is forgotten, the rest is kept.
+      version: 1,
+      migrate: (persisted) => {
+        const stored = (persisted ?? {}) as Partial<ProfileState>;
+        return {
+          ...stored,
+          job: jobById(stored.job?.id) ? (stored.job ?? null) : null,
+          isBeginner: stored.isBeginner ?? false,
+        } as ProfileState;
+      },
+    },
   ),
 );
 
 /** What Nestor's instructions say about the user, if anything. */
 export const profileRules = () => {
   const { job, isBeginner } = useProfileStore.getState();
+  const profile = jobById(job?.id);
   return [
-    job
-      ? `The user works in this field: ${job.label}. When an example or a part to fill in helps, take it from this field; never change the user's subject.`
-      : '',
+    profile ? jobRules(profile) : '',
     isBeginner
       ? 'The user is new to AI assistants: use very simple everyday words and short sentences, one idea at a time.'
       : '',

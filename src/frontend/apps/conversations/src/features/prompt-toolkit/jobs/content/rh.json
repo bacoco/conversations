@@ -1,0 +1,151 @@
+{
+  "job": {
+    "id": "rh",
+    "label": "Gestionnaire RH",
+    "who": "Les gestionnaires des ressources humaines, de proximité ou en bureau de gestion, qui suivent la carrière, la paie, les congés, le télétravail, le recrutement et la formation des agents d'une direction.",
+    "vocabulary": [
+      "avancement d'échelon",
+      "tableau d'avancement",
+      "lignes directrices de gestion",
+      "compte épargne-temps",
+      "jours de RTT",
+      "temps partiel",
+      "convention de télétravail",
+      "mutation",
+      "fiche de poste",
+      "entretien professionnel",
+      "compte personnel de formation",
+      "bulletin de paie",
+      "régime indemnitaire",
+      "agent contractuel",
+      "dossier individuel"
+    ],
+    "readers": [
+      "un agent qui pose une question",
+      "un chef de service ou de bureau",
+      "un candidat à un poste",
+      "le bureau de la paie",
+      "les représentants du personnel",
+      "la hiérarchie de la direction"
+    ],
+    "tasks": [
+      "répondre à la question d'un agent sur ses congés ou son télétravail",
+      "rédiger une fiche de poste",
+      "expliquer une ligne du bulletin de paie",
+      "comparer des candidatures pour un recrutement",
+      "rédiger une note d'information sur une campagne de formation",
+      "préparer un courriel de rappel aux chefs de bureau"
+    ],
+    "examples": [
+      "Rédigez une réponse simple et cordiale à un agent qui demande s'il peut poser des jours de RTT juste avant son congé de Noël.",
+      "Expliquez en cinq phrases simples, pour un agent nouvellement arrivé, la différence entre congés annuels, jours de RTT et compte épargne-temps.",
+      "Rédigez une fiche de poste d'une page pour un gestionnaire de paie, avec missions, compétences attendues, conditions de travail et contact.",
+      "Rédigez un courriel aux chefs de bureau pour rappeler que les entretiens professionnels de leurs agents doivent être terminés avant le 31 mars.",
+      "Rédigez un message aux agents annonçant l'ouverture des inscriptions aux formations du premier semestre, avec une date limite fixée au 15 décembre."
+    ],
+    "cautions": [
+      "Ne collez jamais de données personnelles d'un agent (nom, numéro de sécurité sociale, salaire, situation familiale) : écrivez « un agent » ou utilisez des données fictives.",
+      "Ne transmettez jamais à l'Assistant d'arrêt maladie, d'élément médical ni de dossier disciplinaire.",
+      "Vérifiez toute règle de congés, de paie ou de carrière dans les textes et notes de service : l'Assistant peut se tromper ou citer une règle périmée.",
+      "Pour un recrutement, faites comparer uniquement sur les critères de la fiche de poste et gardez la décision pour le jury."
+    ]
+  },
+  "cases": [
+    {
+      "id": "rh-1",
+      "jobId": "rh",
+      "level": 1,
+      "task": "répondre à la question d'un agent sur son télétravail",
+      "title": "Répondre sur un jour de télétravail",
+      "minutes": 5,
+      "situation": "Vous êtes gestionnaire RH de proximité. Un agent vous écrit pour déplacer son jour de télétravail et « rattraper » un jour la semaine suivante. Vous avez sous la main l'extrait de la note de service de votre direction sur le télétravail.",
+      "material": "Courriel reçu :\n« Bonjour, je suis en télétravail le mardi et le jeudi. La semaine prochaine, j'ai une formation le mardi : est-ce que je peux mettre mon télétravail le mercredi à la place ? Et est-ce que je peux faire trois jours la semaine d'après pour rattraper ? Merci. Un agent du bureau des achats »\n\nExtrait de la note de service de la direction (fictive) :\n« Les jours de télétravail sont fixés dans la convention de chaque agent. Un changement ponctuel de jour est possible avec l'accord préalable du chef de bureau, demandé au moins 48 heures à l'avance. Les jours non utilisés ne sont pas reportables d'une semaine sur l'autre. »",
+      "startingRequest": "réponds à l'agent pour son télétravail",
+      "goodRequest": "À partir du texte ci-dessous, rédigez une réponse courte à un agent qui m'a écrit au sujet de son télétravail. Appuyez-vous uniquement sur l'extrait de la note de service placé après son courriel. Répondez clairement à ses deux questions, dans l'ordre : le déplacement ponctuel du mardi au mercredi, puis le rattrapage la semaine suivante. Indiquez-lui la démarche à faire auprès de son chef de bureau et le délai à respecter. Ton cordial, phrases simples, vouvoiement, dix lignes maximum.",
+      "keyPoints": [
+        {
+          "skill": "sources",
+          "point": "Vous demandez de s'appuyer uniquement sur la note de service : l'Assistant n'invente pas de règle."
+        },
+        {
+          "skill": "task",
+          "point": "Vous listez les deux questions à traiter : aucune n'est oubliée dans la réponse."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous précisez qu'un agent va lire, en phrases simples et en dix lignes : la réponse reste claire et rapide à lire."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que la réponse refuse le rattrapage, car les jours ne sont pas reportables.",
+        "Vérifiez qu'elle mentionne l'accord du chef de bureau et le délai de 48 heures.",
+        "Vérifiez qu'aucune règle absente de l'extrait n'a été ajoutée."
+      ],
+      "lesson": "Donnez à l'Assistant le texte de référence et demandez-lui de s'y tenir : sa réponse sera juste et vérifiable."
+    },
+    {
+      "id": "rh-2",
+      "jobId": "rh",
+      "level": 2,
+      "task": "rédiger une fiche de poste",
+      "title": "Rédiger une fiche de poste",
+      "minutes": 10,
+      "situation": "Le chef du bureau de la paie vous a envoyé ses notes pour un poste qui se libère au 1er janvier. Vous devez en faire une fiche de poste publiable, lisible par des candidats qui ne connaissent pas le bureau.",
+      "material": "Notes du chef du bureau de la paie (fictives) :\nOn cherche un gestionnaire paie, catégorie B, poste vacant au 1er janvier. Il gérera environ 300 dossiers d'agents : saisie des éléments variables (heures supplémentaires, primes, absences), contrôle avant envoi, réponses aux questions des agents. Travaille en binôme avec une collègue, sous l'autorité de l'adjointe au chef de bureau. Logiciel de paie interne, formation assurée à l'arrivée. Il faut quelqu'un de rigoureux, discret (données sensibles), à l'aise avec un tableur. Expérience en paie souhaitée mais pas obligatoire. Télétravail possible jusqu'à 2 jours par semaine après 3 mois. Pic de charge en fin de mois. Contact : le chef de bureau, par la boîte fonctionnelle du bureau.",
+      "startingRequest": "écris une fiche de poste gestionnaire paie",
+      "goodRequest": "À partir du texte ci-dessous (les notes de mon chef de bureau), rédigez une fiche de poste d'une page pour un gestionnaire de paie de catégorie B, qui sera publiée pour des candidats internes et externes. Rubriques dans cet ordre : intitulé du poste, service et rattachement, missions principales, activités détaillées, compétences attendues (connaissances, savoir-faire, qualités), conditions de travail, contact. Ton clair et engageant, sans sigle ni jargon interne. N'inventez aucune information absente des notes, en particulier sur la rémunération : si une rubrique manque d'éléments, signalez-le à la fin dans une liste de questions pour le chef de bureau.",
+      "keyPoints": [
+        {
+          "skill": "format",
+          "point": "Vous donnez les rubriques et leur ordre : la fiche a la forme habituelle d'une fiche de poste."
+        },
+        {
+          "skill": "audience",
+          "point": "Vous dites que des candidats extérieurs la liront : l'Assistant évite les sigles et explique le service."
+        },
+        {
+          "skill": "constraints",
+          "point": "Vous interdisez d'inventer et demandez une liste de questions : les trous apparaissent au lieu d'être comblés au hasard."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez qu'aucun montant de salaire ou de prime n'apparaît, puisqu'il n'est pas dans les notes.",
+        "Vérifiez que le télétravail est décrit exactement : jusqu'à 2 jours par semaine, après 3 mois.",
+        "Vérifiez que toutes les rubriques demandées sont présentes, dans l'ordre."
+      ],
+      "lesson": "Indiquez les rubriques attendues et dites quoi faire quand une information manque, plutôt que de laisser l'Assistant la deviner."
+    },
+    {
+      "id": "rh-3",
+      "jobId": "rh",
+      "level": 3,
+      "task": "comparer des candidatures pour un recrutement",
+      "title": "Comparer trois candidatures anonymisées",
+      "minutes": 15,
+      "situation": "Trois candidatures ont été reçues pour le poste de gestionnaire de paie. Le chef de bureau vous demande un tableau de comparaison avant les entretiens. Vous avez retiré noms, âges et toute donnée personnelle, et seuls les critères de la fiche de poste doivent compter.",
+      "material": "Critères de la fiche de poste (gestionnaire de paie, catégorie B) : connaissance de la paie publique, rigueur, maîtrise d'un tableur, sens du service aux agents, disponibilité au 1er janvier.\n\nCandidature A : agent de catégorie B, 4 ans en gestion des congés dans une autre direction, tableur utilisé au quotidien, pas d'expérience en paie, disponible au 1er janvier, souhaite évoluer vers la paie.\n\nCandidature B : agent contractuel, 6 ans de paie dans une entreprise privée, tableur avancé (tableaux croisés), ne connaît pas la paie publique, disponible au 1er février.\n\nCandidature C : lauréat d'un concours de catégorie B, 3 ans d'accueil des agents dans un service RH, tableur débutant, a suivi une formation paie de 5 jours, disponible au 1er janvier.",
+      "startingRequest": "qui est le meilleur candidat ?",
+      "goodRequest": "À partir du texte ci-dessous, comparez les trois candidatures anonymisées A, B et C au regard des cinq critères de la fiche de poste, et uniquement de ces critères. Présentez un tableau avec une ligne par critère et une colonne par candidature : dans chaque case, reprenez ce que dit le dossier puis indiquez « atout », « point d'attention » ou « non renseigné ». Ajoutez ensuite, pour chaque candidature, deux ou trois questions à poser en entretien pour lever les doutes. Ne classez pas les candidatures et ne recommandez personne : le choix sera fait par le jury. Note destinée au chef de bureau, ton neutre et factuel.",
+      "keyPoints": [
+        {
+          "skill": "constraints",
+          "point": "Vous limitez la comparaison aux critères de la fiche de poste : la note reste équitable et sans jugement personnel."
+        },
+        {
+          "skill": "format",
+          "point": "Vous demandez un tableau critère par critère et des questions d'entretien : le chef de bureau prépare les entretiens directement."
+        },
+        {
+          "skill": "task",
+          "point": "Vous interdisez le classement : l'Assistant éclaire la décision, le jury la prend."
+        }
+      ],
+      "checkAnswer": [
+        "Vérifiez que chaque case s'appuie sur ce que dit le dossier, sans supposition sur la personne.",
+        "Vérifiez que la disponibilité au 1er février de la candidature B est signalée comme point d'attention.",
+        "Vérifiez qu'aucun classement ni aucune recommandation n'apparaît dans la note."
+      ],
+      "lesson": "Pour préparer une décision, demandez une comparaison sur des critères que vous fixez, et gardez le choix pour vous."
+    }
+  ]
+}
