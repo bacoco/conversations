@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PanelHome } from '../components/PanelHome';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { profileRules, useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
@@ -192,5 +193,13 @@ describe('<PanelHome />', () => {
       showHome: false,
       showFavorites: true,
     });
+  });
+
+  it('shows a beginner where to start: the coach', () => {
+    useNestorChatStore.setState({ chats: {} });
+    render(<PanelHome />);
+    expect(
+      screen.getByRole('button', { name: /Start here.*Coach/ }),
+    ).toBeInTheDocument();
   });
 });

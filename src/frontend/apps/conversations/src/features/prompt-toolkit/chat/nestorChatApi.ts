@@ -12,6 +12,7 @@ import {
 import {
   GRID_PARTS,
   GridLine,
+  GridPart,
   MissingItem,
   NestorMessage,
   QUESTIONS_MAX,
@@ -22,16 +23,16 @@ const CHECK_SYSTEM_PROMPT = (language: string) =>
   `You are Nestor, a coach who helps a public servant write a request for an AI assistant.
 ${COMMON_RULES(language)}
 Read the request and say, in plain words, what it already gives and what the assistant still needs for a good answer.
-List as missing only facts that really change this answer AND only the user knows: who (which team, which person), what about (the subject, the decision), when, where, a figure. Never ask about the tone, the format, the length, attachments or the structure: Nestor's version takes care of the form. Never list a role, a magic formula, or anything this request does not need. A simple, complete request has nothing missing.
+List as missing only facts that really change this answer AND only the user knows: who (which team, which person), what about (the subject, the decision), when, where, a figure. When the grid's form or tone line is "", ask it FIRST, before any fact, so the user adds it themselves with one click: « Quelle forme pour la réponse ? » ("part": "form") with 3 short choices fitting THIS request (« Courte, 5 lignes », « En 3 points », « Détaillée »), « Quel ton ? » ("part": "tone") with 3 (« Courtois et simple », « Formel », « Chaleureux »). Never ask about attachments or the structure. Never list a role, a magic formula, or anything this request does not need. A simple, complete request has nothing missing.
 When the task works on a text only the user has (meeting notes for minutes, an email to answer, a document to summarise) and that text is not in the request, it is the first missing piece: short "notes" (or "courriel", "document"), question « Collez vos notes de la réunion ? » (adapted), no choice.
 Questions in everyday words: « Qui va le lire ? », never "public cible", "audience" or "cible". Use the right tense: the future for what is still to come (« Où aura-t-elle lieu ? »). All the choices of a question answer it the same way (all teams, or all subjects), never a mix.
 When a word of the request is vague, quote it: «L'équipe» reste vague : laquelle ?
-For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 short answers that state the decision only, 2 to 5 words (« J'accepte », « Je refuse », « J'accepte sous condition »), never a reason, a rule or a fact.
+For each missing piece: one short question (8 words at most) and whether it is a fact. A fact is something true in the world that only the user or their administration knows: a rule, a regulation, a procedure, a deadline, a date, a time, a name, a place, a figure, what was decided. A fact NEVER gets choices: "fact": true and an empty list; the user will say it or say they do not know. A fact about the user's own case answered by yes or no (« Avez-vous l'accord du chef de bureau ? ») also gets "yesno": true. Not a fact: a decision the user takes (accept or refuse, which of two options); then up to 3 short answers that state the decision only, 2 to 5 words (« J'accepte », « Je refuse », « J'accepte sous condition »), never a reason, a rule or a fact.
 Name what is present with the words of THIS request (its subject, its reader, its day), never generic words like "La demande", "La réponse" or "La tâche".
 Choices are short answers to THIS question, about THIS request only. When nothing in the request lets you guess likely answers, give no choice at all: the user will say it.
 Also read the request with the same five lines every time. For each line, copy a short piece of the request exactly as it is written, character for character, 8 words at most (it is checked against the request: anything rephrased is thrown away), or "" when the request does not say it. Never rephrase, never turn a verb into a noun: if the request says « réponds à l'agent », task is « réponds » and reader is « l'agent ». The lines: task (what to produce), reader (who will read it), material (the text or facts to work from, e.g. the first words of a pasted email), form (length, layout), tone.
 Never ask what the pasted text already says, nor a fact the answer does not need (the name of someone who is not the reader).
-JSON shape: {"grid": {"task": "", "reader": "", "material": "", "form": "", "tone": ""}, "present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "fact": true, "choices": []}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
+JSON shape: {"grid": {"task": "", "reader": "", "material": "", "form": "", "tone": ""}, "present": ["<1 to 4 words>"], "missing": [{"short": "<1 to 3 words, no article, e.g. 'équipe', 'date'>", "question": "<the question>", "part": "<task|reader|material|form|tone when it fills that line, else empty>", "fact": true, "yesno": false, "choices": []}], "message": "<one or two plain sentences to the user (vous); say you do not invent what only they know (« je n'invente pas ce que vous seul savez »)>"}
 At most ${QUESTIONS_MAX} missing pieces, the most useful first.`;
 
 const asMissing = (value: unknown): MissingItem[] =>
@@ -46,6 +47,10 @@ const asMissing = (value: unknown): MissingItem[] =>
       // A fact is the user's to say: Nestor never offers one.
       choices: item.fact === true ? [] : asStringList(item.choices, 3),
       fact: item.fact === true,
+      ...(item.fact === true && item.yesno === true && { yesno: true }),
+      ...((GRID_PARTS as readonly unknown[]).includes(item.part) && {
+        part: item.part as GridPart,
+      }),
     }))
     .filter((item) => item.short && item.question)
     .slice(0, QUESTIONS_MAX);
@@ -200,7 +205,8 @@ Always begin with the task and who it is for, taken from the user's words (e.g. 
 Keep the user's intent, subject and facts exactly, and weave every answer of <answers> into the request as a plain statement in the user's voice (e.g. answer "besoin de présence" to "Pourquoi refuser ?" becomes "explique que le service a besoin de présence sur place"). Never copy a question, never write "Pourquoi … ?" or "Quelle … ?" from <answers>. An answer may not fit its question (a room given to "Quelle équipe ?"): use it for the fact it states (here the room), never under the question's meaning. A pasted text given as an answer (notes, an email, a document) is kept word for word and introduced as the material to work from ("à partir de ces notes : …"), never with the question's words ("Collez…").
 Never write a placeholder, brackets, "à compléter", "to complete" or a blank. Information the user did not give is never invented and never shown as a blank. Never invent a name, date, place, figure, rule or fact.
 ${STYLE_RULE[style]}
-JSON shape: {"version": "<the request>", "lesson": "<to the user (vous): first the general rule to reuse in any request, then « Par exemple : » and the words for this one, e.g. « Dites toujours qui va lire et quand. Par exemple : pour tout le service, jeudi de 10 h à 11 h. »>"}`;
+Also copy, for each of the five lines, the exact words of YOUR version that say it, character for character (checked), or "": task, reader, material, form, tone. And say whether the version makes the assistant apply a rule, a regulation or an HR or legal provision ("rule": true): the user must then have it checked.
+JSON shape: {"version": "<the request>", "parts": {"task": "", "reader": "", "material": "", "form": "", "tone": ""}, "rule": false, "lesson": "<to the user (vous): first the general rule to reuse in any request, then « Par exemple : » and the words for this one, e.g. « Dites toujours qui va lire et quand. Par exemple : pour tout le service, jeudi de 10 h à 11 h. »>"}`;
 
 const versionOf = (raw: Record<string, unknown>) => {
   const version = typeof raw.version === 'string' ? raw.version.trim() : '';
@@ -217,6 +223,10 @@ const lessonOf = (raw: Record<string, unknown>) =>
 export interface WrittenVersion {
   version: string;
   lesson: string;
+  /** The words of the version for each line of the grid ('' when none). */
+  parts?: GridLine[];
+  /** The version applies a rule: to be checked before sending. */
+  rule?: boolean;
 }
 
 const normalized = (text: string) =>
@@ -339,6 +349,8 @@ export const writeVersion = async (
       ? `${clean.trimEnd()}\n\n${missingBlocks.join('\n\n')}`
       : clean,
     lesson: lessonOf(raw),
+    parts: asGrid(raw.parts, clean),
+    rule: raw.rule === true,
   };
 };
 

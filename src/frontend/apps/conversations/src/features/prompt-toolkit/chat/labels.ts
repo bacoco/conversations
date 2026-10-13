@@ -20,7 +20,7 @@ export const roundLabel = (
   ({
     examples: t('See examples'),
     complete: t('Complete them'),
-    'create-without': t('Create without this information'),
+    'create-without': t('Write the version without it'),
     'redo-with-missing': t('Redo with {{items}}', {
       items: new Intl.ListFormat(language, { type: 'conjunction' }).format(
         context.missing,

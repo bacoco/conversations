@@ -5,6 +5,7 @@ import { Icon } from '@/components';
 
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
+import { markParts } from './markParts';
 import { shortText } from './shortText';
 import type { GridPart, NestorMessage } from './types';
 import {
@@ -23,6 +24,9 @@ import {
   LinkButton,
   MainButton,
   NestorBubble,
+  PartKeys,
+  PartLabel,
+  PartMark,
   QuestionNumber,
   Separator,
   Small,
@@ -37,6 +41,9 @@ import type { NestorChat } from './useNestorChat';
 import { versionParts } from './versionParts';
 
 export { NestorBubble };
+
+/** The good request of an example, cut here until asked in full. */
+const AFTER_SHORT = 160;
 
 /** The five lines of a request, as the user reads them. */
 const GRID_LABELS: Record<GridPart, string> = {
@@ -60,6 +67,7 @@ export const MessageView = ({
   const [voice, setVoice] = useState(false);
   const [moreSuites, setMoreSuites] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(0);
+  const [wholeAfter, setWholeAfter] = useState(false);
 
   switch (message.kind) {
     case 'request':
@@ -124,7 +132,16 @@ export const MessageView = ({
                 <span>{t('Before')}</span>« {pair.before} »
               </ExampleLine>
               <ExampleLine $good>
-                <span>{t('After')}</span>« {pair.after} »
+                <span>{t('After')}</span>«{' '}
+                {wholeAfter || pair.after.length <= AFTER_SHORT
+                  ? pair.after
+                  : `${pair.after.slice(0, AFTER_SHORT).trimEnd()}…`}{' '}
+                »
+                {!wholeAfter && pair.after.length > AFTER_SHORT && (
+                  <LinkButton type="button" onClick={() => setWholeAfter(true)}>
+                    {t('Read the whole request')}
+                  </LinkButton>
+                )}
               </ExampleLine>
               <Lesson>
                 <strong>{t('The rule to keep:')}</strong>
@@ -138,7 +155,10 @@ export const MessageView = ({
                   <Choice
                     type="button"
                     $tone="dunno"
-                    onClick={() => setExampleIndex((index) => index + 1)}
+                    onClick={() => {
+                      setExampleIndex((index) => index + 1);
+                      setWholeAfter(false);
+                    }}
                   >
                     {t('Another example')}
                   </Choice>
@@ -209,7 +229,9 @@ export const MessageView = ({
             {message.check.grid.map((line) => (
               <GridRow key={line.part} $ok={!!line.words}>
                 <span aria-hidden="true">{line.words ? '✓' : '○'}</span>
-                <strong>{t(GRID_LABELS[line.part])}</strong>
+                <PartLabel $part={line.part}>
+                  {t(GRID_LABELS[line.part])}
+                </PartLabel>
                 <span>{line.words ? `« ${line.words} »` : t('not said')}</span>
               </GridRow>
             ))}
@@ -235,15 +257,17 @@ export const MessageView = ({
           {isCurrent && !voice && (
             <>
               <Choices>
-                {item.choices.map((choice) => (
-                  <Choice
-                    key={choice}
-                    type="button"
-                    onClick={() => chat.answerQuestion(choice, 'choice')}
-                  >
-                    {choice}
-                  </Choice>
-                ))}
+                {(item.yesno ? [t('Yes'), t('No')] : item.choices).map(
+                  (choice) => (
+                    <Choice
+                      key={choice}
+                      type="button"
+                      onClick={() => chat.answerQuestion(choice, 'choice')}
+                    >
+                      {choice}
+                    </Choice>
+                  ),
+                )}
                 <Choice
                   type="button"
                   $tone="voice"
@@ -292,14 +316,43 @@ export const MessageView = ({
         <NestorBubble>
           <span>{t('Here is your request:')}</span>
           <VersionBox>
-            {parts.map((part, index) =>
-              part.kind === 'added' ? (
-                <Added key={index}>{part.text}</Added>
+            {parts.map((part, index) => {
+              // Each line of the grid wears its colour, as in the analysis.
+              const pieces = markParts(part.text, message.parts ?? []).map(
+                (piece, at) =>
+                  piece.part ? (
+                    <PartMark key={at} $part={piece.part}>
+                      {piece.text}
+                    </PartMark>
+                  ) : (
+                    piece.text
+                  ),
+              );
+              return part.kind === 'added' ? (
+                <Added key={index}>{pieces}</Added>
               ) : (
-                <span key={index}>{part.text}</span>
-              ),
-            )}
+                <span key={index}>{pieces}</span>
+              );
+            })}
           </VersionBox>
+          {message.parts?.some((line) => line.words) && (
+            <PartKeys aria-label={t('The five lines, in colour')}>
+              {message.parts
+                .filter((line) => line.words)
+                .map((line) => (
+                  <PartMark key={line.part} $part={line.part}>
+                    {t(GRID_LABELS[line.part])}
+                  </PartMark>
+                ))}
+            </PartKeys>
+          )}
+          {message.rule && (
+            <Small>
+              {t(
+                'Draft: it applies a rule. Have it checked before sending the answer.',
+              )}
+            </Small>
+          )}
           {added && (
             <Keys>
               <Added>{t('Suggested by Nestor')}</Added>
@@ -347,9 +400,7 @@ export const MessageView = ({
       );
     case 'advice': {
       const warn =
-        message.missing.length > 0 ||
-        (message.gaps?.length ?? 0) > 0 ||
-        /\[/.test(message.note.issue);
+        message.missing.length > 0 || (message.gaps?.length ?? 0) > 0;
       return (
         <NestorBubble>
           {message.note.issue &&

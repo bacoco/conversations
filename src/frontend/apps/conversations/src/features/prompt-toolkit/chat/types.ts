@@ -12,6 +12,10 @@ export interface MissingItem {
   choices: string[];
   /** A fact (a rule, a date, a name…): never a ready answer, only the user's. */
   fact?: boolean;
+  /** A yes-or-no on the user's own case: « Oui » / « Non », nothing invented. */
+  yesno?: boolean;
+  /** The line of the grid this question fills, when it fills one. */
+  part?: GridPart;
 }
 
 /** The five lines every request is read with: its « grammar ». */
@@ -42,7 +46,7 @@ export interface RequestCheck {
   message: string;
 }
 
-export const QUESTIONS_MAX = 3;
+export const QUESTIONS_MAX = 4;
 
 /** The four buttons of the bar, in their order. */
 export const BAR_ACTIONS = ['analyse', 'improve', 'review', 'ask'] as const;
@@ -118,6 +122,10 @@ export type NestorMessage = Base &
         missing: string[];
         /** What the user can write themselves next time. */
         lesson?: string;
+        /** The version's words for each line of the grid. */
+        parts?: GridLine[];
+        /** It applies a rule: to have checked before sending. */
+        rule?: boolean;
       }
     | { kind: 'placed'; previous: string; undone?: boolean }
     | {

@@ -178,7 +178,7 @@ export const useNestorChat = (language: string) => {
         analysis?.check.grid
           .filter((line) => !line.words)
           .map((line) => line.part) ?? [];
-      const { version, lesson } = await writeVersion(
+      const { version, lesson, parts, rule } = await writeVersion(
         { gaps, ...input },
         language,
         signal,
@@ -191,6 +191,8 @@ export const useNestorChat = (language: string) => {
           version,
           missing,
           ...(lesson && { lesson }),
+          ...(parts && { parts }),
+          ...(rule && { rule }),
         },
         [
           ...(missing.length
@@ -295,6 +297,19 @@ export const useNestorChat = (language: string) => {
       const requests = all.filter(
         (message): message is Find<'request'> => message.kind === 'request',
       );
+      // The lines of the grid most often left unsaid in this session.
+      const unsaid = new Map<string, number>();
+      all.forEach((message) => {
+        if (message.kind !== 'analysis') return;
+        message.check.grid
+          .filter((line) => !line.words)
+          .forEach((line) =>
+            unsaid.set(line.part, (unsaid.get(line.part) ?? 0) + 1),
+          );
+      });
+      const gaps = [...unsaid.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([part]) => part);
       const authors = prompts.map(
         (_, index) =>
           requests.findLast((message) => message.n === index + 1)?.by ?? 'user',
@@ -305,6 +320,7 @@ export const useNestorChat = (language: string) => {
         signal,
         advice,
         authors,
+        gaps,
       );
       const lastAdvice = lastOf(all, 'advice');
       const lesson = lastAdvice?.note.competency

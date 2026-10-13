@@ -352,6 +352,8 @@ export const reviewSession = async (
   advice: { afterPrompt: number; text: string }[] = [],
   /** Who wrote each prompt: the user, Nestor (as given), or both. */
   authors: ('user' | 'nestor' | 'both')[] = [],
+  /** The lines of the grid most often unsaid in the session, most first. */
+  gaps: string[] = [],
 ) => {
   const first = Math.max(0, prompts.length - SESSION_MAX_PROMPTS);
   const body = prompts
@@ -361,6 +363,9 @@ export const reviewSession = async (
         `<prompt n="${index + 1}" by="${authors[first + index] ?? 'user'}">\n${prompt.slice(0, SESSION_PROMPT_MAX_CHARS)}\n</prompt>`,
     )
     .join('\n');
+  const unsaid = gaps.length
+    ? `\nThe user's requests most often did not say: ${gaps.join(', ')} (task = what to write, reader = who will read it, material = the information to use, form, tone). The first tip is about the first of them, in the user's words, never about another line.`
+    : '';
   const written = authors.length
     ? `\nEach prompt says who wrote it. by="nestor": the coach wrote it, the user only clicked; never praise or judge the user on it, never say they wrote it. by="both": judge only what the user added. When no prompt is by="user" or "both", "summary" says first, plainly, that Nestor wrote the requests this time; "strengths" is empty; the first tip invites them to write the next request themselves, starting with one thing: who will read it, from what, which form or which tone. Speak of « demandes », never of « prompts ».`
     : '';
@@ -370,7 +375,7 @@ export const reviewSession = async (
   return parseSessionReview(
     await complete(
       SESSION_SYSTEM_PROMPT(language),
-      `${body}${coached}${written}`,
+      `${body}${coached}${written}${unsaid}`,
       signal,
       false,
       // Judging who wrote what needs the stronger model.
@@ -1259,6 +1264,7 @@ Reply only with valid JSON, every field in plain text:
 {"follow_up": "<only when <previous> is given: did the user apply it in <since>? Say it in one sentence, quoting their words; congratulate when they did. Else empty>", "applied": <true, false, or null when there is no previous advice>, "worked": "<one or two sentences: what worked in the user's requests, quoting their own words>", "issue": "<one or two sentences: what is missing or weak in the latest answer, and which part of the request caused it>", "try": "<the one move to make now, at most 20 words>", "try_why": "<one sentence: why it gives a better answer>", "prompt": "<the next request to send to the assistant, complete and ready to send, written as the user would; empty if no request is needed>", "habit": "<one sentence: the habit to keep for every request, beyond this case>", "competency": "<the skill this habit trains, one of: ${COMPETENCIES.join(', ')}>"}
 Be specific to these exchanges, warm and concrete; never generic. Raise an issue only when it really matters for what the user wants; when the answer does what was asked, leave "issue" empty and give a next step instead of a nitpick. Words of the user's own field are not jargon for their reader (a director in public procurement knows "marchés publics"). Never advise adding something the request already says (read it again before "try"). Plain everyday words: say who will read it, never "audience", "public cible" or "audience cible"; say the request, never "prompt".
 Never invent facts. In "prompt", never brackets, placeholders or blanks: leave out what only the user knows, the user adds it.
+Blanks the assistant left for the user to fill ([Nom de l'agent], [Votre nom]) are normal, never an issue and never « pas utilisable »: say it calmly in "try", e.g. « Avant d'envoyer : remplacez [Nom de l'agent] et [Votre nom]. »
 Check the answer against the requests: any fact the requests did not give (a year, a date, a name, a place, an activity, a figure, a justification) is invented by the assistant. Name it first in "issue" as invented, to check or remove before use; this is the most useful thing to teach.
 Blanks for the sender's own name, title or signature are a light reminder to fill in before sending, never "not usable".
 Write correct French: « à l'Assistant », never « au assistant ».

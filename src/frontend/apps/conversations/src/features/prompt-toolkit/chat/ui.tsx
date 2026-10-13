@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { Icon } from '@/components';
 
 import { NESTOR_AVATAR_URL } from './avatar';
+import type { GridPart } from './types';
 
 /** The colours of the "E · Coach en chat" canvas, screen for screen. */
 export const C = {
@@ -46,8 +47,9 @@ export const ThreadScroll = styled.div`
   scrollbar-width: thin;
 `;
 
+// Centred while it is short (no empty half), a chat that scrolls once long.
 export const ThreadInner = styled.div`
-  margin-top: auto;
+  margin-block: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -417,6 +419,36 @@ export const ExampleLine = styled.p<{ $good?: boolean }>`
   }
 `;
 
+/** One colour per line of the grid: the same in the analysis and the version. */
+export const PART_COLORS: Record<GridPart, { ink: string; soft: string }> = {
+  task: { ink: '#2c5cc5', soft: '#e7eefc' },
+  reader: { ink: '#18753c', soft: '#e3f4e8' },
+  material: { ink: '#9a5200', soft: '#fcefdc' },
+  form: { ink: '#7339c9', soft: '#f0e8fc' },
+  tone: { ink: '#b8235f', soft: '#fbe6ef' },
+};
+
+export const PartLabel = styled.strong<{ $part: GridPart }>`
+  color: ${({ $part }) => PART_COLORS[$part].ink};
+`;
+
+/** Words of a line of the grid, in the version: underlined in its colour. */
+export const PartMark = styled.mark<{ $part: GridPart }>`
+  color: inherit;
+  background: ${({ $part }) => PART_COLORS[$part].soft};
+  border-bottom: 2px solid ${({ $part }) => PART_COLORS[$part].ink};
+  border-radius: 3px;
+  padding: 0 2px;
+`;
+
+export const PartKeys = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
 /** « Analyser mon texte »: the five lines of a request. */
 export const Grid = styled.div`
   display: flex;
@@ -508,16 +540,36 @@ export const FaceRound = styled.span`
   }
 `;
 
-/** The rounds of the moment: a grey tile hanging under the last bubble. */
+/** The actions of the moment, under Nestor's last bubble. */
 export const RoundsTile = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  align-self: flex-start;
-  margin: -6px 0 0 36px;
-  padding: 10px 10px 8px;
-  background: ${C.soft};
-  border-radius: 0 0 14px 14px;
+  gap: 8px;
+  margin: 0 0 0 36px;
+`;
+
+/** One action of the moment: an icon and what it does, in words. */
+export const ActionButton = styled.button<{ $primary?: boolean }>`
+  ${buttonReset}
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  border: 1px solid ${C.brand};
+  color: ${({ $primary }) => ($primary ? '#ffffff' : C.brandInk)};
+  background: ${({ $primary }) => ($primary ? C.brand : '#ffffff')};
+  &:hover {
+    background: ${({ $primary }) => ($primary ? C.brandInk : C.brandSoft)};
+  }
+  &:focus-visible {
+    outline: 2px solid ${C.brand};
+    outline-offset: 2px;
+  }
 `;
 
 /** The fixed bar: always the same four rounds. */

@@ -19,7 +19,7 @@ const completion = (content: object) =>
   );
 
 describe('parseRequestCheck', () => {
-  it('keeps three missing pieces at most, each with a question', () => {
+  it('keeps four missing pieces at most, each with a question', () => {
     const check = parseRequestCheck({
       present: ['La tâche', 'Le contexte'],
       missing: [
@@ -36,6 +36,7 @@ describe('parseRequestCheck', () => {
         { short: 'date', question: 'Quelle date ?', choices: [] },
         { short: 'salle', question: 'Quelle salle ?' },
         { short: 'heure', question: 'Quelle heure ?' },
+        { short: 'lieu', question: 'Où ?' },
         { short: '', question: 'vide' },
       ],
       message: '« L’équipe » reste vague : laquelle ?',
@@ -44,6 +45,7 @@ describe('parseRequestCheck', () => {
       'équipe',
       'date',
       'salle',
+      'heure',
     ]);
     expect(check.missing[0].choices).toHaveLength(3);
     expect(check.present).toEqual(['La tâche', 'Le contexte']);
@@ -101,6 +103,35 @@ describe('the grid of a request', () => {
     );
     expect(check.missing[0].choices).toEqual([]);
     expect(check.missing[1].choices).toEqual(['J’accepte', 'Je refuse']);
+  });
+});
+
+describe('the questions follow the grid', () => {
+  it('knows the line a question fills, and a yes-or-no about one’s own case', () => {
+    const check = parseRequestCheck(
+      {
+        missing: [
+          {
+            short: 'forme',
+            question: 'Quelle forme pour la réponse ?',
+            part: 'form',
+            choices: ['Courte, 5 lignes', 'En 3 points'],
+          },
+          {
+            short: 'accord',
+            question: 'Avez-vous l’accord du chef de bureau ?',
+            fact: true,
+            yesno: true,
+            choices: ['Oui, je l’ai'],
+          },
+        ],
+        message: 'Claire.',
+      },
+      'Réponds à l’agent',
+    );
+    expect(check.missing[0]).toMatchObject({ part: 'form', fact: false });
+    expect(check.missing[0].choices).toHaveLength(2);
+    expect(check.missing[1]).toMatchObject({ yesno: true, choices: [] });
   });
 });
 
@@ -261,7 +292,7 @@ describe('writeVersion — the lesson under the version', () => {
       { draft: 'Fais un courriel pour inviter', answers: [], skipped: [] },
       'French',
     );
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       version: 'Rédige un courriel court pour inviter tout le service jeudi.',
       lesson:
         'Dites dès le début pour qui et quel jour : « pour tout le service, jeudi ».',
@@ -312,6 +343,39 @@ describe('a pasted text already quoted by the version', () => {
     );
     expect(version.match(/accord préalable/g)).toHaveLength(1);
     expect(version.endsWith(email)).toBe(true);
+  });
+});
+
+describe('what a version says', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('marks the words of each line, and a rule to have checked', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version:
+          'Rédige une réponse courte à l’agent, en langage simple : les jours ne sont pas reportables.',
+        lesson: '',
+        parts: {
+          task: 'Rédige une réponse',
+          reader: 'à l’agent',
+          form: 'courte',
+          tone: 'en langage poli',
+        },
+        rule: true,
+      }),
+    );
+    const result = await writeVersion(
+      { draft: 'réponds', answers: [], skipped: [] },
+      'French',
+    );
+    expect(result.rule).toBe(true);
+    expect(result.parts).toEqual([
+      { part: 'task', words: 'Rédige une réponse' },
+      { part: 'reader', words: 'à l’agent' },
+      { part: 'material', words: '' },
+      { part: 'form', words: 'courte' },
+      { part: 'tone', words: '' },
+    ]);
   });
 });
 

@@ -3,6 +3,12 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "No": "Non",
+      "Draft: it applies a rule. Have it checked before sending the answer.": "Brouillon : il applique une règle. Faites-la vérifier avant d’envoyer la réponse.",
+      "The five lines, in colour": "Les cinq lignes, en couleur",
+      "Read the whole request": "Lire toute la demande",
+      "Start here": "Commencer ici",
+      "Write the version without it": "Faire la version sans",
       "Now improve it yourself: click “Analyser mon texte”, at the bottom. I show you what it does not say yet.": "À vous de l’améliorer : cliquez sur « Analyser mon texte », en bas. Je vous montre ce qu’elle ne dit pas encore.",
       "A request of your job: first as many write it, then a good one.": "Une demande de votre métier : d’abord comme beaucoup l’écrivent, puis une bonne demande.",
       "Before": "Avant",

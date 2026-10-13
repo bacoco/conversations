@@ -11,6 +11,8 @@ import { REVIEW_FIRST_FROM } from '../learn/steps';
 import { useReviewDue } from '../learn/useLearnProgress';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import { useRecorderStore } from '../speech/useRecorderStore';
+import { useNestorChatStore } from '../stores/useNestorChatStore';
+import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
@@ -28,6 +30,8 @@ interface HomeCard {
   onSelect: () => void;
   /** A gentle sign that something waits there, in words for readers. */
   badge?: string;
+  /** Where a beginner starts: marked « Commencer ici ». */
+  start?: boolean;
 }
 
 const cardCss = (tone: Tone) => css`
@@ -270,8 +274,8 @@ const NestorHeader = () => {
       <img
         src={NESTOR_HOME_URL}
         alt=""
-        width={140}
-        height={140}
+        width={96}
+        height={96}
         style={{ borderRadius: '50%', background: ILLUSTRATION_BACKGROUND }}
       />
       <Box $gap="2px">
@@ -356,6 +360,10 @@ export const PanelHome = () => {
   const isAiAvailable = useAiAvailable();
   const openTool = usePromptToolkitStore((state) => state.openTool);
   const openFavorites = usePromptToolkitStore((state) => state.openFavorites);
+  const isBeginner = useProfileStore((state) => state.isBeginner);
+  const hasUsedCoach = useNestorChatStore(
+    (state) => Object.keys(state.chats).length > 0,
+  );
   const reviewDue = useReviewDue();
 
   const transcriptionCard: HomeCard = {
@@ -379,6 +387,7 @@ export const PanelHome = () => {
       title: t('Coach'),
       description: t('Improves your requests, before and after the answer.'),
       onSelect: () => startCoach(),
+      start: isBeginner || !hasUsedCoach,
     },
     {
       id: 'course',
@@ -438,71 +447,103 @@ export const PanelHome = () => {
           list-style: none;
         `}
       >
-        {shownCards.map((card, index) => (
-          <li
-            key={card.id}
-            // An odd last card takes the whole row: no hole in the grid.
-            style={
-              shownCards.length % 2 === 1 && index === shownCards.length - 1
-                ? { gridColumn: '1 / -1' }
-                : undefined
-            }
-          >
-            <Box
-              as="button"
-              type="button"
-              onClick={card.onSelect}
-              $align="center"
-              $gap="8px"
-              $css={css`
-                ${cardCss(card.tone)}
-                position: relative;
-                justify-content: flex-start;
-                text-align: center;
-              `}
+        {shownCards.map((card, index) => {
+          // An odd last card takes the whole row, low and wide: no hole in
+          // the grid, and everything fits without scrolling.
+          const isWide =
+            shownCards.length % 2 === 1 && index === shownCards.length - 1;
+          return (
+            <li
+              key={card.id}
+              style={isWide ? { gridColumn: '1 / -1' } : undefined}
             >
-              {card.badge && (
-                <Box
-                  as="span"
-                  title={card.badge}
-                  $css={css`
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50%;
-                    background: var(
-                      --c--contextuals--background--semantic--brand--primary
-                    );
-                  `}
-                >
-                  <span className="sr-only">{card.badge}</span>
+              <Box
+                as="button"
+                type="button"
+                onClick={card.onSelect}
+                $direction={isWide ? 'row' : 'column'}
+                $align="center"
+                $gap={isWide ? '12px' : '4px'}
+                $css={css`
+                  ${cardCss(card.tone)}
+                  position: relative;
+                  ${
+                    card.start &&
+                    css`
+                      border: 2px solid
+                        var(--c--contextuals--border--semantic--brand--primary);
+                    `
+                  }
+                  justify-content: ${isWide ? 'center' : 'flex-start'};
+                  text-align: ${isWide ? 'left' : 'center'};
+                  padding: 10px 8px;
+                `}
+              >
+                {card.start && (
+                  <Box
+                    as="span"
+                    $css={css`
+                      position: absolute;
+                      top: -10px;
+                      left: 50%;
+                      transform: translateX(-50%);
+                      padding: 1px 10px;
+                      border-radius: 999px;
+                      font-size: 11px;
+                      font-weight: 700;
+                      white-space: nowrap;
+                      color: #ffffff;
+                      background: var(
+                        --c--contextuals--background--semantic--brand--primary
+                      );
+                    `}
+                  >
+                    {t('Start here')}
+                  </Box>
+                )}
+                {card.badge && (
+                  <Box
+                    as="span"
+                    title={card.badge}
+                    $css={css`
+                      position: absolute;
+                      top: 10px;
+                      right: 10px;
+                      width: 10px;
+                      height: 10px;
+                      border-radius: 50%;
+                      background: var(
+                        --c--contextuals--background--semantic--brand--primary
+                      );
+                    `}
+                  >
+                    <span className="sr-only">{card.badge}</span>
+                  </Box>
+                )}
+                <img
+                  src={card.image}
+                  alt=""
+                  width={48}
+                  height={48}
+                  style={{
+                    flex: 'none',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    background: ILLUSTRATION_BACKGROUND,
+                  }}
+                />
+                <Box $gap="2px">
+                  <Text $weight="700" $size="sm">
+                    {card.title}
+                  </Text>
+                  <Text $size="xs" $variation="secondary">
+                    {card.description}
+                  </Text>
                 </Box>
-              )}
-              <img
-                src={card.image}
-                alt=""
-                width={64}
-                height={64}
-                style={{
-                  flex: 'none',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  background: ILLUSTRATION_BACKGROUND,
-                }}
-              />
-              <Box $gap="2px">
-                <Text $weight="700" $size="sm">
-                  {card.title}
-                </Text>
-                <Text $size="xs" $variation="secondary">
-                  {card.description}
-                </Text>
               </Box>
-            </Box>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </Box>
       {/* One real task of the user's job each week. */}
       <WeeklyCase />

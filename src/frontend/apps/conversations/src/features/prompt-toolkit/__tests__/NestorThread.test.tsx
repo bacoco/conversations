@@ -118,6 +118,40 @@ describe('<NestorThread />', () => {
     expect(screen.getAllByText('not said')).toHaveLength(3);
   });
 
+  it('a version applying a rule says to have it checked; its lines wear colours', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'v',
+            action: 1,
+            kind: 'version',
+            original: 'réponds',
+            version: 'Rédige une réponse courte à l’agent.',
+            missing: [],
+            rule: true,
+            parts: [
+              { part: 'task', words: 'Rédige une réponse' },
+              { part: 'reader', words: 'à l’agent' },
+              { part: 'material', words: '' },
+              { part: 'form', words: 'courte' },
+              { part: 'tone', words: '' },
+            ],
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getByText(
+        'Draft: it applies a rule. Have it checked before sending the answer.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('The five lines, in colour'),
+    ).toHaveTextContent('What to write');
+  });
+
   it('shows the rounds of the last message only, and sends the click', () => {
     const chat = chatWith([
       {

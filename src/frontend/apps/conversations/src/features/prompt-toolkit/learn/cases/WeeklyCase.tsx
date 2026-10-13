@@ -16,7 +16,7 @@ const Card = styled.section`
   flex-direction: column;
   gap: 8px;
   position: relative;
-  padding: 14px 44px 14px 16px;
+  padding: 10px 44px 12px 14px;
   border: 1px solid ${C.brandLine};
   border-radius: 14px;
   background: #f7f6ff;

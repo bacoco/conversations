@@ -4,7 +4,7 @@ import { Icon } from '@/components';
 
 import { roundLabel } from './labels';
 import type { NestorMessage, Round, RoundId } from './types';
-import { RoundButton, RoundsTile } from './ui';
+import { ActionButton, RoundsTile } from './ui';
 
 const ICONS: Record<RoundId, string> = {
   examples: 'lightbulb',
@@ -20,7 +20,7 @@ const ICONS: Record<RoundId, string> = {
   retry: 'refresh',
 };
 
-/** The rounds of the moment, a grey tile under Nestor's last bubble. */
+/** The actions of the moment, as labelled buttons under Nestor's last bubble. */
 export const InChatRounds = ({
   message,
   missing,
@@ -42,18 +42,15 @@ export const InChatRounds = ({
   return (
     <RoundsTile>
       {rounds.map((round) => (
-        <RoundButton
+        <ActionButton
           key={round.id}
           type="button"
-          $size="small"
           $primary={round.primary}
           onClick={() => onRound(round)}
         >
-          <span>
-            <Icon iconName={ICONS[round.id]} $size="20px" $withThemeInherited />
-          </span>
+          <Icon iconName={ICONS[round.id]} $size="18px" $withThemeInherited />
           {label(round.id)}
-        </RoundButton>
+        </ActionButton>
       ))}
     </RoundsTile>
   );
