@@ -606,3 +606,45 @@ export const Lesson = styled.div`
     font-size: 12px;
   }
 `;
+
+/** One line of Nestor's advice: what is good (✓) or what to do (→). */
+export const CounselLine = styled.span<{ $tone: 'ok' | 'go' }>`
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 6px;
+  & > span:first-child {
+    font-weight: 700;
+    color: ${({ $tone }) => ($tone === 'ok' ? C.okInk : C.brand)};
+  }
+`;
+
+/** Why a piece of advice changes the answer. */
+export const Why = styled.span`
+  color: ${C.muted};
+`;
+
+/** One version at the end of the advice: its title, its text, its buttons. */
+export const ChoiceCard = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid ${C.line};
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  & > p {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+`;
+
+/** A request Nestor proposes, shown before it goes to the field. */
+export const Proposed = styled.span`
+  padding: 6px 10px;
+  border-left: 3px solid ${C.brand};
+  border-radius: 0 8px 8px 0;
+  background: #ffffff;
+  white-space: pre-wrap;
+`;

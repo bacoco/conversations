@@ -7,9 +7,10 @@ import { Box, Icon } from '@/components';
 import { RECORD_RED } from '../speech/RecorderView';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
 
 import { NESTOR_AVATAR_URL } from './avatar';
-import { C, LinkButton, MainButton } from './ui';
+import { C, LinkButton, MainButton, Warn } from './ui';
 import type { NestorChat } from './useNestorChat';
 
 const Veil = styled.button`
@@ -108,6 +109,37 @@ const Said = styled.div`
   color: ${C.brandDark};
 `;
 
+/** What one can say to Nestor: examples to say, not buttons. */
+const Examples = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: ${C.soft};
+  font-size: 13px;
+  & > strong {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: ${C.muted};
+  }
+`;
+
+/** Before an answer, about the request; after one, about the answer. */
+const SAY_BEFORE = [
+  'Look at what I wrote',
+  'Help me improve it',
+  'How do I make a table?',
+  'I am done, take stock',
+];
+const SAY_AFTER = [
+  'Is what it answered reliable?',
+  'How do I go on?',
+  'Help me improve my request',
+  'I am done, take stock',
+];
+
 const Field = styled.textarea`
   width: 100%;
   box-sizing: border-box;
@@ -133,6 +165,15 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
   });
   const isRecording =
     capture.status === 'recording' || capture.status === 'starting';
+  const hasAnswer = useMainConversationStore(
+    (state) =>
+      !!state.latestCompletedAssistantMessageId && !state.isAssistantResponding,
+  );
+
+  // A blocked microphone: the keyboard opens at once, never a dead end.
+  useEffect(() => {
+    if (capture.error === 'microphone') setTyping(true);
+  }, [capture.error]);
 
   useEffect(() => {
     if (chat.sheetOpen) dialogRef.current?.focus();
@@ -217,8 +258,29 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
             <Legend $center>
               {t('The microphone only turns on when you press.')}
             </Legend>
-            {said && <Said>« {said} »</Said>}
+            {said ? (
+              <Said>« {said} »</Said>
+            ) : (
+              <Examples>
+                <strong>{t('For example, say')}</strong>
+                {(hasAnswer ? SAY_AFTER : SAY_BEFORE).map((example) => (
+                  <span key={example}>« {t(example)} »</span>
+                ))}
+              </Examples>
+            )}
           </>
+        )}
+        {capture.error === 'microphone' && (
+          <Warn role="alert">
+            {t(
+              'Your browser blocks the microphone. To allow it, click the padlock left of the site address, then “Microphone: Allow”. Meanwhile, type your question.',
+            )}
+          </Warn>
+        )}
+        {capture.error === 'transcription' && (
+          <Warn role="alert">
+            {t('I could not hear you. Try again, or type it.')}
+          </Warn>
         )}
         {typing && (
           <Field
@@ -259,7 +321,9 @@ export const AskNestorSheet = ({ chat }: { chat: NestorChat }) => {
           </LinkButton>
         )}
         <Legend>
-          {t('You are talking to Nestor: nothing is sent to the Assistant.')}
+          {t(
+            'Nestor sees your request and your conversation. Nothing is sent to the Assistant.',
+          )}
         </Legend>
       </Window>
     </Box>

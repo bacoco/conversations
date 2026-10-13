@@ -52,69 +52,6 @@ describe('useNestorChat', () => {
     });
   });
 
-  it('analyse → complete → three bounded questions → version with no blank', async () => {
-    usePromptToolkitStore.setState({
-      chatInput: 'Fais un courriel pour inviter l’équipe',
-    });
-    vi.spyOn(global, 'fetch')
-      .mockResolvedValueOnce(
-        completion({
-          grid: [],
-          present: ['La tâche'],
-          missing: [
-            {
-              short: 'équipe',
-              question: 'Quelle équipe ?',
-              choices: ['Mon bureau'],
-            },
-            { short: 'date', question: 'Quelle date ?', choices: [] },
-            { short: 'salle', question: 'Quelle salle ?', choices: [] },
-          ],
-          message: '« L’équipe » reste vague : laquelle ?',
-        }),
-      )
-      .mockResolvedValueOnce(
-        completion({
-          version:
-            'Rédige un courriel pour inviter toute l’équipe du bureau 3.',
-          lesson: 'Dites quelle équipe dès le début.',
-        }),
-      );
-    const { result } = renderHook(() => useNestorChat('French'));
-    await act(() => {
-      result.current.runBar('analyse');
-      return Promise.resolve();
-    });
-    const analysis = thread().at(-1)!;
-    expect(analysis).toMatchObject({
-      kind: 'analysis',
-      rounds: [{ id: 'complete', primary: true }, { id: 'create-without' }],
-    });
-
-    act(() => result.current.runRound(analysis.id, { id: 'complete' }));
-    expect(thread().at(-1)).toMatchObject({ kind: 'question', index: 0 });
-    act(() =>
-      result.current.answerQuestion('toute l’équipe du bureau 3', 'voice'),
-    );
-    expect(thread().at(-1)).toMatchObject({ kind: 'question', index: 1 });
-    act(() => result.current.answerQuestion('Je ne sais pas', 'skip'));
-    await act(() => {
-      result.current.answerQuestion('Arrêter les questions', 'stop');
-      return Promise.resolve();
-    });
-
-    const version = thread().at(-1)!;
-    expect(version).toMatchObject({
-      kind: 'version',
-      missing: ['date', 'salle'],
-      lesson: 'Dites quelle équipe dès le début.',
-    });
-    expect(version.rounds?.[0]).toEqual({
-      id: 'redo-with-missing',
-      primary: true,
-    });
-  });
-
   it('putting the version in the field keeps the draft for "Annuler"', () => {
     usePromptToolkitStore.setState({ chatInput: 'brouillon' });
     useNestorChatStore.getState().post('c1', {
@@ -152,26 +89,19 @@ describe('useNestorChat', () => {
       missing: [],
     });
     usePromptToolkitStore.setState({ chatInput: 'Résume ce texte' });
-    const fetchMock = vi
-      .spyOn(global, 'fetch')
-      .mockResolvedValueOnce(
-        completion({
-          grid: [],
-          present: ['Le résumé'],
-          missing: [],
-          message: 'Claire.',
-        }),
-      )
-      .mockResolvedValueOnce(
-        completion({ version: 'Résume ce texte en 5 points.' }),
-      );
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      completion({
+        good: [],
+        tips: [{ text: 'Dites la longueur voulue.', why: '' }],
+      }),
+    );
     const { result } = renderHook(() => useNestorChat('French'));
     await act(() => {
       result.current.runBar('improve');
       return Promise.resolve();
     });
     const bodies = fetchMock.mock.calls.map((call) => call[1]?.body as string);
-    expect(bodies).toHaveLength(2);
+    expect(bodies).toHaveLength(1);
     expect(bodies.join('\n')).not.toContain('bureau 3');
   });
 
@@ -293,30 +223,6 @@ describe('useNestorChat', () => {
     expect(thread().at(-1)).toMatchObject({ kind: 'request', n: 2 });
   });
 
-  it('"Améliorer" on a vague request asks what is missing first, then writes', async () => {
-    usePromptToolkitStore.setState({ chatInput: 'aide moi compte rendu' });
-    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
-      completion({
-        grid: [],
-        present: ['Le compte rendu'],
-        missing: [
-          { short: 'réunion', question: 'De quelle réunion ?', choices: [] },
-        ],
-        message: 'Il me faut la réunion.',
-      }),
-    );
-    const { result } = renderHook(() => useNestorChat('French'));
-    await act(() => {
-      result.current.runBar('improve');
-      return Promise.resolve();
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(thread().at(-1)).toMatchObject({
-      kind: 'question',
-      index: 0,
-    });
-  });
-
   it('what the user clicked shows on their side, before Nestor answers', () => {
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.runBar('analyse'));
@@ -342,9 +248,12 @@ describe('useNestorChat', () => {
       },
       rounds: [{ id: 'complete', primary: true }],
     });
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({ good: ['Clair.'], tips: [] }),
+    );
     const { result } = renderHook(() => useNestorChat('French'));
     act(() => result.current.runRound(id, { id: 'complete', primary: true }));
-    expect(thread().slice(-2)[0]).toMatchObject({
+    expect(thread().at(-1)).toMatchObject({
       kind: 'user',
       via: 'action',
       text: 'Complete them',

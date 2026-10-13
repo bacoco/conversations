@@ -75,6 +75,15 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
       ? t('Version prepared: {{how}}', { how: asked.text })
       : t('Version prepared');
   }
+  if (find('counsel')) {
+    return t('Advice on your request');
+  }
+  const versions = find('versions');
+  if (versions) {
+    return versions.items.length > 1
+      ? t('{{n}} versions prepared', { n: versions.items.length })
+      : t('Version prepared');
+  }
   const chosen = find('chosen');
   if (chosen) {
     return chosen.undone
@@ -102,6 +111,7 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
   }
   const hint = find('hint');
   if (hint) {
+    if (hint.hint === 'fix-myself') return t('You correct it yourself');
     return hint.hint === 'write-first'
       ? t('Nestor asked to write the request first')
       : hint.hint === 'review-after-answer'

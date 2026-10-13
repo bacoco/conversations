@@ -2,6 +2,7 @@ import type { CoachNote, NextGroup, SessionReview } from '../coach/coachApi';
 
 import type { Author } from './author';
 import type { ExamplePair } from './examples';
+import type { RequestAdvice, VersionChoice } from './nestorChatApi';
 
 /** One piece of information the request lacks, asked as one question. */
 export interface MissingItem {
@@ -64,7 +65,16 @@ export type RoundId =
   | 'resume-questions'
   | 'new-request'
   | 'lesson'
-  | 'retry';
+  | 'retry'
+  /** After the advice: one text, two versions, or the user's own fix. */
+  | 'give-text'
+  | 'two-versions'
+  | 'fix-myself'
+  /** Say it at the microphone instead of clicking. */
+  | 'say'
+  /** « Vous parlez de quoi ? »: the request, or the Assistant's answer. */
+  | 'clarify-request'
+  | 'clarify-answer';
 
 export interface Round {
   id: RoundId;
@@ -74,7 +84,11 @@ export interface Round {
 
 /** What Nestor says when a bar button has nothing to work on. */
 export type HintKind =
-  'write-first' | 'review-after-answer' | 'new-request' | 'improve-it';
+  | 'write-first'
+  | 'review-after-answer'
+  | 'new-request'
+  | 'improve-it'
+  | 'fix-myself';
 
 /** How the user said something in the thread. */
 export type UserVia =
@@ -107,6 +121,10 @@ export type NestorMessage = Base &
     | { kind: 'hint'; hint: HintKind }
     | { kind: 'warning'; text: string }
     | { kind: 'analysis'; draft: string; check: RequestCheck }
+    /** « Améliorer mon texte »: Nestor's advice, before any text. */
+    | { kind: 'counsel'; draft: string; advice: RequestAdvice }
+    /** The text at the end of the advice: one, or two to choose from. */
+    | { kind: 'versions'; draft: string; items: VersionChoice[] }
     | { kind: 'question'; index: number; items: MissingItem[] }
     | {
         kind: 'user';

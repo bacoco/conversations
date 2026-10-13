@@ -141,4 +141,36 @@ describe('foldSummary', () => {
       ),
     ).toBe('Version prepared: {{how}}'.replace('{{how}}', 'Plus court'));
   });
+  it('names the advice and the versions, each by what it was', () => {
+    expect(
+      foldSummary(
+        [
+          msg(3, {
+            kind: 'counsel',
+            draft: 'x',
+            advice: { good: [], tips: [] },
+          }),
+        ],
+        t,
+      ),
+    ).toBe('Advice on your request');
+    expect(
+      foldSummary(
+        [
+          msg(4, {
+            kind: 'versions',
+            draft: 'x',
+            items: [
+              { title: 'a', text: 'a' },
+              { title: 'b', text: 'b' },
+            ],
+          }),
+        ],
+        t,
+      ),
+    ).toBe('2 versions prepared');
+    expect(foldSummary([msg(5, { kind: 'hint', hint: 'fix-myself' })], t)).toBe(
+      'You correct it yourself',
+    );
+  });
 });

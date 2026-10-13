@@ -33,4 +33,10 @@ export const roundLabel = (
     'new-request': t('Start a request'),
     lesson: t('See the lesson'),
     retry: t('Retry'),
+    'give-text': t('Give me the right text'),
+    'two-versions': t('Suggest 2 versions'),
+    'fix-myself': t('I will fix it myself'),
+    say: t('Say it'),
+    'clarify-request': t('My request'),
+    'clarify-answer': t('The Assistant’s answer'),
   })[id];

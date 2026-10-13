@@ -116,9 +116,11 @@ JSON shape: {"improved_prompt": "<the rewritten prompt>", "changes": ["<at most 
 
 /** Never wait forever: a slow model gives up and lets the user retry. */
 export const COACH_TIMEOUT_MS = 30000;
+/** Writing whole requests takes longer than reading one. */
+export const WRITE_TIMEOUT_MS = 60000;
 
-const withTimeout = (signal?: AbortSignal) => {
-  const timeout = AbortSignal.timeout(COACH_TIMEOUT_MS);
+const withTimeout = (signal?: AbortSignal, ms = COACH_TIMEOUT_MS) => {
+  const timeout = AbortSignal.timeout(ms);
   return signal ? AbortSignal.any([signal, timeout]) : timeout;
 };
 
@@ -168,11 +170,12 @@ export const completeMessages = async (
   signal?: AbortSignal,
   temperature = 0.2,
   model = COACH_MODEL,
+  timeoutMs = COACH_TIMEOUT_MS,
 ): Promise<Record<string, unknown>> => {
   const response = await fetch(COACH_COMPLETIONS_URL, {
     method: 'POST',
     credentials: 'include',
-    signal: withTimeout(signal),
+    signal: withTimeout(signal, timeoutMs),
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model,
@@ -197,6 +200,7 @@ export const complete = (
   signal?: AbortSignal,
   wrapPrompt = true,
   model = COACH_MODEL,
+  timeoutMs = COACH_TIMEOUT_MS,
 ) =>
   completeMessages(
     [
@@ -209,6 +213,7 @@ export const complete = (
     signal,
     0.2,
     model,
+    timeoutMs,
   );
 
 export const parseAnalysis = (raw: Record<string, unknown>): PromptAnalysis => {

@@ -1,0 +1,71 @@
+import { render, screen } from '@testing-library/react';
+
+import { AskNestorSheet } from '../chat/AskNestorSheet';
+import type { NestorChat } from '../chat/useNestorChat';
+import type { CaptureError } from '../speech/useSpeechCapture';
+import { useMainConversationStore } from '../stores/useMainConversationStore';
+
+vi.mock('@/components/ToastProvider', () => ({
+  useToast: () => ({ showToast: vi.fn() }),
+}));
+
+const speech = vi.hoisted(() => ({ error: null as CaptureError }));
+vi.mock('../speech/useSpeechCapture', () => ({
+  useSpeechCapture: () => ({
+    status: 'idle',
+    error: speech.error,
+    liveText: '',
+    start: vi.fn(),
+    stop: vi.fn(),
+    clearError: vi.fn(),
+  }),
+}));
+
+const chat = () =>
+  ({
+    sheetOpen: true,
+    setSheetOpen: vi.fn(),
+    askNestor: vi.fn(),
+  }) as unknown as NestorChat;
+
+describe('<AskNestorSheet /> says what one can say', () => {
+  beforeEach(() => {
+    speech.error = null;
+    useMainConversationStore.setState({
+      latestCompletedAssistantMessageId: null,
+      isAssistantResponding: false,
+    });
+  });
+
+  it('before any answer: examples about the request', () => {
+    render(<AskNestorSheet chat={chat()} />);
+    expect(screen.getByText('For example, say')).toBeInTheDocument();
+    expect(screen.getByText('« Look at what I wrote »')).toBeInTheDocument();
+    expect(screen.getByText('« I am done, take stock »')).toBeInTheDocument();
+    // Examples to say, not buttons.
+    expect(
+      screen.queryByRole('button', { name: /Look at what I wrote/ }),
+    ).toBeNull();
+  });
+
+  it('after an answer: examples about the answer', () => {
+    useMainConversationStore.setState({
+      latestCompletedAssistantMessageId: 'a1',
+    });
+    render(<AskNestorSheet chat={chat()} />);
+    expect(
+      screen.getByText('« Is what it answered reliable? »'),
+    ).toBeInTheDocument();
+  });
+
+  it('a blocked microphone is explained, and the keyboard opens', () => {
+    speech.error = 'microphone';
+    render(<AskNestorSheet chat={chat()} />);
+    expect(
+      screen.getByText(/Your browser blocks the microphone/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: 'Your question to Nestor' }),
+    ).toBeInTheDocument();
+  });
+});

@@ -18,6 +18,12 @@ const ICONS: Record<RoundId, string> = {
   'new-request': 'add',
   lesson: 'school',
   retry: 'refresh',
+  'give-text': 'edit_note',
+  'two-versions': 'view_agenda',
+  'fix-myself': 'edit',
+  say: 'mic',
+  'clarify-request': 'edit_note',
+  'clarify-answer': 'chat',
 };
 
 /** The actions of the moment, as labelled buttons under Nestor's last bubble. */

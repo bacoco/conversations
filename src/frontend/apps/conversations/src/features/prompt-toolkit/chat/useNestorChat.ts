@@ -6,7 +6,6 @@ import { useConversationRouteId } from '@/utils';
 import {
   CoachFollowUp,
   NextGroup,
-  chatWithNestor,
   coachThreadNote,
   coachThreadReply,
   reviewSession,
@@ -33,10 +32,14 @@ import { decideBarAction } from './barGuard';
 import { ExamplePair, examplePairs } from './examples';
 import { barLabel, roundLabel } from './labels';
 import {
+  CoachTurn,
   VersionInput,
   adviceCount,
+  adviseRequest,
   checkRequest,
+  coachChat,
   hasHoles,
+  writeChoices,
   writeVersion,
 } from './nestorChatApi';
 import { PASTED_ANSWER_CHARS, questionState } from './questions';
@@ -75,6 +78,56 @@ const roundSource = (messages: NestorMessage[]) => {
     if (message.kind === 'version') return message.version;
   }
   return '';
+};
+
+/** Nestor's last steps in a few words: what he knows he has done. */
+const doneSteps = (messages: NestorMessage[]) =>
+  messages
+    .filter((message) => message.kind !== 'user' && message.kind !== 'request')
+    .slice(-5)
+    .map((message) => {
+      switch (message.kind) {
+        case 'analysis':
+          return 'Read the request in the field with the five lines';
+        case 'counsel':
+          return `Gave advice on the request: ${message.advice.tips
+            .map((tip) => tip.text)
+            .join(' ')}`;
+        case 'versions':
+          return `Wrote ${message.items.length} version(s) of the request`;
+        case 'placed':
+          return 'Put a version in the Assistant’s field';
+        case 'advice':
+          return `Advice after the Assistant’s answer: ${message.note.tryNow}`;
+        case 'review':
+          return 'Did the review of the session';
+        case 'reply':
+          return `Said: ${message.text}`;
+        default:
+          return '';
+      }
+    })
+    .filter(Boolean);
+
+/** The free talk with Nestor: what was said, not the clicks. */
+const coachHistory = (messages: NestorMessage[], extra?: string) => {
+  const history: CoachTurn[] = messages
+    .filter(
+      (m): m is Find<'user'> | Find<'reply'> =>
+        m.kind === 'reply' ||
+        (m.kind === 'user' && !m.answers && m.via !== 'action'),
+    )
+    .slice(-8)
+    .map((m) =>
+      m.kind === 'user'
+        ? { role: 'user' as const, text: m.text }
+        : {
+            role: 'nestor' as const,
+            text: m.text,
+            ...(m.prompt ? { prompt: m.prompt } : {}),
+          },
+    );
+  return extra ? [...history, { role: 'user' as const, text: extra }] : history;
 };
 
 /** The central field, focused when Nestor asks to write in it. */
@@ -218,34 +271,46 @@ export const useNestorChat = (language: string) => {
   );
 
   /**
-   * "Améliorer mon texte" on a new request: when only the user knows what
-   * is missing, the questions come first; a version made without it would
-   * say nothing.
+   * « Améliorer mon texte » and « Compléter »: Nestor's advice first, never
+   * a question; the text comes after, when the user asks for it.
    */
-  const runImprove = useCallback(() => {
-    const draft = draftNow();
-    void run('improve', 'improve', async (signal, say) => {
-      const check = await checkRequest(
-        draft,
-        language,
-        signal,
-        useMainConversationStore.getState().turns,
-      );
-      warnSensitive(draft, say);
-      if (check.missing.length) {
-        say({ kind: 'analysis', draft, check });
-        say({ kind: 'question', index: 0, items: check.missing });
-        return;
-      }
-      await writeVersionInto(
-        { draft, answers: [], skipped: [] },
-        [],
-        signal,
-        say,
-      );
-    });
+  const runCounsel = useCallback(
+    (draft: string) => {
+      void run('improve', 'improve', async (signal, say) => {
+        const advice = await adviseRequest(
+          draft,
+          language,
+          signal,
+          useMainConversationStore.getState().turns,
+        );
+        warnSensitive(draft, say);
+        say({ kind: 'counsel', draft, advice }, [
+          { id: 'give-text', primary: true },
+          { id: 'two-versions' },
+          { id: 'fix-myself' },
+          { id: 'say' },
+        ]);
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, run, writeVersionInto]);
+    [language, run],
+  );
+
+  /** The text at the end: one request, or two to choose from. */
+  const runChoices = useCallback(
+    (draft: string, count: 1 | 2, tips: string[]) => {
+      void run('version', 'improve', async (signal, say) => {
+        const items = await writeChoices(
+          { draft, count, tips },
+          language,
+          signal,
+        );
+        say({ kind: 'versions', draft, items }, [{ id: 'say' }]);
+        reward('improvement');
+      });
+    },
+    [language, reward, run],
+  );
 
   const runAnalyse = useCallback(() => {
     const draft = draftNow();
@@ -260,8 +325,12 @@ export const useNestorChat = (language: string) => {
       say(
         { kind: 'analysis', draft, check },
         check.missing.length
-          ? [{ id: 'complete', primary: true }, { id: 'create-without' }]
-          : [],
+          ? [
+              { id: 'complete', primary: true },
+              { id: 'create-without' },
+              { id: 'say' },
+            ]
+          : [{ id: 'say' }],
       );
       reward('analysis');
     });
@@ -339,7 +408,8 @@ export const useNestorChat = (language: string) => {
   }, [key, language, run, store]);
 
   const runBar = useCallback(
-    (bar: BarAction) => {
+    /** From words said to Nestor: the words already show, no echo. */
+    (bar: BarAction, fromWords = false) => {
       const all = messagesOf(store().chats, key);
       const {
         latestCompletedAssistantMessageId: answerId,
@@ -356,13 +426,15 @@ export const useNestorChat = (language: string) => {
         setSheetOpen(true);
         return;
       }
-      store().beginAction(key);
-      // What was clicked shows on the user's side, as in a chat.
-      store().post(key, {
-        kind: 'user',
-        via: 'action',
-        text: barLabel(t, bar),
-      });
+      if (!fromWords) {
+        store().beginAction(key);
+        // What was clicked shows on the user's side, as in a chat.
+        store().post(key, {
+          kind: 'user',
+          via: 'action',
+          text: barLabel(t, bar),
+        });
+      }
       if (decision.kind === 'hint') {
         post({ kind: 'hint', hint: decision.hint });
         if (decision.focusField) focusAssistantField();
@@ -399,12 +471,12 @@ export const useNestorChat = (language: string) => {
             resume,
           );
         } else {
-          runImprove();
+          runCounsel(draftNow());
         }
       }
       if (bar === 'review') runReview();
     },
-    [key, post, runAnalyse, runImprove, runReview, store, t, writeAndPost],
+    [key, post, runAnalyse, runCounsel, runReview, store, t, writeAndPost],
   );
 
   const askQuestion = useCallback(
@@ -468,6 +540,62 @@ export const useNestorChat = (language: string) => {
     [key, placePrompt, post, store],
   );
 
+  /**
+   * Nestor called: he sees the field, the conversation and his own steps.
+   * Words that ask for a button run it; words that could mean two things
+   * get « Vous parlez de quoi ? »; anything else gets a coach's answer.
+   */
+  const replyAsCoach = useCallback(
+    (extra?: string) => {
+      const all = messagesOf(store().chats, key);
+      const history = coachHistory(all, extra);
+      void run('reply', 'ask', async (signal, say) => {
+        const reply = await coachChat(
+          { history, draft: draftNow(), done: doneSteps(all) },
+          language,
+          signal,
+          useMainConversationStore.getState().turns,
+        );
+        if (reply.action === 'clarify') {
+          say({ kind: 'reply', text: reply.text }, [
+            { id: 'clarify-request' },
+            { id: 'clarify-answer' },
+            { id: 'say' },
+          ]);
+          return;
+        }
+        // Reading or improving needs a request in the field: with none,
+        // the words were about something else, and Nestor's answer stands.
+        const needsDraft =
+          reply.action === 'analyse' || reply.action === 'improve';
+        if (reply.action && !(needsDraft && !draftNow())) {
+          if (reply.text) say({ kind: 'reply', text: reply.text });
+          runBar(reply.action, true);
+          return;
+        }
+        say(
+          {
+            kind: 'reply',
+            text: reply.text,
+            ...(reply.prompt && { prompt: reply.prompt }),
+          },
+          [{ id: 'say' }],
+        );
+      });
+    },
+    [key, language, run, runBar, store],
+  );
+
+  const askNestor = useCallback(
+    (text: string, via: 'voice' | 'keyboard') => {
+      setSheetOpen(false);
+      store().beginAction(key);
+      store().post(key, { kind: 'user', text, via });
+      replyAsCoach();
+    },
+    [key, replyAsCoach, store],
+  );
+
   const runRound = useCallback(
     (messageId: string, round: Round) => {
       // The welcome's round has no stored message.
@@ -482,6 +610,11 @@ export const useNestorChat = (language: string) => {
             chosen,
           }),
         });
+      // The microphone opens; the buttons stay for when it closes.
+      if (round.id === 'say') {
+        setSheetOpen(true);
+        return;
+      }
       if (round.id === 'examples') {
         if (messageId !== 'hello') store().consumeRounds(key, messageId);
         showExamples(() => said(false));
@@ -498,16 +631,30 @@ export const useNestorChat = (language: string) => {
       const analysis = lastOf(all, 'analysis');
       switch (round.id) {
         case 'complete':
-          if (analysis) askQuestion(analysis.check.missing, 0);
+          if (analysis) runCounsel(draftNow() || analysis.draft);
           break;
         case 'create-without':
-          if (analysis) {
-            writeAndPost({
-              draft: draftNow() || analysis.draft,
-              answers: [],
-              skipped: analysis.check.missing.map((item) => item.short),
-            });
+          if (analysis) runChoices(draftNow() || analysis.draft, 1, []);
+          break;
+        case 'give-text':
+        case 'two-versions':
+          if (message.kind === 'counsel') {
+            runChoices(
+              message.draft,
+              round.id === 'give-text' ? 1 : 2,
+              message.advice.tips.map((tip) => tip.text),
+            );
           }
+          break;
+        case 'fix-myself':
+          post({ kind: 'hint', hint: 'fix-myself' });
+          focusAssistantField();
+          break;
+        case 'clarify-request':
+          runBar('improve', true);
+          break;
+        case 'clarify-answer':
+          replyAsCoach("I mean the Assistant's last answer, not my request.");
           break;
         case 'redo-with-missing':
           if (version) {
@@ -566,7 +713,10 @@ export const useNestorChat = (language: string) => {
       i18n.language,
       key,
       post,
+      replyAsCoach,
       runBar,
+      runChoices,
+      runCounsel,
       showExamples,
       store,
       t,
@@ -589,6 +739,23 @@ export const useNestorChat = (language: string) => {
     [key, placePrompt, post, store],
   );
 
+  /** One of the versions at the end of the advice, put in the field. */
+  const placeChoice = useCallback(
+    (messageId: string, index: number) => {
+      const versions = messagesOf(store().chats, key).find(
+        (item): item is Find<'versions'> =>
+          item.id === messageId && item.kind === 'versions',
+      );
+      const choice = versions?.items[index];
+      if (!choice) return;
+      const previous = usePromptToolkitStore.getState().chatInput;
+      placePrompt(choice.text, { replaceDraft: true });
+      store().beginAction(key);
+      post({ kind: 'placed', previous }, [{ id: 'undo' }]);
+    },
+    [key, placePrompt, post, store],
+  );
+
   const choosePiste = useCallback(
     (text: string, phrases: string[]) => {
       const previous = usePromptToolkitStore.getState().chatInput;
@@ -598,41 +765,6 @@ export const useNestorChat = (language: string) => {
       post({ kind: 'chosen', text, previous }, [{ id: 'undo' }]);
     },
     [key, post, store],
-  );
-
-  const askNestor = useCallback(
-    (text: string, via: 'voice' | 'keyboard') => {
-      setSheetOpen(false);
-      store().beginAction(key);
-      store().post(key, { kind: 'user', text, via });
-      const history = messagesOf(store().chats, key)
-        .filter(
-          (m): m is Find<'user'> | Find<'reply'> =>
-            m.kind === 'reply' ||
-            (m.kind === 'user' && !m.answers && m.via !== 'action'),
-        )
-        .slice(-8)
-        .map((m) =>
-          m.kind === 'user'
-            ? { role: 'user' as const, text: m.text }
-            : {
-                role: 'nestor' as const,
-                text: m.text,
-                ...(m.prompt ? { prompt: m.prompt } : {}),
-              },
-        );
-      void run('reply', 'ask', async (signal, say) => {
-        const reply = await chatWithNestor(
-          history,
-          language,
-          'the coach chat',
-          signal,
-          useMainConversationStore.getState().turns,
-        );
-        say({ kind: 'reply', text: reply.text, prompt: reply.prompt });
-      });
-    },
-    [key, language, run, store],
   );
 
   const askAbout = useCallback(
@@ -726,7 +858,9 @@ export const useNestorChat = (language: string) => {
           ? [message.text]
           : message.kind === 'version'
             ? [message.version]
-            : [],
+            : message.kind === 'versions'
+              ? message.items.map((item) => item.text)
+              : [],
       );
       store().post(key, {
         kind: 'request',
@@ -764,6 +898,7 @@ export const useNestorChat = (language: string) => {
     choosePiste,
     tryExample,
     placeVersion,
+    placeChoice,
     askAbout,
     usePrompt,
     postAdvice,

@@ -6,14 +6,18 @@ import { Icon } from '@/components';
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
 import { markParts } from './markParts';
+import { pastedText } from './nestorChatApi';
 import { shortText } from './shortText';
 import type { GridPart, NestorMessage } from './types';
 import {
+  ActionButton,
   Added,
   Caption,
   Chip,
   Choice,
+  ChoiceCard,
   Choices,
+  CounselLine,
   Event,
   ExampleBox,
   ExampleLine,
@@ -27,6 +31,7 @@ import {
   PartKeys,
   PartLabel,
   PartMark,
+  Proposed,
   QuestionNumber,
   Separator,
   Small,
@@ -36,6 +41,7 @@ import {
   UserSays,
   VersionBox,
   Warn,
+  Why,
 } from './ui';
 import type { NestorChat } from './useNestorChat';
 import { versionParts } from './versionParts';
@@ -68,6 +74,7 @@ export const MessageView = ({
   const [moreSuites, setMoreSuites] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(0);
   const [wholeAfter, setWholeAfter] = useState(false);
+  const [openChoice, setOpenChoice] = useState<number | null>(null);
 
   switch (message.kind) {
     case 'request':
@@ -108,6 +115,10 @@ export const MessageView = ({
           {message.hint === 'new-request' &&
             t(
               'Write your new request in the middle. I suggest starting ideas as you type.',
+            )}
+          {message.hint === 'fix-myself' &&
+            t(
+              'Correct your text in the Assistant’s field, in the middle. Then click “Analyser mon texte”, or call me.',
             )}
           {message.hint === 'improve-it' &&
             t(
@@ -242,6 +253,81 @@ export const MessageView = ({
           )}
         </NestorBubble>
       );
+    case 'counsel':
+      return (
+        <NestorBubble>
+          <strong>{t('My advice on your request')}</strong>
+          {message.advice.good.map((good) => (
+            <CounselLine key={good} $tone="ok">
+              <span aria-hidden="true">✓</span>
+              <span>{good}</span>
+            </CounselLine>
+          ))}
+          {message.advice.tips.map((tip) => (
+            <CounselLine key={tip.text} $tone="go">
+              <span aria-hidden="true">→</span>
+              <span>
+                <span>{tip.text}</span> {tip.why && <Why>{tip.why}</Why>}
+              </span>
+            </CounselLine>
+          ))}
+        </NestorBubble>
+      );
+    case 'versions': {
+      // Only the latest versions go into the field: never older ones.
+      const latest =
+        chat.messages.findLast((item) => item.kind === 'versions')?.id ===
+        message.id;
+      return (
+        <NestorBubble>
+          <span>
+            {message.items.length > 1
+              ? t(
+                  'Here are two versions, with my advice applied. Take the one that suits you.',
+                )
+              : t('Here is your request, with my advice applied.')}
+          </span>
+          {message.items.map((item, index) => {
+            // The request in full; the pasted texts (an email, a note) fold.
+            const pasted = pastedText(message.draft);
+            const folds = !!pasted && item.text.endsWith(pasted);
+            const request = folds
+              ? item.text.slice(0, item.text.length - pasted.length).trim()
+              : item.text;
+            const open = openChoice === index;
+            return (
+              <ChoiceCard key={index} aria-label={item.title || undefined}>
+                {item.title && <strong>{item.title}</strong>}
+                <p>{request}</p>
+                {folds && (
+                  <LinkButton
+                    type="button"
+                    onClick={() => setOpenChoice(open ? null : index)}
+                  >
+                    {open
+                      ? t('Hide the texts you pasted')
+                      : t('Show the texts you pasted')}
+                  </LinkButton>
+                )}
+                {folds && open && <p>{pasted}</p>}
+                {latest && (
+                  <StarRow>
+                    <ActionButton
+                      type="button"
+                      $primary={index === 0}
+                      onClick={() => chat.placeChoice(message.id, index)}
+                    >
+                      {t('Put it in the Assistant’s field')}
+                    </ActionButton>
+                    <StarRequest text={item.text} />
+                  </StarRow>
+                )}
+              </ChoiceCard>
+            );
+          })}
+        </NestorBubble>
+      );
+    }
     case 'question': {
       const isCurrent = chat.questions.current?.id === message.id;
       const item = message.items[message.index];
@@ -504,6 +590,7 @@ export const MessageView = ({
       return (
         <NestorBubble>
           <span style={{ whiteSpace: 'pre-wrap' }}>{message.text}</span>
+          {prompt && <Proposed>{prompt}</Proposed>}
           {prompt && (
             <MainButton type="button" onClick={() => chat.usePrompt(prompt)}>
               {t('Put it in the Assistant’s field')}

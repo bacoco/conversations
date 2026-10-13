@@ -1,6 +1,6 @@
 import type { Round, RoundId } from './types';
 
-export const ROUNDS_MAX = 3;
+export const ROUNDS_MAX = 4;
 
 /** Rounds still useful until done: kept under each new message. */
 export const STICKY_ROUNDS: readonly RoundId[] = [
