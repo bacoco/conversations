@@ -50,9 +50,8 @@ describe('parseRequestCheck', () => {
 });
 
 describe('holes', () => {
-  it('finds brackets, "À COMPLÉTER" and blanks', () => {
+  it('finds brackets and blanks', () => {
     expect(hasHoles('Date : [date].')).toBe(true);
-    expect(hasHoles('Salle : À COMPLÉTER.')).toBe(true);
     expect(hasHoles('Salle : ___.')).toBe(true);
     expect(hasHoles('Écris au [service')).toBe(true);
     expect(hasHoles('Remplis ceci : []')).toBe(true);
@@ -78,7 +77,7 @@ describe('writeVersion', () => {
         completion({ version: 'Invite l’équipe. Date : [date].' }),
       )
       .mockResolvedValueOnce(
-        completion({ version: 'Invite l’équipe. Salle : À COMPLÉTER.' }),
+        completion({ version: 'Invite l’équipe. Salle : [salle].' }),
       );
     const version = await writeVersion(
       {

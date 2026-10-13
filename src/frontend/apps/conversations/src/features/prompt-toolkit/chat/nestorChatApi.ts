@@ -64,8 +64,8 @@ export const checkRequest = async (
     await complete(CHECK_SYSTEM_PROMPT(language), draft, signal),
   );
 
-/** A blank left for later: any bracket, "À COMPLÉTER", underscores. */
-const HOLE = /[[\]]|À COMPL[ÉE]TER|A COMPLETER|TO COMPLETE|_{3,}/i;
+/** A blank left for later: a bracket or a line of underscores (characters, no words). */
+const HOLE = /[[\]]|_{3,}/;
 const SENTENCE_WITH_HOLE = new RegExp(
   `[^.!?\\n]*(?:${HOLE.source})[^.!?\\n]*[.!?]?`,
   'gi',
