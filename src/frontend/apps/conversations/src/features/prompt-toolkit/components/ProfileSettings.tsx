@@ -24,12 +24,7 @@ const selectCss = css`
  * Two optional settings, kept in this browser: the user's field, so that
  * Nestor's examples and the library fit their work, and a beginner mode.
  */
-export const ProfileSettings = ({
-  withBeginner = true,
-}: {
-  /** Nestor's settings (E11) leave the beginner mode out. */
-  withBeginner?: boolean;
-}) => {
+export const ProfileSettings = () => {
   const { t, i18n } = useTranslation();
   const job = useProfileStore((state) => state.job);
   const setJob = useProfileStore((state) => state.setJob);
@@ -77,31 +72,27 @@ export const ProfileSettings = ({
             </option>
           ))}
         </Box>
-        {withBeginner && (
-          <Button
-            size="small"
-            color={isBeginner ? 'brand' : 'neutral'}
-            variant={isBeginner ? 'secondary' : 'tertiary'}
-            aria-pressed={isBeginner}
-            onClick={() => setBeginner(!isBeginner)}
-            icon={
-              <Icon
-                iconName={isBeginner ? 'check' : 'emoji_people'}
-                $size="16px"
-              />
-            }
-          >
-            {t('I am a beginner')}
-          </Button>
-        )}
+        <Button
+          size="small"
+          color={isBeginner ? 'brand' : 'neutral'}
+          variant={isBeginner ? 'secondary' : 'tertiary'}
+          aria-pressed={isBeginner}
+          onClick={() => setBeginner(!isBeginner)}
+          icon={
+            <Icon
+              iconName={isBeginner ? 'check' : 'emoji_people'}
+              $size="16px"
+            />
+          }
+        >
+          {t('I am a beginner')}
+        </Button>
       </Box>
-      {withBeginner && (
-        <Text $size="xs" $variation="secondary">
-          {isBeginner
-            ? t('Beginner mode: fewer details on screen, simpler words.')
-            : t('Nestor adapts its examples and the library to your field.')}
-        </Text>
-      )}
+      <Text $size="xs" $variation="secondary">
+        {isBeginner
+          ? t('Beginner mode: fewer details on screen, simpler words.')
+          : t('Nestor adapts its examples and the library to your field.')}
+      </Text>
     </Box>
   );
 };

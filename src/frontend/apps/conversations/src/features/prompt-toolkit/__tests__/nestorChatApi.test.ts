@@ -150,8 +150,75 @@ describe('writeVersion — the answers woven in', () => {
   });
 });
 
+describe('writeVersion — shorter and other really change', () => {
+  afterEach(() => vi.restoreAllMocks());
+  const draft =
+    'Rédigez un article pour l’intranet à destination des employés sur la journée portes ouvertes du samedi 18 octobre, de 10 h à 17 h, sur un ton informatif.';
+
+  it('"Plus court" not shorter: asked again with a length to keep under', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValueOnce(completion({ version: draft }))
+      .mockResolvedValueOnce(
+        completion({
+          version:
+            'Article intranet : portes ouvertes samedi 18 octobre, 10 h-17 h, ton informatif.',
+        }),
+      );
+    const version = await writeVersion(
+      { draft, answers: [], skipped: [], style: 'shorter' },
+      'French',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(version.length).toBeLessThan(draft.length);
+  });
+
+  it('"Autre version" identical: asked again', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValueOnce(completion({ version: draft }))
+      .mockResolvedValueOnce(
+        completion({
+          version:
+            'Pour l’intranet, écrivez aux employés un article sur les portes ouvertes du samedi 18 octobre (10 h-17 h), ton informatif.',
+        }),
+      );
+    await writeVersion(
+      { draft, answers: [], skipped: [], style: 'other' },
+      'French',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('checkRequest', () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it('reads the request with the conversation so far: what it says is not missing', async () => {
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        present: ['Les bénévoles'],
+        missing: [],
+        message: 'Claire.',
+      }),
+    );
+    await checkRequest(
+      'Remercie les bénévoles de la journée',
+      'French',
+      undefined,
+      [
+        {
+          role: 'user',
+          text: 'Article sur la journée portes ouvertes du 18 octobre',
+        },
+        { role: 'assistant', text: 'Voici l’article…' },
+      ],
+    );
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[1].content).toContain(
+      'journée portes ouvertes du 18 octobre',
+    );
+  });
 
   it('sends the draft as data and reads the answer', async () => {
     const fetchMock = vi

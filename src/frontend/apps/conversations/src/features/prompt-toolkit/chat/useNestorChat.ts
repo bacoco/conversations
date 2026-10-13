@@ -200,7 +200,12 @@ export const useNestorChat = (language: string) => {
   const runImprove = useCallback(() => {
     const draft = draftNow();
     void run('improve', 'improve', async (signal, say) => {
-      const check = await checkRequest(draft, language, signal);
+      const check = await checkRequest(
+        draft,
+        language,
+        signal,
+        useMainConversationStore.getState().turns,
+      );
       warnSensitive(draft, say);
       if (check.missing.length) {
         say({ kind: 'analysis', draft, check });
@@ -220,7 +225,12 @@ export const useNestorChat = (language: string) => {
   const runAnalyse = useCallback(() => {
     const draft = draftNow();
     void run('analyse', 'analyse', async (signal, say) => {
-      const check = await checkRequest(draft, language, signal);
+      const check = await checkRequest(
+        draft,
+        language,
+        signal,
+        useMainConversationStore.getState().turns,
+      );
       warnSensitive(draft, say);
       say(
         { kind: 'analysis', draft, check },
