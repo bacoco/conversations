@@ -435,10 +435,8 @@ export const PartLabel = styled.strong<{ $part: GridPart }>`
 /** Words of a line of the grid, in the version: underlined in its colour. */
 export const PartMark = styled.mark<{ $part: GridPart }>`
   color: inherit;
-  background: ${({ $part }) => PART_COLORS[$part].soft};
-  border-bottom: 2px solid ${({ $part }) => PART_COLORS[$part].ink};
-  border-radius: 3px;
-  padding: 0 2px;
+  background: none;
+  border-bottom: 3px solid ${({ $part }) => PART_COLORS[$part].ink};
 `;
 
 export const PartKeys = styled.div`

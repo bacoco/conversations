@@ -190,7 +190,9 @@ describe('writeVersion', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(version.version).toBe('Invite l’équipe.');
+    expect(version.version).toBe(
+      'Invite l’équipe. À ne pas affirmer (je le vérifierai) : date, salle.',
+    );
   });
 
   it('asks again when an answer of the user is left out', async () => {
@@ -413,7 +415,20 @@ describe('a fact the user does not know', () => {
     expect(body.messages[1].content).toContain(
       'The user does not know these yet: règles RTT',
     );
-    expect(body.messages[1].content).toContain('not to state them either');
+    expect(body.messages[1].content).toContain('Nestor adds that sentence');
+  });
+
+  it('is named exactly, in one sentence Nestor adds himself', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({ version: 'Rédige une réponse à l’agent.', lesson: '' }),
+    );
+    const { version } = await writeVersion(
+      { draft: 'Réponds', answers: [], skipped: ['délai de 48 h'] },
+      'French',
+    );
+    expect(version).toBe(
+      'Rédige une réponse à l’agent. À ne pas affirmer (je le vérifierai) : délai de 48 h.',
+    );
   });
 });
 

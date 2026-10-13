@@ -290,7 +290,7 @@ export const writeVersion = async (
     .map(({ question, answer }) => `${question} → ${answer}`)
     .join('\n')}\n</answers>${
     skipped.length
-      ? `\nThe user does not know these yet: ${skipped.join(', ')}. Never state them and never write a blank: ask the assistant, in one short sentence naming exactly these items and nothing else, not to state them either (for « date » : « N'indiquez pas de date. »), so that it invents nothing.`
+      ? `\nThe user does not know these yet: ${skipped.join(', ')}. Never state them, never write a blank and never write any sentence about them: Nestor adds that sentence himself.`
       : ''
   }${
     gaps.length
@@ -341,7 +341,16 @@ export const writeVersion = async (
     );
     version = versionOf(raw);
   }
-  const clean = hasHoles(version) ? withoutHoles(version) : version;
+  const written = hasHoles(version) ? withoutHoles(version) : version;
+  // What the user does not know is named exactly, so the assistant states
+  // nothing about it: one sentence, written by Nestor, not by the model.
+  const clean = skipped.length
+    ? `${written.trimEnd()} ${
+        language === 'French'
+          ? `À ne pas affirmer (je le vérifierai) : ${skipped.join(', ')}.`
+          : `Do not state (I will check it): ${skipped.join(', ')}.`
+      }`
+    : written;
   // A text pasted under the request (an email, notes) is what the answer
   // works from: when the version left it out, it comes back word for word.
   const missingBlocks = pastedBlocks(draft).filter(
