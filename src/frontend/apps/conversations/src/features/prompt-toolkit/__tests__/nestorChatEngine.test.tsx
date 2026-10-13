@@ -73,6 +73,7 @@ describe('useNestorChat', () => {
         completion({
           version:
             'Rédige un courriel pour inviter toute l’équipe du bureau 3.',
+          lesson: 'Dites quelle équipe dès le début.',
         }),
       );
     const { result } = renderHook(() => useNestorChat('French'));
@@ -102,6 +103,7 @@ describe('useNestorChat', () => {
     expect(version).toMatchObject({
       kind: 'version',
       missing: ['date', 'salle'],
+      lesson: 'Dites quelle équipe dès le début.',
     });
     expect(version.rounds?.[0]).toEqual({
       id: 'redo-with-missing',

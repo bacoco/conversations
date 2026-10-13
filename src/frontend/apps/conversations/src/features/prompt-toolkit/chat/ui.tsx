@@ -474,3 +474,20 @@ export const DockDivider = styled.span`
   background: ${C.line};
   margin: 0 2px;
 `;
+
+/** Under a version: what the user can write themselves next time. */
+export const Lesson = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-left: 3px solid ${C.brand};
+  border-radius: 0 8px 8px 0;
+  background: ${C.brandSoft};
+  color: ${C.brandDark};
+  font-size: 13px;
+  line-height: 1.45;
+  & > strong {
+    font-size: 12px;
+  }
+`;

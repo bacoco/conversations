@@ -168,16 +168,25 @@ export const useNestorChat = (language: string) => {
       signal: AbortSignal,
       say: typeof post,
     ) => {
-      const version = await writeVersion(input, language, signal);
+      const { version, lesson } = await writeVersion(input, language, signal);
       const missing = input.skipped;
-      say({ kind: 'version', original: input.draft, version, missing }, [
-        ...(missing.length
-          ? [{ id: 'redo-with-missing', primary: true } as Round]
-          : []),
-        { id: 'shorter' },
-        { id: 'other-version' },
-        ...extra,
-      ]);
+      say(
+        {
+          kind: 'version',
+          original: input.draft,
+          version,
+          missing,
+          ...(lesson && { lesson }),
+        },
+        [
+          ...(missing.length
+            ? [{ id: 'redo-with-missing', primary: true } as Round]
+            : []),
+          { id: 'shorter' },
+          { id: 'other-version' },
+          ...extra,
+        ],
+      );
       reward('improvement');
     },
     [language, reward],

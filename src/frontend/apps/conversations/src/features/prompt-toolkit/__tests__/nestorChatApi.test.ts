@@ -88,7 +88,7 @@ describe('writeVersion', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(version).toBe('Invite l’équipe.');
+    expect(version.version).toBe('Invite l’équipe.');
   });
 
   it('asks again when an answer of the user is left out', async () => {
@@ -114,7 +114,7 @@ describe('writeVersion', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(version).toContain('bureau 3');
+    expect(version.version).toContain('bureau 3');
   });
 });
 
@@ -146,7 +146,7 @@ describe('writeVersion — the answers woven in', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(version).not.toContain('Pourquoi refuser ?');
+    expect(version.version).not.toContain('Pourquoi refuser ?');
   });
 });
 
@@ -170,7 +170,7 @@ describe('writeVersion — shorter and other really change', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(version.length).toBeLessThan(draft.length);
+    expect(version.version.length).toBeLessThan(draft.length);
   });
 
   it('"Autre version" identical: asked again', async () => {
@@ -188,6 +188,29 @@ describe('writeVersion — shorter and other really change', () => {
       'French',
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('writeVersion — the lesson under the version', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('brings back what to write oneself next time', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      completion({
+        version: 'Rédige un courriel court pour inviter tout le service jeudi.',
+        lesson:
+          'Dites dès le début pour qui et quel jour : « pour tout le service, jeudi ».',
+      }),
+    );
+    const result = await writeVersion(
+      { draft: 'Fais un courriel pour inviter', answers: [], skipped: [] },
+      'French',
+    );
+    expect(result).toEqual({
+      version: 'Rédige un courriel court pour inviter tout le service jeudi.',
+      lesson:
+        'Dites dès le début pour qui et quel jour : « pour tout le service, jeudi ».',
+    });
   });
 });
 

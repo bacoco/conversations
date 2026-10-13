@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Next time, write it yourself:": "La prochaine fois, écrivez vous-même :",
       "Automatic help": "Aide automatique",
       "The same switch as on top. Off: the 4 lines below grey out and Nestor does nothing by himself. On again: they come back as you left them.": "Le même bouton qu’en haut. Éteint : les 4 lignes dessous se grisent et Nestor ne fait plus rien tout seul. Rallumé : elles reprennent comme vous les aviez laissées.",
       "Starting ideas, close to yours.": "Des pistes de départ, proches de la vôtre.",

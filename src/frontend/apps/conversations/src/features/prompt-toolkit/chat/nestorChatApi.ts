@@ -166,7 +166,7 @@ Always begin with the task and who it is for, taken from the user's words (e.g. 
 Keep the user's intent, subject and facts exactly, and weave every answer of <answers> into the request as a plain statement in the user's voice (e.g. answer "besoin de présence" to "Pourquoi refuser ?" becomes "explique que le service a besoin de présence sur place"). Never copy a question, never write "Pourquoi … ?" or "Quelle … ?" from <answers>. A pasted text given as an answer (notes, an email, a document) is kept word for word and introduced as the material to work from ("à partir de ces notes : …"), never with the question's words ("Collez…").
 Never write a placeholder, brackets, "à compléter", "to complete" or a blank. Information the user did not give is simply left out, and the wording adapts so that nothing looks missing. Never invent a name, date, place, figure or fact.
 ${STYLE_RULE[style]}
-JSON shape: {"version": "<the request>"}`;
+JSON shape: {"version": "<the request>", "lesson": "<one short sentence to the user (vous): what they could write themselves next time to get there, quoting the words to add, e.g. « Dites pour qui et quel jour : pour tout le service, jeudi. »>"}`;
 
 const versionOf = (raw: Record<string, unknown>) => {
   const version = typeof raw.version === 'string' ? raw.version.trim() : '';
@@ -175,6 +175,15 @@ const versionOf = (raw: Record<string, unknown>) => {
   }
   return version;
 };
+
+const lessonOf = (raw: Record<string, unknown>) =>
+  typeof raw.lesson === 'string' ? raw.lesson.trim() : '';
+
+/** A version, and what the user can write themselves next time. */
+export interface WrittenVersion {
+  version: string;
+  lesson: string;
+}
 
 const normalized = (text: string) =>
   text.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
@@ -201,7 +210,7 @@ export const writeVersion = async (
   { draft, answers, skipped, style = 'full' }: VersionInput,
   language: string,
   signal?: AbortSignal,
-): Promise<string> => {
+): Promise<WrittenVersion> => {
   const system = VERSION_SYSTEM_PROMPT(language, style);
   const input = `<prompt>\n${draft}\n</prompt>\n<answers>\n${answers
     .map(({ question, answer }) => `${question} → ${answer}`)
@@ -210,7 +219,8 @@ export const writeVersion = async (
       ? `\nLeave out entirely, the user does not know them: ${skipped.join(', ')}.`
       : ''
   }`;
-  let version = versionOf(await complete(system, input, signal, false));
+  let raw = await complete(system, input, signal, false);
+  let version = versionOf(raw);
   const dropped = droppedAnswers(answers, version);
   const copied = copiedQuestions(answers, version);
   // "Plus court" and "Autre version" must change something the user sees.
@@ -224,36 +234,38 @@ export const writeVersion = async (
     notShorter ||
     unchanged
   ) {
-    version = versionOf(
-      await complete(
-        system,
-        `${input}\n\nYour version was: ${version}\n${
-          hasHoles(version)
-            ? 'It holds a blank: remove it and adapt the wording. '
-            : ''
-        }${
-          dropped.length
-            ? `It leaves out: ${dropped.join(', ')}. Put them in. `
-            : ''
-        }${
-          copied.length
-            ? `It copies the questions (${copied.join(' ')}): write the answers as plain statements instead. `
-            : ''
-        }${
-          notShorter
-            ? `It is not shorter: keep it under ${limit} characters, every fact kept. `
-            : ''
-        }${
-          unchanged
-            ? 'It is the same text: change the structure and the words, the same facts. '
-            : ''
-        }Return the whole version again.`,
-        signal,
-        false,
-      ),
+    raw = await complete(
+      system,
+      `${input}\n\nYour version was: ${version}\n${
+        hasHoles(version)
+          ? 'It holds a blank: remove it and adapt the wording. '
+          : ''
+      }${
+        dropped.length
+          ? `It leaves out: ${dropped.join(', ')}. Put them in. `
+          : ''
+      }${
+        copied.length
+          ? `It copies the questions (${copied.join(' ')}): write the answers as plain statements instead. `
+          : ''
+      }${
+        notShorter
+          ? `It is not shorter: keep it under ${limit} characters, every fact kept. `
+          : ''
+      }${
+        unchanged
+          ? 'It is the same text: change the structure and the words, the same facts. '
+          : ''
+      }Return the whole version again.`,
+      signal,
+      false,
     );
+    version = versionOf(raw);
   }
-  return hasHoles(version) ? withoutHoles(version) : version;
+  return {
+    version: hasHoles(version) ? withoutHoles(version) : version,
+    lesson: lessonOf(raw),
+  };
 };
 
 /** "Sur 2 conseils, vous en avez appliqué 1": checked advice only. */

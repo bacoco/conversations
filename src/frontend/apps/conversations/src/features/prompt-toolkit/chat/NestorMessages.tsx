@@ -13,6 +13,7 @@ import {
   Choices,
   Event,
   Keys,
+  Lesson,
   LinkButton,
   MainButton,
   NestorBubble,
@@ -238,6 +239,13 @@ export const MessageView = ({
             <Keys>
               <Added>{t('Suggested by Nestor')}</Added>
             </Keys>
+          )}
+          {/* The point of Nestor: the user learns to write it themselves. */}
+          {message.lesson && (
+            <Lesson>
+              <strong>{t('Next time, write it yourself:')}</strong>
+              <span>{message.lesson}</span>
+            </Lesson>
           )}
           {message.missing.length > 0 && (
             <Warn>

@@ -86,7 +86,14 @@ export type NestorMessage = Base &
         /** The question message this answers, if any. */
         answers?: string;
       }
-    | { kind: 'version'; original: string; version: string; missing: string[] }
+    | {
+        kind: 'version';
+        original: string;
+        version: string;
+        missing: string[];
+        /** What the user can write themselves next time. */
+        lesson?: string;
+      }
     | { kind: 'placed'; previous: string; undone?: boolean }
     | {
         kind: 'advice';

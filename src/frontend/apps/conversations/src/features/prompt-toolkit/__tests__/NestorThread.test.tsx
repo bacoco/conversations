@@ -214,6 +214,31 @@ describe('<NestorThread />', () => {
     ).toBeInTheDocument();
   });
 
+  it('under the version, the lesson: what to write oneself next time', () => {
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'v',
+            action: 9,
+            kind: 'version',
+            original: 'a',
+            version: 'b',
+            missing: [],
+            lesson: 'Dites pour qui dès le début.',
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    expect(
+      screen.getByText('Next time, write it yourself:'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Dites pour qui dès le début.'),
+    ).toBeInTheDocument();
+  });
+
   it('a question: "Question 1 of 3", the choices, "I don’t know", stop', () => {
     const items = [
       {
