@@ -364,10 +364,10 @@ export const reviewSession = async (
     )
     .join('\n');
   const unsaid = gaps.length
-    ? `\nThe user's requests most often did not say: ${gaps.join(', ')} (task = what to write, reader = who will read it, material = the information to use, form, tone). The first tip is about the first of them, in the user's words, never about another line.`
+    ? `\nThe user's requests most often did not say: ${gaps.join(', ')} (task = what to write, reader = who will read it, material = the information to use, form, tone). The first tip MUST be about "${gaps[0]}" and nothing else (form: say the length and layout, e.g. « en 5 lignes »; tone: say the tone, e.g. « courtois et simple »; reader: say who will read it; material: give the text to work from; task: say what to write), with an example from this session. Never make the first tip about another line, even the reader.`
     : '';
   const written = authors.length
-    ? `\nEach prompt says who wrote it. by="nestor": the coach wrote it, the user only clicked; never praise or judge the user on it, never say they wrote it. by="both": judge only what the user added. When no prompt is by="user" or "both", "summary" says first, plainly, that Nestor wrote the requests this time; "strengths" is empty; the first tip invites them to write the next request themselves, starting with one thing: who will read it, from what, which form or which tone. Speak of « demandes », never of « prompts ».`
+    ? `\nEach prompt says who wrote it. by="nestor": the coach wrote it, the user only clicked; never praise or judge the user on it, never say they wrote it. by="both": judge only what the user added. When no prompt is by="user" or "both", "summary" says first, plainly, that Nestor wrote the requests this time; "strengths" is empty; the first tip invites them to write the next request themselves, starting with that one line. Speak of « demandes », never of « prompts ».`
     : '';
   const coached = advice.length
     ? `\n<advice>\n${advice.map((item) => `After prompt ${item.afterPrompt}: ${item.text}`).join('\n')}\n</advice>\nDuring the session, the coach gave this advice, each marked applied yes, no or unknown. Use these marks as they are, never your own guess: in "summary", mention an advice as applied only when it is marked "applied: yes"; never say an advice marked "no" or "unknown" was applied.`
