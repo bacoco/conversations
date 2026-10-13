@@ -664,29 +664,33 @@ const meaningfulWords = (text: string) =>
 
 /**
  * The answers of the user that the final prompt does not carry: most of
- * their words are missing. Skips ("I do not know") are not answers.
+ * their words are missing. Skips (marked `skipped`) are not answers.
  */
 export const droppedAnswers = (
-  answers: { question: string; answer: string }[],
+  answers: { question: string; answer: string; skipped?: boolean }[],
   prompt: string,
 ) => {
   const inPrompt = new Set(meaningfulWords(prompt));
-  return answers
-    .map(({ answer }) => answer.trim())
-    .filter((answer) => {
-      const words = meaningfulWords(answer);
-      if (words.length === 0 || /passe|skip|sais pas|know/i.test(answer)) {
-        return false;
-      }
-      const found = words.filter((word) =>
-        [...inPrompt].some(
-          (other) =>
-            other.startsWith(word.slice(0, 5)) ||
-            word.startsWith(other.slice(0, 5)),
-        ),
-      ).length;
-      return found / words.length < 0.5;
-    });
+  return (
+    answers
+      // A skip is marked by the button that made it, never read from words.
+      .filter(({ skipped }) => !skipped)
+      .map(({ answer }) => answer.trim())
+      .filter((answer) => {
+        const words = meaningfulWords(answer);
+        if (words.length === 0) {
+          return false;
+        }
+        const found = words.filter((word) =>
+          [...inPrompt].some(
+            (other) =>
+              other.startsWith(word.slice(0, 5)) ||
+              word.startsWith(other.slice(0, 5)),
+          ),
+        ).length;
+        return found / words.length < 0.5;
+      })
+  );
 };
 
 /** A text pasted between triple quotes: an email, notes, a document. */

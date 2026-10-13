@@ -14,6 +14,8 @@ import {
 export interface Exchange {
   question: string;
   answer: string;
+  /** The user skipped the question: no answer to carry. */
+  skipped?: boolean;
 }
 
 export type GuidedFillStatus = 'idle' | 'loading' | 'ready' | 'error';
@@ -100,13 +102,17 @@ export const useGuidedFill = ({
   const question = step?.kind === 'question' ? step : null;
   const final = step?.kind === 'final' ? step : null;
 
-  const reply = (text: string) => {
+  const reply = (text: string, skipped = false) => {
     if (!question || status === 'loading') {
       return;
     }
     const history = [
       ...exchanges,
-      { question: question.question, answer: text },
+      {
+        question: question.question,
+        answer: text,
+        ...(skipped && { skipped }),
+      },
     ];
     setExchanges(history);
     ask(history);
@@ -163,7 +169,7 @@ export const useGuidedFill = ({
     isAdjusting,
     reply,
     /** Skip the current question. */
-    skip: () => reply(t('I do not know, skip this question.')),
+    skip: () => reply(t('I do not know, skip this question.'), true),
     /** Stop the questions: the prompt is written with what is known. */
     finish: () => ask(exchanges, true),
     retry: () => ask(exchanges),

@@ -153,7 +153,12 @@ describe('the answers the user gave to Nestor', () => {
         question: 'Quel but ?',
         answer: 'Informer sur les nouvelles règles de télétravail',
       },
-      { question: 'Quel délai ?', answer: 'Je ne sais pas, passe à la suite.' },
+      // A skip is marked as such, never recognised by its words.
+      {
+        question: 'Quel délai ?',
+        answer: 'Je ne sais pas, passe à la suite.',
+        skipped: true,
+      },
     ];
     expect(
       droppedAnswers(
