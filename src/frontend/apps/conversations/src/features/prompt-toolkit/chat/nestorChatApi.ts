@@ -1,4 +1,5 @@
 import {
+  COACH_MODEL,
   COMMON_RULES,
   ChatMessage,
   CoachError,
@@ -13,6 +14,7 @@ import {
   formatConversationContext,
 } from '../coach/coachApi';
 
+import { changedNumbers } from './facts';
 import {
   GRID_PARTS,
   GridLine,
@@ -283,7 +285,15 @@ const withPasted = (text: string, draft: string) => {
  * The request first, the pasted texts last and word for word: what the
  * model copied of them comes out, with the words that introduced them.
  */
-const requestThenPasted = (text: string, draft: string) => {
+/** A sentence starts with a capital: « … ci-dessous. À partir du… ». */
+const capitalized = (text: string) =>
+  text.replace(
+    /(^|[.!?]\s+)(\p{Ll})/gu,
+    (_, before: string, letter: string) => `${before}${letter.toUpperCase()}`,
+  );
+
+const requestThenPasted = (raw: string, draft: string) => {
+  const text = capitalized(raw);
   const blocks = pastedBlocks(draft);
   if (!blocks.length) return text;
   const bodies = blocks.map((block) => normalized(longestLine(block)));
@@ -422,6 +432,10 @@ export const adviceCount = (messages: NestorMessage[]) => {
 export interface CounselTip {
   text: string;
   why: string;
+  /** The words « Ajouter » puts in the request; none when only the user knows. */
+  add?: string;
+  /** The line of the grid it is about, to remember what the user does. */
+  part?: GridPart;
 }
 
 /** What Nestor thinks of a request, before any rewriting. */
@@ -441,7 +455,8 @@ Say first what the request already does well (0 to ${COUNSEL_GOOD_MAX} points, q
 Advise only what changes THIS answer: what to write and for whom, the text to work from, the length and the layout, the tone, what the assistant must not invent. A simple, complete request gets one piece of advice at most.
 Never ask the user a question and never ask them for a fact. When the answer depends on something only the user or their administration knows (a rule, a deadline, an approval, a date), advise to have the assistant state it as a condition without saying it is met, e.g. « Demandez-lui de rappeler les conditions de la note sans dire qu'elles sont remplies. ».
 Never invent a fact, a name, a date or a rule. No jargon: never "prompt", "contexte", "public cible".
-JSON shape: {"good": ["<sentence>"], "tips": [{"text": "<what to do>", "why": "<why it changes the answer>"}]}`;
+For each piece of advice, also give "add": the few words to add to the request to apply it, in the user's own voice (« en 5 lignes, sur un ton courtois »), or "" when only the user knows them (a fact, a name, a text to paste); and "part": the line it is about (task, reader, material, form, tone), or "".
+JSON shape: {"good": ["<sentence>"], "tips": [{"text": "<what to do>", "why": "<why it changes the answer>", "add": "", "part": ""}]}`;
 
 export const parseRequestAdvice = (
   raw: Record<string, unknown>,
@@ -455,10 +470,18 @@ export const parseRequestAdvice = (
       (tip): tip is Record<string, unknown> =>
         typeof tip === 'object' && tip !== null,
     )
-    .map((tip) => ({
-      text: typeof tip.text === 'string' ? tip.text.trim() : '',
-      why: typeof tip.why === 'string' ? tip.why.trim() : '',
-    }))
+    .map((tip) => {
+      const add = typeof tip.add === 'string' ? tip.add.trim() : '';
+      return {
+        text: typeof tip.text === 'string' ? tip.text.trim() : '',
+        why: typeof tip.why === 'string' ? tip.why.trim() : '',
+        // Words with a blank would put a blank in the request: none.
+        ...(add && !hasHoles(add) && { add }),
+        ...((GRID_PARTS as readonly unknown[]).includes(tip.part) && {
+          part: tip.part as GridPart,
+        }),
+      };
+    })
     .filter((tip) => tip.text)
     .slice(0, COUNSEL_TIPS_MAX);
   if (!good.length && !tips.length) {
@@ -472,6 +495,8 @@ export const adviseRequest = async (
   language: string,
   signal?: AbortSignal,
   conversation: ConversationContextTurn[] = [],
+  /** What the user said they already do: never advised again. */
+  known: GridPart[] = [],
 ): Promise<RequestAdvice> => {
   const context = formatConversationContext(conversation);
   const raw = await complete(
@@ -480,18 +505,29 @@ export const adviseRequest = async (
       context
         ? `<conversation>\n${context}\n</conversation>\nThe conversation above is context only.\n`
         : ''
-    }<prompt>\n${draft}\n</prompt>`,
+    }<prompt>\n${draft}\n</prompt>${
+      known.length
+        ? `\nThe user already does these by themselves: ${known.join(', ')}. Never advise them.`
+        : ''
+    }`,
     signal,
     false,
     FILL_MODEL,
   );
-  return parseRequestAdvice(raw);
+  const advice = parseRequestAdvice(raw);
+  // Told « je le fais déjà »: that advice never comes back.
+  return {
+    ...advice,
+    tips: advice.tips.filter((tip) => !tip.part || !known.includes(tip.part)),
+  };
 };
 
 /** A ready request, and what sets it apart from the other one. */
 export interface VersionChoice {
   title: string;
   text: string;
+  /** Figures of the user's text this version added or lost. */
+  changed?: { added: string[]; removed: string[] };
 }
 
 export interface ChoicesInput {
@@ -545,9 +581,13 @@ export const writeChoices = async (
     .map((item) => {
       const text = typeof item.text === 'string' ? item.text.trim() : '';
       const whole = hasHoles(text) ? withoutHoles(text) : text;
+      const request = whole ? requestThenPasted(whole, draft) : '';
+      // The code checks the figures, never the model.
+      const changed = changedNumbers(draft, request, tips);
       return {
         title: typeof item.title === 'string' ? item.title.trim() : '',
-        text: whole ? requestThenPasted(whole, draft) : '',
+        text: request,
+        ...((changed.added.length || changed.removed.length) && { changed }),
       };
     })
     .filter((choice) => choice.text)
@@ -668,3 +708,90 @@ export const coachChat = async (
   );
   return parseCoachReply(raw);
 };
+
+/* « Que voulez-vous faire ? »: a task of the job, started for the user. */
+
+/** The start of a request for a task, and one good reflex to keep. */
+export interface Starter {
+  request: string;
+  reflex: string;
+}
+
+const STARTER_SYSTEM_PROMPT = (language: string) =>
+  `You are Nestor, a coach next to a public servant who works with an AI assistant. They chose a task of their job; you give them a good start of a request for it, and the one reflex it teaches.
+${COMMON_RULES(language)}
+"request": a request they can send to the assistant for this task, in a few whole sentences, in their job's words: what to write, for whom, the length and the tone. Never invent a fact, a name, a date or a figure: where only the user has the material, say where to put it (« à partir du courriel ci-dessous », « à partir de mes notes ci-dessous »). Never a blank or brackets.
+"reflex": one sentence, the habit this request shows, to keep for any request (« Dites toujours qui va lire. »).
+JSON shape: {"request": "", "reflex": ""}`;
+
+export const parseStarter = (raw: Record<string, unknown>): Starter => {
+  const request = typeof raw.request === 'string' ? raw.request.trim() : '';
+  const reflex = typeof raw.reflex === 'string' ? raw.reflex.trim() : '';
+  const whole = hasHoles(request) ? withoutHoles(request) : request;
+  if (!whole && !reflex) {
+    throw new CoachError('Nestor returned no start');
+  }
+  return { request: whole, reflex };
+};
+
+export const starterFor = async (
+  task: string,
+  language: string,
+  signal?: AbortSignal,
+): Promise<Starter> =>
+  parseStarter(
+    await complete(
+      STARTER_SYSTEM_PROMPT(language),
+      `The task: ${task}`,
+      signal,
+      false,
+      FILL_MODEL,
+    ),
+  );
+
+/* « J'ai corrigé »: Nestor looks only at the advice he gave. */
+
+export interface FixCheck {
+  /** One per piece of advice, in order: applied or not. */
+  done: boolean[];
+  message: string;
+}
+
+const CHECK_FIX_SYSTEM_PROMPT = (language: string) =>
+  `You are Nestor, a coach. The user corrected their request themselves after your advice. Look ONLY at the advice given in <advice>: for each one, in order, is it applied in <prompt>? Answer true or false, nothing else.
+${COMMON_RULES(language)}
+"message": one short sentence to the user (vous), warm and concrete: what they did well, or the one thing still to do.
+JSON shape: {"done": [true, false], "message": ""}`;
+
+export const parseCheckFix = (
+  raw: Record<string, unknown>,
+  count: number,
+): FixCheck => {
+  const done = (Array.isArray(raw.done) ? raw.done : [])
+    .slice(0, count)
+    .map((value) => value === true);
+  const message = typeof raw.message === 'string' ? raw.message.trim() : '';
+  if (done.length !== count) {
+    throw new CoachError('Nestor did not check every piece of advice');
+  }
+  return { done, message };
+};
+
+export const checkFix = async (
+  draft: string,
+  tips: string[],
+  language: string,
+  signal?: AbortSignal,
+): Promise<FixCheck> =>
+  parseCheckFix(
+    await complete(
+      CHECK_FIX_SYSTEM_PROMPT(language),
+      `<prompt>\n${draft}\n</prompt>\n<advice>\n${tips
+        .map((tip, index) => `${index + 1}. ${tip}`)
+        .join('\n')}\n</advice>`,
+      signal,
+      false,
+      COACH_MODEL,
+    ),
+    tips.length,
+  );

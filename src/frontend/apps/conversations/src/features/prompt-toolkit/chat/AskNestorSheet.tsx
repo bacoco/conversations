@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
 import type { TFunction } from 'i18next';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { Box, Icon } from '@/components';
 
+import { jobById } from '../jobs/jobs';
 import { Listening, RECORD_RED, pulse } from '../speech/RecordingSigns';
 import { appendText, speechLanguageOf } from '../speech/transcribe';
 import { useSpeechCapture } from '../speech/useSpeechCapture';
-import { jobById } from '../jobs/jobs';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { useProfileStore } from '../stores/useProfileStore';
 

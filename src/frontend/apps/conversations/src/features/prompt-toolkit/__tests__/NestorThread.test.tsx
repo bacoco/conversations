@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import { NestorThread } from '../chat/NestorThread';
 import type { NestorMessage } from '../chat/types';
 import type { NestorChat } from '../chat/useNestorChat';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -44,6 +45,8 @@ describe('<NestorThread />', () => {
   });
 
   it('shows the welcome and "Voir des exemples" on an empty thread', () => {
+    // The job question answered « Plus tard »: the usual welcome.
+    useCoachPrefsStore.setState({ jobLater: true });
     render(<NestorThread chat={chatWith([])} pistes={[]} />);
     expect(
       screen.getByText(/Write your request in the Assistant’s field/),

@@ -12,9 +12,11 @@ import {
 } from '../coach/coachApi';
 import { detectSensitiveData } from '../coach/sensitiveData';
 import { answerGaps } from '../coach/useAfterAnswer';
-import { jobById } from '../jobs/jobs';
+import { casesOf, jobById } from '../jobs/jobs';
+import { useCasesStore } from '../learn/cases/casesProgress';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { useReward } from '../rewards/useReward';
+import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   NEW_CHAT_KEY,
@@ -30,29 +32,72 @@ import { usePlacePrompt } from '../tools/usePlacePrompt';
 import { authorOf } from './author';
 import { decideBarAction } from './barGuard';
 import { ExamplePair, examplePairs } from './examples';
+import { requestSays, unfoundNumbers } from './facts';
 import { barLabel, roundLabel } from './labels';
 import {
   CoachTurn,
   VersionInput,
   adviceCount,
   adviseRequest,
+  checkFix,
   checkRequest,
   coachChat,
   hasHoles,
+  starterFor,
   writeChoices,
   writeVersion,
 } from './nestorChatApi';
 import { PASTED_ANSWER_CHARS, questionState } from './questions';
 import { carryOver } from './rounds';
+import { GRID_PARTS } from './types';
 import type {
   BarAction,
   NestorMessage,
   NewMessage,
+  PartProgress,
+  Pending,
+  RetryStep,
   Round,
+  TipState,
   UserVia,
 } from './types';
 
 export type BusyKind = BarAction | 'advice' | 'version' | 'reply';
+
+/** A task of the job, as the user reads it: « Rédiger une fiche de poste ». */
+const asSentence = (task: string) =>
+  task.charAt(0).toUpperCase() + task.slice(1);
+
+/**
+ * The advice's words, at the end of the request itself: a text pasted
+ * under it (an email, a note) stays below, untouched.
+ */
+export const withWords = (field: string, words: string) => {
+  const cut = field.indexOf('\n\n');
+  const request = (cut < 0 ? field : field.slice(0, cut)).trimEnd();
+  const rest = cut < 0 ? '' : field.slice(cut);
+  const ended = /[.!?]$/.test(request);
+  const body = ended ? request.slice(0, -1) : request;
+  return `${body} ${words}${ended ? request.slice(-1) : ''}${rest}`;
+};
+
+/** The lines of the grid said in the session's analysed requests. */
+const progressOf = (messages: NestorMessage[]): PartProgress[] => {
+  const grids = messages.flatMap((message) =>
+    message.kind === 'analysis' ? [message.check.grid] : [],
+  );
+  if (!grids.length) return [];
+  return GRID_PARTS.map((part) => ({
+    part,
+    said: grids.filter((grid) =>
+      grid.some((line) => line.part === part && line.words),
+    ).length,
+    total: grids.length,
+  }))
+    .filter((line) => line.said > 0)
+    .sort((a, b) => b.said - a.said)
+    .slice(0, 2);
+};
 
 type Find<K extends NestorMessage['kind']> = Extract<
   NestorMessage,
@@ -179,7 +224,7 @@ export const useNestorChat = (language: string) => {
   const run = useCallback(
     async (
       kind: BusyKind,
-      retry: BarAction | null,
+      retry: RetryStep | null,
       task: (signal: AbortSignal, say: typeof post) => Promise<void>,
     ) => {
       controllerRef.current?.abort();
@@ -194,7 +239,10 @@ export const useNestorChat = (language: string) => {
         await task(controller.signal, say);
       } catch {
         if (!controller.signal.aborted && retry) {
-          post({ kind: 'error', retry }, [{ id: 'retry', primary: true }]);
+          post({ kind: 'error', retry }, [
+            { id: 'retry', primary: true },
+            { id: 'say' },
+          ]);
         }
       } finally {
         if (controllerRef.current === controller) setBusy(null);
@@ -205,11 +253,30 @@ export const useNestorChat = (language: string) => {
 
   const draftNow = () => usePromptToolkitStore.getState().chatInput.trim();
 
-  const warnSensitive = (text: string, say: typeof post) => {
-    if (detectSensitiveData(text).length) {
-      say({ kind: 'warning', text: 'sensitive' });
-    }
-  };
+  /** « Continuer quand même »: the next step goes, personal data or not. */
+  const allowOnceRef = useRef(false);
+
+  /**
+   * Personal data (a social security number, an IBAN…): Nestor sends
+   * nothing before the user decides. True when it stopped.
+   */
+  const stopForData = useCallback(
+    (text: string, pending: Pending) => {
+      const kinds = detectSensitiveData(text);
+      if (!kinds.length) return false;
+      if (allowOnceRef.current) {
+        allowOnceRef.current = false;
+        return false;
+      }
+      post({ kind: 'sensitive', kinds, pending }, [
+        { id: 'remove-sensitive', primary: true },
+        { id: 'send-anyway' },
+        { id: 'say' },
+      ]);
+      return true;
+    },
+    [post],
+  );
 
   /**
    * The caller says what the version is made of: answers and skips of the
@@ -282,8 +349,8 @@ export const useNestorChat = (language: string) => {
           language,
           signal,
           useMainConversationStore.getState().turns,
+          useCoachPrefsStore.getState().knownParts,
         );
-        warnSensitive(draft, say);
         say({ kind: 'counsel', draft, advice }, [
           { id: 'give-text', primary: true },
           { id: 'two-versions' },
@@ -292,14 +359,14 @@ export const useNestorChat = (language: string) => {
         ]);
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [language, run],
   );
 
   /** The text at the end: one request, or two to choose from. */
   const runChoices = useCallback(
     (draft: string, count: 1 | 2, tips: string[]) => {
-      void run('version', 'improve', async (signal, say) => {
+      const again: RetryStep = { kind: 'choices', draft, count, tips };
+      void run('version', again, async (signal, say) => {
         const items = await writeChoices(
           { draft, count, tips },
           language,
@@ -321,7 +388,6 @@ export const useNestorChat = (language: string) => {
         signal,
         useMainConversationStore.getState().turns,
       );
-      warnSensitive(draft, say);
       say(
         { kind: 'analysis', draft, check },
         check.missing.length
@@ -395,14 +461,32 @@ export const useNestorChat = (language: string) => {
       const lesson = lastAdvice?.note.competency
         ? LESSON_FOR_COMPETENCY[lastAdvice.note.competency]
         : undefined;
+      // What the session shows, counted by the code: the lines said, the
+      // request to keep, and a case of the job not done yet to practise.
+      const progress = progressOf(all);
+      // The request itself, without the email or note pasted under it:
+      // that is what can be used again.
+      const last = prompts.at(-1) ?? '';
+      const favorite = last.split('\n\n')[0].trim();
+      const jobId = jobById(useProfileStore.getState().job?.id)?.id;
+      const done = useCasesStore.getState().done;
+      const cases = jobId ? casesOf(jobId) : [];
+      const practice = cases.find((item) => !done[item.id]) ?? cases[0];
       say(
         {
           kind: 'review',
           review,
           ...adviceCount(all),
           answerId: latestCompletedAssistantMessageId ?? '',
+          ...(progress.length && { progress }),
+          ...(favorite && { favorite }),
+          ...(practice && { caseId: practice.id }),
         },
-        [{ id: 'new-request' }, ...(lesson ? [{ id: 'lesson' } as Round] : [])],
+        [
+          { id: 'new-request' },
+          ...(lesson ? [{ id: 'lesson' } as Round] : []),
+          { id: 'say' },
+        ],
       );
     });
   }, [key, language, run, store]);
@@ -454,6 +538,13 @@ export const useNestorChat = (language: string) => {
         }
         return;
       }
+      // Nothing personal leaves before the user decides.
+      if (
+        (bar === 'analyse' || bar === 'improve') &&
+        stopForData(draftNow(), { bar })
+      ) {
+        return;
+      }
       const resume: Round[] = decision.resumeQuestions
         ? [{ id: 'resume-questions' }]
         : [];
@@ -476,7 +567,17 @@ export const useNestorChat = (language: string) => {
       }
       if (bar === 'review') runReview();
     },
-    [key, post, runAnalyse, runCounsel, runReview, store, t, writeAndPost],
+    [
+      key,
+      post,
+      runAnalyse,
+      runCounsel,
+      runReview,
+      stopForData,
+      store,
+      t,
+      writeAndPost,
+    ],
   );
 
   const askQuestion = useCallback(
@@ -549,6 +650,8 @@ export const useNestorChat = (language: string) => {
     (extra?: string) => {
       const all = messagesOf(store().chats, key);
       const history = coachHistory(all, extra);
+      const outgoing = [draftNow(), ...history.map((turn) => turn.text)];
+      if (stopForData(outgoing.join('\n'), { ask: true })) return;
       void run('reply', 'ask', async (signal, say) => {
         const reply = await coachChat(
           { history, draft: draftNow(), done: doneSteps(all) },
@@ -583,8 +686,113 @@ export const useNestorChat = (language: string) => {
         );
       });
     },
-    [key, language, run, runBar, store],
+    [key, language, run, runBar, stopForData, store],
   );
+
+  const runTask = useCallback(
+    (task: string) => {
+      void run('reply', { kind: 'task', task }, async (signal, say) => {
+        const { request, reflex } = await starterFor(task, language, signal);
+        say({ kind: 'starter', task, request, reflex }, [{ id: 'say' }]);
+      });
+    },
+    [language, run],
+  );
+
+  /** « Que voulez-vous faire ? »: a task of the job, started for the user. */
+  const startTask = useCallback(
+    (task: string) => {
+      store().beginAction(key);
+      store().post(key, {
+        kind: 'user',
+        via: 'action',
+        text: asSentence(task),
+      });
+      runTask(task);
+    },
+    [key, runTask, store],
+  );
+
+  /**
+   * « J'ai corrigé »: only the advice he gave. Words he advised to add are
+   * checked by the code in the request itself; Nestor reads the rest.
+   */
+  const runCheckFix = useCallback(() => {
+    const all = messagesOf(store().chats, key);
+    const counsel = lastOf(all, 'counsel');
+    if (!counsel) return;
+    const states = counsel.tipStates ?? {};
+    const open = counsel.advice.tips.filter(
+      (_, index) => !['ignored', 'known'].includes(states[index] ?? ''),
+    );
+    if (!open.length) return;
+    const field = draftNow();
+    const tips = open.map((tip) => tip.text);
+    const byCode = open.map((tip) =>
+      tip.add ? requestSays(field, tip.add) : null,
+    );
+    const toRead = open.filter((tip) => !tip.add).map((tip) => tip.text);
+    const sayCheck = (done: boolean[], say: typeof post) => {
+      const still = tips.find((_, index) => !done[index]);
+      say(
+        {
+          kind: 'fixcheck',
+          tips,
+          done,
+          message: still
+            ? t('Still to do: {{tip}}', { tip: still })
+            : t('Well done: everything I advised is in your request.'),
+        },
+        still
+          ? [{ id: 'give-text', primary: true }, { id: 'say' }]
+          : [{ id: 'say' }],
+      );
+    };
+    if (!toRead.length) {
+      sayCheck(
+        byCode.map((value) => value === true),
+        post,
+      );
+      return;
+    }
+    void run('reply', null, async (signal, say) => {
+      const read = await checkFix(field, toRead, language, signal);
+      let next = 0;
+      sayCheck(
+        byCode.map((value) => value ?? read.done[next++] ?? false),
+        say,
+      );
+    });
+  }, [key, language, post, run, store, t]);
+
+  /** « Ajouter », « Ignorer », « Je le fais déjà » under a piece of advice. */
+  const tipAction = useCallback(
+    (messageId: string, index: number, state: TipState) => {
+      const counsel = messagesOf(store().chats, key).find(
+        (item): item is Find<'counsel'> =>
+          item.id === messageId && item.kind === 'counsel',
+      );
+      const tip = counsel?.advice.tips[index];
+      if (!counsel || !tip) return;
+      if (state === 'added' && tip.add) {
+        const field = usePromptToolkitStore.getState().chatInput;
+        usePromptToolkitStore
+          .getState()
+          .setChatInput?.(withWords(field, tip.add));
+      }
+      if (state === 'known' && tip.part) {
+        useCoachPrefsStore.getState().addKnownPart(tip.part);
+      }
+      store().markTip(key, messageId, index, state);
+    },
+    [key, store],
+  );
+
+  /** « Garder mon texte »: the field stays as the user wrote it. */
+  const keepText = useCallback(() => {
+    store().beginAction(key);
+    post({ kind: 'hint', hint: 'kept-text' });
+  }, [key, post, store]);
 
   const askNestor = useCallback(
     (text: string, via: 'voice' | 'keyboard') => {
@@ -637,18 +845,41 @@ export const useNestorChat = (language: string) => {
           if (analysis) runChoices(draftNow() || analysis.draft, 1, []);
           break;
         case 'give-text':
-        case 'two-versions':
-          if (message.kind === 'counsel') {
+        case 'two-versions': {
+          // From the advice, or from the check of the user's correction.
+          const counsel =
+            message.kind === 'counsel' ? message : lastOf(all, 'counsel');
+          if (counsel) {
             runChoices(
-              message.draft,
+              message.kind === 'counsel'
+                ? counsel.draft
+                : draftNow() || counsel.draft,
               round.id === 'give-text' ? 1 : 2,
-              message.advice.tips.map((tip) => tip.text),
+              counsel.advice.tips.map((tip) => tip.text),
             );
           }
           break;
+        }
         case 'fix-myself':
-          post({ kind: 'hint', hint: 'fix-myself' });
+          post({ kind: 'hint', hint: 'fix-myself' }, [
+            { id: 'check-fix', primary: true },
+            { id: 'say' },
+          ]);
           focusAssistantField();
+          break;
+        case 'check-fix':
+          runCheckFix();
+          break;
+        case 'remove-sensitive':
+          post({ kind: 'hint', hint: 'remove-sensitive' });
+          focusAssistantField();
+          break;
+        case 'send-anyway':
+          if (message.kind === 'sensitive') {
+            allowOnceRef.current = true;
+            if ('bar' in message.pending) runBar(message.pending.bar, true);
+            else replyAsCoach();
+          }
           break;
         case 'clarify-request':
           runBar('improve', true);
@@ -704,7 +935,14 @@ export const useNestorChat = (language: string) => {
           break;
         }
         case 'retry':
-          if (message.kind === 'error') runBar(message.retry);
+          // The very step that failed, with its own data.
+          if (message.kind === 'error') {
+            const step = message.retry;
+            if (typeof step === 'string') runBar(step);
+            else if (step.kind === 'choices')
+              runChoices(step.draft, step.count, step.tips);
+            else runTask(step.task);
+          }
           break;
       }
     },
@@ -715,8 +953,10 @@ export const useNestorChat = (language: string) => {
       post,
       replyAsCoach,
       runBar,
+      runCheckFix,
       runChoices,
       runCounsel,
+      runTask,
       showExamples,
       store,
       t,
@@ -742,14 +982,19 @@ export const useNestorChat = (language: string) => {
   /** One of the versions at the end of the advice, put in the field. */
   const placeChoice = useCallback(
     (messageId: string, index: number) => {
-      const versions = messagesOf(store().chats, key).find(
-        (item): item is Find<'versions'> =>
-          item.id === messageId && item.kind === 'versions',
+      const message = messagesOf(store().chats, key).find(
+        (item) => item.id === messageId,
       );
-      const choice = versions?.items[index];
-      if (!choice) return;
+      // A version at the end of the advice, or the start of a task.
+      const text =
+        message?.kind === 'versions'
+          ? message.items[index]?.text
+          : message?.kind === 'starter'
+            ? message.request
+            : undefined;
+      if (!text) return;
       const previous = usePromptToolkitStore.getState().chatInput;
-      placePrompt(choice.text, { replaceDraft: true });
+      placePrompt(text, { replaceDraft: true });
       store().beginAction(key);
       post({ kind: 'placed', previous }, [{ id: 'undo' }]);
     },
@@ -803,6 +1048,11 @@ export const useNestorChat = (language: string) => {
         turns.findLast((turn) => turn.role === 'assistant')?.text ?? '';
       const gaps = answerGaps(answer);
       const author = lastOf(all, 'request')?.by ?? 'user';
+      // Figures of the answer found nowhere in what the user gave: to check.
+      const unfound = unfoundNumbers(
+        answer,
+        turns.filter((turn) => turn.role === 'user').map((turn) => turn.text),
+      );
       void run('advice', null, async (signal, say) => {
         const note = await coachThreadNote(
           turns,
@@ -817,7 +1067,14 @@ export const useNestorChat = (language: string) => {
           ? LESSON_FOR_COMPETENCY[note.competency]
           : undefined;
         say(
-          { kind: 'advice', note, missing, gaps, answerId },
+          {
+            kind: 'advice',
+            note,
+            missing,
+            gaps,
+            answerId,
+            ...(unfound.length && { unfound }),
+          },
           missing.length
             ? [{ id: 'redo-with-missing', primary: true }]
             : lesson
@@ -862,7 +1119,9 @@ export const useNestorChat = (language: string) => {
             ? [message.version]
             : message.kind === 'versions'
               ? message.items.map((item) => item.text)
-              : [],
+              : message.kind === 'starter'
+                ? [message.request]
+                : [],
       );
       store().post(key, {
         kind: 'request',
@@ -901,6 +1160,9 @@ export const useNestorChat = (language: string) => {
     tryExample,
     placeVersion,
     placeChoice,
+    startTask,
+    tipAction,
+    keepText,
     askAbout,
     usePrompt,
     postAdvice,

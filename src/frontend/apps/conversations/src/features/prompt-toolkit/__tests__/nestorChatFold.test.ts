@@ -173,4 +173,45 @@ describe('foldSummary', () => {
       'You correct it yourself',
     );
   });
+
+  it('names a task started, a correction checked, personal data found', () => {
+    expect(
+      foldSummary(
+        [
+          msg(3, {
+            kind: 'starter',
+            task: 'rédiger une fiche de poste',
+            request: 'r',
+            reflex: 'x',
+          }),
+        ],
+        t,
+      ),
+    ).toBe('Start of a request: rédiger une fiche de poste');
+    expect(
+      foldSummary(
+        [
+          msg(4, {
+            kind: 'fixcheck',
+            tips: ['a', 'b'],
+            done: [true, false],
+            message: '',
+          }),
+        ],
+        t,
+      ),
+    ).toBe('Your correction: 1 of 2 done');
+    expect(
+      foldSummary(
+        [
+          msg(5, {
+            kind: 'sensitive',
+            kinds: ['nir'],
+            pending: { bar: 'improve' },
+          }),
+        ],
+        t,
+      ),
+    ).toBe('Personal data found, nothing sent');
+  });
 });

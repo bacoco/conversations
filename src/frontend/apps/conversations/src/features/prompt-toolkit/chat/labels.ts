@@ -39,4 +39,7 @@ export const roundLabel = (
     say: t('Say it'),
     'clarify-request': t('My request'),
     'clarify-answer': t('The Assistant’s answer'),
+    'check-fix': t('I have corrected it'),
+    'remove-sensitive': t('I remove it'),
+    'send-anyway': t('Go on anyway'),
   })[id];

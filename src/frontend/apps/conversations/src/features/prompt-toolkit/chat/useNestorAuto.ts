@@ -6,13 +6,8 @@ import { useAfterAnswer } from '../coach/useAfterAnswer';
 import { isAutoOn, useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import { NEW_CHAT_KEY, useNestorChatStore } from '../stores/useNestorChatStore';
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 
 import type { NestorChat } from './useNestorChat';
-
-/** "Analyser quand je fais une pause": after this long without typing. */
-export const AUTO_ANALYSE_PAUSE_MS = 3000;
-export const AUTO_ANALYSE_MIN_CHARS = 25;
 
 /** What Nestor does by himself, each part only when Auto allows it. */
 export const useNestorAuto = (chat: NestorChat, language: string) => {
@@ -25,7 +20,6 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
   const isResponding = useMainConversationStore(
     (state) => state.isAssistantResponding,
   );
-  const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const requestCount = turns.filter((turn) => turn.role === 'user').length;
 
   // The thread written before the first send follows the conversation that
@@ -57,25 +51,6 @@ export const useNestorAuto = (chat: NestorChat, language: string) => {
     }
     wasRespondingRef.current = isResponding;
   }, [isResponding, requestCount, chat]);
-
-  // Analysis at a pause (off by default).
-  const analysedRef = useRef('');
-  useEffect(() => {
-    const text = chatInput.trim();
-    if (
-      !isAutoOn(prefs, 'autoAnalyse') ||
-      text.length < AUTO_ANALYSE_MIN_CHARS ||
-      text === analysedRef.current ||
-      chat.busy
-    ) {
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      analysedRef.current = text;
-      chat.runBar('analyse');
-    }, AUTO_ANALYSE_PAUSE_MS);
-    return () => window.clearTimeout(timer);
-  }, [chatInput, prefs, chat]);
 
   // Advice after each answer, once per answer.
   // An answer belongs to a conversation: on the new page, the one still in

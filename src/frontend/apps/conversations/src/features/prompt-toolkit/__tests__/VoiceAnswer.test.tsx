@@ -34,7 +34,8 @@ describe('<VoiceAnswer />', () => {
 
   it('while it records, the time and the bars show it listens', () => {
     capture.status = 'recording';
-    capture.error = null;
+    // No error: the microphone works.
+    capture.error = '';
     capture.seconds = 7;
     render(<VoiceAnswer onSend={vi.fn()} onCancel={vi.fn()} />);
     expect(screen.getByText('I am listening…')).toBeInTheDocument();

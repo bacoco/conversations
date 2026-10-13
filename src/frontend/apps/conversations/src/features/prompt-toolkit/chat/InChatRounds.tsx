@@ -24,6 +24,9 @@ const ICONS: Record<RoundId, string> = {
   say: 'mic',
   'clarify-request': 'edit_note',
   'clarify-answer': 'chat',
+  'check-fix': 'task_alt',
+  'remove-sensitive': 'backspace',
+  'send-anyway': 'arrow_forward',
 };
 
 /** The actions of the moment, as labelled buttons under Nestor's last bubble. */

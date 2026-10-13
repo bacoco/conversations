@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { NestorMessage, NewMessage, Round } from '../chat/types';
+import type { NestorMessage, NewMessage, Round, TipState } from '../chat/types';
 
 /** The thread before the conversation exists; it moves to it once sent. */
 export const NEW_CHAT_KEY = 'new';
@@ -25,6 +25,13 @@ interface NestorChatState {
   consumeRounds: (key: string, messageId: string) => void;
   /** "Annuler": the event stays in the thread, marked undone. */
   markUndone: (key: string, messageId: string) => void;
+  /** What a piece of advice became: added, ignored or already done. */
+  markTip: (
+    key: string,
+    messageId: string,
+    index: number,
+    state: TipState,
+  ) => void;
   /** The thread written before the conversation existed moves to it. */
   adopt: (from: string, to: string) => void;
   clear: (key: string) => void;
@@ -120,6 +127,20 @@ export const useNestorChatStore = create<NestorChatState>()(
               message.id === messageId &&
               (message.kind === 'placed' || message.kind === 'chosen')
                 ? { ...message, undone: true }
+                : message,
+            ),
+          })),
+        })),
+      markTip: (key, messageId, index, tipState) =>
+        set((state) => ({
+          chats: withChat(state.chats, key, (chat) => ({
+            ...chat,
+            messages: chat.messages.map((message) =>
+              message.id === messageId && message.kind === 'counsel'
+                ? {
+                    ...message,
+                    tipStates: { ...message.tipStates, [index]: tipState },
+                  }
                 : message,
             ),
           })),

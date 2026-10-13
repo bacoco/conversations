@@ -50,6 +50,15 @@ describe('Nestor’s settings', () => {
     expect(thread()).toHaveLength(0);
   });
 
+  it('never offers to analyse at a pause, and never promises to be right', () => {
+    render(<NestorSettings onClose={vi.fn()} />);
+    expect(
+      screen.queryByRole('switch', { name: 'Analyse when I pause' }),
+    ).toBeNull();
+    expect(screen.queryByText(/never makes anything up/)).toBeNull();
+    expect(screen.getByText(/Nestor can be wrong/)).toBeInTheDocument();
+  });
+
   it('has no bottom bar', () => {
     render(<NestorSettings onClose={vi.fn()} />);
     expect(screen.queryByRole('toolbar')).toBeNull();

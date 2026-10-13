@@ -3,6 +3,10 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components';
 
+import { caseById } from '../jobs/jobs';
+import { useCasesStore } from '../learn/cases/casesProgress';
+import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+
 import { StarRequest } from './StarRequest';
 import { VoiceAnswer } from './VoiceAnswer';
 import { markParts } from './markParts';
@@ -21,6 +25,7 @@ import {
   Event,
   ExampleBox,
   ExampleLine,
+  FixList,
   Grid,
   GridRow,
   Keys,
@@ -37,6 +42,8 @@ import {
   Small,
   StarRow,
   Suite,
+  TipButton,
+  TipRow,
   UnderBubble,
   UserSays,
   VersionBox,
@@ -50,6 +57,15 @@ export { NestorBubble };
 
 /** The good request of an example, cut here until asked in full. */
 const AFTER_SHORT = 160;
+
+/** Personal data found before Nestor sends anything, in plain words. */
+const SENSITIVE_WORDS = {
+  email: 'an email address',
+  phone: 'a phone number',
+  nir: 'a social security number',
+  iban: 'an IBAN',
+  card: 'a card number',
+} as const;
 
 /** The five lines of a request, as the user reads them. */
 const GRID_LABELS: Record<GridPart, string> = {
@@ -120,6 +136,12 @@ export const MessageView = ({
             t(
               'Correct your text in the Assistant’s field, in the middle. Then click “Analyser mon texte”, or call me.',
             )}
+          {message.hint === 'remove-sensitive' &&
+            t(
+              'Remove it from your text, in the middle, then click the button again.',
+            )}
+          {message.hint === 'kept-text' &&
+            t('Your text stays as you wrote it.')}
           {message.hint === 'improve-it' &&
             t(
               'Now improve it yourself: click “Analyser mon texte”, at the bottom. I show you what it does not say yet.',
@@ -161,6 +183,14 @@ export const MessageView = ({
               <Choices>
                 <Choice type="button" onClick={() => chat.tryExample(pair)}>
                   {t('I practise improving it')}
+                </Choice>
+                <Choice
+                  type="button"
+                  $tone="voice"
+                  onClick={() => chat.setSheetOpen(true)}
+                >
+                  <Icon iconName="mic" $size="16px" $withThemeInherited />
+                  {t('Say it')}
                 </Choice>
                 {message.pairs.length > 1 && (
                   <Choice
@@ -263,14 +293,109 @@ export const MessageView = ({
               <span>{good}</span>
             </CounselLine>
           ))}
-          {message.advice.tips.map((tip) => (
-            <CounselLine key={tip.text} $tone="go">
-              <span aria-hidden="true">→</span>
-              <span>
-                <span>{tip.text}</span> {tip.why && <Why>{tip.why}</Why>}
-              </span>
-            </CounselLine>
-          ))}
+          {message.advice.tips.map((tip, index) => {
+            const state = message.tipStates?.[index];
+            return (
+              <CounselLine key={tip.text} $tone="go">
+                <span aria-hidden="true">→</span>
+                <span>
+                  <span>{tip.text}</span> {tip.why && <Why>{tip.why}</Why>}
+                  <TipRow>
+                    {state === 'added' && t('✓ Added to your text')}
+                    {state === 'ignored' && t('Ignored')}
+                    {state === 'known' &&
+                      t('Noted: you already do it, I will not say it again')}
+                    {!state && (
+                      <>
+                        {tip.add && (
+                          <TipButton
+                            type="button"
+                            onClick={() =>
+                              chat.tipAction(message.id, index, 'added')
+                            }
+                          >
+                            {t('Add')}
+                          </TipButton>
+                        )}
+                        <TipButton
+                          type="button"
+                          onClick={() =>
+                            chat.tipAction(message.id, index, 'ignored')
+                          }
+                        >
+                          {t('Ignore')}
+                        </TipButton>
+                        {tip.part && (
+                          <TipButton
+                            type="button"
+                            onClick={() =>
+                              chat.tipAction(message.id, index, 'known')
+                            }
+                          >
+                            {t('I already do it')}
+                          </TipButton>
+                        )}
+                      </>
+                    )}
+                  </TipRow>
+                </span>
+              </CounselLine>
+            );
+          })}
+        </NestorBubble>
+      );
+    case 'starter':
+      return (
+        <NestorBubble>
+          <span>{t('Here is a start for your request:')}</span>
+          <Proposed>{message.request}</Proposed>
+          <Lesson>
+            <strong>{t('The reflex to keep:')}</strong>
+            <span>{message.reflex}</span>
+          </Lesson>
+          {message.request && (
+            <StarRow>
+              <ActionButton
+                type="button"
+                $primary
+                onClick={() => chat.placeChoice(message.id, 0)}
+              >
+                {t('Put it in the Assistant’s field')}
+              </ActionButton>
+              <StarRequest text={message.request} />
+            </StarRow>
+          )}
+        </NestorBubble>
+      );
+    case 'fixcheck':
+      return (
+        <NestorBubble>
+          {message.message && <span>{message.message}</span>}
+          <FixList>
+            {message.tips.map((tip, index) => (
+              <li key={tip} data-done={message.done[index]}>
+                <span aria-hidden="true">
+                  {message.done[index] ? '✓' : '○'}
+                </span>
+                <span>{tip}</span>
+              </li>
+            ))}
+          </FixList>
+        </NestorBubble>
+      );
+    case 'sensitive':
+      return (
+        <NestorBubble>
+          <Warn>
+            {t('⚠ Your text holds {{what}}.', {
+              what: list(message.kinds.map((kind) => t(SENSITIVE_WORDS[kind]))),
+            })}
+          </Warn>
+          <span>
+            {t(
+              'Nothing has been sent. Remove it from your text, or go on if the task needs it.',
+            )}
+          </span>
         </NestorBubble>
       );
     case 'versions': {
@@ -310,6 +435,28 @@ export const MessageView = ({
                   </LinkButton>
                 )}
                 {folds && open && <p>{pasted}</p>}
+                {item.changed && (
+                  <>
+                    <Warn>
+                      {t(
+                        '⚠ This version changes a figure of your text: {{figures}}.',
+                        {
+                          figures: list([
+                            ...item.changed.added.map((figure) =>
+                              t('{{figure}} added', { figure }),
+                            ),
+                            ...item.changed.removed.map((figure) =>
+                              t('{{figure}} left out', { figure }),
+                            ),
+                          ]),
+                        },
+                      )}
+                    </Warn>
+                    <LinkButton type="button" onClick={() => chat.keepText()}>
+                      {t('Keep my text')}
+                    </LinkButton>
+                  </>
+                )}
                 {latest && (
                   <StarRow>
                     <ActionButton
@@ -488,20 +635,37 @@ export const MessageView = ({
       // A blank to fill ([Votre nom]) is a calm reminder; only what the
       // user did not know yet is a real lack.
       const warn = message.missing.length > 0;
+      const unfound = message.unfound ?? [];
+      const { issue, worked, tryNow } = message.note;
+      // One remark first, the most useful; the rest waits behind the link.
+      const main = unfound.length
+        ? 'unfound'
+        : issue
+          ? 'issue'
+          : worked
+            ? 'worked'
+            : 'try';
+      const tryLine = tryNow && (
+        <span>
+          <strong>{t('To try:')}</strong> {tryNow}
+        </span>
+      );
       return (
         <NestorBubble>
-          {message.note.issue &&
-            (warn ? (
-              <Warn>⚠ {message.note.issue}</Warn>
-            ) : (
-              <span>{message.note.issue}</span>
-            ))}
-          {message.note.worked && <span>✓ {message.note.worked}</span>}
-          {message.note.tryNow && (
-            <span>
-              <strong>{t('To try:')}</strong> {message.note.tryNow}
-            </span>
+          {main === 'unfound' && (
+            <Warn>
+              {t(
+                '⚠ Not in what you gave: {{figures}}. Check it before sending.',
+                {
+                  figures: list(unfound),
+                },
+              )}
+            </Warn>
           )}
+          {main === 'issue' &&
+            (warn ? <Warn>⚠ {issue}</Warn> : <span>{issue}</span>)}
+          {main === 'worked' && <span>✓ {worked}</span>}
+          {main === 'try' && tryLine}
           <details>
             <summary
               style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
@@ -509,6 +673,9 @@ export const MessageView = ({
               {t('See the full advice')}
             </summary>
             <UnderBubble style={{ paddingLeft: 0, paddingTop: 6 }}>
+              {main !== 'issue' && issue && <span>{issue}</span>}
+              {main !== 'worked' && worked && <span>✓ {worked}</span>}
+              {main !== 'try' && tryLine}
               {message.note.tryWhy && <span>{message.note.tryWhy}</span>}
               <Choices>
                 <Choice
@@ -583,6 +750,43 @@ export const MessageView = ({
                     { advised: message.advised, applied: message.applied },
                   )}
             </span>
+          )}
+          {/* What the session shows, counted, not guessed. */}
+          {message.progress?.map((line) => (
+            <span key={line.part}>
+              ✓{' '}
+              {line.total === 1
+                ? t('{{part}}: said in your request', {
+                    part: t(GRID_LABELS[line.part]),
+                  })
+                : t('{{part}}: in {{said}} requests out of {{total}}', {
+                    part: t(GRID_LABELS[line.part]),
+                    said: line.said,
+                    total: line.total,
+                  })}
+            </span>
+          ))}
+          {message.favorite && (
+            <>
+              <span>{t('A request to keep in your favorites:')}</span>
+              <StarRow>
+                <Proposed>{message.favorite}</Proposed>
+                <StarRequest text={message.favorite} />
+              </StarRow>
+            </>
+          )}
+          {message.caseId && caseById(message.caseId) && (
+            <ActionButton
+              type="button"
+              onClick={() => {
+                useCasesStore.getState().request(message.caseId ?? '');
+                usePromptToolkitStore.getState().openSection('learn');
+              }}
+            >
+              {t('Practise on a case: {{title}}', {
+                title: caseById(message.caseId)?.title,
+              })}
+            </ActionButton>
           )}
         </NestorBubble>
       );

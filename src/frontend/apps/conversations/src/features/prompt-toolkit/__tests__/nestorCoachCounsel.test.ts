@@ -169,6 +169,26 @@ describe('writeChoices', () => {
   });
 });
 
+describe('a version reads as whole sentences', () => {
+  it('a sentence never starts with a small letter', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      completion({
+        versions: [
+          {
+            title: 'Courte',
+            text: "Réponds à l'agent en 3 lignes. à partir du courriel ci-dessous.",
+          },
+        ],
+      }),
+    );
+    const [choice] = await writeChoices(
+      { draft: DRAFT, count: 1, tips: [] },
+      'French',
+    );
+    expect(choice.text).toContain('3 lignes. À partir du courriel');
+  });
+});
+
 describe('parseCoachReply', () => {
   it('keeps an action Nestor can run, nothing else', () => {
     expect(

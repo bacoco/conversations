@@ -316,11 +316,6 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
       note: t('Starting ideas, close to yours.'),
     },
     {
-      part: 'autoAnalyse',
-      label: t('Analyse when I pause'),
-      note: t('Nestor reads your text after 3 seconds without typing.'),
-    },
-    {
       part: 'autoAdvice',
       label: t('Advice after each answer'),
       note: t('What worked and one thing to try.'),
@@ -529,7 +524,7 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
         </Note>
         <Note>
           {t(
-            'Always on, whatever the settings: simple words, and Nestor never makes anything up. These settings stay on this computer.',
+            'Always on, whatever the settings: simple words. Nestor can be wrong: check dates, figures and rules before sending. These settings stay on this computer.',
           )}
         </Note>
       </Body>

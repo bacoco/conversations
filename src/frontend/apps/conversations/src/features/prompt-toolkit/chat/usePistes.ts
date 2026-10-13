@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { languageName } from '../coach/language';
+import { detectSensitiveData } from '../coach/sensitiveData';
 
 import { suggestPistes } from './nestorChatApi';
 
@@ -30,7 +31,9 @@ export const usePistes = (text: string, enabled: boolean) => {
     if (
       !enabled ||
       query.length < PISTES_MIN_CHARS ||
-      query.length > PISTES_MAX_CHARS
+      query.length > PISTES_MAX_CHARS ||
+      // Personal data never leaves for an idea nobody asked for.
+      detectSensitiveData(query).length > 0
     ) {
       return;
     }

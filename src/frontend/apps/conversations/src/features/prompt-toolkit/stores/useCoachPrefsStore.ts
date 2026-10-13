@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import type { GridPart } from '../chat/types';
 import type { Competency, RequestKind } from '../coach/coachApi';
 
 export type CoachTone = 'encouraging' | 'direct';
@@ -25,8 +26,7 @@ const AUDIENCE_WORDS: Record<UsualAudience, string> = {
 /** "Useful? Too simple? Too complicated?" is asked at most once a day. */
 export const FELT_ASK_EVERY_MS = 24 * 60 * 60 * 1000;
 
-export type AutoPart =
-  'autoPistes' | 'autoAnalyse' | 'autoAdvice' | 'autoSuites';
+export type AutoPart = 'autoPistes' | 'autoAdvice' | 'autoSuites';
 
 interface CoachPrefsState {
   tone: CoachTone;
@@ -46,7 +46,6 @@ interface CoachPrefsState {
   /** "Auto" in Nestor's header: off, Nestor does nothing by himself. */
   auto: boolean;
   autoPistes: boolean;
-  autoAnalyse: boolean;
   autoAdvice: boolean;
   autoSuites: boolean;
   setAuto: (auto: boolean) => void;
@@ -64,6 +63,12 @@ interface CoachPrefsState {
   setUsualAudience: (audience: UsualAudience | null) => void;
   dismissTip: (kind: RequestKind, skill: Competency) => void;
   markFeltAsked: (now?: number) => void;
+  /** Lines of a request the user said they already write themselves. */
+  knownParts: GridPart[];
+  addKnownPart: (part: GridPart) => void;
+  /** « Plus tard » to « Quel est votre métier ? »: not asked again. */
+  jobLater: boolean;
+  setJobLater: (later: boolean) => void;
   reset: () => void;
 }
 
@@ -77,11 +82,12 @@ const initialPrefs = {
   usualAudience: null as UsualAudience | null,
   auto: true,
   autoPistes: true,
-  autoAnalyse: false,
   autoAdvice: true,
   autoSuites: true,
   dismissedTips: {} as Partial<Record<RequestKind, Competency[]>>,
   feltAskedAt: 0,
+  knownParts: [] as GridPart[],
+  jobLater: false,
 };
 
 /** A part of "Auto" runs only when "Auto" itself is on. */
@@ -117,6 +123,13 @@ export const useCoachPrefsStore = create<CoachPrefsState>()(
               };
         }),
       markFeltAsked: (now = Date.now()) => set({ feltAskedAt: now }),
+      addKnownPart: (part) =>
+        set((state) =>
+          state.knownParts.includes(part)
+            ? state
+            : { knownParts: [...state.knownParts, part] },
+        ),
+      setJobLater: (jobLater) => set({ jobLater }),
       reset: () => set(initialPrefs),
     }),
     {

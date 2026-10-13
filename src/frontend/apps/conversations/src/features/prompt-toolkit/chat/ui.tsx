@@ -662,3 +662,48 @@ export const Proposed = styled.span`
   background: #ffffff;
   white-space: pre-wrap;
 `;
+
+/** A small button under a piece of advice: « Ajouter », « Ignorer »… */
+export const TipButton = styled.button`
+  ${buttonReset}
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid ${C.brandLine};
+  background: #ffffff;
+  color: ${C.brandInk};
+  &:hover {
+    background: ${C.brandSoft};
+  }
+`;
+
+/** What a piece of advice became, or the buttons to decide it. */
+export const TipRow = styled.span`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: ${C.muted};
+`;
+
+/** « J'ai corrigé »: each piece of advice, done (✓) or still to do (○). */
+export const FixList = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  & > li {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 6px;
+  }
+  & > li[data-done='true'] > span:first-child {
+    color: ${C.okInk};
+    font-weight: 700;
+  }
+`;

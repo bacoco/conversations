@@ -7,11 +7,10 @@ import {
 describe('useCoachPrefsStore — Auto', () => {
   beforeEach(() => useCoachPrefsStore.getState().reset());
 
-  it('is on by default, except the analysis at a pause', () => {
+  it('is on by default', () => {
     const state = useCoachPrefsStore.getState();
     expect(state.auto).toBe(true);
     expect(isAutoOn(state, 'autoPistes')).toBe(true);
-    expect(isAutoOn(state, 'autoAnalyse')).toBe(false);
   });
 
   it('switched off, nothing runs by itself; on again, as it was left', () => {

@@ -127,7 +127,7 @@ describe('useNestorChat', () => {
     expect(thread().at(-1)).toMatchObject({
       kind: 'error',
       retry: 'analyse',
-      rounds: [{ id: 'retry', primary: true }],
+      rounds: [{ id: 'retry', primary: true }, { id: 'say' }],
     });
   });
 

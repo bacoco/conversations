@@ -1,4 +1,5 @@
 import type { CoachNote, NextGroup, SessionReview } from '../coach/coachApi';
+import type { SensitiveKind } from '../coach/sensitiveData';
 
 import type { Author } from './author';
 import type { ExamplePair } from './examples';
@@ -74,7 +75,12 @@ export type RoundId =
   | 'say'
   /** « Vous parlez de quoi ? »: the request, or the Assistant's answer. */
   | 'clarify-request'
-  | 'clarify-answer';
+  | 'clarify-answer'
+  /** « J'ai corrigé »: Nestor looks at the user's own correction. */
+  | 'check-fix'
+  /** Personal data found before Nestor sends anything. */
+  | 'remove-sensitive'
+  | 'send-anyway';
 
 export interface Round {
   id: RoundId;
@@ -88,7 +94,28 @@ export type HintKind =
   | 'review-after-answer'
   | 'new-request'
   | 'improve-it'
-  | 'fix-myself';
+  | 'fix-myself'
+  | 'remove-sensitive'
+  | 'kept-text';
+
+/** What a piece of advice became: added, ignored, or already done. */
+export type TipState = 'added' | 'ignored' | 'known';
+
+/** A step to do again exactly, after a failure. */
+export type RetryStep =
+  | BarAction
+  | { kind: 'choices'; draft: string; count: 1 | 2; tips: string[] }
+  | { kind: 'task'; task: string };
+
+/** What waits for the user's word when personal data was found. */
+export type Pending = { bar: BarAction } | { ask: true };
+
+/** A line of the grid, said in how many of the session's requests. */
+export interface PartProgress {
+  part: GridPart;
+  said: number;
+  total: number;
+}
 
 /** How the user said something in the thread. */
 export type UserVia =
@@ -122,7 +149,18 @@ export type NestorMessage = Base &
     | { kind: 'warning'; text: string }
     | { kind: 'analysis'; draft: string; check: RequestCheck }
     /** « Améliorer mon texte »: Nestor's advice, before any text. */
-    | { kind: 'counsel'; draft: string; advice: RequestAdvice }
+    | {
+        kind: 'counsel';
+        draft: string;
+        advice: RequestAdvice;
+        tipStates?: Record<number, TipState>;
+      }
+    /** A task of the job: the start of a request and one reflex. */
+    | { kind: 'starter'; task: string; request: string; reflex: string }
+    /** « J'ai corrigé »: each piece of advice, applied or not. */
+    | { kind: 'fixcheck'; tips: string[]; done: boolean[]; message: string }
+    /** Personal data: nothing is sent before the user decides. */
+    | { kind: 'sensitive'; kinds: SensitiveKind[]; pending: Pending }
     /** The text at the end of the advice: one, or two to choose from. */
     | { kind: 'versions'; draft: string; items: VersionChoice[] }
     | { kind: 'question'; index: number; items: MissingItem[] }
@@ -152,6 +190,8 @@ export type NestorMessage = Base &
         missing: string[];
         /** Blanks left in the answer: the advice warns first. */
         gaps?: string[];
+        /** Figures of the answer found nowhere in what the user gave. */
+        unfound?: string[];
         answerId: string;
       }
     | { kind: 'suites'; groups: NextGroup[]; answerId: string }
@@ -161,9 +201,15 @@ export type NestorMessage = Base &
         advised: number;
         applied: number;
         answerId: string;
+        /** The lines most often said in the session's requests. */
+        progress?: PartProgress[];
+        /** The last request sent: one to keep in the favorites. */
+        favorite?: string;
+        /** A case of the user's job, to practise now. */
+        caseId?: string;
       }
     | { kind: 'reply'; text: string; prompt?: string }
-    | { kind: 'error'; retry: BarAction }
+    | { kind: 'error'; retry: RetryStep }
   );
 
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown

@@ -75,6 +75,20 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
       ? t('Version prepared: {{how}}', { how: asked.text })
       : t('Version prepared');
   }
+  const starter = find('starter');
+  if (starter) {
+    return t('Start of a request: {{task}}', { task: starter.task });
+  }
+  const fixcheck = find('fixcheck');
+  if (fixcheck) {
+    return t('Your correction: {{done}} of {{total}} done', {
+      done: fixcheck.done.filter(Boolean).length,
+      total: fixcheck.done.length,
+    });
+  }
+  if (find('sensitive')) {
+    return t('Personal data found, nothing sent');
+  }
   if (find('counsel')) {
     return t('Advice on your request');
   }
