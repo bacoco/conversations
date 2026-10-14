@@ -7,7 +7,7 @@ import { Box, Icon } from '@/components';
 
 /**
  * Nestor's presentation, one render per language. Source and render steps:
- * `videos/nestor-intro/` (HyperFrames) at the repository root.
+ * `videos/nestor-welcome/` (HyperFrames) at the repository root.
  */
 const introVideoUrl = (language?: string) =>
   `/assets/nestor-intro-${language?.startsWith('fr') ? 'fr' : 'en'}.mp4`;
