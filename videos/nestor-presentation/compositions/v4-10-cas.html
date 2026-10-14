@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>v4-10-cas</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#v4-10-cas-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#v4-10-cas-content { position: absolute; inset: 0; }
+
+.v4-10-cas-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#v4-10-cas-scrim { position: absolute; left: 0; width: 1160px; }
+.v4-10-cas-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.v4-10-cas-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.v4-10-cas-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.v4-10-cas-l.a { font-size: 74px; color: #000091; }
+.v4-10-cas-l.b { font-size: 74px; color: #161616; }
+.v4-10-cas-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.v4-10-cas-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.v4-10-cas-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.v4-10-cas-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="v4-10-cas" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+        <div id="v4-10-cas-bg"></div>
+        <div id="v4-10-cas-content">
+          <img class="v4-10-cas-shot" id="v4-10-cas-s0" src="assets/v4/s10-cas.png" alt="">
+          <img class="v4-10-cas-shot" id="v4-10-cas-s1" src="assets/v4/s10-etapes.png" alt="">
+          <div class="v4-10-cas-ring" id="v4-10-cas-r0" style="left:1205px;top:481px;width:670px;height:308px;border:5px solid #000091;border-radius:22px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div class="v4-10-cas-ring" id="v4-10-cas-r1" style="left:1182px;top:141px;width:717px;height:78px;border:5px solid #000091;border-radius:18px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div id="v4-10-cas-scrim" style="top:0px;height:1080px;background:rgba(247,248,253,0.985)"></div>
+          <div class="v4-10-cas-hg" id="v4-10-cas-g0" style="top:0px;height:1080px"><div class="v4-10-cas-dash"></div><div class="v4-10-cas-l a" id="v4-10-cas-g0-l0">De vrais cas de votre métier.</div><div class="v4-10-cas-l b" id="v4-10-cas-g0-l1">Dix métiers, trois niveaux.</div><div class="v4-10-cas-l c" id="v4-10-cas-g0-l2">Pas à pas, en cinq étapes.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-10-cas-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
+      tl.fromTo("#v4-10-cas-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#v4-10-cas-s1", {opacity: 0}, {opacity: 1, duration: 0.45, ease: "sine.inOut"}, 3.60);
+      tl.fromTo("#v4-10-cas-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 1.00);
+      tl.to("#v4-10-cas-r0", {opacity: 0, duration: 0.35, ease: "sine.in"}, 3.40);
+      tl.fromTo("#v4-10-cas-r1", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 3.90);
+      tl.fromTo("#v4-10-cas-scrim", {opacity: 0, x: -80}, {opacity: 1, x: 0, duration: 0.6, ease: "power3.out"}, 0.00);
+      tl.fromTo("#v4-10-cas-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.40);
+      tl.fromTo("#v4-10-cas-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 1.80);
+      tl.fromTo("#v4-10-cas-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 3.70);
+      tl.fromTo("#v4-10-cas-g0 .v4-10-cas-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.40);
+      window.__timelines["v4-10-cas"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

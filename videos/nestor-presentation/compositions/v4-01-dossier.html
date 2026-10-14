@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>v4-01-dossier</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#v4-01-dossier-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#v4-01-dossier-content { position: absolute; inset: 0; }
+
+.v4-01-dossier-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#v4-01-dossier-scrim { position: absolute; left: 0; width: 1160px; }
+.v4-01-dossier-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.v4-01-dossier-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.v4-01-dossier-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.v4-01-dossier-l.a { font-size: 74px; color: #000091; }
+.v4-01-dossier-l.b { font-size: 74px; color: #161616; }
+.v4-01-dossier-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.v4-01-dossier-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.v4-01-dossier-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.v4-01-dossier-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="v4-01-dossier" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+        <div id="v4-01-dossier-bg"></div>
+        <div id="v4-01-dossier-content">
+          <img class="v4-01-dossier-shot" id="v4-01-dossier-s0" src="assets/v4/s01-brouillon.png" alt="">
+          <div class="v4-01-dossier-ring" id="v4-01-dossier-r0" style="left:47px;top:800px;width:1066px;height:190px;border:5px solid #000091;border-radius:30px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div id="v4-01-dossier-scrim" style="top:0px;height:790px;background:linear-gradient(180deg, rgba(247,248,253,0.985) 0%, rgba(247,248,253,0.985) 95%, rgba(247,248,253,0) 100%)"></div>
+          <div class="v4-01-dossier-hg" id="v4-01-dossier-g0" style="top:0px;height:720px"><div class="v4-01-dossier-dash"></div><div class="v4-01-dossier-l a" id="v4-01-dossier-g0-l0">Vous connaissez votre dossier.</div><div class="v4-01-dossier-l b" id="v4-01-dossier-g0-l1">Votre IA, non.</div><div class="v4-01-dossier-l c" id="v4-01-dossier-g0-l2">Alors, elle devine.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-01-dossier-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#v4-01-dossier-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 1.00);
+      tl.fromTo("#v4-01-dossier-scrim", {opacity: 0, x: -80}, {opacity: 1, x: 0, duration: 0.6, ease: "power3.out"}, 0.15);
+      tl.fromTo("#v4-01-dossier-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.55);
+      tl.fromTo("#v4-01-dossier-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.15);
+      tl.fromTo("#v4-01-dossier-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 4.35);
+      tl.fromTo("#v4-01-dossier-g0 .v4-01-dossier-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.55);
+      window.__timelines["v4-01-dossier"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

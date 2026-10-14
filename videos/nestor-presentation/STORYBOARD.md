@@ -1,41 +1,33 @@
 ---
-duration: 184.3
+duration: 84.2
 music: none
-voice: Nestor — OmniVoice clone "nestor-aventuriere", fr, speed 1.0 (22 MP3 in .media/audio/voice-v3/)
-format: 1920x1080 composition, 30 fps; web delivery 1280x720
-generator: tools/gen3.py (scene list, headlines, captures, ring timings)
+voice: Nestor — OmniVoice reference voice "nestor-aventuriere", fr, speed 1.0 (13 clips, .media/audio/voice-v4/)
+format: 1920x1080, 30 fps
+generator: tools/gen4.py (scene list, headlines, captures, outlines)
 ---
 
-# Nestor — présentation v3 (FR, voix de Nestor)
+# Nestor — présentation v4 (FR, voix de Nestor)
 
-Apple-style: a human problem, the promise, Nestor revealed as the coach, his method in one idea per beat,
-then progress. Each scene is a self-contained sub-composition (`compositions/v3-*.html`): own headline,
-whole-app capture (`assets/full/`), soft dim + red ring. Narration clips sit at the root of `index.html`
-(scene start + 0.6 s); each scene lasts 0.6 s + voice + 1.3 s.
+One real task from start to finish: an agent must reply to a colleague who asks for one more telework day.
+Nestor helps while typing (pistes), shows what is missing (Analyser mon texte), gives advice the agent chooses
+(Ajouter · Ignorer · Je le fais déjà), writes the good text with the references, warns about a phone number before
+sending, then rereads the real answer and says what to do. Then: progress (cases of your job, twenty minutes a week,
+badges, attestation, nothing leaves your workstation), and the end card with one gesture.
 
-| # | Scene | What it shows | Narration (spoken) |
-|---|---|---|---|
-| 1 | v3-accroche | Plein écran, sans Nestor. Une demande écrite vite, puis une réponse qui redemande tout. | Vous écrivez une demande, vite. Et la réponse ne vous avance pas. Il faut tout reprendre. |
-| 2 | v3-promesse | Grand titre sur fond clair. | Bien demander à votre IA, ça s'apprend. En travaillant, au quotidien. |
-| 3 | v3-nestor | Plein écran. Le panneau de Nestor apparaît à droite, avec sa remarque et À faire. | Voici Nestor, votre coach. Je suis là, à droite de l'écran. Rien à installer. Je ne fais pas le travail à votre place. Je vous apprends à bien demander. |
-| 4 | v3-metier | Le coach demande Quel est votre métier, puis propose trois tâches. | D'abord, je vous demande votre métier. Je connais dix métiers du ministère. Puis je vous propose trois tâches pour commencer. |
-| 5 | v3-pistes | Pendant la frappe, Nestor réfléchit, puis des pistes, un cas et un modèle proches. | Pendant que vous écrivez, je réfléchis avec vous. Je propose des pistes proches de votre demande. Et un modèle ou un cas pratique proche. |
-| 6 | v3-analyser | Bouton Analyser mon texte. Ce qui est dit, ce qui manque. | Analyser mon texte. Je vous montre ce que dit votre demande, et ce qui manque. Vous complétez. Vous seul connaissez votre dossier. |
-| 7 | v3-conseils | Bouton Améliorer mon texte. Des conseils avec Ajouter, Ignorer, Je le fais déjà. | Améliorer mon texte. D'abord, des conseils. Pour chacun, vous choisissez. Ajouter, ignorer, ou je le fais déjà. |
-| 8 | v3-versions | Le bon texte ou deux versions, et Je corrige moi-même. | Ensuite seulement, le bon texte, ou deux versions au choix. Vos chiffres ne changent pas. Vous pouvez aussi corriger vous-même. |
-| 9 | v3-donnees | Alerte numéro de téléphone avant l'envoi, Je le retire. | Un numéro de téléphone dans votre texte, je vous préviens avant tout envoi. Vous le retirez, ou vous continuez. |
-| 10 | v3-verifier | La réponse avec des chiffres non donnés, puis la remarque de Nestor et À faire. | La réponse arrive. Je la relis pour vous. Un chiffre que vous n'avez pas donné, je le signale. Et je vous dis quoi vérifier. |
-| 11 | v3-suite | Conseil après la réponse et Pour continuer. | Après chaque réponse, un conseil. Et trois idées pour continuer. |
-| 12 | v3-bilan | Bouton Faire le bilan. Bilan de séance. | Faire le bilan. Je fais le point sur votre séance. Ce qui va bien, et quoi faire la prochaine fois. |
-| 13 | v3-parler | Demander à Nestor, le micro rouge, Le dire, puis une réponse de Nestor. | Vous pouvez me parler, au lieu d'écrire. Le micro s'allume seulement quand vous appuyez. Une question, je réponds. Rien ne part vers votre IA. |
-| 14 | v3-boutons | Les quatre boutons fixes, puis le bouton Auto. | Mes quatre boutons restent toujours au même endroit. Avec Auto, je vous aide de moi-même. Sinon, seulement quand vous le demandez. |
-| 15 | v3-profil | Réglages de Nestor, Mon métier, Ma direction, Mes thèmes de travail. | Votre direction et vos thèmes de travail m'aident à choisir mes exemples. Je ne les ajoute jamais à vos demandes. |
-| 16 | v3-progresser | Grand titre. | Et je vous fais progresser, semaine après semaine. |
-| 17 | v3-entrainer | Cas de mon métier, puis les cinq étapes de l'entraînement. | De vrais cas de votre métier, pas à pas. Lire, demander, conseils, comparer, vérifier. Trois niveaux, du plus simple au plus complet. |
-| 18 | v3-semaine | Votre semaine, Réserver vingt minutes par semaine. | Chaque semaine, quelques actions pour votre métier. Et vingt minutes réservées dans votre agenda. |
-| 19 | v3-parcours | Mon parcours, niveau, badges, attestation. | Votre niveau, vos badges, une attestation à imprimer. Vos progrès restent sur votre poste. Personne ne vous classe. |
-| 20 | v3-cours | Le cours, huit leçons, le grand quiz, le mémo. | Huit leçons courtes, des quiz et un mémo. Pour apprendre à vérifier une réponse, et à mieux demander. |
-| 21 | v3-outils-favoris | Outils du quotidien, exemples de demandes, favoris, partage par lien. | Des demandes prêtes pour le quotidien. Vos favoris sous la main. Et un lien pour les partager avec un collègue. |
-| 22 | v3-fermeture | Nestor, Avec Albert, l'IA de l'État, et le point d'interrogation dans l'en-tête. | Voici Nestor. Je m'appuie sur Albert, l'IA de l'État. Avec moi, vous apprenez à bien demander, en travaillant. Pour revoir cette présentation, cliquez sur le point d'interrogation. |
+Scenes overlap by 0.4 s (crossfade); narration clips sit at the root of `index.html`.
 
-Headlines on screen are listed in `tools/gen3.py`.
+| Scene | Start (s) | Dur (s) | Captures | On-screen text | Narration |
+|---|---|---|---|---|---|
+| v4-01-dossier | 0.0 | 6.4 | s01-brouillon | Vous connaissez votre dossier. Votre IA, non. Alors, elle devine. | Vous connaissez votre dossier. Votre IA, elle, ne le connaît pas. Alors elle devine. |
+| v4-02-nestor | 6.0 | 6.0 | s01-brouillon | Nestor. Votre coach, à droite de l’écran. Il vous apprend à bien demander, en travaillant. | Voici Nestor. Je suis là, à droite. Je vous apprends à bien demander, en travaillant. |
+| v4-03-pistes | 11.6 | 6.8 | s01-brouillon, s03-pistes | Pendant que vous écrivez, des débuts plus précis. Un clic, et la piste est dans votre champ. | Pendant que vous écrivez, je vous propose des débuts plus précis. Un clic, et la piste est dans votre champ. |
+| v4-04-manque | 18.0 | 6.2 | s03-pistes, s04-analyse | Ce qui manque, avant d’envoyer. [Analyser mon texte] | Je vous montre ce qui manque. Vous complétez. Vous seul connaissez votre dossier. |
+| v4-05-conseils | 23.8 | 8.4 | s04-analyse, s05-conseils, s05-ajoute, s05-bon-texte | D’abord, des conseils. Vous choisissez. [Ajouter · Ignorer · Je le fais déjà] / Puis le bon texte, avec vos références. | D'abord, des conseils. Vous choisissez ce que vous gardez. Ensuite, le bon texte, avec vos références. |
+| v4-06-donnees | 31.8 | 5.4 | s06-telephone | Un numéro de téléphone ? Une alerte, avant l’envoi. | Un numéro de téléphone dans votre texte, je vous préviens. Avant tout envoi. |
+| v4-07-relecture | 36.8 | 7.6 | s07-relecture | La réponse, relue. Vous savez quoi faire. | La réponse arrive. Je la relis avec vous. S'il manque l'essentiel, je vous le signale. Et je vous dis quoi faire. |
+| v4-08-boutons | 44.0 | 6.2 | s07-relecture, s08-parler | À portée de main. Et vous pouvez lui parler. [Analyser · Améliorer · Faire le bilan · Demander à Nestor] | Mes quatre boutons restent à portée de main. Vous pouvez aussi me parler, à voix haute. |
+| v4-09-progresser | 49.8 | 3.8 | fox nestor-volee | Et vous progressez. | Et chaque semaine, vous progressez. |
+| v4-10-cas | 53.2 | 6.4 | s10-cas, s10-etapes | De vrais cas de votre métier. Dix métiers, trois niveaux. Pas à pas, en cinq étapes. | De vrais cas de votre métier. Dix métiers, trois niveaux. Je vous guide, pas à pas. |
+| v4-11-semaine | 59.2 | 9.6 | s11-semaine, s11-parcours | Vingt minutes par semaine, dans votre agenda. Des badges, une attestation à imprimer. / Vos progrès restent sur votre poste. Personne ne vous classe. | Vingt minutes par semaine, dans votre agenda. Des badges, une attestation à imprimer. Vos progrès restent sur votre poste. Personne ne vous classe. |
+| v4-12-aussi | 68.4 | 6.6 | s12-cours, s12-outils | Huit leçons courtes. Des outils pour chaque jour. | Et aussi, huit leçons courtes. Et des outils pour chaque jour, avec des demandes prêtes en un clic. |
+| v4-13-fin | 74.6 | 9.6 | end card, fox nestor-salut, real « Analyser mon texte » icon | Nestor · Votre coach pour bien demander à l’IA. · Écrivez votre demande, puis cliquez sur Analyser mon texte. · Avec Albert, l’IA de l’État | Je m'appuie sur Albert, l'IA de l'État. Écrivez votre demande, puis cliquez sur Analyser mon texte. Je suis à droite, avec vous. |

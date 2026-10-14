@@ -1,0 +1,67 @@
+[
+ {
+  "id": "vo-001",
+  "scene": "v4-01-dossier",
+  "text": "Vous connaissez votre dossier. Votre IA, elle, ne le connaît pas. Alors elle devine."
+ },
+ {
+  "id": "vo-002",
+  "scene": "v4-02-nestor",
+  "text": "Voici Nestor. Je suis là, à droite. Je vous apprends à bien demander, en travaillant."
+ },
+ {
+  "id": "vo-003",
+  "scene": "v4-03-pistes",
+  "text": "Pendant que vous écrivez, je vous propose des débuts plus précis. Un clic, et la piste est dans votre champ."
+ },
+ {
+  "id": "vo-004",
+  "scene": "v4-04-manque",
+  "text": "Je vous montre ce qui manque. Vous complétez. Vous seul connaissez votre dossier."
+ },
+ {
+  "id": "vo-005",
+  "scene": "v4-05-conseils",
+  "text": "D'abord, des conseils. Vous choisissez ce que vous gardez. Ensuite, le bon texte, avec vos références."
+ },
+ {
+  "id": "vo-006",
+  "scene": "v4-06-donnees",
+  "text": "Un numéro de téléphone dans votre texte, je vous préviens. Avant tout envoi."
+ },
+ {
+  "id": "vo-007",
+  "scene": "v4-07-verifier",
+  "text": "La réponse arrive. Je la relis avec vous. S'il manque l'essentiel, je vous le signale. Et je vous dis quoi faire."
+ },
+ {
+  "id": "vo-008",
+  "scene": "v4-08-boutons",
+  "text": "Mes quatre boutons restent à portée de main. Vous pouvez aussi me parler, à voix haute."
+ },
+ {
+  "id": "vo-009",
+  "scene": "v4-09-progresser",
+  "text": "Et chaque semaine, vous progressez."
+ },
+ {
+  "id": "vo-010",
+  "scene": "v4-10-cas",
+  "text": "De vrais cas de votre métier. Dix métiers, trois niveaux. Je vous guide, pas à pas."
+ },
+ {
+  "id": "vo-011",
+  "scene": "v4-11-semaine",
+  "text": "Vingt minutes par semaine, dans votre agenda. Des badges, une attestation à imprimer. Vos progrès restent sur votre poste. Personne ne vous classe."
+ },
+ {
+  "id": "vo-012",
+  "scene": "v4-12-aussi",
+  "text": "Et aussi, huit leçons courtes. Et des outils pour chaque jour, avec des demandes prêtes en un clic."
+ },
+ {
+  "id": "vo-013",
+  "scene": "v4-13-fin",
+  "text": "Je m'appuie sur Albert, l'IA de l'État. Écrivez votre demande, puis cliquez sur Analyser mon texte. Je suis à droite, avec vous."
+ }
+]

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>v4-04-manque</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#v4-04-manque-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#v4-04-manque-content { position: absolute; inset: 0; }
+
+.v4-04-manque-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#v4-04-manque-scrim { position: absolute; left: 0; width: 1160px; }
+.v4-04-manque-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.v4-04-manque-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.v4-04-manque-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.v4-04-manque-l.a { font-size: 74px; color: #000091; }
+.v4-04-manque-l.b { font-size: 74px; color: #161616; }
+.v4-04-manque-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.v4-04-manque-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.v4-04-manque-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.v4-04-manque-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="v4-04-manque" data-start="0" data-duration="6.2" data-width="1920" data-height="1080">
+        <div id="v4-04-manque-bg"></div>
+        <div id="v4-04-manque-content">
+          <img class="v4-04-manque-shot" id="v4-04-manque-s0" src="assets/v4/s03-pistes.png" alt="">
+          <img class="v4-04-manque-shot" id="v4-04-manque-s1" src="assets/v4/s04-analyse.png" alt="">
+          <div class="v4-04-manque-ring" id="v4-04-manque-r0" style="left:1258px;top:181px;width:604px;height:443px;border:5px solid #000091;border-radius:22px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div class="v4-04-manque-pulse" id="v4-04-manque-p00" style="left:1268px;top:939px"></div>
+          <div class="v4-04-manque-pulse" id="v4-04-manque-p01" style="left:1268px;top:939px"></div>
+          <div id="v4-04-manque-scrim" style="top:0px;height:1080px;background:rgba(247,248,253,0.985)"></div>
+          <div class="v4-04-manque-hg" id="v4-04-manque-g0" style="top:0px;height:1080px"><div class="v4-04-manque-dash"></div><div class="v4-04-manque-l a" id="v4-04-manque-g0-l0">Ce qui manque,</div><div class="v4-04-manque-l b" id="v4-04-manque-g0-l1">avant d’envoyer.</div><div class="v4-04-manque-chip" id="v4-04-manque-g0-chip">Analyser mon texte</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-04-manque-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
+      tl.fromTo("#v4-04-manque-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#v4-04-manque-s1", {opacity: 0}, {opacity: 1, duration: 0.45, ease: "sine.inOut"}, 0.75);
+      tl.fromTo("#v4-04-manque-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 1.30);
+      tl.fromTo("#v4-04-manque-p00", {opacity: 0.95, scale: 0.55}, {opacity: 0, scale: 1.35, duration: 0.6, ease: "power2.out"}, 0.10);
+      tl.fromTo("#v4-04-manque-p01", {opacity: 0.95, scale: 0.55}, {opacity: 0, scale: 1.35, duration: 0.6, ease: "power2.out"}, 0.32);
+      tl.set("#v4-04-manque-scrim", {opacity: 1}, 0);
+      tl.fromTo("#v4-04-manque-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.45);
+      tl.fromTo("#v4-04-manque-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.85);
+      tl.fromTo("#v4-04-manque-g0-chip", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.5, ease: "power2.out"}, 1.35);
+      tl.fromTo("#v4-04-manque-g0 .v4-04-manque-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.45);
+      window.__timelines["v4-04-manque"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

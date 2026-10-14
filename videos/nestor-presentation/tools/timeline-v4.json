@@ -1,0 +1,135 @@
+{
+ "duration": 84.2,
+ "scenes": [
+  {
+   "scene": "v4-01-dossier",
+   "start": 0.0,
+   "duration": 6.4,
+   "vo": "vo-001",
+   "vo_start": 0.5,
+   "vo_end": 5.34,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-001-nestor.wav",
+   "text": "Vous connaissez votre dossier. Votre IA, elle, ne le connaît pas. Alors elle devine."
+  },
+  {
+   "scene": "v4-02-nestor",
+   "start": 6.0,
+   "duration": 6.0,
+   "vo": "vo-002",
+   "vo_start": 6.35,
+   "vo_end": 11.12,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-002-nestor.wav",
+   "text": "Voici Nestor. Je suis là, à droite. Je vous apprends à bien demander, en travaillant."
+  },
+  {
+   "scene": "v4-03-pistes",
+   "start": 11.6,
+   "duration": 6.8,
+   "vo": "vo-003",
+   "vo_start": 11.95,
+   "vo_end": 18.0,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-003-nestor.wav",
+   "text": "Pendant que vous écrivez, je vous propose des débuts plus précis. Un clic, et la piste est dans votre champ."
+  },
+  {
+   "scene": "v4-04-manque",
+   "start": 18.0,
+   "duration": 6.2,
+   "vo": "vo-004",
+   "vo_start": 18.8,
+   "vo_end": 23.56,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-004-nestor.wav",
+   "text": "Je vous montre ce qui manque. Vous complétez. Vous seul connaissez votre dossier."
+  },
+  {
+   "scene": "v4-05-conseils",
+   "start": 23.8,
+   "duration": 8.4,
+   "vo": "vo-005",
+   "vo_start": 24.4,
+   "vo_end": 30.23,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-005-nestor.wav",
+   "text": "D'abord, des conseils. Vous choisissez ce que vous gardez. Ensuite, le bon texte, avec vos références."
+  },
+  {
+   "scene": "v4-06-donnees",
+   "start": 31.8,
+   "duration": 5.4,
+   "vo": "vo-006",
+   "vo_start": 32.2,
+   "vo_end": 36.55,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-006-nestor.wav",
+   "text": "Un numéro de téléphone dans votre texte, je vous préviens. Avant tout envoi."
+  },
+  {
+   "scene": "v4-07-relecture",
+   "start": 36.8,
+   "duration": 7.6,
+   "vo": "vo-007",
+   "vo_start": 37.2,
+   "vo_end": 43.46,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-007-nestor.wav",
+   "text": "La réponse arrive. Je la relis avec vous. S'il manque l'essentiel, je vous le signale. Et je vous dis quoi faire."
+  },
+  {
+   "scene": "v4-08-boutons",
+   "start": 44.0,
+   "duration": 6.2,
+   "vo": "vo-008",
+   "vo_start": 44.3,
+   "vo_end": 48.96,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-008-nestor.wav",
+   "text": "Mes quatre boutons restent à portée de main. Vous pouvez aussi me parler, à voix haute."
+  },
+  {
+   "scene": "v4-09-progresser",
+   "start": 49.8,
+   "duration": 3.8,
+   "vo": "vo-009",
+   "vo_start": 50.6,
+   "vo_end": 52.74,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-009-nestor.wav",
+   "text": "Et chaque semaine, vous progressez."
+  },
+  {
+   "scene": "v4-10-cas",
+   "start": 53.2,
+   "duration": 6.4,
+   "vo": "vo-010",
+   "vo_start": 53.6,
+   "vo_end": 58.24,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-010-nestor.wav",
+   "text": "De vrais cas de votre métier. Dix métiers, trois niveaux. Je vous guide, pas à pas."
+  },
+  {
+   "scene": "v4-11-semaine",
+   "start": 59.2,
+   "duration": 9.6,
+   "vo": "vo-011",
+   "vo_start": 59.6,
+   "vo_end": 67.95,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-011-nestor.wav",
+   "text": "Vingt minutes par semaine, dans votre agenda. Des badges, une attestation à imprimer. Vos progrès restent sur votre poste. Personne ne vous classe."
+  },
+  {
+   "scene": "v4-12-aussi",
+   "start": 68.4,
+   "duration": 6.6,
+   "vo": "vo-012",
+   "vo_start": 68.7,
+   "vo_end": 74.32,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-012-nestor.wav",
+   "text": "Et aussi, huit leçons courtes. Et des outils pour chaque jour, avec des demandes prêtes en un clic."
+  },
+  {
+   "scene": "v4-13-fin",
+   "start": 74.6,
+   "duration": 9.6,
+   "vo": "vo-013",
+   "vo_start": 75.4,
+   "vo_end": 82.55,
+   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-013-nestor.wav",
+   "text": "Je m'appuie sur Albert, l'IA de l'État. Écrivez votre demande, puis cliquez sur Analyser mon texte. Je suis à droite, avec vous."
+  }
+ ]
+}

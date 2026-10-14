@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>v4-13-fin</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#v4-13-fin-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#v4-13-fin-content { position: absolute; inset: 0; }
+
+#v4-13-fin-wrap { position: absolute; left: 0; right: 0; top: 0; bottom: 120px; display: flex; align-items: center; justify-content: center; gap: 100px; }
+#v4-13-fin-fox { width: 470px; height: 470px; border-radius: 50%; overflow: hidden; background: #eeeefb; flex: none;
+  box-shadow: 0 30px 80px rgba(0,0,80,0.14), 0 0 0 1px #e3e4f3; opacity: 0; }
+#v4-13-fin-fox img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+#v4-13-fin-txt { display: flex; flex-direction: column; max-width: 1040px; }
+#v4-13-fin-name { font-size: 176px; font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; color: #000091; opacity: 0; }
+#v4-13-fin-tag { font-size: 50px; font-weight: 700; color: #161616; margin-top: 18px; opacity: 0; }
+#v4-13-fin-cta { display: flex; align-items: center; gap: 26px; margin-top: 54px; padding: 22px 34px 22px 22px; background: #ffffff;
+  border-radius: 28px; border: 2px solid #d5d7f4; box-shadow: 0 18px 50px rgba(0,0,80,0.10); opacity: 0; }
+#v4-13-fin-cta img { width: 96px; height: 96px; border-radius: 50%; flex: none; }
+#v4-13-fin-cta div { font-size: 38px; font-weight: 500; line-height: 1.25; color: #161616; }
+#v4-13-fin-cta b { font-weight: 800; color: #000091; }
+#v4-13-fin-foot { position: absolute; left: 0; right: 0; bottom: 92px; display: flex; align-items: center; justify-content: center; gap: 26px; opacity: 0; }
+#v4-13-fin-flag { width: 132px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%);
+  box-shadow: 0 0 0 1px #dde0ee; }
+#v4-13-fin-albert { font-size: 40px; font-weight: 700; color: #3a3a4a; }
+
+      </style>
+      <div id="root" data-composition-id="v4-13-fin" data-start="0" data-duration="9.6" data-width="1920" data-height="1080">
+        <div id="v4-13-fin-bg"></div>
+        <div id="v4-13-fin-content">
+          <div id="v4-13-fin-wrap"><div id="v4-13-fin-fox"><img src="assets/v4/nestor-salut.webp" alt=""></div><div id="v4-13-fin-txt"><div id="v4-13-fin-name">Nestor</div><div id="v4-13-fin-tag">Votre coach pour bien demander à l’IA.</div><div id="v4-13-fin-cta"><img src="assets/v4/icone-analyser.png" alt=""><div>Écrivez votre demande, puis cliquez sur <b>Analyser mon texte</b>.</div></div></div></div><div id="v4-13-fin-foot"><div id="v4-13-fin-flag"></div><div id="v4-13-fin-albert">Avec Albert, l’IA de l’État</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-13-fin-content", {opacity: 0}, {opacity: 1, duration: 0.6, ease: "sine.inOut"}, 0);
+      tl.fromTo("#v4-13-fin-fox", {opacity: 0, scale: 0.9}, {opacity: 1, scale: 1, duration: 0.9, ease: "back.out(1.4)"}, 0.3);
+      tl.fromTo("#v4-13-fin-name", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.8, ease: "power3.out"}, 0.5);
+      tl.fromTo("#v4-13-fin-tag", {opacity: 0, y: 24}, {opacity: 1, y: 0, duration: 0.7, ease: "power3.out"}, 0.9);
+      tl.fromTo("#v4-13-fin-foot", {opacity: 0}, {opacity: 1, duration: 0.7}, 1.4);
+      tl.fromTo("#v4-13-fin-cta", {opacity: 0, y: 24}, {opacity: 1, y: 0, duration: 0.7, ease: "power3.out"}, 4.5);
+      window.__timelines["v4-13-fin"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

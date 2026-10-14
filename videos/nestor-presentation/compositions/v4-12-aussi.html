@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>v4-12-aussi</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#v4-12-aussi-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#v4-12-aussi-content { position: absolute; inset: 0; }
+
+.v4-12-aussi-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#v4-12-aussi-scrim { position: absolute; left: 0; width: 1160px; }
+.v4-12-aussi-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.v4-12-aussi-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.v4-12-aussi-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.v4-12-aussi-l.a { font-size: 74px; color: #000091; }
+.v4-12-aussi-l.b { font-size: 74px; color: #161616; }
+.v4-12-aussi-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.v4-12-aussi-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.v4-12-aussi-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.v4-12-aussi-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="v4-12-aussi" data-start="0" data-duration="6.6" data-width="1920" data-height="1080">
+        <div id="v4-12-aussi-bg"></div>
+        <div id="v4-12-aussi-content">
+          <img class="v4-12-aussi-shot" id="v4-12-aussi-s0" src="assets/v4/s12-cours.png" alt="">
+          <img class="v4-12-aussi-shot" id="v4-12-aussi-s1" src="assets/v4/s12-outils.png" alt="">
+          <div class="v4-12-aussi-ring" id="v4-12-aussi-r0" style="left:1205px;top:330px;width:670px;height:716px;border:5px solid #000091;border-radius:22px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div class="v4-12-aussi-ring" id="v4-12-aussi-r1" style="left:1189px;top:321px;width:340px;height:424px;border:5px solid #000091;border-radius:22px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div id="v4-12-aussi-scrim" style="top:0px;height:1080px;background:rgba(247,248,253,0.985)"></div>
+          <div class="v4-12-aussi-hg" id="v4-12-aussi-g0" style="top:0px;height:1080px"><div class="v4-12-aussi-dash"></div><div class="v4-12-aussi-l a" id="v4-12-aussi-g0-l0">Huit leçons courtes.</div><div class="v4-12-aussi-l b" id="v4-12-aussi-g0-l1">Des outils pour chaque jour.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-12-aussi-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
+      tl.fromTo("#v4-12-aussi-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#v4-12-aussi-s1", {opacity: 0}, {opacity: 1, duration: 0.45, ease: "sine.inOut"}, 2.60);
+      tl.fromTo("#v4-12-aussi-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 0.60);
+      tl.to("#v4-12-aussi-r0", {opacity: 0, duration: 0.35, ease: "sine.in"}, 2.50);
+      tl.fromTo("#v4-12-aussi-r1", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 3.10);
+      tl.set("#v4-12-aussi-scrim", {opacity: 1}, 0);
+      tl.fromTo("#v4-12-aussi-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.30);
+      tl.fromTo("#v4-12-aussi-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.70);
+      tl.fromTo("#v4-12-aussi-g0 .v4-12-aussi-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.30);
+      window.__timelines["v4-12-aussi"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

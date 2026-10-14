@@ -2,52 +2,52 @@
 workflow: product-launch-video
 flow: automation
 storyboard: no
-message: "Nestor, le coach de l'Assistant : il apprend à vos agents à bien demander, en travaillant."
-angle: Apple-style product film — hook (a hasty request, an answer that does not help), promise, Nestor revealed as THE coach, its method, then progress
-destination: modal opened by the « ? » button of Nestor's panel (shown ~800 px wide), also usable in a meeting
+message: "Nestor, le coach de l'Assistant : il vous apprend à bien demander à votre IA, en travaillant."
+angle: Apple-style product film — one real task from start to finish (reply to an agent who asks for one more telework day), then progress, then one gesture to make now
+destination: window opened by « ? » in Nestor's panel, full screen up to ~1200 px wide; must stay legible at 880 px wide
 aspect: "16:9"
 language: fr
-length: ~3 min (v3: 184 s)
-audio: French voiceover by Nestor (OmniVoice clone `nestor-aventuriere`, fr, 1.0), no music
-style_preset: none (reuse videos/robin-intro identity)
+length: ~85 s (v4: 84.2 s, 13 scenes)
+audio: French voiceover by Nestor (OmniVoice reference voice `nestor-aventuriere`, fr, speed 1.0), no music
+style_preset: none (identity of videos/robin-intro: lavender #f7f8fd, navy #000091, Marianne, tricolour dash, fox illustrations)
 ---
 
 ## Intent
-Marketing video for decision makers and agents of the ministry. Sell Nestor by showing it working
-on a real ministry task, then the training path. Real screenshots from
-https://dev.bhub.cloud/nestor-chat/ (close-ups of one element each, 2× device scale), never retouched.
+Marketing film (Apple level) for agents and managers of the ministry. Follow-up of the senior marketing critique
+(scratchpad `critique/critique.md`): one story, one promise, real proof, a clear end card.
 
-## Customizations
-- Identity of `videos/robin-intro/`: lavender canvas `#f7f8fd`, blue-white-red dash top-left, Marianne,
-  navy `#000091` titles, the fox illustrations (`assets/nestor-*.webp`).
-- Sober, institutional: calm cross-fades, slow zooms on screenshot close-ups, a cursor that clicks, a
-  highlight ring. No racing counters, no confetti, no "start-up" energy.
-- Muted: every message is on screen. Minimum 40 px text (the modal shows the video ~800 px wide).
-- Words: « demande », « l'Assistant », « Nestor », « vous ». Never « prompt », « LLM », « modèle de
-  langage », « requête », « IA générative ».
+## Hard rules (Loic)
+1. Every demonstration shot shows Nestor's panel on the RIGHT, at real size and sharp. The app screenshot is never
+   shrunk: captures are 1920x1080 screenshots shown 1:1 (layout 1010x568 CSS rendered at zoom 1.9, so panel text is
+   ~27 px in the master, ~12 px in the 880 px window). The headline sits on a light scrim over the conversation area
+   (x < 1160), never over the panel.
+2. Master 1920x1080 30 fps; web file 1920x1080 30 fps H.264 CRF ~27, -tune stillimage, preset slow, yuv420p, faststart.
+3. Sound: AAC 128 kbit/s mono built from the WAV masters (never from the MP3 copies).
+4. Text: benefit-led, short, human. Voice: sentences of 15 words max, only periods and commas, numbers in words,
+   never the word « assistant », Nestor says « je », vouvoiement, never « prompt », no competitor,
+   never « n'invente rien ». Only features that exist.
+5. Real screenshots of the real app only (dev.bhub.cloud/nestor-chat, session `nestor`), no retouching; user avatar hidden;
+   left conversation list closed (neutral state).
+
+## Visual system
+- Wide: the full app (centre + panel) with no scrim, one blue outline (scenes 2 and 7 open this way).
+- Duo: lavender scrim over the conversation area with the headline (navy line + ink line + optional grey line or chip
+  naming the button), the panel crisp on the right; crossfades between real states of the same screen.
+- Title: lavender card with a fox illustration (« Et vous progressez. ») and the end card.
+- Highlights: blue France #000091 outlines and click pulses; red #e1000f only on the personal-data alert.
 
 ## Must not
-- Name or hint at any other product (no « contrairement à », « pas une extension », « pas de classement, lui »).
-- Claim « n'invente jamais rien » / « rien d'inventé », or any ranking/leaderboard (there is none).
-- Show features that do not exist today; no « En préparation » mockups presented as real.
-- Show the account avatar, the left conversation list, or any on-screen text containing « prompt ».
+- Name or hint at any other product; show the account avatar; show text containing « prompt ».
 - Present the attestation as an official certification (it is declarative, printable).
+- Show features that do not exist.
 
 ## Deliverables
-- `src/frontend/apps/conversations/public/assets/nestor-presentation-fr.mp4` (1920×1080, 30 fps,
-  H.264, faststart, no audio track, ≤ 12 MB)
-- `src/frontend/apps/conversations/public/assets/nestor-presentation-fr.jpg` (poster, 1920×1080)
+- `src/frontend/apps/conversations/public/assets/nestor-presentation-fr.mp4` (1920x1080, 30 fps, H.264, AAC 128k mono, faststart)
+- `src/frontend/apps/conversations/public/assets/nestor-presentation-fr.jpg` (poster 1920x1080)
+- Master outside git: `/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/nestor-presentation-v4-master-1080p.mp4`
 
 ## Sources
-- Earlier study: scratchpad `video/etude-video-jsl.md` (§1 « ne pas mettre », §2 « supériorité sans comparer »)
-- Feature truth: the coordinator's list (100 cases = 10 per job × 10 jobs, 3 levels, weekly programme,
-  attestation, trainer, close matches while typing, personal-data warning, « Le dire », answer check).
-
-## v3 (2026-10-14) — what changed
-- Whole-application base shots (1280×720 captures: left menu, centre, Nestor's panel), soft dim + red ring,
-  no large scrolling crops, no zoom that cuts the left menu. Old test conversation titles blurred.
-- Narration rules (Loic): sentences ≤ 15 words, only periods and commas, numbers in words, never the word
-  « assistant », Nestor says « je ». Text: `tools/narration-v3.json`.
-- Voice: masters in /data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v3/, MP3 32k in `.media/audio/voice-v3/`.
-- Build: `python3 tools/gen3.py index.html` regenerates `compositions/v3-*.html` and `index.html`.
-- Web delivery: 1280×720 H.264, ≤ 5 MB target, `public/assets/nestor-presentation-fr.mp4` + poster `.jpg`.
+- Narration: `tools/narration-v4.json`; WAV masters + manifest: `/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/`;
+  MP3 copies (96 kbit/s mono) for the preview: `.media/audio/voice-v4/`.
+- Build: `python3 tools/gen4.py` writes `compositions/v4-*.html`, `index.html` and `tools/timeline-v4.json`.
+- Captures: `assets/v4/*.png` (2026-10-14, real app, telework thread).
