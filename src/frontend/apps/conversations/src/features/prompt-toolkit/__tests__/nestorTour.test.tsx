@@ -214,20 +214,6 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     expect(screen.getByTestId('tour-backdrop')).toHaveStyle({ left: '300px' });
   });
 
-  it('a click elsewhere on the page closes the tour (the panel included)', () => {
-    const other = document.createElement('button');
-    document.body.appendChild(other);
-    startTour();
-    act(() =>
-      useTourStore.setState({ onFilm: false, index: indexOf('home-course') }),
-    );
-    render(<TourStage />);
-    fireEvent.pointerDown(screen.getByRole('dialog'));
-    expect(useTourStore.getState().active).toBe(true);
-    fireEvent.pointerDown(other);
-    expect(useTourStore.getState().active).toBe(false);
-  });
-
   it('a click on what is flashing, when Nestor asks for it, goes on', () => {
     const card = document.createElement('button');
     card.dataset.tour = 'card-coach-manual';
@@ -272,31 +258,23 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     });
   });
 
-  it('a click beside pauses the tour; « Reprendre la visite » goes back to that step', () => {
-    const other = document.createElement('button');
-    document.body.appendChild(other);
+  it('the tour stays open whatever is clicked around it; it ends only when asked', () => {
+    const coach = document.createElement('button');
+    coach.dataset.tour = 'card-coach-manual';
+    document.body.appendChild(coach);
     startTour();
     act(() =>
       useTourStore.setState({ onFilm: false, index: indexOf('home-course') }),
     );
     render(<TourStage />);
-    fireEvent.pointerDown(other);
-    expect(useTourStore.getState().active).toBe(false);
-    fireEvent.click(screen.getByRole('button', { name: /Resume the tour/ }));
+    fireEvent.pointerDown(coach);
+    fireEvent.click(coach);
+    fireEvent.click(screen.getByTestId('tour-backdrop'));
     expect(useTourStore.getState()).toMatchObject({
       active: true,
-      onFilm: false,
       index: indexOf('home-course'),
     });
-  });
-
-  it('« Passer la visite » ends it for good: nothing to resume', () => {
-    startTour();
-    act(() => useTourStore.setState({ onFilm: false, index: 2 }));
-    render(<TourStage />);
     fireEvent.click(screen.getByRole('button', { name: 'Skip the tour' }));
-    expect(
-      screen.queryByRole('button', { name: /Resume the tour/ }),
-    ).toBeNull();
+    expect(useTourStore.getState().active).toBe(false);
   });
 });
