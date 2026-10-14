@@ -537,7 +537,11 @@ export const TourStage = () => {
           <Body>
             {film ? (
               filmFailed ? (
-                <Words>{t('The presentation cannot be played here.')}</Words>
+                <Words>
+                  {t(
+                    'The new film is coming soon. Meanwhile, take the guided tour: Nestor shows you everything on the real screen.',
+                  )}
+                </Words>
               ) : (
                 <Film
                   aria-label={t('Presentation of Nestor')}

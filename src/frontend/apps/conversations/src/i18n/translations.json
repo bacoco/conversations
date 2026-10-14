@@ -3,6 +3,7 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "The new film is coming soon. Meanwhile, take the guided tour: Nestor shows you everything on the real screen.": "Le nouveau film arrive bientôt. En attendant, faites la visite guidée : Nestor vous montre tout sur le vrai écran.",
       "Resume the tour ({{n}} of {{total}})": "Reprendre la visite ({{n}} sur {{total}})",
       "End the tour": "Terminer la visite",
       "Watch the introduction video": "Regarder la vidéo d’introduction",

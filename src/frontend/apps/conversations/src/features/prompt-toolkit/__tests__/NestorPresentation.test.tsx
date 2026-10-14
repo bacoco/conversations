@@ -51,7 +51,7 @@ describe('the film, first in the window', () => {
     render(<TourStage />);
     fireEvent.error(screen.getByLabelText('Presentation of Nestor'));
     expect(
-      screen.getByText('The presentation cannot be played here.'),
+      screen.getByText('The new film is coming soon. Meanwhile, take the guided tour: Nestor shows you everything on the real screen.'),
     ).toBeInTheDocument();
   });
 });
