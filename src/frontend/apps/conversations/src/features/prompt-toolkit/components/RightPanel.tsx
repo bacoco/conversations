@@ -28,6 +28,10 @@ import { FavoritesPage } from '../favorites/FavoritesPage';
 import { PromptFillView } from '../fill/PromptFillView';
 import { usePanelWidth } from '../hooks/usePanelWidth';
 import { LearnPanel } from '../learn/LearnPanel';
+import {
+  HelpCornerButton,
+  helpCornerShown,
+} from '../presentation/PresentationButton';
 import { useRecorderStore } from '../speech/useRecorderStore';
 import { claimNestorData } from '../stores/accountScope';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
@@ -496,6 +500,20 @@ export const RightPanel = ({
       {/* Nestor's guided tour: he speaks in the middle, the panel flashes. */}
       <TourStage />
       {/* « Mes favoris »: a round star, bottom right, outside the coach. */}
+      {/* « Découvrir Nestor »: a round « ? », bottom left, home cards only. */}
+      {isClaimed &&
+        helpCornerShown({ showHome, welcomeShown, isNestorChat }) && (
+          <Box
+            $css={css`
+              position: absolute;
+              bottom: 16px;
+              left: 16px;
+              pointer-events: auto;
+            `}
+          >
+            <HelpCornerButton />
+          </Box>
+        )}
       {starShown && (
         <Box
           $css={css`

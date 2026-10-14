@@ -1,6 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { PresentationButton } from '../presentation/PresentationButton';
+import {
+  HelpCornerButton,
+  PresentationButton,
+  helpCornerShown,
+} from '../presentation/PresentationButton';
 import { useProfileStore } from '../stores/useProfileStore';
 import { useTourStore } from '../stores/useTourStore';
 import { TourStage } from '../tour/TourStage';
@@ -55,5 +59,46 @@ describe('the film, first in the window', () => {
       onFilm: false,
     });
     expect(screen.queryByText(/coming soon/)).toBeNull();
+  });
+});
+
+describe('the round « ? » at the bottom left of the home cards', () => {
+  beforeEach(() => {
+    useTourStore.getState().stop();
+    useProfileStore.setState({ hasSeenPresentation: false });
+  });
+
+  it('shown only on the home cards, never in the coach or on the welcome', () => {
+    expect(
+      helpCornerShown({
+        showHome: true,
+        welcomeShown: false,
+        isNestorChat: false,
+      }),
+    ).toBe(true);
+    expect(
+      helpCornerShown({
+        showHome: false,
+        welcomeShown: false,
+        isNestorChat: true,
+      }),
+    ).toBe(false);
+    expect(
+      helpCornerShown({
+        showHome: true,
+        welcomeShown: true,
+        isNestorChat: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('opens the film’s window, like the « ? » of the header', () => {
+    render(<HelpCornerButton />);
+    fireEvent.click(screen.getByRole('button', { name: 'Discover Nestor' }));
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: true,
+    });
+    expect(useProfileStore.getState().hasSeenPresentation).toBe(true);
   });
 });

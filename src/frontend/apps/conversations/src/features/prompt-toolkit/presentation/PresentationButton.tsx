@@ -57,3 +57,64 @@ export const PresentationButton = () => {
     </Anchor>
   );
 };
+
+/** The round « ? »: on the home page's cards only (the header's is small). */
+export const helpCornerShown = ({
+  showHome,
+  welcomeShown,
+  isNestorChat,
+}: {
+  showHome: boolean;
+  welcomeShown: boolean;
+  isNestorChat: boolean;
+}) => showHome && !welcomeShown && !isNestorChat;
+
+const Round = styled.button`
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid ${C.brandLine};
+  background: #ffffff;
+  color: ${C.brand};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(30, 30, 46, 0.18);
+  &:hover {
+    background: ${C.brandSoft};
+  }
+  &:focus-visible {
+    outline: 2px solid ${C.brand};
+    outline-offset: 2px;
+  }
+`;
+
+/**
+ * « Découvrir Nestor », a round « ? » at the bottom left of the home page,
+ * facing the favorites' star: the film's window, then the guided tour.
+ */
+export const HelpCornerButton = () => {
+  const { t } = useTranslation();
+  const seen = useProfileStore((state) => state.hasSeenPresentation);
+  const markSeen = useProfileStore((state) => state.markPresentationSeen);
+  return (
+    <Round
+      type="button"
+      aria-label={t('Discover Nestor')}
+      title={t('Discover Nestor')}
+      onClick={() => {
+        markSeen();
+        startTour();
+      }}
+    >
+      <QuestionMarkCircleIcon aria-hidden width={30} height={30} />
+      {!seen && (
+        <Dot>
+          <span className="sr-only">{t('New: discover Nestor')}</span>
+        </Dot>
+      )}
+    </Round>
+  );
+};
