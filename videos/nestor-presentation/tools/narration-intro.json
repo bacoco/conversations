@@ -1,0 +1,10 @@
+[
+ {"id": "intro-01", "scene": "in-01-outil", "text": "Voici un outil en ligne de l'État, conçu par la Dinum. Vous lui écrivez votre besoin, comme à un collègue."},
+ {"id": "intro-02", "scene": "in-02-reponse", "text": "Il rédige un courriel, résume un document, reformule une note, prépare une réunion. Il répond en quelques secondes. On appelle cela une intelligence artificielle, une IA."},
+ {"id": "intro-03", "scene": "in-03-vague", "text": "Mais l'IA ne sait que ce que vous lui écrivez. Une demande vague donne une réponse vague, ou fausse. Ici, elle doit tout vous redemander."},
+ {"id": "intro-04", "scene": "in-04-nestor", "text": "Voici Nestor, votre coach, à droite de l'écran. Je vous apprends à bien demander, pas à pas. Et je relis la réponse avec vous."},
+ {"id": "intro-05", "scene": "in-05-metiers", "text": "Je connais dix métiers du ministère, et plus de deux cents cas pratiques, modèles et outils. Je vous les propose pendant que vous écrivez."},
+ {"id": "intro-06", "scene": "in-06-confiance", "text": "Je m'appuie sur Albert, l'IA de l'État. Je vous préviens avant l'envoi d'une donnée personnelle. Vos progrès restent sur votre ordinateur. Personne n'est classé."},
+ {"id": "vo-015", "scene": "v4-01-dossier", "text": "Voyons un exemple. Un agent vous demande un jour de télétravail en plus. Vous commencez à écrire votre demande."},
+ {"id": "vo-014", "scene": "v4-02-nestor", "text": "Je suis là, à droite de l'écran. Je vous accompagne, du début à la fin."}
+]

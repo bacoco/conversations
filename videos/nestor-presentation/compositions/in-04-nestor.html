@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>in-04-nestor</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#in-04-nestor-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#in-04-nestor-content { position: absolute; inset: 0; }
+
+.in-04-nestor-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#in-04-nestor-scrim { position: absolute; left: 0; width: 1160px; }
+.in-04-nestor-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.in-04-nestor-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.in-04-nestor-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.in-04-nestor-l.a { font-size: 74px; color: #000091; }
+.in-04-nestor-l.b { font-size: 74px; color: #161616; }
+.in-04-nestor-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.in-04-nestor-l.d { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #161616; margin-top: 26px;
+  padding-left: 44px; position: relative; }
+.in-04-nestor-l.d::before { content: ""; position: absolute; left: 0; top: 0.32em; width: 22px; height: 22px; border-radius: 6px; background: #000091; }
+.in-04-nestor-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.in-04-nestor-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.in-04-nestor-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="in-04-nestor" data-start="0" data-duration="8.0" data-width="1920" data-height="1080">
+        <div id="in-04-nestor-bg"></div>
+        <div id="in-04-nestor-content">
+          <img class="in-04-nestor-shot" id="in-04-nestor-s0" src="assets/intro/i-nestor-vague.png" alt="">
+          <div class="in-04-nestor-ring" id="in-04-nestor-r0" style="left:1168px;top:6px;width:744px;height:1068px;border:5px solid #000091;border-radius:26px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div class="in-04-nestor-ring" id="in-04-nestor-r1" style="left:1258px;top:232px;width:604px;height:270px;border:5px solid #000091;border-radius:26px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div id="in-04-nestor-scrim" style="top:0px;height:1080px;background:rgba(247,248,253,0.985)"></div>
+          <div class="in-04-nestor-hg" id="in-04-nestor-g0" style="top:0px;height:1080px"><div class="in-04-nestor-dash"></div><div class="in-04-nestor-l a" id="in-04-nestor-g0-l0">Nestor.</div><div class="in-04-nestor-l b" id="in-04-nestor-g0-l1">Votre coach, à droite de l’écran.</div><div class="in-04-nestor-l c" id="in-04-nestor-g0-l2">Il vous apprend à bien demander, pas à pas. Il relit la réponse avec vous.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#in-04-nestor-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
+      tl.fromTo("#in-04-nestor-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#in-04-nestor-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 0.30);
+      tl.to("#in-04-nestor-r0", {opacity: 0, duration: 0.35, ease: "sine.in"}, 3.40);
+      tl.fromTo("#in-04-nestor-r1", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 5.85);
+      tl.fromTo("#in-04-nestor-scrim", {opacity: 0, x: -80}, {opacity: 1, x: 0, duration: 0.6, ease: "power3.out"}, 0.60);
+      tl.fromTo("#in-04-nestor-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.70);
+      tl.fromTo("#in-04-nestor-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.20);
+      tl.fromTo("#in-04-nestor-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 3.45);
+      tl.fromTo("#in-04-nestor-g0 .in-04-nestor-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.70);
+      window.__timelines["in-04-nestor"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

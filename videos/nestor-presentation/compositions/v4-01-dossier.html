@@ -23,6 +23,9 @@
 .v4-01-dossier-l.a { font-size: 74px; color: #000091; }
 .v4-01-dossier-l.b { font-size: 74px; color: #161616; }
 .v4-01-dossier-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.v4-01-dossier-l.d { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #161616; margin-top: 26px;
+  padding-left: 44px; position: relative; }
+.v4-01-dossier-l.d::before { content: ""; position: absolute; left: 0; top: 0.32em; width: 22px; height: 22px; border-radius: 6px; background: #000091; }
 .v4-01-dossier-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
   border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
 .v4-01-dossier-ring { position: absolute; opacity: 0; box-sizing: border-box; }
@@ -30,23 +33,24 @@
   border: 6px solid #000091; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="v4-01-dossier" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="v4-01-dossier" data-start="0" data-duration="7.5" data-width="1920" data-height="1080">
         <div id="v4-01-dossier-bg"></div>
         <div id="v4-01-dossier-content">
           <img class="v4-01-dossier-shot" id="v4-01-dossier-s0" src="assets/v4/s01-brouillon.png" alt="">
           <div class="v4-01-dossier-ring" id="v4-01-dossier-r0" style="left:47px;top:800px;width:1066px;height:190px;border:5px solid #000091;border-radius:30px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
           <div id="v4-01-dossier-scrim" style="top:0px;height:790px;background:linear-gradient(180deg, rgba(247,248,253,0.985) 0%, rgba(247,248,253,0.985) 95%, rgba(247,248,253,0) 100%)"></div>
-          <div class="v4-01-dossier-hg" id="v4-01-dossier-g0" style="top:0px;height:720px"><div class="v4-01-dossier-dash"></div><div class="v4-01-dossier-l a" id="v4-01-dossier-g0-l0">Vous connaissez votre dossier.</div><div class="v4-01-dossier-l b" id="v4-01-dossier-g0-l1">Votre IA, non.</div><div class="v4-01-dossier-l c" id="v4-01-dossier-g0-l2">Alors, elle devine.</div></div>
+          <div class="v4-01-dossier-hg" id="v4-01-dossier-g0" style="top:0px;height:720px"><div class="v4-01-dossier-dash"></div><div class="v4-01-dossier-l a" id="v4-01-dossier-g0-l0">Un exemple.</div><div class="v4-01-dossier-l b" id="v4-01-dossier-g0-l1">Un agent demande un jour de télétravail en plus.</div><div class="v4-01-dossier-l c" id="v4-01-dossier-g0-l2">Vous commencez à écrire votre demande.</div></div>
         </div>
       </div>
       <script>
       const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#v4-01-dossier-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
       tl.fromTo("#v4-01-dossier-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
-      tl.fromTo("#v4-01-dossier-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 1.00);
+      tl.fromTo("#v4-01-dossier-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 5.20);
       tl.fromTo("#v4-01-dossier-scrim", {opacity: 0, x: -80}, {opacity: 1, x: 0, duration: 0.6, ease: "power3.out"}, 0.15);
       tl.fromTo("#v4-01-dossier-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.55);
-      tl.fromTo("#v4-01-dossier-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.15);
-      tl.fromTo("#v4-01-dossier-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 4.35);
+      tl.fromTo("#v4-01-dossier-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.30);
+      tl.fromTo("#v4-01-dossier-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 5.15);
       tl.fromTo("#v4-01-dossier-g0 .v4-01-dossier-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.55);
       window.__timelines["v4-01-dossier"] = tl;
       </script>

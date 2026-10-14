@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Nestor film v4: one real task (telework reply), real 1:1 captures, Nestor's panel always sharp on the right.
+"""Nestor film v4 + intro: first explain what the Assistant is (the State's AI tool), why a vague request fails,
+who Nestor is and why he can be trusted (INTRO, 6 scenes), then one real task (telework reply).
+Real 1:1 captures, Nestor's panel always sharp on the right.
 
 Captures are 1920x1080 screenshots of https://dev.bhub.cloud/nestor-chat/ (layout 1010x568 CSS at zoom 1.9),
 shown full frame at 1:1: no rescale, so the panel text stays crisp. The headline sits on a light scrim over the
@@ -17,6 +19,7 @@ OV = 0.4          # crossfade overlap between scenes
 PANEL_X = 1160    # left edge of Nestor's panel in the captures
 NAVY, RED = "#000091", "#e1000f"
 A = "assets/v4/"
+AI = "assets/intro/"
 
 FONTS = """
 @font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
@@ -51,14 +54,59 @@ def P(x, y, t):
     return {"x": x, "y": y, "t": t}
 
 
+INTRO = [
+    {"id": "in-01-outil", "vo": "intro-01", "dur": 6.8, "vo_at": 0.4, "kind": "demo",
+     "shots": [(AI + "i-reponse", 0)],
+     "scrim": {"mode": "full", "t": None},
+     "heads": [H(0.45, [("L'Assistant.", "a", 0), ("Un outil en ligne de l'État, conçu par la DINUM.", "b", 0.5),
+                        ("Vous lui écrivez votre besoin, comme à un collègue.", "c", 2.95)])],
+     "rings": [], "pulses": []},
+    {"id": "in-02-reponse", "vo": "intro-02", "dur": 10.6, "vo_at": 0.35, "kind": "demo",
+     "shots": [(AI + "i-reponse", 0)],
+     "scrim": {"mode": "bottom", "y": 640, "t": 0.2},
+     "heads": [H(0.45, [("Un courriel, un résumé,", "a", 0), ("une note, une réunion.", "b", 2.2)], out=5.2),
+               H(5.55, [("Il répond en quelques secondes.", "a", 0), ("C'est une intelligence artificielle, une IA.", "c", 1.75)])],
+     "rings": [R((93, 122, 1092, 238), 0.5, 5.3, NAVY, 24), R((80, 295, 1100, 630), 5.6, None, NAVY, 24)],
+     "pulses": []},
+    {"id": "in-03-vague", "vo": "intro-03", "dur": 8.6, "vo_at": 0.35, "kind": "demo",
+     "shots": [(AI + "i-vague", 0)],
+     "scrim": {"mode": "bottom", "y": 640, "t": 3.0},
+     "heads": [H(3.25, [("Demande vague,", "a", 0), ("réponse vague.", "b", 0.6),
+                        ("L'IA ne sait que ce que vous lui écrivez.", "c", 1.3)])],
+     "rings": [R((649, 122, 1092, 203), 0.45, None, NAVY, 22), R((120, 395, 1040, 625), 6.2, None, NAVY, 22)],
+     "pulses": []},
+    {"id": "in-04-nestor", "vo": "intro-04", "dur": 8.0, "vo_at": 0.35, "kind": "demo",
+     "shots": [(AI + "i-nestor-vague", 0)],
+     "scrim": {"mode": "full", "t": 0.6},
+     "heads": [H(0.7, [("Nestor.", "a", 0), ("Votre coach, à droite de l'écran.", "b", 1.5),
+                       ("Il vous apprend à bien demander, pas à pas. Il relit la réponse avec vous.", "c", 2.75)])],
+     "rings": [R((1168, 6, 1912, 1074), 0.3, 3.4, NAVY, 26), R((1258, 232, 1862, 502), 5.85, None, NAVY, 26)],
+     "pulses": []},
+    {"id": "in-05-metiers", "vo": "intro-05", "dur": 8.5, "vo_at": 0.35, "kind": "demo",
+     "shots": [("s10-cas", 0), ("s03-pistes", 5.6)],
+     "scrim": {"mode": "full", "t": None},
+     "heads": [H(0.45, [("Dix métiers du ministère.", "a", 0), ("Plus de 200 cas pratiques, modèles et outils.", "b", 2.05),
+                        ("Proposés pendant que vous écrivez.", "c", 5.5)])],
+     "rings": [R((1205, 481, 1875, 789), 1.0, 5.4), R((1258, 314, 1819, 468), 6.2)],
+     "pulses": []},
+    {"id": "in-06-confiance", "vo": "intro-06", "dur": 9.9, "vo_at": 0.35, "kind": "demo",
+     "shots": [("s06-telephone", 0), ("s11-parcours", 5.45)],
+     "scrim": {"mode": "full", "t": None},
+     "heads": [H(0.45, [("Avec Albert, l'IA de l'État.", "a", 0), ("Une alerte avant d'envoyer une donnée personnelle.", "d", 2.65),
+                        ("Vos progrès restent sur votre ordinateur.", "d", 5.3), ("Personne n'est classé.", "d", 7.8)])],
+     "rings": [R((1282, 384, 1838, 484), 3.2, 5.3, RED, 16), R((1205, 333, 1875, 677), 5.9)],
+     "pulses": []},
+]
+
 SCENES = [
-    {"id": "v4-01-dossier", "vo": "vo-001", "dur": 6.4, "vo_at": 0.5, "kind": "demo",
+    {"id": "v4-01-dossier", "vo": "vo-015", "dur": 7.5, "vo_at": 0.5, "kind": "demo",
      "shots": [("s01-brouillon", 0)],
      "scrim": {"mode": "top", "h": 790, "t": 0.15},
-     "heads": [H(0.55, [("Vous connaissez votre dossier.", "a", 0), ("Votre IA, non.", "b", 1.6), ("Alors, elle devine.", "c", 3.8)])],
-     "rings": [R((47, 800, 1113, 990), 1.0, None, NAVY, 30)],
+     "heads": [H(0.55, [("Un exemple.", "a", 0), ("Un agent demande un jour de télétravail en plus.", "b", 1.75),
+                        ("Vous commencez à écrire votre demande.", "c", 4.6)])],
+     "rings": [R((47, 800, 1113, 990), 5.2, None, NAVY, 30)],
      "pulses": []},
-    {"id": "v4-02-nestor", "vo": "vo-002", "dur": 6.0, "vo_at": 0.35, "kind": "demo",
+    {"id": "v4-02-nestor", "vo": "vo-014", "dur": 5.2, "vo_at": 0.35, "kind": "demo",
      "shots": [("s01-brouillon", 0)],
      "scrim": {"mode": "full", "t": 1.5},
      "heads": [H(1.6, [("Nestor.", "a", 0), ("Votre coach, à droite de l'écran.", "b", 0.5),
@@ -181,6 +229,9 @@ def demo(sc, first):
 .{sid}-l.a {{ font-size: 74px; color: {NAVY}; }}
 .{sid}-l.b {{ font-size: 74px; color: #161616; }}
 .{sid}-l.c {{ font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }}
+.{sid}-l.d {{ font-size: 46px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #161616; margin-top: 26px;
+  padding-left: 44px; position: relative; }}
+.{sid}-l.d::before {{ content: ""; position: absolute; left: 0; top: 0.32em; width: 22px; height: 22px; border-radius: 6px; background: {NAVY}; }}
 .{sid}-chip {{ align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
   border: 2px solid #c9cbf2; color: {NAVY}; font-size: 32px; font-weight: 700; opacity: 0; }}
 .{sid}-ring {{ position: absolute; opacity: 0; box-sizing: border-box; }}
@@ -191,7 +242,8 @@ def demo(sc, first):
     if not first:
         js.append(f'tl.fromTo("#{sid}-content", {{opacity: 0}}, {{opacity: 1, duration: {OV}, ease: "sine.inOut"}}, 0);')
     for k, (img, t) in enumerate(sc["shots"]):
-        body.append(f'<img class="{sid}-shot" id="{sid}-s{k}" src="{A}{img}.png" alt="">')
+        src = img if img.startswith("assets/") else A + img
+        body.append(f'<img class="{sid}-shot" id="{sid}-s{k}" src="{src}.png" alt="">')
         d = 0.01 if k == 0 else 0.45
         js.append(f'tl.fromTo("#{sid}-s{k}", {{opacity: 0}}, {{opacity: 1, duration: {d}, ease: "sine.inOut"}}, {t:.2f});')
     for k, r in enumerate(sc["rings"]):
@@ -304,7 +356,7 @@ def end(sc):
 def main():
     meta = {m["id"]: m for m in json.load(open(META))}
     t, slots, table = 0.0, [], []
-    for i, sc in enumerate(SCENES):
+    for i, sc in enumerate(INTRO + SCENES):
         html = demo(sc, i == 0) if sc["kind"] == "demo" else title(sc) if sc["kind"] == "title" else end(sc)
         with open(os.path.join(PROJ, "compositions", sc["id"] + ".html"), "w") as f:
             f.write(html)
@@ -348,7 +400,7 @@ def main():
         f.write(doc)
     with open(os.path.join(PROJ, "tools", "timeline-v4.json"), "w") as f:
         json.dump({"duration": round(t, 2), "scenes": table}, f, ensure_ascii=False, indent=1)
-    print(f"total {t:.2f}s, {len(SCENES)} scenes")
+    print(f"total {t:.2f}s, {len(INTRO)} + {len(SCENES)} scenes")
 
 
 if __name__ == "__main__":

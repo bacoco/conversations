@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>in-02-reponse</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#in-02-reponse-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#in-02-reponse-content { position: absolute; inset: 0; }
+
+.in-02-reponse-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#in-02-reponse-scrim { position: absolute; left: 0; width: 1160px; }
+.in-02-reponse-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.in-02-reponse-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.in-02-reponse-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.in-02-reponse-l.a { font-size: 74px; color: #000091; }
+.in-02-reponse-l.b { font-size: 74px; color: #161616; }
+.in-02-reponse-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.in-02-reponse-l.d { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #161616; margin-top: 26px;
+  padding-left: 44px; position: relative; }
+.in-02-reponse-l.d::before { content: ""; position: absolute; left: 0; top: 0.32em; width: 22px; height: 22px; border-radius: 6px; background: #000091; }
+.in-02-reponse-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.in-02-reponse-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.in-02-reponse-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="in-02-reponse" data-start="0" data-duration="10.6" data-width="1920" data-height="1080">
+        <div id="in-02-reponse-bg"></div>
+        <div id="in-02-reponse-content">
+          <img class="in-02-reponse-shot" id="in-02-reponse-s0" src="assets/intro/i-reponse.png" alt="">
+          <div class="in-02-reponse-ring" id="in-02-reponse-r0" style="left:93px;top:122px;width:999px;height:116px;border:5px solid #000091;border-radius:24px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div class="in-02-reponse-ring" id="in-02-reponse-r1" style="left:80px;top:295px;width:1020px;height:335px;border:5px solid #000091;border-radius:24px;box-shadow:0 0 0 8px rgba(0,0,145,0.14)"></div>
+          <div id="in-02-reponse-scrim" style="top:640px;height:440px;background:linear-gradient(0deg, rgba(247,248,253,0.985) 0%, rgba(247,248,253,0.985) 90%, rgba(247,248,253,0) 100%)"></div>
+          <div class="in-02-reponse-hg" id="in-02-reponse-g0" style="top:700px;height:380px"><div class="in-02-reponse-dash"></div><div class="in-02-reponse-l a" id="in-02-reponse-g0-l0">Un courriel, un résumé,</div><div class="in-02-reponse-l b" id="in-02-reponse-g0-l1">une note, une réunion.</div></div>
+          <div class="in-02-reponse-hg" id="in-02-reponse-g1" style="top:700px;height:380px"><div class="in-02-reponse-dash"></div><div class="in-02-reponse-l a" id="in-02-reponse-g1-l0">Il répond en quelques secondes.</div><div class="in-02-reponse-l c" id="in-02-reponse-g1-l1">C’est une intelligence artificielle, une IA.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#in-02-reponse-content", {opacity: 0}, {opacity: 1, duration: 0.4, ease: "sine.inOut"}, 0);
+      tl.fromTo("#in-02-reponse-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#in-02-reponse-r0", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 0.50);
+      tl.to("#in-02-reponse-r0", {opacity: 0, duration: 0.35, ease: "sine.in"}, 5.30);
+      tl.fromTo("#in-02-reponse-r1", {opacity: 0, scale: 1.035}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 5.60);
+      tl.fromTo("#in-02-reponse-scrim", {opacity: 0, x: -80}, {opacity: 1, x: 0, duration: 0.6, ease: "power3.out"}, 0.20);
+      tl.fromTo("#in-02-reponse-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.45);
+      tl.fromTo("#in-02-reponse-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 2.65);
+      tl.fromTo("#in-02-reponse-g0 .in-02-reponse-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.45);
+      tl.to("#in-02-reponse-g0", {opacity: 0, y: -20, duration: 0.3, ease: "power1.in"}, 5.20);
+      tl.fromTo("#in-02-reponse-g1-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 5.55);
+      tl.fromTo("#in-02-reponse-g1-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 7.30);
+      tl.fromTo("#in-02-reponse-g1 .in-02-reponse-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 5.55);
+      window.__timelines["in-02-reponse"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

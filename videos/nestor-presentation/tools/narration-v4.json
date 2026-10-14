@@ -1,13 +1,13 @@
 [
  {
-  "id": "vo-001",
+  "id": "vo-015",
   "scene": "v4-01-dossier",
-  "text": "Vous connaissez votre dossier. Votre IA, elle, ne le connaît pas. Alors elle devine."
+  "text": "Voyons un exemple. Un agent vous demande un jour de télétravail en plus. Vous commencez à écrire votre demande."
  },
  {
-  "id": "vo-002",
+  "id": "vo-014",
   "scene": "v4-02-nestor",
-  "text": "Voici Nestor. Je suis là, à droite. Je vous apprends à bien demander, en travaillant."
+  "text": "Je suis là, à droite de l'écran. Je vous accompagne, du début à la fin."
  },
  {
   "id": "vo-003",

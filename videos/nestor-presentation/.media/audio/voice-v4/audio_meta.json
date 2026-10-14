@@ -1,5 +1,83 @@
 [
  {
+  "id": "intro-01",
+  "speaker": "Nestor",
+  "scene": "in-01-outil",
+  "text": "Voici un outil en ligne de l'État, conçu par la Dinum. Vous lui écrivez votre besoin, comme à un collègue.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-01-nestor.mp3",
+  "duration_s": 5.78,
+  "sha256": "20390cd42657d8a391c6b65c4841f709cd76913ddd414d7454d5297798ce3759",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-01-nestor.wav"
+ },
+ {
+  "id": "intro-02",
+  "speaker": "Nestor",
+  "scene": "in-02-reponse",
+  "text": "Il rédige un courriel, résume un document, reformule une note, prépare une réunion. Il répond en quelques secondes. On appelle cela une intelligence artificielle, une IA.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-02-nestor.mp3",
+  "duration_s": 9.72,
+  "sha256": "0fdb1a45ef3d84b34fb0e8df912d38e35c630793daddaa2fc1c033b7d38df6d5",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-02-nestor.wav"
+ },
+ {
+  "id": "intro-03",
+  "speaker": "Nestor",
+  "scene": "in-03-vague",
+  "text": "Mais l'IA ne sait que ce que vous lui écrivez. Une demande vague donne une réponse vague, ou fausse. Ici, elle doit tout vous redemander.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-03-nestor.mp3",
+  "duration_s": 7.66,
+  "sha256": "c657344a580d0a714a4f79454b0faf2e6dcf297cfec5bb114664da0824a71e44",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-03-nestor.wav"
+ },
+ {
+  "id": "intro-04",
+  "speaker": "Nestor",
+  "scene": "in-04-nestor",
+  "text": "Voici Nestor, votre coach, à droite de l'écran. Je vous apprends à bien demander, pas à pas. Et je relis la réponse avec vous.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-04-nestor.mp3",
+  "duration_s": 7.0,
+  "sha256": "3f86866ceba8c4b57bea4c472ae2f049a0e6f641e20e2ff928e95af03b75afa1",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-04-nestor.wav"
+ },
+ {
+  "id": "intro-05",
+  "speaker": "Nestor",
+  "scene": "in-05-metiers",
+  "text": "Je connais dix métiers du ministère, et plus de deux cents cas pratiques, modèles et outils. Je vous les propose pendant que vous écrivez.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-05-nestor.mp3",
+  "duration_s": 7.56,
+  "sha256": "34466d01dfac9412e6aaaa3087b4b3bccf679fe714e033f7b47cbcc9b7bc8182",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-05-nestor.wav"
+ },
+ {
+  "id": "intro-06",
+  "speaker": "Nestor",
+  "scene": "in-06-confiance",
+  "text": "Je m'appuie sur Albert, l'IA de l'État. Je vous préviens avant l'envoi d'une donnée personnelle. Vos progrès restent sur votre ordinateur. Personne n'est classé.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/intro-06-nestor.mp3",
+  "duration_s": 8.98,
+  "sha256": "c7fb64c6308b310f6d51d0d40f7a6358d90e6f651808e745f2977d641e99dc91",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/intro-06-nestor.wav"
+ },
+ {
   "id": "vo-001",
   "speaker": "Nestor",
   "scene": "v4-01-dossier",
@@ -167,5 +245,31 @@
   "duration_s": 7.15,
   "sha256": "34610d654d9db23234db22abf7a48c8253dfa0332a2b1b3c3b0c4868908437bf",
   "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-013-nestor.wav"
+ },
+ {
+  "id": "vo-014",
+  "speaker": "Nestor",
+  "scene": "v4-02-nestor",
+  "text": "Je suis là, à droite de l'écran. Je vous accompagne, du début à la fin.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/vo-014-nestor.mp3",
+  "duration_s": 3.92,
+  "sha256": "c2aea70428707a7e6747a34072370bcfb9f4efe6e57aedc4991f0916ab16780f",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-014-nestor.wav"
+ },
+ {
+  "id": "vo-015",
+  "speaker": "Nestor",
+  "scene": "v4-01-dossier",
+  "text": "Voyons un exemple. Un agent vous demande un jour de télétravail en plus. Vous commencez à écrire votre demande.",
+  "voice": "nestor-aventuriere",
+  "language": "fr",
+  "speed": 1.0,
+  "path": ".media/audio/voice-v4/vo-015-nestor.mp3",
+  "duration_s": 6.4,
+  "sha256": "c9e34c2f7f9c2b3667e7d4b3abc49e707eb7bd7124306c71932892e013f3152c",
+  "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v4/vo-015-nestor.wav"
  }
 ]

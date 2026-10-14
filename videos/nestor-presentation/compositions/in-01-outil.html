@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="UTF-8" /><title>in-01-outil</title></head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#in-01-outil-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#in-01-outil-content { position: absolute; inset: 0; }
+
+.in-01-outil-shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+#in-01-outil-scrim { position: absolute; left: 0; width: 1160px; }
+.in-01-outil-hg { position: absolute; left: 104px; width: 990px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.in-01-outil-dash { width: 132px; height: 9px; border-radius: 5px; margin-bottom: 26px;
+  background: linear-gradient(90deg, #000091 33.3%, #ffffff 33.3% 66.6%, #e1000f 66.6%); box-shadow: 0 0 0 1px #dde0ee; }
+.in-01-outil-l { font-weight: 800; letter-spacing: -0.02em; line-height: 1.07; opacity: 0; text-wrap: balance; }
+.in-01-outil-l.a { font-size: 74px; color: #000091; }
+.in-01-outil-l.b { font-size: 74px; color: #161616; }
+.in-01-outil-l.c { font-size: 40px; font-weight: 500; letter-spacing: 0; line-height: 1.25; color: #3a3a4a; margin-top: 18px; }
+.in-01-outil-l.d { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #161616; margin-top: 26px;
+  padding-left: 44px; position: relative; }
+.in-01-outil-l.d::before { content: ""; position: absolute; left: 0; top: 0.32em; width: 22px; height: 22px; border-radius: 6px; background: #000091; }
+.in-01-outil-chip { align-self: flex-start; margin-top: 30px; padding: 12px 26px; border-radius: 40px; background: #ffffff;
+  border: 2px solid #c9cbf2; color: #000091; font-size: 32px; font-weight: 700; opacity: 0; }
+.in-01-outil-ring { position: absolute; opacity: 0; box-sizing: border-box; }
+.in-01-outil-pulse { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 6px solid #000091; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="in-01-outil" data-start="0" data-duration="6.8" data-width="1920" data-height="1080">
+        <div id="in-01-outil-bg"></div>
+        <div id="in-01-outil-content">
+          <img class="in-01-outil-shot" id="in-01-outil-s0" src="assets/intro/i-reponse.png" alt="">
+          <div id="in-01-outil-scrim" style="top:0px;height:1080px;background:rgba(247,248,253,0.985)"></div>
+          <div class="in-01-outil-hg" id="in-01-outil-g0" style="top:0px;height:1080px"><div class="in-01-outil-dash"></div><div class="in-01-outil-l a" id="in-01-outil-g0-l0">L’Assistant.</div><div class="in-01-outil-l b" id="in-01-outil-g0-l1">Un outil en ligne de l’État, conçu par la DINUM.</div><div class="in-01-outil-l c" id="in-01-outil-g0-l2">Vous lui écrivez votre besoin, comme à un collègue.</div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#in-01-outil-s0", {opacity: 0}, {opacity: 1, duration: 0.01, ease: "sine.inOut"}, 0.00);
+      tl.set("#in-01-outil-scrim", {opacity: 1}, 0);
+      tl.fromTo("#in-01-outil-g0-l0", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.45);
+      tl.fromTo("#in-01-outil-g0-l1", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 0.95);
+      tl.fromTo("#in-01-outil-g0-l2", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.6, ease: "power3.out"}, 3.40);
+      tl.fromTo("#in-01-outil-g0 .in-01-outil-dash", {opacity: 0, scaleX: 0, transformOrigin: "0% 50%"}, {opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out"}, 0.45);
+      window.__timelines["in-01-outil"] = tl;
+      </script>
+    </template>
+  </body>
+</html>
