@@ -54,14 +54,42 @@ const findTarget = (name: string) =>
     : document.querySelector<HTMLElement>(`[data-tour="${name}"]`);
 
 /** Nestor's voice, when the browser has one: he reads what he says. */
-const speak = (text: string) => {
+/**
+ * Nestor's own voice, recorded once per step (French only; masters and
+ * their manifest in .media/audio/voice at the repository root).
+ */
+export const recordedVoiceUrl = (stepId: string, language?: string) =>
+  language?.startsWith('fr')
+    ? `${import.meta.env.BASE_URL}assets/nestor-voice/${stepId}.mp3`
+    : null;
+
+let playing: HTMLAudioElement | null = null;
+
+/** The browser's voice, when there is no recording or it cannot play. */
+const speakWithBrowser = (text: string) => {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const voice = new SpeechSynthesisUtterance(text);
   voice.lang = 'fr-FR';
   window.speechSynthesis.speak(voice);
 };
+
+const speak = (text: string, recording: string | null) => {
+  hush();
+  if (!recording || typeof Audio === 'undefined') {
+    speakWithBrowser(text);
+    return;
+  }
+  const audio = new Audio(recording);
+  playing = audio;
+  audio.play()?.catch(() => {
+    if (playing === audio) speakWithBrowser(text);
+  });
+};
+
 const hush = () => {
+  playing?.pause();
+  playing = null;
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }
@@ -317,7 +345,7 @@ const usePanelRoom = () => {
  * go on once it is done.
  */
 export const TourStage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const active = useTourStore((state) => state.active);
   const index = useTourStore((state) => state.index);
   const next = useTourStore((state) => state.next);
@@ -382,9 +410,11 @@ export const TourStage = () => {
   }, [step, coachOpen, demoDone, next]);
 
   useEffect(() => {
-    if (words && voiceOn && !film) speak(words);
+    if (words && voiceOn && !film && step) {
+      speak(words, recordedVoiceUrl(step.id, i18n.language));
+    }
     return hush;
-  }, [words, voiceOn, film]);
+  }, [words, voiceOn, film, step, i18n.language]);
 
   if (!step) return null;
   return createPortal(

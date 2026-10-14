@@ -47,7 +47,7 @@ export const PresentationButton = () => {
           markSeen();
           startTour();
         }}
-        icon={<QuestionMarkCircleIcon aria-hidden width={20} height={20} />}
+        icon={<QuestionMarkCircleIcon aria-hidden width={26} height={26} />}
       />
       {!seen && (
         <Dot>

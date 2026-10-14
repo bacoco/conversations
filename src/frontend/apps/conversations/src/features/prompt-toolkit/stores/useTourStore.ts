@@ -22,7 +22,16 @@ export const useTourStore = create<TourState>()((set, get) => ({
   active: false,
   index: 0,
   onFilm: false,
-  takeTour: () => set({ onFilm: false, index: 0 }),
+  // The tour starts on the home page's cards, the welcome film put away.
+  takeTour: () => {
+    usePromptToolkitStore.setState({
+      showHome: true,
+      showFavorites: false,
+      showNestorSettings: false,
+      hasSeenWelcome: true,
+    });
+    set({ onFilm: false, index: 0 });
+  },
   showFilm: () => set({ onFilm: true }),
   next: () => {
     const index = get().index + 1;
@@ -41,13 +50,7 @@ export const useTourStore = create<TourState>()((set, get) => ({
  */
 export const startTour = () => {
   useProfileStore.getState().markTourSeen();
-  usePromptToolkitStore.setState({
-    isOpen: true,
-    showHome: true,
-    showFavorites: false,
-    showNestorSettings: false,
-    hasSeenWelcome: true,
-  });
+  usePromptToolkitStore.setState({ isOpen: true });
   useTourStore.setState({ active: true, index: 0, onFilm: true });
 };
 

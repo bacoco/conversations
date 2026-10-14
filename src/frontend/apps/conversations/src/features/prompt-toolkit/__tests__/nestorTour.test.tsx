@@ -10,7 +10,7 @@ import { useDemoStore } from '../stores/useDemoStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { startTour, useTourStore } from '../stores/useTourStore';
-import { TourStage } from '../tour/TourStage';
+import { TourStage, recordedVoiceUrl } from '../tour/TourStage';
 import { TOUR_STEPS } from '../tour/tourScript';
 import { useFirstTour } from '../tour/useFirstTour';
 
@@ -41,9 +41,12 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
       index: 0,
       onFilm: true,
     });
+    expect(usePromptToolkitStore.getState().isOpen).toBe(true);
+    // « Faire la visite guidée »: the home page's cards.
+    act(() => useTourStore.getState().takeTour());
     expect(usePromptToolkitStore.getState()).toMatchObject({
-      isOpen: true,
       showHome: true,
+      hasSeenWelcome: true,
     });
     expect(useProfileStore.getState().hasSeenTour).toBe(true);
   });
@@ -203,5 +206,27 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     useProfileStore.setState({ hasSeenTour: true });
     renderHook(() => useFirstTour(true));
     expect(useTourStore.getState().active).toBe(false);
+  });
+
+  it('the welcome film shown in the panel: the window opens too', () => {
+    useProfileStore.setState({ hasSeenTour: true });
+    usePromptToolkitStore.setState({ hasSeenWelcome: false });
+    renderHook(() => useFirstTour(true));
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: true,
+    });
+  });
+
+  it('in French, Nestor’s own recorded voice says each step', () => {
+    expect(recordedVoiceUrl('hello', 'fr')).toBe(
+      `${import.meta.env.BASE_URL}assets/nestor-voice/hello.mp3`,
+    );
+    // Recorded in French only: other languages keep the browser’s voice.
+    expect(recordedVoiceUrl('hello', 'en')).toBeNull();
+    // Every step has its recording.
+    TOUR_STEPS.forEach((step) =>
+      expect(recordedVoiceUrl(step.id, 'fr')).toContain(`/${step.id}.mp3`),
+    );
   });
 });
