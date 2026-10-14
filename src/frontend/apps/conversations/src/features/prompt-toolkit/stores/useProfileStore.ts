@@ -24,6 +24,9 @@ interface ProfileState {
   direction: DirectionId | null;
   /** The work themes the user ticked; empty: not specified. */
   interests: InterestId[];
+  /** The « ? » presentation was opened once: its dot goes away. */
+  hasSeenPresentation: boolean;
+  markPresentationSeen: () => void;
   setJob: (job: Job | null) => void;
   setBeginner: (isBeginner: boolean) => void;
   setDirection: (direction: DirectionId | null) => void;
@@ -38,6 +41,8 @@ export const useProfileStore = create<ProfileState>()(
       isBeginner: false,
       direction: null,
       interests: [],
+      hasSeenPresentation: false,
+      markPresentationSeen: () => set({ hasSeenPresentation: true }),
       setJob: (job) => set({ job }),
       setBeginner: (isBeginner) => set({ isBeginner }),
       setDirection: (direction) =>

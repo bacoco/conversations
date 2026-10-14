@@ -3,6 +3,11 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "I take your last request back into the Assistant’s field: here is what I think of it.": "Je reprends votre dernière demande dans le champ de l’Assistant : voici ce que j’en pense.",
+      "Discover Nestor": "Découvrir Nestor",
+      "New: discover Nestor": "Nouveau : découvrez Nestor",
+      "Presentation of Nestor": "Présentation de Nestor",
+      "The presentation cannot be played here.": "La présentation ne peut pas être lue ici.",
       "To do:": "À faire :",
       "Erase Nestor’s thread": "Effacer le fil de Nestor",
       "Auto: Nestor offers ideas and advice by himself while you work.": "Auto : Nestor vous propose de lui-même des pistes et des conseils pendant que vous travaillez.",

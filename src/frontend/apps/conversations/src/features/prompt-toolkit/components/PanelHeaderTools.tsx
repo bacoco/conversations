@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Icon } from '@/components';
 
 import { NestorHeaderTools } from '../chat/NestorSettings';
+import { PresentationButton } from '../presentation/PresentationButton';
 
 /**
  * The right end of the panel's header: the same tools, in the same order,
@@ -50,6 +51,7 @@ export const PanelHeaderTools = ({
         />
       )}
       <NestorHeaderTools />
+      <PresentationButton />
       <Button
         size="small"
         color="neutral"

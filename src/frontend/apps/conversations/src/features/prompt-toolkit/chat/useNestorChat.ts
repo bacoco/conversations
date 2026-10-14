@@ -499,6 +499,21 @@ export const useNestorChat = (language: string) => {
     (bar: BarAction, fromWords = false) => {
       // The coach used during a case: the case waits, « Reprendre ».
       if (bar !== 'ask') useTrainerStore.getState().pause();
+      // An empty field just after a request was sent: that request comes
+      // back into the field, where the user sees it, and Nestor works on it.
+      const lastSent =
+        bar === 'analyse' || bar === 'improve'
+          ? useMainConversationStore
+              .getState()
+              .turns.findLast((turn) => turn.role === 'user')
+              ?.text.trim()
+          : undefined;
+      const tookLast = !draftNow() && !!lastSent;
+      if (tookLast && lastSent) {
+        const panel = usePromptToolkitStore.getState();
+        panel.setChatInput?.(lastSent);
+        panel.publishChatInput(lastSent);
+      }
       const all = messagesOf(store().chats, key);
       const {
         latestCompletedAssistantMessageId: answerId,
@@ -524,6 +539,7 @@ export const useNestorChat = (language: string) => {
           text: barLabel(t, bar),
         });
       }
+      if (tookLast) post({ kind: 'hint', hint: 'took-last' });
       if (decision.kind === 'hint') {
         post({ kind: 'hint', hint: decision.hint });
         if (decision.focusField) focusAssistantField();

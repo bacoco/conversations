@@ -53,6 +53,31 @@ describe('useNestorChat', () => {
     });
   });
 
+  it('an empty field after a request sent: Nestor takes that request back', () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(completion({ good: [], tips: [] }));
+    useMainConversationStore.setState({
+      turns: [
+        { role: 'user', text: 'Quels indicateurs pour la vulnérabilité ?' },
+        { role: 'assistant', text: 'Voici huit indicateurs.' },
+      ],
+      latestCompletedAssistantMessageId: 'a1',
+    });
+    const { result } = renderHook(() => useNestorChat('French'));
+    act(() => result.current.runBar('improve'));
+    // Back in the Assistant's field, where the user can see and change it.
+    expect(setChatInput).toHaveBeenCalledWith(
+      'Quels indicateurs pour la vulnérabilité ?',
+    );
+    expect(
+      thread().some(
+        (message) => message.kind === 'hint' && message.hint === 'took-last',
+      ),
+    ).toBe(true);
+    expect(fetchMock).toHaveBeenCalled();
+  });
+
   it('putting the version in the field keeps the draft for "Annuler"', () => {
     usePromptToolkitStore.setState({ chatInput: 'brouillon' });
     useNestorChatStore.getState().post('c1', {

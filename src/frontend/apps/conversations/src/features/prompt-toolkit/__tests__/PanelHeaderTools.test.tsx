@@ -17,7 +17,12 @@ describe('<PanelHeaderTools />: the same tools at the same place on every screen
       <PanelHeaderTools isDesktop isExpanded={false} onSettings={vi.fn()} />,
     );
     const onHome = names();
-    expect(onHome).toEqual(['Nestor’s settings', 'Expand the panel']);
+    // The « ? » sits before the gear, on every screen.
+    expect(onHome).toEqual([
+      'Discover Nestor',
+      'Nestor’s settings',
+      'Expand the panel',
+    ]);
     // A space that can start over: its button comes first, nothing moves.
     rerender(
       <PanelHeaderTools

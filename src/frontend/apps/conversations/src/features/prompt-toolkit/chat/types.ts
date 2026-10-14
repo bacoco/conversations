@@ -96,7 +96,9 @@ export type HintKind =
   | 'improve-it'
   | 'fix-myself'
   | 'remove-sensitive'
-  | 'kept-text';
+  | 'kept-text'
+  /** The field was empty: the last request sent came back into it. */
+  | 'took-last';
 
 /** What a piece of advice became: added, ignored, or already done. */
 export type TipState = 'added' | 'ignored' | 'known';

@@ -142,6 +142,10 @@ export const MessageView = ({
             )}
           {message.hint === 'kept-text' &&
             t('Your text stays as you wrote it.')}
+          {message.hint === 'took-last' &&
+            t(
+              'I take your last request back into the Assistant’s field: here is what I think of it.',
+            )}
           {message.hint === 'improve-it' &&
             t(
               'Now improve it yourself: click “Analyser mon texte”, at the bottom. I show you what it does not say yet.',
