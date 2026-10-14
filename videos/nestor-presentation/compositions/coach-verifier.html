@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>coach-verifier</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#coach-verifier-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#coach-verifier-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#coach-verifier-content { position: absolute; inset: 0; }
+#coach-verifier-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#coach-verifier-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#coach-verifier-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.coach-verifier-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#coach-verifier-card { position: absolute; left: 110px; top: 420px; width: 1700px; height: 600px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.coach-verifier-view { position: absolute; left: 24px; top: 24px; width: 1652px; height: 552px; overflow: hidden; }
+.coach-verifier-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.coach-verifier-pan img { display: block; width: 100%; height: 100%; }
+.coach-verifier-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.coach-verifier-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+#coach-verifier-text { top: 110px; bottom: auto; width: 1700px; gap: 18px; justify-content: flex-start; }
+#coach-verifier-title { font-size: 72px; }
+.coach-verifier-body { font-size: 42px; }
+
+      </style>
+      <div id="root" data-composition-id="coach-verifier" data-start="0" data-duration="12" data-width="1920" data-height="1080">
+        <div id="coach-verifier-bg"></div>
+        <div id="coach-verifier-flag"></div>
+        <div id="coach-verifier-content">
+          <div id="coach-verifier-text">
+  <div id="coach-verifier-eyebrow">Après la réponse</div>
+  <div id="coach-verifier-title">Il relit la réponse de l’Assistant</div>
+  <div class="coach-verifier-body" id="coach-verifier-b0">Un chiffre que vous n’avez pas donné ? Il le signale.</div><div class="coach-verifier-body" id="coach-verifier-b1">« À faire » : ce que vous devez vérifier.</div>
+</div><div id="coach-verifier-card"><div class="coach-verifier-view" id="coach-verifier-v0" data-layout-allow-overflow><div class="coach-verifier-pan" id="coach-verifier-p0" style="left:0px;width:1652px;height:538px"><img src="assets/shots/c08-reponse-assistant.png" alt=""><div class="coach-verifier-ring" id="coach-verifier-p0-r0" style="left:586px;top:256px;width:142px;height:65px"></div><div class="coach-verifier-ring" id="coach-verifier-p0-r1" style="left:306px;top:387px;width:168px;height:65px"></div></div></div><div class="coach-verifier-view" id="coach-verifier-v1" data-layout-allow-overflow><div class="coach-verifier-pan" id="coach-verifier-p1" style="left:345px;width:962px;height:462px"><img src="assets/shots/c08b-verif-chiffres.png" alt=""><div class="coach-verifier-ring" id="coach-verifier-p1-r0" style="left:122px;top:22px;width:761px;height:161px"></div></div></div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#coach-verifier-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.to("#coach-verifier-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 11.55);
+      tl.fromTo("#coach-verifier-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
+      tl.fromTo("#coach-verifier-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
+      tl.fromTo("#coach-verifier-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
+      tl.fromTo("#coach-verifier-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
+      tl.fromTo("#coach-verifier-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
+      tl.fromTo("#coach-verifier-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.70);
+      tl.fromTo("#coach-verifier-p0-r1", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.30);
+      tl.fromTo("#coach-verifier-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
+      tl.to("#coach-verifier-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.90);
+      tl.fromTo("#coach-verifier-p0", {y: 7, scale: 1}, {y: 7, scale: 1.035, duration: 6.10, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#coach-verifier-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 7.40);
+      tl.fromTo("#coach-verifier-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.90);
+      tl.fromTo("#coach-verifier-p1", {y: 45, scale: 1}, {y: 45, scale: 1.035, duration: 6.60, ease: "sine.inOut"}, 5.90);
+      window.__timelines["coach-verifier"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

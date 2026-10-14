@@ -27,6 +27,9 @@ interface ProfileState {
   /** The « ? » presentation was opened once: its dot goes away. */
   hasSeenPresentation: boolean;
   markPresentationSeen: () => void;
+  /** The guided tour was started once: it never starts by itself again. */
+  hasSeenTour: boolean;
+  markTourSeen: () => void;
   setJob: (job: Job | null) => void;
   setBeginner: (isBeginner: boolean) => void;
   setDirection: (direction: DirectionId | null) => void;
@@ -43,6 +46,8 @@ export const useProfileStore = create<ProfileState>()(
       interests: [],
       hasSeenPresentation: false,
       markPresentationSeen: () => set({ hasSeenPresentation: true }),
+      hasSeenTour: false,
+      markTourSeen: () => set({ hasSeenTour: true }),
       setJob: (job) => set({ job }),
       setBeginner: (isBeginner) => set({ isBeginner }),
       setDirection: (direction) =>

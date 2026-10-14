@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>semaine</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#semaine-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#semaine-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#semaine-content { position: absolute; inset: 0; }
+#semaine-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#semaine-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#semaine-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.semaine-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#semaine-card { position: absolute; left: 830px; top: 70px; width: 990px; height: 940px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.semaine-view { position: absolute; left: 24px; top: 24px; width: 942px; height: 892px; overflow: hidden; }
+.semaine-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.semaine-pan img { display: block; width: 100%; height: 100%; }
+.semaine-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.semaine-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="semaine" data-start="0" data-duration="8.5" data-width="1920" data-height="1080">
+        <div id="semaine-bg"></div>
+        <div id="semaine-flag"></div>
+        <div id="semaine-content">
+          <div id="semaine-text">
+  <div id="semaine-eyebrow">Chaque semaine</div>
+  <div id="semaine-title">Quelques actions pour votre métier</div>
+  <div class="semaine-body" id="semaine-b0">20 minutes réservées dans votre agenda.</div><div class="semaine-body" id="semaine-b1">Un programme sur plusieurs semaines.</div>
+</div><div id="semaine-card"><div class="semaine-view" id="semaine-v0" data-layout-allow-overflow><div class="semaine-pan" id="semaine-p0" style="left:0px;width:942px;height:555px"><img src="assets/shots/c30-semaine.png" alt=""><div class="semaine-ring" id="semaine-p0-r0" style="left:29px;top:429px;width:615px;height:101px"></div></div></div><div class="semaine-view" id="semaine-v1" data-layout-allow-overflow><div class="semaine-pan" id="semaine-p1" style="left:8px;width:925px;height:566px"><img src="assets/shots/c31b-agenda-attestation.png" alt=""><div class="semaine-ring" id="semaine-p1-r0" style="left:10px;top:-3px;width:614px;height:128px"></div></div></div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#semaine-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.to("#semaine-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.05);
+      tl.fromTo("#semaine-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
+      tl.fromTo("#semaine-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
+      tl.fromTo("#semaine-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
+      tl.fromTo("#semaine-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
+      tl.fromTo("#semaine-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
+      tl.fromTo("#semaine-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.90);
+      tl.fromTo("#semaine-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
+      tl.to("#semaine-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.70);
+      tl.fromTo("#semaine-p0", {y: 168, scale: 1}, {y: 168, scale: 1.035, duration: 4.90, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#semaine-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 5.60);
+      tl.fromTo("#semaine-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.70);
+      tl.fromTo("#semaine-p1", {y: 163, scale: 1}, {y: 163, scale: 1.035, duration: 4.30, ease: "sine.inOut"}, 4.70);
+      window.__timelines["semaine"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

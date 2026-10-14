@@ -1,0 +1,122 @@
+[
+ {
+  "id": "ouverture",
+  "start": 0.0,
+  "duration": 6.5
+ },
+ {
+  "id": "coach-presentation",
+  "start": 6.5,
+  "duration": 8
+ },
+ {
+  "id": "coach-metier",
+  "start": 14.5,
+  "duration": 9
+ },
+ {
+  "id": "coach-profil",
+  "start": 23.5,
+  "duration": 7.5
+ },
+ {
+  "id": "coach-pistes",
+  "start": 31.0,
+  "duration": 10
+ },
+ {
+  "id": "coach-analyser",
+  "start": 41.0,
+  "duration": 10
+ },
+ {
+  "id": "coach-conseils",
+  "start": 51.0,
+  "duration": 12
+ },
+ {
+  "id": "coach-versions",
+  "start": 63.0,
+  "duration": 10
+ },
+ {
+  "id": "coach-donnees",
+  "start": 73.0,
+  "duration": 8.5
+ },
+ {
+  "id": "coach-verifier",
+  "start": 81.5,
+  "duration": 12
+ },
+ {
+  "id": "coach-suite",
+  "start": 93.5,
+  "duration": 9
+ },
+ {
+  "id": "coach-bilan",
+  "start": 102.5,
+  "duration": 9.5
+ },
+ {
+  "id": "coach-le-dire",
+  "start": 112.0,
+  "duration": 7
+ },
+ {
+  "id": "coach-demander",
+  "start": 119.0,
+  "duration": 9.5
+ },
+ {
+  "id": "coach-boutons",
+  "start": 128.5,
+  "duration": 7
+ },
+ {
+  "id": "coach-auto",
+  "start": 135.5,
+  "duration": 7.5
+ },
+ {
+  "id": "progresser",
+  "start": 143.0,
+  "duration": 4.5
+ },
+ {
+  "id": "entrainer",
+  "start": 147.5,
+  "duration": 14
+ },
+ {
+  "id": "semaine",
+  "start": 161.5,
+  "duration": 8.5
+ },
+ {
+  "id": "parcours",
+  "start": 170.0,
+  "duration": 10
+ },
+ {
+  "id": "cours",
+  "start": 180.0,
+  "duration": 8
+ },
+ {
+  "id": "outils",
+  "start": 188.0,
+  "duration": 8
+ },
+ {
+  "id": "favoris",
+  "start": 196.0,
+  "duration": 9
+ },
+ {
+  "id": "fermeture",
+  "start": 205.0,
+  "duration": 8
+ }
+]

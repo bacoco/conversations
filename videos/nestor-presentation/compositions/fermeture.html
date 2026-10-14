@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>fermeture</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#fermeture-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#fermeture-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#fermeture-content { position: absolute; inset: 0; }
+#fermeture-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#fermeture-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#fermeture-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.fermeture-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#fermeture-card { position: absolute; left: 830px; top: 70px; width: 990px; height: 940px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.fermeture-view { position: absolute; left: 24px; top: 24px; width: 942px; height: 892px; overflow: hidden; }
+.fermeture-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.fermeture-pan img { display: block; width: 100%; height: 100%; }
+.fermeture-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.fermeture-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+#fermeture-stack { position: absolute; left: 110px; top: 0; bottom: 0; width: 1050px; display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+#fermeture-name { font-size: 150px; font-weight: 800; letter-spacing: -0.03em; color: #000091; line-height: 1; }
+#fermeture-tag { font-size: 64px; font-weight: 800; line-height: 1.1; color: #161616; }
+#fermeture-albert { font-size: 44px; font-weight: 500; color: #3a3f55; }
+#fermeture-help { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; font-size: 44px; font-weight: 700; color: #000091; margin-top: 20px; }
+#fermeture-hdr { position: relative; width: 1000px; height: 162px; border-radius: 24px; overflow: hidden; background: #fff;
+  border: 2px solid #dde0ee; flex: none; }
+#fermeture-hdr img { display: block; width: 100%; height: 100%; }
+#fermeture-hring { position: absolute; left: 535px; top: 35px; width: 62px; height: 90px;
+  border: 6px solid #e1000f; border-radius: 50%; opacity: 0; }
+#fermeture-art { position: absolute; left: 1290px; top: 250px; width: 540px; height: 540px; border-radius: 50%; overflow: hidden; background: #f6f8fc; box-shadow: 0 30px 70px rgba(0, 0, 145, 0.12); }
+#fermeture-art img { position: absolute; left: 0px; top: 48px; width: 540px; height: 435px; }
+
+      </style>
+      <div id="root" data-composition-id="fermeture" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+        <div id="fermeture-bg"></div>
+        <div id="fermeture-flag"></div>
+        <div id="fermeture-content">
+          <div id="fermeture-stack">
+  <div id="fermeture-name">Nestor</div>
+  <div id="fermeture-tag">Apprendre à bien demander, en travaillant.</div>
+  <div id="fermeture-albert">Avec Albert, l’IA de l’État.</div>
+  <div id="fermeture-help"><span>Revoyez cette présentation avec le « ? »</span><div id="fermeture-hdr"><img src="assets/shots/c40-entete.png" alt=""><div id="fermeture-hring"></div></div></div>
+</div>
+<div id="fermeture-art"><img src="assets/nestor.webp" alt="Nestor"></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fermeture-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.fromTo("#fermeture-name", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 0.3);
+      tl.fromTo("#fermeture-tag", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 1.1);
+      tl.fromTo("#fermeture-albert", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 2.0);
+      tl.fromTo("#fermeture-help", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 3.0);
+      tl.fromTo("#fermeture-hring", {opacity: 0, scale: 1.4}, {opacity: 1, scale: 1, duration: 0.5, ease: "power2.out"}, 4.0);
+      tl.fromTo("#fermeture-art", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 1.0, ease: "power2.out"}, 0.5);
+      window.__timelines["fermeture"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

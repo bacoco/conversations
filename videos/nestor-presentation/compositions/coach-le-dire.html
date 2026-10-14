@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>coach-le-dire</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#coach-le-dire-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#coach-le-dire-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#coach-le-dire-content { position: absolute; inset: 0; }
+#coach-le-dire-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#coach-le-dire-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#coach-le-dire-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.coach-le-dire-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#coach-le-dire-card { position: absolute; left: 830px; top: 70px; width: 990px; height: 940px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.coach-le-dire-view { position: absolute; left: 24px; top: 24px; width: 942px; height: 892px; overflow: hidden; }
+.coach-le-dire-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.coach-le-dire-pan img { display: block; width: 100%; height: 100%; }
+.coach-le-dire-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.coach-le-dire-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="coach-le-dire" data-start="0" data-duration="7" data-width="1920" data-height="1080">
+        <div id="coach-le-dire-bg"></div>
+        <div id="coach-le-dire-flag"></div>
+        <div id="coach-le-dire-content">
+          <div id="coach-le-dire-text">
+  <div id="coach-le-dire-eyebrow">Le dire</div>
+  <div id="coach-le-dire-title">Parlez au lieu d’écrire</div>
+  <div class="coach-le-dire-body" id="coach-le-dire-b0">Le micro ne s’allume que quand vous appuyez.</div><div class="coach-le-dire-body" id="coach-le-dire-b1">« Le dire » revient dans chaque échange.</div>
+</div><div id="coach-le-dire-card"><div class="coach-le-dire-view" id="coach-le-dire-v0" data-layout-allow-overflow><div class="coach-le-dire-pan" id="coach-le-dire-p0" style="left:7px;width:928px;height:988px"><img src="assets/shots/c12-demander.png" alt=""><div class="coach-le-dire-cursor" id="coach-le-dire-p0-c" style="left:458px;top:246px"><svg viewBox="0 0 40 52" width="56" height="72" aria-hidden="true"><path d="M3 3 L3 42 L13 33 L20 49 L27 46 L20 30 L34 30 Z" fill="#ffffff" stroke="#000091" stroke-width="3" stroke-linejoin="round"/></svg></div></div></div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#coach-le-dire-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.to("#coach-le-dire-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 6.55);
+      tl.fromTo("#coach-le-dire-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
+      tl.fromTo("#coach-le-dire-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
+      tl.fromTo("#coach-le-dire-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
+      tl.fromTo("#coach-le-dire-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
+      tl.fromTo("#coach-le-dire-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
+      tl.fromTo("#coach-le-dire-p0-c", {opacity: 0, x: 160, y: 120}, {opacity: 1, x: 0, y: 0, duration: 1.0, ease: "power2.inOut"}, 2.70);
+      tl.to("#coach-le-dire-p0-c", {scale: 0.82, duration: 0.12, ease: "power1.in", transformOrigin: "10% 10%"}, 3.70);
+      tl.to("#coach-le-dire-p0-c", {scale: 1, duration: 0.18, ease: "power1.out"}, 3.83);
+      tl.fromTo("#coach-le-dire-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
+      tl.fromTo("#coach-le-dire-p0", {y: -0, scale: 1}, {y: -96, scale: 1.035, duration: 7.20, ease: "sine.inOut"}, 0.30);
+      window.__timelines["coach-le-dire"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

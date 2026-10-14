@@ -6,6 +6,8 @@ import { NestorThread } from '../chat/NestorThread';
 import type { NestorMessage } from '../chat/types';
 import type { NestorChat } from '../chat/useNestorChat';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
+import { useDemoStore } from '../stores/useDemoStore';
+import { useTourStore } from '../stores/useTourStore';
 
 vi.mock('@/components/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
@@ -68,6 +70,46 @@ describe('<NestorThread />', () => {
     expect(
       screen.queryByRole('status', { name: 'Nestor is thinking…' }),
     ).toBeNull();
+  });
+
+  it('the demo’s word sits under the last answer and its buttons', () => {
+    useDemoStore.setState({
+      active: true,
+      notes: [{ after: 'q', step: 'analyse' }],
+    });
+    render(
+      <NestorThread
+        chat={chatWith([
+          {
+            id: 'q',
+            action: 9,
+            kind: 'hint',
+            hint: 'write-first',
+            rounds: [{ id: 'examples' }],
+          },
+        ])}
+        pistes={[]}
+      />,
+    );
+    const word = screen.getByText(/That was « Analyser mon texte »/);
+    const round = screen.getAllByRole('button').at(-1)!;
+    // The buttons of the answer come first, then the demo's word.
+    expect(
+      round.compareDocumentPosition(word) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    useDemoStore.setState({ active: false, notes: [] });
+  });
+
+  it('during the guided tour, Nestor speaks in the middle, not in the thread', () => {
+    useDemoStore.setState({
+      active: true,
+      notes: [{ after: '', step: 'intro' }],
+    });
+    useTourStore.setState({ active: true, index: 0 });
+    render(<NestorThread chat={chatWith([])} pistes={[]} />);
+    expect(screen.queryByText(/This is a demo/)).toBeNull();
+    useTourStore.setState({ active: false, index: 0 });
+    useDemoStore.setState({ active: false, notes: [] });
   });
 
   it('folds a past step into one line that reopens', () => {

@@ -4,8 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Box } from '@/components';
 
 import { languageName } from '../coach/language';
+import { DemoBand } from '../demo/DemoBand';
+import { useDemoGuide } from '../demo/useDemoGuide';
 import { isAutoOn, useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTourStore } from '../stores/useTourStore';
 import { useTrainerStore } from '../stores/useTrainerStore';
 
 import { AskNestorSheet } from './AskNestorSheet';
@@ -29,6 +32,10 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
   const trainer = useTrainer(language);
   const training = !!trainer.item && !trainer.paused;
   useNestorAuto(chat, language);
+  // « Essayer en mode démo »: each button explained right after its work.
+  const demo = useDemoGuide(chat);
+  // The guided tour flashes the buttons itself and speaks in the middle.
+  const touring = useTourStore((state) => state.active);
   const chatInput = usePromptToolkitStore((state) => state.chatInput);
   const showSettings = usePromptToolkitStore(
     (state) => state.showNestorSettings,
@@ -76,6 +83,7 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
       $direction="column"
       $css="flex: 1; min-height: 0; position: relative; background: #ffffff;"
     >
+      {demo.active && !touring && <DemoBand next={demo.next} />}
       <EraseThreadBar />
       {training ? (
         <TrainerView trainer={trainer} onSay={() => chat.setSheetOpen(true)} />
@@ -101,7 +109,13 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
           />
         </>
       )}
-      {isActive && <NestorBar chat={chat} />}
+      {isActive && (
+        <NestorBar
+          chat={chat}
+          highlight={touring ? undefined : demo.next}
+          onBar={demo.onBar}
+        />
+      )}
       <AskNestorSheet chat={chat} />
     </Box>
   );

@@ -6,6 +6,7 @@ import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { useTourStore } from '../stores/useTourStore';
 
 const VIDEO = 'Presentation of Nestor, your coach for asking AI well';
 
@@ -132,6 +133,23 @@ describe('<PanelHome />', () => {
     expect(
       screen.getByRole('button', { name: /Improves your requests/ }),
     ).toBeInTheDocument();
+  });
+
+  it('after the welcome film, the guided tour starts, the first time only', () => {
+    usePromptToolkitStore.setState({ hasSeenWelcome: false });
+    useProfileStore.setState({ hasSeenTour: false });
+    render(<PanelHome />);
+    fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
+    expect(useTourStore.getState().active).toBe(true);
+    useTourStore.getState().stop();
+  });
+
+  it('the tour already seen: the welcome film leads to the cards', () => {
+    usePromptToolkitStore.setState({ hasSeenWelcome: false });
+    useProfileStore.setState({ hasSeenTour: true });
+    render(<PanelHome />);
+    fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
+    expect(useTourStore.getState().active).toBe(false);
   });
 
   it('offers to watch again once the video has ended', () => {

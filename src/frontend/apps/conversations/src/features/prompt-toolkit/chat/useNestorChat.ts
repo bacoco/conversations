@@ -17,6 +17,7 @@ import { useCasesStore } from '../learn/cases/casesProgress';
 import { LESSON_FOR_COMPETENCY } from '../learn/lessonForCompetency';
 import { useReward } from '../rewards/useReward';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
+import { DEMO_KEY, useDemoStore } from '../stores/useDemoStore';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
   NEW_CHAT_KEY,
@@ -191,7 +192,9 @@ const focusAssistantField = () =>
 export const useNestorChat = (language: string) => {
   const { t, i18n } = useTranslation();
   const conversationId = useConversationRouteId();
-  const key = conversationId ?? NEW_CHAT_KEY;
+  // The demo has its own thread: the real ones stay untouched.
+  const isDemo = useDemoStore((state) => state.active);
+  const key = isDemo ? DEMO_KEY : (conversationId ?? NEW_CHAT_KEY);
   const messages = useNestorChatStore((state) => messagesOf(state.chats, key));
   const action = useNestorChatStore((state) => actionOf(state.chats, key));
   const store = useNestorChatStore.getState;

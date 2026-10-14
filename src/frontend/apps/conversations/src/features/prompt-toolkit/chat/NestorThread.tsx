@@ -2,6 +2,10 @@ import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { keyframes } from 'styled-components';
 
+import { DemoNoteView } from '../demo/DemoNoteView';
+import { type DemoNote, useDemoStore } from '../stores/useDemoStore';
+import { useTourStore } from '../stores/useTourStore';
+
 import { CloseMatches } from './CloseMatches';
 import { InChatRounds } from './InChatRounds';
 import { MessageView } from './NestorMessages';
@@ -11,6 +15,8 @@ import type { CloseMatchesFound } from './closeMatches';
 import { foldSummary, foldThread } from './fold';
 import { C, Fold, FoldChevron, Hello, ThreadInner, ThreadScroll } from './ui';
 import type { NestorChat } from './useNestorChat';
+
+const NO_NOTES: DemoNote[] = [];
 
 /** Closer than this to the bottom, the reader follows new messages. */
 const FOLLOW_PX = 80;
@@ -90,6 +96,19 @@ export const NestorThread = ({
     [chat.messages, chat.action],
   );
   const last = chat.messages.at(-1);
+  // The demo: Nestor's words about each button, under what they follow.
+  // During the guided tour, Nestor speaks in the middle instead.
+  const touring = useTourStore((state) => state.active);
+  const demoNotes = useDemoStore((state) =>
+    state.active && !touring ? state.notes : NO_NOTES,
+  );
+  const notesAfter = (id: string) =>
+    demoNotes
+      .filter((note) => note.after === id)
+      .map((note) => (
+        <DemoNoteView key={`${note.after}-${note.step}`} step={note.step} />
+      ));
+  const lastId = last?.id ?? '';
   // A round kept from earlier ("Refaire avec…") names what is still missing.
   const closeCount = Number(!!close?.caseMatch) + Number(!!close?.model);
   const missing =
@@ -125,14 +144,25 @@ export const NestorThread = ({
       return;
     }
     end?.scrollIntoView?.({ block: 'end' });
-  }, [chat.messages.length, chat.busy, pistes.length, closeCount, thinking]);
+  }, [
+    chat.messages.length,
+    chat.busy,
+    pistes.length,
+    closeCount,
+    thinking,
+    demoNotes.length,
+  ]);
   // The first message of the latest step.
   const firstOfStep = parts.findIndex(
     (part) => part.kind !== 'fold' && part.message.action === chat.action,
   );
 
   return (
-    <ThreadScroll data-panel-scroll data-testid="nestor-thread">
+    <ThreadScroll
+      data-panel-scroll
+      data-testid="nestor-thread"
+      data-tour="thread"
+    >
       <ThreadInner>
         {/* Nestor's welcome opens the thread, always. */}
         <Hello>
@@ -161,6 +191,7 @@ export const NestorThread = ({
             <Fragment key={part.message.id}>
               {index === firstOfStep && <div ref={startRef} />}
               <MessageView message={part.message} chat={chat} />
+              {part.message.id !== lastId && notesAfter(part.message.id)}
             </Fragment>
           ),
         )}
@@ -195,6 +226,8 @@ export const NestorThread = ({
             onRound={(round) => chat.runRound(last.id, round)}
           />
         ) : null}
+        {/* Under the last answer and its buttons; at the top, the intro. */}
+        {notesAfter(lastId)}
         <div ref={endRef} />
       </ThreadInner>
     </ThreadScroll>

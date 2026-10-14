@@ -17,6 +17,7 @@ import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import { startTour } from '../stores/useTourStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
 
@@ -66,6 +67,15 @@ const centeredCss = css`
   justify-content: center;
 `;
 
+/**
+ * The welcome is over: the first time, Nestor's guided tour starts; it
+ * shows the cards and the coach's buttons on the real screen.
+ */
+const finishWelcome = () => {
+  usePromptToolkitStore.getState().dismissWelcome();
+  if (!useProfileStore.getState().hasSeenTour) startTour();
+};
+
 /** The cards page keeps room at the bottom for Nestor's round button. */
 const homeCss = css`
   ${centeredCss}
@@ -108,7 +118,6 @@ const valueBadgeCss = (color: string) => css`
 /** Nestor's welcome, without motion: who Nestor is and what it does. */
 const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
   const { t } = useTranslation();
-  const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const values = [
     {
       icon: 'chat',
@@ -223,7 +232,7 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
 
       <Button
         fullWidth
-        onClick={dismissWelcome}
+        onClick={finishWelcome}
         iconPosition="right"
         icon={<Icon iconName="arrow_forward" $size="20px" />}
       >
@@ -249,14 +258,13 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
  * when motion is reduced or the video cannot play.
  */
 const NestorIntro = () => {
-  const dismissWelcome = usePromptToolkitStore((state) => state.dismissWelcome);
   const [isVideoShown, setVideoShown] = useState(() => !prefersReducedMotion());
   const [hasVideoFailed, setVideoFailed] = useState(false);
 
   if (isVideoShown && !hasVideoFailed) {
     return (
       <NestorIntroVideo
-        onDone={dismissWelcome}
+        onDone={finishWelcome}
         onError={() => setVideoFailed(true)}
       />
     );
@@ -457,6 +465,7 @@ export const PanelHome = () => {
               <Box
                 as="button"
                 type="button"
+                data-tour={`card-${card.id}`}
                 onClick={card.onSelect}
                 $direction={isWide ? 'row' : 'column'}
                 $align="center"

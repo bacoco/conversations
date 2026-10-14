@@ -39,6 +39,7 @@ import {
 } from '../stores/usePromptToolkitStore';
 import { useTrainerStore } from '../stores/useTrainerStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
+import { TourStage } from '../tour/TourStage';
 
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
@@ -284,6 +285,7 @@ export const RightPanel = ({
     <Box
       as="aside"
       aria-label={title}
+      data-tour="panel"
       $height="100%"
       $css={css`
         position: relative;
@@ -485,6 +487,8 @@ export const RightPanel = ({
       </Box>
       {/* Nestor, on every screen: a round button that opens a sheet. */}
       {/* In the coach, "Demander à Nestor" is in the bar. */}
+      {/* Nestor's guided tour: he speaks in the middle, the panel flashes. */}
+      <TourStage />
       {/* « Mes favoris »: a round star, bottom right, outside the coach. */}
       {isClaimed &&
         favoritesCornerShown({ welcomeShown, isNestorChat, showFavorites }) && (

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>outils</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#outils-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#outils-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#outils-content { position: absolute; inset: 0; }
+#outils-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#outils-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#outils-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.outils-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#outils-card { position: absolute; left: 830px; top: 70px; width: 990px; height: 940px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.outils-view { position: absolute; left: 24px; top: 24px; width: 942px; height: 892px; overflow: hidden; }
+.outils-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.outils-pan img { display: block; width: 100%; height: 100%; }
+.outils-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.outils-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="outils" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+        <div id="outils-bg"></div>
+        <div id="outils-flag"></div>
+        <div id="outils-content">
+          <div id="outils-text">
+  <div id="outils-eyebrow">Outils du quotidien</div>
+  <div id="outils-title">Des demandes prêtes, classées par travail</div>
+  <div class="outils-body" id="outils-b0">Écrire, résumer, organiser…</div><div class="outils-body" id="outils-b1">et des exemples pour chaque type de travail.</div>
+</div><div id="outils-card"><div class="outils-view" id="outils-v0" data-layout-allow-overflow><div class="outils-pan" id="outils-p0" style="left:0px;width:942px;height:1173px"><img src="assets/shots/c32-outils.png" alt=""></div></div><div class="outils-view" id="outils-v1" data-layout-allow-overflow><div class="outils-pan" id="outils-p1" style="left:0px;width:942px;height:1672px"><img src="assets/shots/c32c-demandes.png" alt=""></div></div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#outils-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.to("#outils-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.55);
+      tl.fromTo("#outils-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
+      tl.fromTo("#outils-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
+      tl.fromTo("#outils-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
+      tl.fromTo("#outils-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
+      tl.fromTo("#outils-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
+      tl.fromTo("#outils-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
+      tl.to("#outils-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.90);
+      tl.fromTo("#outils-p0", {y: -0, scale: 1}, {y: -281, scale: 1.035, duration: 4.10, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#outils-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.90);
+      tl.fromTo("#outils-p1", {y: -0, scale: 1}, {y: -374, scale: 1.035, duration: 4.60, ease: "sine.inOut"}, 3.90);
+      window.__timelines["outils"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

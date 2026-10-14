@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>cours</title>
+  </head>
+  <body>
+    <template>
+      <style>
+
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Medium.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-Bold.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Marianne"; src: url("assets/fonts/Marianne-ExtraBold.woff2") format("woff2"); font-weight: 800; }
+
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Marianne", sans-serif; color: #161616; }
+#cours-bg { position: absolute; inset: 0; background: #f7f8fd; }
+#cours-flag { position: absolute; left: 110px; top: 70px; width: 150px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #000091 33%, #ffffff 33% 66%, #e1000f 66%); box-shadow: 0 0 0 1px #dde0ee; }
+#cours-content { position: absolute; inset: 0; }
+#cours-text { position: absolute; left: 110px; top: 0; bottom: 0; width: 660px; display: flex; flex-direction: column;
+  justify-content: center; gap: 30px; }
+#cours-eyebrow { font-size: 40px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #000091; }
+#cours-title { font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; color: #000091; }
+.cours-body { font-size: 44px; font-weight: 500; line-height: 1.3; color: #3a3f55; }
+#cours-card { position: absolute; left: 830px; top: 70px; width: 990px; height: 940px; border-radius: 36px;
+  background: #ffffff; border: 2px solid #dde0ee; box-shadow: 0 24px 60px rgba(0, 0, 145, 0.10); overflow: hidden; }
+.cours-view { position: absolute; left: 24px; top: 24px; width: 942px; height: 892px; overflow: hidden; }
+.cours-pan { position: absolute; left: 0; top: 0; transform-origin: 50% 0%; }
+.cours-pan img { display: block; width: 100%; height: 100%; }
+.cours-ring { position: absolute; border: 6px solid #e1000f; border-radius: 22px; box-shadow: 0 0 0 6px rgba(225, 0, 15, 0.12); opacity: 0; }
+.cours-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
+
+      </style>
+      <div id="root" data-composition-id="cours" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+        <div id="cours-bg"></div>
+        <div id="cours-flag"></div>
+        <div id="cours-content">
+          <div id="cours-text">
+  <div id="cours-eyebrow">Cours</div>
+  <div id="cours-title">Huit leçons courtes, des quiz, un mémo</div>
+  <div class="cours-body" id="cours-b0">Dont : vérifier et adapter la réponse,</div><div class="cours-body" id="cours-b1">obtenir une réponse sans invention.</div>
+</div><div id="cours-card"><div class="cours-view" id="cours-v0" data-layout-allow-overflow><div class="cours-pan" id="cours-p0" style="left:5px;width:931px;height:1350px"><img src="assets/shots/c21-lecons.png" alt=""><div class="cours-ring" id="cours-p0-r0" style="left:37px;top:792px;width:861px;height:116px"></div><div class="cours-ring" id="cours-p0-r1" style="left:37px;top:1230px;width:861px;height:116px"></div></div></div><div class="cours-view" id="cours-v1" data-layout-allow-overflow><div class="cours-pan" id="cours-p1" style="left:77px;width:788px;height:338px"><img src="assets/shots/c21b-quiz-memo.png" alt=""></div></div></div>
+        </div>
+      </div>
+      <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#cours-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
+      tl.to("#cours-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.55);
+      tl.fromTo("#cours-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
+      tl.fromTo("#cours-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
+      tl.fromTo("#cours-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
+      tl.fromTo("#cours-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
+      tl.fromTo("#cours-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
+      tl.fromTo("#cours-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.90);
+      tl.fromTo("#cours-p0-r1", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.70);
+      tl.fromTo("#cours-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
+      tl.to("#cours-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.30);
+      tl.fromTo("#cours-p0", {y: -0, scale: 1}, {y: -200, scale: 1.035, duration: 5.50, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#cours-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.30);
+      tl.fromTo("#cours-p1", {y: 277, scale: 1}, {y: 277, scale: 1.035, duration: 3.20, ease: "sine.inOut"}, 5.30);
+      window.__timelines["cours"] = tl;
+      </script>
+    </template>
+  </body>
+</html>
