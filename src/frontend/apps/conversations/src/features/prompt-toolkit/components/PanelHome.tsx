@@ -17,7 +17,7 @@ import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
-import { startTour } from '../stores/useTourStore';
+import { startTour, useTourStore } from '../stores/useTourStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
 
@@ -260,8 +260,10 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
 const NestorIntro = () => {
   const [isVideoShown, setVideoShown] = useState(() => !prefersReducedMotion());
   const [hasVideoFailed, setVideoFailed] = useState(false);
+  // Never two films at once: the film's window is open, the panel is still.
+  const filmWindowOpen = useTourStore((state) => state.active && state.onFilm);
 
-  if (isVideoShown && !hasVideoFailed) {
+  if (isVideoShown && !hasVideoFailed && !filmWindowOpen) {
     return (
       <NestorIntroVideo
         onDone={finishWelcome}

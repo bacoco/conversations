@@ -229,4 +229,22 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
       expect(recordedVoiceUrl(step.id, 'fr')).toContain(`/${step.id}.mp3`),
     );
   });
+
+  it('the window leaves the Assistant’s left menu visible', () => {
+    const menu = document.createElement('div');
+    menu.dataset.testid = 'left-panel-desktop';
+    menu.getBoundingClientRect = () =>
+      ({
+        left: 0,
+        right: 300,
+        width: 300,
+        top: 0,
+        bottom: 900,
+        height: 900,
+      }) as DOMRect;
+    document.body.appendChild(menu);
+    startTour();
+    render(<TourStage />);
+    expect(screen.getByTestId('tour-backdrop')).toHaveStyle({ left: '300px' });
+  });
 });

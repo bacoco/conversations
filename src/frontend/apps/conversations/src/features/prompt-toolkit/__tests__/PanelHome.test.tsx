@@ -152,6 +152,15 @@ describe('<PanelHome />', () => {
     expect(useTourStore.getState().active).toBe(false);
   });
 
+  it('never two films at once: with the film’s window open, the panel stays still', () => {
+    usePromptToolkitStore.setState({ hasSeenWelcome: false });
+    useTourStore.setState({ active: true, index: 0, onFilm: true });
+    render(<PanelHome />);
+    expect(screen.queryByLabelText(VIDEO)).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Nestor' })).toBeInTheDocument();
+    useTourStore.getState().stop();
+  });
+
   it('offers to watch again once the video has ended', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
     render(<PanelHome />);

@@ -101,12 +101,11 @@ const bob = keyframes`
 `;
 
 /** Over the conversation, left of the panel: Nestor, large, speaking. */
-const Stage = styled.div<{ $right: number }>`
+/** Between the Assistant's left menu and Nestor's panel: both stay seen. */
+const Stage = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
-  left: 0;
-  right: ${({ $right }) => $right}px;
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -324,19 +323,27 @@ const Hint = styled.p`
 
 /** How far the panel leaves room on the right of the screen. */
 const usePanelRoom = () => {
-  const [right, setRight] = useState(0);
+  const [room, setRoom] = useState({ left: 0, right: 0 });
   useLayoutEffect(() => {
     const measure = () => {
       const panel = findTarget('panel');
-      const left = panel?.getBoundingClientRect().left ?? window.innerWidth;
+      const panelLeft =
+        panel?.getBoundingClientRect().left ?? window.innerWidth;
+      // The Assistant's left menu, when it is open on a large screen.
+      const menuRight =
+        document
+          .querySelector<HTMLElement>('[data-testid="left-panel-desktop"]')
+          ?.getBoundingClientRect().right ?? 0;
       // A phone: the panel takes the screen, Nestor speaks over it.
-      setRight(left < 360 ? 0 : window.innerWidth - left);
+      const right = panelLeft < 360 ? 0 : window.innerWidth - panelLeft;
+      const left = window.innerWidth - right - menuRight >= 480 ? menuRight : 0;
+      setRoom({ left, right });
     };
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, []);
-  return right;
+  return room;
 };
 
 /**
@@ -356,7 +363,7 @@ export const TourStage = () => {
   const takeTour = useTourStore((state) => state.takeTour);
   const showFilm = useTourStore((state) => state.showFilm);
   const [filmFailed, setFilmFailed] = useState(false);
-  const right = usePanelRoom();
+  const room = usePanelRoom();
   const coachOpen = usePromptToolkitStore(
     (state) =>
       state.mode === 'coach' && !state.showHome && !state.showFavorites,
@@ -422,7 +429,7 @@ export const TourStage = () => {
       <FlashStyle />
       {/* A click outside the window closes it. */}
       <Stage
-        $right={right}
+        style={{ left: room.left, right: room.right }}
         data-testid="tour-backdrop"
         onClick={(event) => {
           if (event.target === event.currentTarget) endTour();
