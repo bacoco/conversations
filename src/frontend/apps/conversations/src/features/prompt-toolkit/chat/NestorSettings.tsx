@@ -76,7 +76,7 @@ const Switch = ({
 const HeaderAuto = styled.span`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-right: 2px;
   font-size: 13px;
   font-weight: 600;

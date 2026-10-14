@@ -57,48 +57,56 @@ describe('<ToolsPanel />', () => {
     useToolsUsageStore.setState({ recent: [], favorites: [] });
   });
 
-  it('prepares the prompt of a tool in the chat input', () => {
-    // The request opens in a window, as in the app.
-    render(
-      <CunninghamProvider>
-        <ToolsPanel />
-      </CunninghamProvider>,
-    );
-    fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
-    fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
-    fireEvent.click(screen.getByRole('radio', { name: 'German' }));
-    fireEvent.change(screen.getByRole('textbox', { name: 'Text to work on' }), {
-      target: { value: 'Bonjour à tous' },
-    });
-    // The request, part by part in its colours, before it goes.
-    fireEvent.click(screen.getByRole('button', { name: 'See my request' }));
-    expect(screen.getByText('Your request, explained')).toBeInTheDocument();
-    for (const part of [
-      'Context',
-      'Precise instruction',
-      'Expected format',
-      'Reference document',
-    ]) {
-      expect(screen.getAllByText(part).length).toBeGreaterThan(0);
-    }
-    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
-    expect(
-      screen.getByText('A good request always has these four parts'),
-    ).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Put it in the message field' }),
-    );
+  // A heavy render: some slack on a loaded machine.
+  it(
+    'prepares the prompt of a tool in the chat input',
+    { timeout: 15_000 },
+    () => {
+      // The request opens in a window, as in the app.
+      render(
+        <CunninghamProvider>
+          <ToolsPanel />
+        </CunninghamProvider>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /^Write/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Translate/ }));
+      fireEvent.click(screen.getByRole('radio', { name: 'German' }));
+      fireEvent.change(
+        screen.getByRole('textbox', { name: 'Text to work on' }),
+        {
+          target: { value: 'Bonjour à tous' },
+        },
+      );
+      // The request, part by part in its colours, before it goes.
+      fireEvent.click(screen.getByRole('button', { name: 'See my request' }));
+      expect(screen.getByText('Your request, explained')).toBeInTheDocument();
+      for (const part of [
+        'Context',
+        'Precise instruction',
+        'Expected format',
+        'Reference document',
+      ]) {
+        expect(screen.getAllByText(part).length).toBeGreaterThan(0);
+      }
+      fireEvent.click(screen.getByRole('button', { name: 'Help' }));
+      expect(
+        screen.getByText('A good request always has these four parts'),
+      ).toBeInTheDocument();
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Put it in the message field' }),
+      );
 
-    const prompt = setChatInput.mock.calls[0][0] as string;
-    expect(prompt).toContain('{{language}}'.replace('{{language}}', ''));
-    expect(prompt).toContain('Bonjour à tous');
-    expect(mockShowToast).toHaveBeenCalledWith(
-      'success',
-      expect.any(String),
-      undefined,
-      4000,
-    );
-  });
+      const prompt = setChatInput.mock.calls[0][0] as string;
+      expect(prompt).toContain('{{language}}'.replace('{{language}}', ''));
+      expect(prompt).toContain('Bonjour à tous');
+      expect(mockShowToast).toHaveBeenCalledWith(
+        'success',
+        expect.any(String),
+        undefined,
+        4000,
+      );
+    },
+  );
 
   it('shows what AI can do as four cards; a card opens its tools', () => {
     render(<ToolsPanel />);

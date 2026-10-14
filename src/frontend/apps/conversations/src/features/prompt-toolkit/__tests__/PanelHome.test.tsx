@@ -124,7 +124,7 @@ describe('<PanelHome />', () => {
 
     expect(screen.getByLabelText(VIDEO)).toHaveAttribute(
       'src',
-      '/assets/nestor-intro-en.mp4',
+      '/assets/nestor-welcome-en.mp4',
     );
     fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
     expect(usePromptToolkitStore.getState().hasSeenWelcome).toBe(true);

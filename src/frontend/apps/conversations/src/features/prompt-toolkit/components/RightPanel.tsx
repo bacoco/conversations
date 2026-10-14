@@ -306,7 +306,8 @@ export const RightPanel = ({
           flex: none;
           container: panel-header / inline-size;
           height: ${isDesktop ? HEADER_HEIGHT : 48}px;
-          padding: 0 ${isDesktop ? accountToolsWidth + 16 : 8}px 0 12px;
+          /* Tight sides: « Nestor » stays whole beside the tools. */
+          padding: 0 ${isDesktop ? accountToolsWidth + 8 : 8}px 0 8px;
           pointer-events: none;
           & > * {
             pointer-events: auto;
@@ -362,11 +363,10 @@ export const RightPanel = ({
             {isNestorChat && (
               <Box
                 as="h2"
-                $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;"
+                // A short name, never cut (« Nes… »): it keeps its width.
+                $css="margin: 0; font-size: 0.9375rem; font-weight: 700; white-space: nowrap; flex: none;"
               >
-                <span style={ellipsis}>
-                  {training ? t('Training') : 'Nestor'}
-                </span>
+                <span>{training ? t('Training') : 'Nestor'}</span>
               </Box>
             )}
             {!showHome && !isNestorChat && (

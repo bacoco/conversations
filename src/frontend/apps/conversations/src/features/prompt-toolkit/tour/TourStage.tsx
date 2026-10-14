@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { createGlobalStyle, css, keyframes } from 'styled-components';
@@ -114,11 +114,17 @@ const Stage = styled.div`
   background: rgba(20, 20, 40, 0.28);
 `;
 
-/** One size for every step: nothing jumps, the buttons never move. */
-const Card = styled.div`
+/**
+ * One size for every step: nothing jumps, the buttons never move. The
+ * film gets the whole screen: it is watched, not read beside the panel.
+ */
+const Card = styled.div<{ $film: boolean }>`
   pointer-events: auto;
-  width: min(900px, 100%);
-  height: min(620px, calc(100vh - 48px));
+  width: ${({ $film }) => ($film ? 'min(1200px, 100%)' : 'min(900px, 100%)')};
+  height: ${({ $film }) =>
+    $film
+      ? 'min(800px, calc(100vh - 48px))'
+      : 'min(620px, calc(100vh - 48px))'};
   display: flex;
   flex-direction: column;
   border-radius: 20px;
@@ -363,6 +369,25 @@ export const TourStage = () => {
   const takeTour = useTourStore((state) => state.takeTour);
   const showFilm = useTourStore((state) => state.showFilm);
   const [filmFailed, setFilmFailed] = useState(false);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  // A click anywhere else on the page closes the tour — the panel included
+  // — except on what is flashing when Nestor asks for that very click.
+  useEffect(() => {
+    if (!step) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target || cardRef.current?.contains(target)) return;
+      if (step.wait && step.target && !film) {
+        const asked = findTarget(step.target);
+        if (asked?.contains(target)) return;
+      }
+      endTour();
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () =>
+      document.removeEventListener('pointerdown', onPointerDown, true);
+  }, [step, film]);
   const room = usePanelRoom();
   const coachOpen = usePromptToolkitStore(
     (state) =>
@@ -429,13 +454,21 @@ export const TourStage = () => {
       <FlashStyle />
       {/* A click outside the window closes it. */}
       <Stage
-        style={{ left: room.left, right: room.right }}
+        style={
+          film ? { left: 0, right: 0 } : { left: room.left, right: room.right }
+        }
         data-testid="tour-backdrop"
         onClick={(event) => {
           if (event.target === event.currentTarget) endTour();
         }}
       >
-        <Card role="dialog" aria-label={t('Tour of Nestor')} aria-live="polite">
+        <Card
+          ref={cardRef}
+          $film={film}
+          role="dialog"
+          aria-label={t('Tour of Nestor')}
+          aria-live="polite"
+        >
           <Body>
             {film ? (
               filmFailed ? (

@@ -10,7 +10,7 @@ import { Box, Icon } from '@/components';
  * `videos/nestor-welcome/` (HyperFrames) at the repository root.
  */
 const introVideoUrl = (language?: string) =>
-  `/assets/nestor-intro-${language?.startsWith('fr') ? 'fr' : 'en'}.mp4`;
+  `${import.meta.env.BASE_URL}assets/nestor-welcome-${language?.startsWith('fr') ? 'fr' : 'en'}.mp4`;
 /** The video's own background, so its letterboxing blends into the panel. */
 const VIDEO_CANVAS = '#f6f8fc';
 

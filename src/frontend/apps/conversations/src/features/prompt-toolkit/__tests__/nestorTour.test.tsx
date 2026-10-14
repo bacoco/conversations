@@ -194,7 +194,7 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     );
   });
 
-  it('the window leaves the Assistant’s left menu visible', () => {
+  it('the tour’s window leaves the Assistant’s left menu visible', () => {
     const menu = document.createElement('div');
     menu.dataset.testid = 'left-panel-desktop';
     menu.getBoundingClientRect = () =>
@@ -208,7 +208,67 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
       }) as DOMRect;
     document.body.appendChild(menu);
     startTour();
+    // The tour itself, beside the menu (the film alone takes the screen).
+    act(() => useTourStore.setState({ onFilm: false, index: 0 }));
     render(<TourStage />);
     expect(screen.getByTestId('tour-backdrop')).toHaveStyle({ left: '300px' });
+  });
+
+  it('a click elsewhere on the page closes the tour (the panel included)', () => {
+    const other = document.createElement('button');
+    document.body.appendChild(other);
+    startTour();
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('home-course') }),
+    );
+    render(<TourStage />);
+    fireEvent.pointerDown(screen.getByRole('dialog'));
+    expect(useTourStore.getState().active).toBe(true);
+    fireEvent.pointerDown(other);
+    expect(useTourStore.getState().active).toBe(false);
+  });
+
+  it('a click on what is flashing, when Nestor asks for it, goes on', () => {
+    const card = document.createElement('button');
+    card.dataset.tour = 'card-coach-manual';
+    document.body.appendChild(card);
+    startTour();
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('open-coach') }),
+    );
+    render(<TourStage />);
+    fireEvent.pointerDown(card);
+    expect(useTourStore.getState().active).toBe(true);
+  });
+
+  it('the film takes the whole screen, not the strip beside the panel', () => {
+    const box = (
+      testid: string,
+      tour: string | null,
+      left: number,
+      right: number,
+    ) => {
+      const el = document.createElement('div');
+      if (testid) el.dataset.testid = testid;
+      if (tour) el.dataset.tour = tour;
+      el.getBoundingClientRect = () =>
+        ({
+          left,
+          right,
+          width: right - left,
+          top: 0,
+          bottom: 900,
+          height: 900,
+        }) as DOMRect;
+      document.body.appendChild(el);
+    };
+    box('left-panel-desktop', null, 0, 300);
+    box('', 'panel', 1000, 1400);
+    startTour();
+    render(<TourStage />);
+    expect(screen.getByTestId('tour-backdrop')).toHaveStyle({
+      left: '0px',
+      right: '0px',
+    });
   });
 });
