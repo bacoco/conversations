@@ -135,21 +135,27 @@ describe('<PanelHome />', () => {
     ).toBeInTheDocument();
   });
 
-  it('after the welcome film, the guided tour starts, the first time only', () => {
+  it('« Commencer » under the panel’s video: the cards, nothing opens by itself', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
     useProfileStore.setState({ hasSeenTour: false });
     render(<PanelHome />);
     fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
-    expect(useTourStore.getState().active).toBe(true);
-    useTourStore.getState().stop();
+    expect(usePromptToolkitStore.getState().hasSeenWelcome).toBe(true);
+    expect(useTourStore.getState().active).toBe(false);
   });
 
-  it('the tour already seen: the welcome film leads to the cards', () => {
+  it('« Regarder la vidéo d’introduction »: the cards, and the film’s window', () => {
     usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    useProfileStore.setState({ hasSeenTour: true });
     render(<PanelHome />);
-    fireEvent.click(screen.getByRole('button', { name: /Get started/ }));
-    expect(useTourStore.getState().active).toBe(false);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Watch the introduction video' }),
+    );
+    expect(usePromptToolkitStore.getState().hasSeenWelcome).toBe(true);
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: true,
+    });
+    useTourStore.getState().stop();
   });
 
   it('never two films at once: with the film’s window open, the panel stays still', () => {

@@ -24,9 +24,12 @@ export const prefersReducedMotion = () =>
  */
 export const NestorIntroVideo = ({
   onDone,
+  onWatchFilm,
   onError,
 }: {
   onDone: () => void;
+  /** « Regarder la vidéo d'introduction »: the cards, and the film's window. */
+  onWatchFilm?: () => void;
   onError: () => void;
 }) => {
   const { t, i18n } = useTranslation();
@@ -98,6 +101,19 @@ export const NestorIntroVideo = ({
           >
             {t('Get started')}
           </Button>
+          {onWatchFilm && (
+            <Box $css="margin-top: 8px;">
+              <Button
+                fullWidth
+                color="neutral"
+                variant="secondary"
+                onClick={onWatchFilm}
+                icon={<Icon iconName="play_circle" $size="20px" />}
+              >
+                {t('Watch the introduction video')}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

@@ -1235,7 +1235,7 @@ Format : un message de 8 lignes maximum, ou des notes pour un échange oral si j
 
 Pour chaque objectif : l'objectif en une phrase, l'indicateur de réussite, l'échéance, les moyens nécessaires.
 Format : un tableau.
-Contrainte : objectifs atteignables avec les moyens indiqués ; signale ceux qui me semblent trop ambitieux.
+Contrainte : objectifs atteignables avec les moyens indiqués ; signale ceux qui te semblent trop ambitieux.
 
 Priorités :
 

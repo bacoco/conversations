@@ -1,10 +1,4 @@
-import {
-  act,
-  fireEvent,
-  render,
-  renderHook,
-  screen,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { useDemoStore } from '../stores/useDemoStore';
 import { useProfileStore } from '../stores/useProfileStore';
@@ -12,7 +6,6 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { startTour, useTourStore } from '../stores/useTourStore';
 import { TourStage, recordedVoiceUrl } from '../tour/TourStage';
 import { TOUR_STEPS } from '../tour/tourScript';
-import { useFirstTour } from '../tour/useFirstTour';
 
 const indexOf = (id: string) => TOUR_STEPS.findIndex((step) => step.id === id);
 
@@ -187,35 +180,6 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     expect(
       screen.getByRole('img', { name: 'Analyse my text' }),
     ).toBeInTheDocument();
-  });
-
-  it('the first time the page opens with the panel open, the window comes', () => {
-    useProfileStore.setState({ hasSeenTour: false });
-    const { rerender } = renderHook(({ ready }) => useFirstTour(ready), {
-      initialProps: { ready: false },
-    });
-    expect(useTourStore.getState().active).toBe(false);
-    rerender({ ready: true });
-    expect(useTourStore.getState()).toMatchObject({
-      active: true,
-      onFilm: true,
-    });
-  });
-
-  it('never again once seen', () => {
-    useProfileStore.setState({ hasSeenTour: true });
-    renderHook(() => useFirstTour(true));
-    expect(useTourStore.getState().active).toBe(false);
-  });
-
-  it('the welcome film shown in the panel: the window opens too', () => {
-    useProfileStore.setState({ hasSeenTour: true });
-    usePromptToolkitStore.setState({ hasSeenWelcome: false });
-    renderHook(() => useFirstTour(true));
-    expect(useTourStore.getState()).toMatchObject({
-      active: true,
-      onFilm: true,
-    });
   });
 
   it('in French, Nestor’s own recorded voice says each step', () => {

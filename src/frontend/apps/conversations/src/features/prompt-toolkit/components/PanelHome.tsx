@@ -67,13 +67,15 @@ const centeredCss = css`
   justify-content: center;
 `;
 
-/**
- * The welcome is over: the first time, Nestor's guided tour starts; it
- * shows the cards and the coach's buttons on the real screen.
- */
+/** « Commencer »: the welcome is over, the cards; nothing opens by itself. */
 const finishWelcome = () => {
   usePromptToolkitStore.getState().dismissWelcome();
-  if (!useProfileStore.getState().hasSeenTour) startTour();
+};
+
+/** « Regarder la vidéo d'introduction »: the cards, and the film's window. */
+const watchFilm = () => {
+  usePromptToolkitStore.getState().dismissWelcome();
+  startTour();
 };
 
 /** The cards page keeps room at the bottom for Nestor's round button. */
@@ -238,6 +240,15 @@ const NestorWelcome = ({ onWatch }: { onWatch?: () => void }) => {
       >
         {t('Get started')}
       </Button>
+      <Button
+        fullWidth
+        color="neutral"
+        variant="secondary"
+        onClick={watchFilm}
+        icon={<Icon iconName="play_circle" $size="20px" />}
+      >
+        {t('Watch the introduction video')}
+      </Button>
       {onWatch && (
         <Button
           fullWidth
@@ -267,6 +278,7 @@ const NestorIntro = () => {
     return (
       <NestorIntroVideo
         onDone={finishWelcome}
+        onWatchFilm={watchFilm}
         onError={() => setVideoFailed(true)}
       />
     );

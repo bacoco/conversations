@@ -114,7 +114,7 @@ const lessons: Lesson[] = [
         skill: 'task',
         content:
           'Avant d’envoyer, relisez votre demande et demandez-vous :\n\n« Un collègue arrivé ce matin comprendrait-il exactement ce que je veux ? »\n\nSi non, ajoutez ce qui lui manquerait.',
-        keyTakeaway: 'Si un humain ne comprendrait pas, l’IA non plus.',
+        keyTakeaway: 'Si un humain ne comprend pas, l’IA non plus.',
       },
       {
         title: 'Courte ou longue ?',
@@ -673,7 +673,7 @@ const quiz: QuizQuestion[] = [
     correctIndex: 1,
     hint: 'Pensez à quelqu’un qui arrive dans votre service.',
     explanation:
-      'Le test du nouveau collègue : si un humain ne comprendrait pas votre demande, l’IA non plus.',
+      'Le test du nouveau collègue : si un humain ne comprend pas votre demande, l’IA non plus.',
   },
   {
     id: 'q32',
@@ -742,7 +742,7 @@ const quiz: QuizQuestion[] = [
     type: 'true-false',
     question: 'Dire pour qui est la réponse ne change rien au résultat.',
     correctAnswer: false,
-    hint: 'Expliqueriez-vous la même chose pareil à un expert et à un usager ?',
+    hint: 'Expliqueriez-vous la même chose de la même façon à un expert et à un usager ?',
     explanation:
       'Le public change tout : vocabulaire, niveau de détail, ton. Un résumé pour un directeur et un résumé pour un usager sont très différents.',
   },
