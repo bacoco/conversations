@@ -160,8 +160,8 @@ export const CasesView = ({
     <CasePage title={t('Cases of my job')} onBack={onBack}>
       <Intro>
         {t(
-          '{{job}}: three real tasks, from the simplest. Each case opens the next level.',
-          { job: job.label },
+          '{{job}}: {{count}} real tasks, from the simplest. Each case opens the next level.',
+          { job: job.label, count: casesOf(job.id).length },
         )}
       </Intro>
       {casesOf(job.id).map((item) => {

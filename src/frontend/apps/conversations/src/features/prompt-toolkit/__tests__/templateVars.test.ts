@@ -34,6 +34,15 @@ describe('sharing a prompt as a link', () => {
     expect(readSharedPrompt('#nestor-prompt=@@@')).toBeNull();
   });
 
+  it('the link keeps the address of the site, not only its domain', () => {
+    vi.stubEnv('BASE_URL', '/nestor-chat/');
+    const link = shareLink('Relance', 'Bonjour');
+    vi.unstubAllEnvs();
+    expect(
+      link.startsWith(`${window.location.origin}/nestor-chat/#nestor-prompt=`),
+    ).toBe(true);
+  });
+
   it('writes new links with the Nestor prefix', () => {
     const link = shareLink('Relance', 'Bonjour');
     expect(link).toContain('/#nestor-prompt=');

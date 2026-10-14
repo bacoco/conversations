@@ -35,6 +35,13 @@ describe('practical cases of my job', () => {
     ).toBeInTheDocument();
   });
 
+  it('says how many cases the job has, as they are', () => {
+    render(<CasesView onBack={vi.fn()} onOpen={vi.fn()} />);
+    expect(
+      screen.getByText(/\{\{count\}\} real tasks|10 real tasks/),
+    ).toBeInTheDocument();
+  });
+
   it('shows the cases of the job; level 2 opens after a case of level 1', () => {
     const onOpen = vi.fn();
     const { rerender } = render(<CasesView onBack={vi.fn()} onOpen={onOpen} />);

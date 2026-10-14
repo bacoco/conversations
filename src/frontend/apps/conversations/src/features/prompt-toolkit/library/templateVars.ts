@@ -55,8 +55,9 @@ const fromBase64Url = (text: string) => {
   );
 };
 
+/** The app may live under a path (/nestor-chat/): the link keeps it. */
 export const shareLink = (title: string, prompt: string) =>
-  `${window.location.origin}/${SHARE_PREFIX}${toBase64Url(
+  `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${SHARE_PREFIX}${toBase64Url(
     JSON.stringify({ title, prompt }),
   )}`;
 
