@@ -443,6 +443,11 @@ def scene_html(sc):
         html.append(f'<div id="{sid}-card">{"".join(views)}</div>')
 
     js_body = "\n      ".join(j for j in js if j)
+    audio = ""
+    if sc.get("vo"):
+        path, vdur = sc["vo"]
+        audio = (f'<audio id="{sid}-vo" src="{path}" data-start="{VO_START}" '
+                 f'data-duration="{vdur}" data-track-index="9" data-volume="1"></audio>')
     return f'''<!doctype html>
 <html lang="fr">
   <head>
@@ -500,7 +505,39 @@ def index_html(total, slots):
 '''
 
 
+VO_START, VO_TAIL = 0.6, 1.3
+
+
+def attach_voice():
+    """Give each scene its narration clip; lengthen the scene (never speed the voice)."""
+    meta_path = os.path.join(PROJ, ".media", "audio", "voice", "audio_meta.json")
+    if not os.path.exists(meta_path):
+        return
+    files = {m["scene"]: m for m in json.load(open(meta_path))["files"]}
+    for sc in SCENES:
+        m = files.get(sc["id"])
+        if not m:
+            continue
+        sc["vo"] = (m["path"], m["duration_s"])
+        need = round(VO_START + m["duration_s"] + VO_TAIL, 1)
+        old = sc["dur"]
+        if need > old:
+            f = need / old
+            for sh in sc.get("shots", []):
+                sh["t"] = round(sh["t"] * f, 2)
+                sh["d"] = round(sh["d"] * f, 2)
+                if "rings" in sh:
+                    sh["rings"] = [(a, b, c, d, round(t * f, 2)) for a, b, c, d, t in sh["rings"]]
+                if "click" in sh:
+                    x, y, t = sh["click"]
+                    sh["click"] = (x, y, round(t * f, 2))
+                if "ring_hold" in sh:
+                    sh["ring_hold"] = round(sh["ring_hold"] * f, 2)
+            sc["dur"] = need
+
+
 def main():
+    attach_voice()
     os.makedirs(os.path.join(PROJ, "compositions"), exist_ok=True)
     t = 0.0
     slots = []
@@ -512,13 +549,19 @@ def main():
         slots.append(
             f'      <div id="slot-{sc["id"]}" data-composition-id="{sc["id"]}" data-composition-src="compositions/{sc["id"]}.html" '
             f'data-start="{t:.2f}" data-duration="{sc["dur"]}" data-track-index="{1 + (i % 2)}" data-width="1920" data-height="1080"></div>')
-        table.append((sc["id"], t, sc["dur"]))
+        if sc.get("vo"):
+            path, vdur = sc["vo"]
+            slots.append(f'      <audio id="vo-{sc["id"]}" src="{path}" data-start="{t + VO_START:.2f}" '
+                         f'data-duration="{vdur}" data-track-index="9" data-volume="1"></audio>')
+        table.append((sc["id"], t, sc["dur"], sc.get("vo")))
         t += sc["dur"]
     with open(os.path.join(PROJ, "index.html"), "w") as f:
         f.write(index_html(t, "\n".join(slots)))
-    json.dump([{"id": a, "start": round(b, 2), "duration": c} for a, b, c in table],
+    json.dump([{"id": a, "start": round(b, 2), "duration": c,
+                "voice": ({"path": v[0], "start_in_scene": VO_START, "duration": v[1]} if v else None)}
+               for a, b, c, v in table],
               open(os.path.join(PROJ, "scenes.json"), "w"), indent=1)
-    for a, b, c in table:
+    for a, b, c, _ in table:
         print(f"{a:22s} {b:7.2f} {c:5.1f}")
     print("total", t)
 

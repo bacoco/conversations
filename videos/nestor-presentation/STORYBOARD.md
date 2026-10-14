@@ -1,7 +1,8 @@
 ---
-duration: 213
+duration: 246.9
 music: none
-format: 1920x1080, 30 fps, muted
+voice: Nestor — OmniVoice "coach-bienveillante", fr, speed 1.0 (24 WAV in .media/audio/voice/, manifest audio_meta.json)
+format: 1920x1080, 30 fps, French voiceover (no music)
 status: built — one sub-composition per feature (compositions/*.html), chained by index.html
 generator: tools/gen.py (regenerates compositions/ and index.html; scenes.json lists start/duration)
 ---
@@ -52,3 +53,11 @@ No music, no counters, no confetti.
 - « Vos chiffres et vos références ne sont pas changés » rests on `chat/facts.ts` (`changedNumbers`, figures of 2+ digits). The capture shows « n° 2026-14 du 12 septembre » kept in both versions.
 - « Avec Albert, l’IA de l’État » only: the coach's calls go through the Albert relay.
 - « Ils restent sur votre poste » mirrors the app's own text (« Vos points restent dans ce navigateur ; personne d’autre ne les voit »).
+
+## Voiceover (added 2026-10-14)
+One narration per scene, Nestor in the first person, text in `tools/narration.json`, audio in
+`.media/audio/voice/vo-NNN-nestor.wav` (manifest `audio_meta.json`). Each clip starts 0.6 s into its
+scene; scenes were lengthened (never the voice sped up) to leave 1.3 s after the line. The clips sit
+at the root of `index.html` (global times); `scenes.json` gives each scene's clip and offset so a scene
+rendered alone can get its voice back. Durations in the table above are the pre-voice ones; see
+`scenes.json` for the current ones.

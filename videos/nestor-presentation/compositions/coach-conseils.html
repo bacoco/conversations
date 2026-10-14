@@ -33,7 +33,7 @@
 .coach-conseils-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-conseils" data-start="0" data-duration="12" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-conseils" data-start="0" data-duration="12.8" data-width="1920" data-height="1080">
         <div id="coach-conseils-bg"></div>
         <div id="coach-conseils-flag"></div>
         <div id="coach-conseils-content">
@@ -47,22 +47,22 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-conseils-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-conseils-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 11.55);
+      tl.to("#coach-conseils-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 12.35);
       tl.fromTo("#coach-conseils-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-conseils-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-conseils-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-conseils-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-conseils-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-conseils-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 4.90);
-      tl.fromTo("#coach-conseils-p0-c", {opacity: 0, x: 160, y: 120}, {opacity: 1, x: 0, y: 0, duration: 1.0, ease: "power2.inOut"}, 3.70);
-      tl.to("#coach-conseils-p0-c", {scale: 0.82, duration: 0.12, ease: "power1.in", transformOrigin: "10% 10%"}, 4.70);
-      tl.to("#coach-conseils-p0-c", {scale: 1, duration: 0.18, ease: "power1.out"}, 4.83);
-      tl.fromTo("#coach-conseils-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#coach-conseils-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 6.50);
-      tl.fromTo("#coach-conseils-p0", {y: -0, scale: 1}, {y: -149, scale: 1.035, duration: 6.70, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#coach-conseils-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 8.60);
-      tl.fromTo("#coach-conseils-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 6.50);
-      tl.fromTo("#coach-conseils-p1", {y: -74, scale: 1}, {y: -198, scale: 1.035, duration: 6.00, ease: "sine.inOut"}, 6.50);
+      tl.fromTo("#coach-conseils-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 5.23);
+      tl.fromTo("#coach-conseils-p0-c", {opacity: 0, x: 160, y: 120}, {opacity: 1, x: 0, y: 0, duration: 1.0, ease: "power2.inOut"}, 4.01);
+      tl.to("#coach-conseils-p0-c", {scale: 0.82, duration: 0.12, ease: "power1.in", transformOrigin: "10% 10%"}, 5.01);
+      tl.to("#coach-conseils-p0-c", {scale: 1, duration: 0.18, ease: "power1.out"}, 5.14);
+      tl.fromTo("#coach-conseils-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.32);
+      tl.to("#coach-conseils-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 6.93);
+      tl.fromTo("#coach-conseils-p0", {y: -0, scale: 1}, {y: -149, scale: 1.035, duration: 7.11, ease: "sine.inOut"}, 0.32);
+      tl.fromTo("#coach-conseils-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 9.17);
+      tl.fromTo("#coach-conseils-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 6.93);
+      tl.fromTo("#coach-conseils-p1", {y: -74, scale: 1}, {y: -198, scale: 1.035, duration: 6.37, ease: "sine.inOut"}, 6.93);
       window.__timelines["coach-conseils"] = tl;
       </script>
     </template>

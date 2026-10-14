@@ -33,7 +33,7 @@
 .cours-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="cours" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="cours" data-start="0" data-duration="8.5" data-width="1920" data-height="1080">
         <div id="cours-bg"></div>
         <div id="cours-flag"></div>
         <div id="cours-content">
@@ -47,19 +47,19 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#cours-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#cours-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.55);
+      tl.to("#cours-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.05);
       tl.fromTo("#cours-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#cours-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#cours-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#cours-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#cours-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#cours-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.90);
-      tl.fromTo("#cours-p0-r1", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.70);
-      tl.fromTo("#cours-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#cours-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.30);
-      tl.fromTo("#cours-p0", {y: -0, scale: 1}, {y: -200, scale: 1.035, duration: 5.50, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#cours-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.30);
-      tl.fromTo("#cours-p1", {y: 277, scale: 1}, {y: 277, scale: 1.035, duration: 3.20, ease: "sine.inOut"}, 5.30);
+      tl.fromTo("#cours-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.08);
+      tl.fromTo("#cours-p0-r1", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.93);
+      tl.fromTo("#cours-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.32);
+      tl.to("#cours-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.63);
+      tl.fromTo("#cours-p0", {y: -0, scale: 1}, {y: -200, scale: 1.035, duration: 5.81, ease: "sine.inOut"}, 0.32);
+      tl.fromTo("#cours-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.63);
+      tl.fromTo("#cours-p1", {y: 277, scale: 1}, {y: 277, scale: 1.035, duration: 3.37, ease: "sine.inOut"}, 5.63);
       window.__timelines["cours"] = tl;
       </script>
     </template>

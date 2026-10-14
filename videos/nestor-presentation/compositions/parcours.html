@@ -33,7 +33,7 @@
 .parcours-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="parcours" data-start="0" data-duration="10" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="parcours" data-start="0" data-duration="11.9" data-width="1920" data-height="1080">
         <div id="parcours-bg"></div>
         <div id="parcours-flag"></div>
         <div id="parcours-content">
@@ -47,21 +47,21 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#parcours-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#parcours-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 9.55);
+      tl.to("#parcours-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 11.45);
       tl.fromTo("#parcours-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#parcours-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#parcours-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#parcours-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#parcours-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#parcours-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#parcours-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.70);
-      tl.fromTo("#parcours-p0", {y: -0, scale: 1}, {y: -196, scale: 1.035, duration: 3.90, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#parcours-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.70);
-      tl.to("#parcours-v1", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 7.00);
-      tl.fromTo("#parcours-p1", {y: -0, scale: 1}, {y: -314, scale: 1.035, duration: 3.80, ease: "sine.inOut"}, 3.70);
-      tl.fromTo("#parcours-p2-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 7.80);
-      tl.fromTo("#parcours-v2", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 7.00);
-      tl.fromTo("#parcours-p2", {y: 163, scale: 1}, {y: 163, scale: 1.035, duration: 3.50, ease: "sine.inOut"}, 7.00);
+      tl.fromTo("#parcours-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.36);
+      tl.to("#parcours-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.41);
+      tl.fromTo("#parcours-p0", {y: -0, scale: 1}, {y: -196, scale: 1.035, duration: 4.55, ease: "sine.inOut"}, 0.36);
+      tl.fromTo("#parcours-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.40);
+      tl.to("#parcours-v1", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 8.33);
+      tl.fromTo("#parcours-p1", {y: -0, scale: 1}, {y: -314, scale: 1.035, duration: 4.43, ease: "sine.inOut"}, 4.40);
+      tl.fromTo("#parcours-p2-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 9.28);
+      tl.fromTo("#parcours-v2", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 8.33);
+      tl.fromTo("#parcours-p2", {y: 163, scale: 1}, {y: 163, scale: 1.035, duration: 4.07, ease: "sine.inOut"}, 8.33);
       window.__timelines["parcours"] = tl;
       </script>
     </template>

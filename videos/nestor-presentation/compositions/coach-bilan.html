@@ -33,7 +33,7 @@
 .coach-bilan-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-bilan" data-start="0" data-duration="9.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-bilan" data-start="0" data-duration="11.5" data-width="1920" data-height="1080">
         <div id="coach-bilan-bg"></div>
         <div id="coach-bilan-flag"></div>
         <div id="coach-bilan-content">
@@ -47,15 +47,15 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-bilan-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-bilan-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 9.05);
+      tl.to("#coach-bilan-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 11.05);
       tl.fromTo("#coach-bilan-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-bilan-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-bilan-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-bilan-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-bilan-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-bilan-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 1.30);
-      tl.fromTo("#coach-bilan-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.fromTo("#coach-bilan-p0", {y: -0, scale: 1}, {y: -521, scale: 1.035, duration: 9.70, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#coach-bilan-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 1.57);
+      tl.fromTo("#coach-bilan-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.36);
+      tl.fromTo("#coach-bilan-p0", {y: -0, scale: 1}, {y: -521, scale: 1.035, duration: 11.64, ease: "sine.inOut"}, 0.36);
       window.__timelines["coach-bilan"] = tl;
       </script>
     </template>

@@ -33,7 +33,7 @@
 .coach-donnees-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-donnees" data-start="0" data-duration="8.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-donnees" data-start="0" data-duration="10.3" data-width="1920" data-height="1080">
         <div id="coach-donnees-bg"></div>
         <div id="coach-donnees-flag"></div>
         <div id="coach-donnees-content">
@@ -47,18 +47,18 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-donnees-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-donnees-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.05);
+      tl.to("#coach-donnees-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 9.85);
       tl.fromTo("#coach-donnees-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-donnees-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-donnees-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-donnees-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-donnees-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-donnees-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 1.70);
-      tl.fromTo("#coach-donnees-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#coach-donnees-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.70);
-      tl.fromTo("#coach-donnees-p0", {y: 370, scale: 1}, {y: 370, scale: 1.035, duration: 3.90, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#coach-donnees-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.70);
-      tl.fromTo("#coach-donnees-p1", {y: 152, scale: 1}, {y: 152, scale: 1.035, duration: 5.30, ease: "sine.inOut"}, 3.70);
+      tl.fromTo("#coach-donnees-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.06);
+      tl.fromTo("#coach-donnees-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.36);
+      tl.to("#coach-donnees-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.48);
+      tl.fromTo("#coach-donnees-p0", {y: 370, scale: 1}, {y: 370, scale: 1.035, duration: 4.62, ease: "sine.inOut"}, 0.36);
+      tl.fromTo("#coach-donnees-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.48);
+      tl.fromTo("#coach-donnees-p1", {y: 152, scale: 1}, {y: 152, scale: 1.035, duration: 6.32, ease: "sine.inOut"}, 4.48);
       window.__timelines["coach-donnees"] = tl;
       </script>
     </template>

@@ -33,7 +33,7 @@
 .outils-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="outils" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="outils" data-start="0" data-duration="9.2" data-width="1920" data-height="1080">
         <div id="outils-bg"></div>
         <div id="outils-flag"></div>
         <div id="outils-content">
@@ -47,17 +47,17 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#outils-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#outils-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.55);
+      tl.to("#outils-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.75);
       tl.fromTo("#outils-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#outils-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#outils-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#outils-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#outils-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#outils-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#outils-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.90);
-      tl.fromTo("#outils-p0", {y: -0, scale: 1}, {y: -281, scale: 1.035, duration: 4.10, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#outils-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.90);
-      tl.fromTo("#outils-p1", {y: -0, scale: 1}, {y: -374, scale: 1.035, duration: 4.60, ease: "sine.inOut"}, 3.90);
+      tl.fromTo("#outils-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.34);
+      tl.to("#outils-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.48);
+      tl.fromTo("#outils-p0", {y: -0, scale: 1}, {y: -281, scale: 1.035, duration: 4.64, ease: "sine.inOut"}, 0.34);
+      tl.fromTo("#outils-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.48);
+      tl.fromTo("#outils-p1", {y: -0, scale: 1}, {y: -374, scale: 1.035, duration: 5.21, ease: "sine.inOut"}, 4.48);
       window.__timelines["outils"] = tl;
       </script>
     </template>

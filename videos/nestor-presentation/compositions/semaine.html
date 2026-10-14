@@ -33,7 +33,7 @@
 .semaine-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="semaine" data-start="0" data-duration="8.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="semaine" data-start="0" data-duration="9.7" data-width="1920" data-height="1080">
         <div id="semaine-bg"></div>
         <div id="semaine-flag"></div>
         <div id="semaine-content">
@@ -47,19 +47,19 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#semaine-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#semaine-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.05);
+      tl.to("#semaine-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 9.25);
       tl.fromTo("#semaine-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#semaine-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#semaine-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#semaine-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#semaine-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#semaine-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 2.90);
-      tl.fromTo("#semaine-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#semaine-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.70);
-      tl.fromTo("#semaine-p0", {y: 168, scale: 1}, {y: 168, scale: 1.035, duration: 4.90, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#semaine-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 5.60);
-      tl.fromTo("#semaine-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.70);
-      tl.fromTo("#semaine-p1", {y: 163, scale: 1}, {y: 163, scale: 1.035, duration: 4.30, ease: "sine.inOut"}, 4.70);
+      tl.fromTo("#semaine-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.31);
+      tl.fromTo("#semaine-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.34);
+      tl.to("#semaine-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.36);
+      tl.fromTo("#semaine-p0", {y: 168, scale: 1}, {y: 168, scale: 1.035, duration: 5.52, ease: "sine.inOut"}, 0.34);
+      tl.fromTo("#semaine-p1-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 6.39);
+      tl.fromTo("#semaine-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.36);
+      tl.fromTo("#semaine-p1", {y: 163, scale: 1}, {y: 163, scale: 1.035, duration: 4.84, ease: "sine.inOut"}, 5.36);
       window.__timelines["semaine"] = tl;
       </script>
     </template>

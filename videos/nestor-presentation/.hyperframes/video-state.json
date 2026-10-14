@@ -1,7 +1,7 @@
 {
   "version": 1,
   "historyId": "104bd1b4-95ea-4724-a23e-b6c34cfe41b7",
-  "currentRevision": "f338b234-05e4-4cf6-a654-77d9945ee671",
+  "currentRevision": "2a5cb0db-c5aa-479c-b4c2-8a1920476577",
   "pendingChanges": false,
   "files": {
     "AGENTS.md": {
@@ -17,8 +17,8 @@
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/1d/1d4f0c8ca2507b94fd7c9df709fff01416adbd51a0f922b9d6ed2f40129147d5"
     },
     "STORYBOARD.md": {
-      "hash": "e27776c0faa1f70c44b8ab49614c2d7614b4ec99c85e5426d50380bf2ca1077e",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/e2/e27776c0faa1f70c44b8ab49614c2d7614b4ec99c85e5426d50380bf2ca1077e"
+      "hash": "4ea1a05417788221aa30265ab7213fe5096763ef16083fb283d0b5edfd45dcd4",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/4e/4ea1a05417788221aa30265ab7213fe5096763ef16083fb283d0b5edfd45dcd4"
     },
     "assets/fonts/Marianne-Bold.woff2": {
       "hash": "3f585632ed9bc498bc9fc995f1e7f8851b64ac667b8f8692662fe472bc0f6d65",
@@ -265,108 +265,108 @@
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d6/d687c89028bf3e7f32d86cd20ce6d4dba752aa9c511a3acd51f4d0563add1414"
     },
     "compositions/coach-analyser.html": {
-      "hash": "8070a82a74d1c293608f429eaf53f5e08a9540157982e2b136b8a02833d63792",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/80/8070a82a74d1c293608f429eaf53f5e08a9540157982e2b136b8a02833d63792"
+      "hash": "be93e007ab170ee5693f42e127166a4da840cfa30a46ef82c6228b7bd8c1bfa1",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/be/be93e007ab170ee5693f42e127166a4da840cfa30a46ef82c6228b7bd8c1bfa1"
     },
     "compositions/coach-auto.html": {
-      "hash": "263b62fd62af6e86f7e822d3f5b288aaff2e95caff5ea3f747583c6cc36951d4",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/26/263b62fd62af6e86f7e822d3f5b288aaff2e95caff5ea3f747583c6cc36951d4"
+      "hash": "7f1a0b16e4f1ec9895f46cf0784a24fad988138f0298cd3fe31576ba6d2ce024",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/7f/7f1a0b16e4f1ec9895f46cf0784a24fad988138f0298cd3fe31576ba6d2ce024"
     },
     "compositions/coach-bilan.html": {
-      "hash": "95ece6348d97ee67dae7b114609249e94d67a5e4bde10ba065d73dda321e6bff",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/95/95ece6348d97ee67dae7b114609249e94d67a5e4bde10ba065d73dda321e6bff"
+      "hash": "df0efe86551722df311533322ba13042d89794bde5a90f1c8346bbe81b5d3582",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/df/df0efe86551722df311533322ba13042d89794bde5a90f1c8346bbe81b5d3582"
     },
     "compositions/coach-boutons.html": {
-      "hash": "55522da1c5105b838a7160140d39a686059dcc92336136c2a01e8cd3beb7cb2f",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/55/55522da1c5105b838a7160140d39a686059dcc92336136c2a01e8cd3beb7cb2f"
+      "hash": "d455cab46a6060d67db68d6f1b980a872fd1fe6b6f61ece7f3591118961222d7",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d4/d455cab46a6060d67db68d6f1b980a872fd1fe6b6f61ece7f3591118961222d7"
     },
     "compositions/coach-conseils.html": {
-      "hash": "b88348a7067312907fa68528a2d66a5260f04accb5bace0789395c6f3811a80b",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/b8/b88348a7067312907fa68528a2d66a5260f04accb5bace0789395c6f3811a80b"
+      "hash": "78a6c5ed974fede8407892579bc71fb17ced605b306e152a97e93dd568f41396",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/78/78a6c5ed974fede8407892579bc71fb17ced605b306e152a97e93dd568f41396"
     },
     "compositions/coach-demander.html": {
       "hash": "74330b70f2717ae799cc6d354b21099cd3eed25a7c6640dde263da118cdcf894",
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/74/74330b70f2717ae799cc6d354b21099cd3eed25a7c6640dde263da118cdcf894"
     },
     "compositions/coach-donnees.html": {
-      "hash": "f5ec50074da1fb4411099ce1f25d213694abde51c3e616f01776cb5de372c21b",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f5/f5ec50074da1fb4411099ce1f25d213694abde51c3e616f01776cb5de372c21b"
+      "hash": "2c1f947d0d61ed944c0ac7b3c19a5585ffc00be5bce407919c202dca7f1e9656",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/2c/2c1f947d0d61ed944c0ac7b3c19a5585ffc00be5bce407919c202dca7f1e9656"
     },
     "compositions/coach-le-dire.html": {
-      "hash": "bfb5985c2d8b9bb722c8357685497ffcd3aea54b32699b9a94c772550c7f8c18",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/bf/bfb5985c2d8b9bb722c8357685497ffcd3aea54b32699b9a94c772550c7f8c18"
+      "hash": "cd05504ba130a338df0d9a7d33cd5f178d0303666ce1a8ed3da0d574778215e7",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/cd/cd05504ba130a338df0d9a7d33cd5f178d0303666ce1a8ed3da0d574778215e7"
     },
     "compositions/coach-metier.html": {
-      "hash": "7500e1cee004d08f34b4c349ca7b629b688510c12b69bc7606e0e6ce10fbff36",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/75/7500e1cee004d08f34b4c349ca7b629b688510c12b69bc7606e0e6ce10fbff36"
+      "hash": "d00d77667c9ec1222e43cd227d44c182dfc1e11833c5e3b0958a3b6d7f5d070c",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d0/d00d77667c9ec1222e43cd227d44c182dfc1e11833c5e3b0958a3b6d7f5d070c"
     },
     "compositions/coach-pistes.html": {
-      "hash": "ebbec22ed1054f7811bae4074417575f09640b0a30def81be7b052ebd0e7086b",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/eb/ebbec22ed1054f7811bae4074417575f09640b0a30def81be7b052ebd0e7086b"
+      "hash": "5c9e2b005b5bf61001ab69ad52d763f9c0fddce11c6f9b28d7c6957eb7edd6a1",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5c/5c9e2b005b5bf61001ab69ad52d763f9c0fddce11c6f9b28d7c6957eb7edd6a1"
     },
     "compositions/coach-presentation.html": {
-      "hash": "aedfa4515fee09b355ee5ee24ca74206ba1dd16b826792d66543b9377136e48d",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ae/aedfa4515fee09b355ee5ee24ca74206ba1dd16b826792d66543b9377136e48d"
+      "hash": "4df573786dfa82ad9ac90e7ff828d068dc801767cf325b2f2d23dbfbd1008c48",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/4d/4df573786dfa82ad9ac90e7ff828d068dc801767cf325b2f2d23dbfbd1008c48"
     },
     "compositions/coach-profil.html": {
-      "hash": "7b48b0b8b16f65bfd09a008b51395f61296499955dc43e63c0c7e97fb5ff3d72",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/7b/7b48b0b8b16f65bfd09a008b51395f61296499955dc43e63c0c7e97fb5ff3d72"
+      "hash": "acbdbe0ae93761788901350f5ebb5173750b7515aa7b47536c79c9f7294544c8",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ac/acbdbe0ae93761788901350f5ebb5173750b7515aa7b47536c79c9f7294544c8"
     },
     "compositions/coach-suite.html": {
-      "hash": "1929507f6fa5d83462486d47c96c2f8e02f1ca294885d8f44cea30a883ef2384",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/19/1929507f6fa5d83462486d47c96c2f8e02f1ca294885d8f44cea30a883ef2384"
+      "hash": "2787951b043fc7df6aacd7172d28ac50f3880ab33aabaed93091f2d1391ea47e",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/27/2787951b043fc7df6aacd7172d28ac50f3880ab33aabaed93091f2d1391ea47e"
     },
     "compositions/coach-verifier.html": {
-      "hash": "004ff3e66f1deff7ad0f5448df35f523f72ee41ee8fdfb75ce9eebeb91388baf",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/00/004ff3e66f1deff7ad0f5448df35f523f72ee41ee8fdfb75ce9eebeb91388baf"
+      "hash": "c0ba36af5ff74d2367f0ec6d5d58269f5b8dab10bf98963fbf2960b35cceded8",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/c0/c0ba36af5ff74d2367f0ec6d5d58269f5b8dab10bf98963fbf2960b35cceded8"
     },
     "compositions/coach-versions.html": {
-      "hash": "574a0d8c9fcd3468ccc8841c97b2a5ee713c4a9347a9ab8c172870823108b1fd",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/57/574a0d8c9fcd3468ccc8841c97b2a5ee713c4a9347a9ab8c172870823108b1fd"
+      "hash": "ce49e46dbbe24d6994a8ac8dd118dd4266aeb9ae9dd504a971c0c1005b05ab6b",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ce/ce49e46dbbe24d6994a8ac8dd118dd4266aeb9ae9dd504a971c0c1005b05ab6b"
     },
     "compositions/cours.html": {
-      "hash": "aca0d43483df080416154fd41d1040881aee561512fb428f8ce7ebd985bc6c86",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ac/aca0d43483df080416154fd41d1040881aee561512fb428f8ce7ebd985bc6c86"
+      "hash": "59d470047639b8766a3b058603e4040e7c06b4ef432d07754338df07d2d549e5",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/59/59d470047639b8766a3b058603e4040e7c06b4ef432d07754338df07d2d549e5"
     },
     "compositions/entrainer.html": {
       "hash": "bf8b9c4fc26a1ddee4870c47300e9e79c0ef3489e5d7713605bd412526a27b8e",
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/bf/bf8b9c4fc26a1ddee4870c47300e9e79c0ef3489e5d7713605bd412526a27b8e"
     },
     "compositions/favoris.html": {
-      "hash": "d9dd360b4a2c6e3f18f197995f382a8a2cc9a7af53b9870c05173f815f0b8f20",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d9/d9dd360b4a2c6e3f18f197995f382a8a2cc9a7af53b9870c05173f815f0b8f20"
+      "hash": "465a95d033e48ae14cdc30670c85864b4c74063db3ea7ba7c1b6a976af5b4c90",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/46/465a95d033e48ae14cdc30670c85864b4c74063db3ea7ba7c1b6a976af5b4c90"
     },
     "compositions/fermeture.html": {
-      "hash": "5b09508ebd213b9d380d7573d12d3aea2be65ced37d29771b6bf8d57659e327c",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5b/5b09508ebd213b9d380d7573d12d3aea2be65ced37d29771b6bf8d57659e327c"
+      "hash": "f0519226151113f958247e35027ac5587644b569a9351cf80d98966a290b69b0",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f0/f0519226151113f958247e35027ac5587644b569a9351cf80d98966a290b69b0"
     },
     "compositions/outils.html": {
-      "hash": "42a0ec4f13515ae7a3f5de40fa8f6a4e9369f31f6ff4a8e4b40742dc533cf0e1",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/42/42a0ec4f13515ae7a3f5de40fa8f6a4e9369f31f6ff4a8e4b40742dc533cf0e1"
+      "hash": "6367cb2a098cca31a81f7a0975c1a98b2ae49a2658139c2c1b3322a67b7f2889",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/63/6367cb2a098cca31a81f7a0975c1a98b2ae49a2658139c2c1b3322a67b7f2889"
     },
     "compositions/ouverture.html": {
-      "hash": "96c02c561183b1a00b18572b12df1f3bdeb585b5f1decfd392cdc8de06698b41",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/96/96c02c561183b1a00b18572b12df1f3bdeb585b5f1decfd392cdc8de06698b41"
+      "hash": "f0e53c530766bf63b1943b0f87a44b1df6a7cfa807944bfa54c9c5f8c7f3fe0f",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f0/f0e53c530766bf63b1943b0f87a44b1df6a7cfa807944bfa54c9c5f8c7f3fe0f"
     },
     "compositions/parcours.html": {
-      "hash": "0c69c64a21003a21ffdbec703201cd00569d3d0089814f13bd1cca0bdb81d363",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/0c/0c69c64a21003a21ffdbec703201cd00569d3d0089814f13bd1cca0bdb81d363"
+      "hash": "ba1180714960c044380abcc1fdceb53afe764ac6a1da616032332a3ff9ecf59c",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ba/ba1180714960c044380abcc1fdceb53afe764ac6a1da616032332a3ff9ecf59c"
     },
     "compositions/progresser.html": {
-      "hash": "d9912357c499e506f21f91b8fb12d44f65a2567595d4171018614d5ddd4b536f",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d9/d9912357c499e506f21f91b8fb12d44f65a2567595d4171018614d5ddd4b536f"
+      "hash": "5ec1f31d0e49617dff9f403e264528c926684f3a4f3148a606d04ec9014161e9",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5e/5ec1f31d0e49617dff9f403e264528c926684f3a4f3148a606d04ec9014161e9"
     },
     "compositions/semaine.html": {
-      "hash": "a96cf05aaeb42b3d9ed45ae8fef5feb6db397f188d127bdc5d36df2c1f0f5a14",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/a9/a96cf05aaeb42b3d9ed45ae8fef5feb6db397f188d127bdc5d36df2c1f0f5a14"
+      "hash": "41bbaae715491c3f95efced8121f87f7337dba5133e334687876286594f46df1",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/41/41bbaae715491c3f95efced8121f87f7337dba5133e334687876286594f46df1"
     },
     "hyperframes.json": {
       "hash": "44d4e8dcefebce0a13f5afa82aa270b0b19a1d3f82e434f92616010cee775dc4",
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/44/44d4e8dcefebce0a13f5afa82aa270b0b19a1d3f82e434f92616010cee775dc4"
     },
     "index.html": {
-      "hash": "825694bee57507216f0f19ec2f5a5227af4eddb6dd65af6acf5670de2715a26c",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/82/825694bee57507216f0f19ec2f5a5227af4eddb6dd65af6acf5670de2715a26c"
+      "hash": "47c8f94c8e891a4ee656101cf33eb510c7192ad1bb89aa0a34fe8263b074af0a",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/47/47c8f94c8e891a4ee656101cf33eb510c7192ad1bb89aa0a34fe8263b074af0a"
     },
     "meta.json": {
       "hash": "655779895852bbff091817eb0f0bef5879bc7ff413d597dc7e2a27998b76f6af",
@@ -377,8 +377,12 @@
       "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ac/acbc464185af5468f71dc5d5c387def8d8cbea384ba0360b2776cbb3e2adc322"
     },
     "scenes.json": {
-      "hash": "763f3d0a3be89468fe7dfa7e4d4ea98e40cb3ee8ae14228cc8bd489123b847da",
-      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/76/763f3d0a3be89468fe7dfa7e4d4ea98e40cb3ee8ae14228cc8bd489123b847da"
+      "hash": "56503f0dc8ad4dfc1078468a298ba56fdb0f37ec9a43277da26d9207cd830397",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/56/56503f0dc8ad4dfc1078468a298ba56fdb0f37ec9a43277da26d9207cd830397"
+    },
+    "tools/gen.py": {
+      "hash": "16ae7bbcd6e7da75fb344c26d9fd548ed0ca54399d75d8fcecb5122ce15824d3",
+      "content": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/16/16ae7bbcd6e7da75fb344c26d9fd548ed0ca54399d75d8fcecb5122ce15824d3"
     }
   },
   "revisions": {
@@ -689,10 +693,128 @@
           "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/e2/e27776c0faa1f70c44b8ab49614c2d7614b4ec99c85e5426d50380bf2ca1077e"
         }
       }
+    },
+    "2a5cb0db-c5aa-479c-b4c2-8a1920476577": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1791963658189,
+      "endedAt": 1791963658266,
+      "files": {
+        "compositions/coach-analyser.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/80/8070a82a74d1c293608f429eaf53f5e08a9540157982e2b136b8a02833d63792",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/be/be93e007ab170ee5693f42e127166a4da840cfa30a46ef82c6228b7bd8c1bfa1"
+        },
+        "compositions/coach-auto.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/26/263b62fd62af6e86f7e822d3f5b288aaff2e95caff5ea3f747583c6cc36951d4",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/7f/7f1a0b16e4f1ec9895f46cf0784a24fad988138f0298cd3fe31576ba6d2ce024"
+        },
+        "compositions/coach-bilan.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/95/95ece6348d97ee67dae7b114609249e94d67a5e4bde10ba065d73dda321e6bff",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/df/df0efe86551722df311533322ba13042d89794bde5a90f1c8346bbe81b5d3582"
+        },
+        "compositions/coach-boutons.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/55/55522da1c5105b838a7160140d39a686059dcc92336136c2a01e8cd3beb7cb2f",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d4/d455cab46a6060d67db68d6f1b980a872fd1fe6b6f61ece7f3591118961222d7"
+        },
+        "compositions/coach-conseils.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/b8/b88348a7067312907fa68528a2d66a5260f04accb5bace0789395c6f3811a80b",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/78/78a6c5ed974fede8407892579bc71fb17ced605b306e152a97e93dd568f41396"
+        },
+        "compositions/coach-donnees.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f5/f5ec50074da1fb4411099ce1f25d213694abde51c3e616f01776cb5de372c21b",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/2c/2c1f947d0d61ed944c0ac7b3c19a5585ffc00be5bce407919c202dca7f1e9656"
+        },
+        "compositions/coach-le-dire.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/bf/bfb5985c2d8b9bb722c8357685497ffcd3aea54b32699b9a94c772550c7f8c18",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/cd/cd05504ba130a338df0d9a7d33cd5f178d0303666ce1a8ed3da0d574778215e7"
+        },
+        "compositions/coach-metier.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/75/7500e1cee004d08f34b4c349ca7b629b688510c12b69bc7606e0e6ce10fbff36",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d0/d00d77667c9ec1222e43cd227d44c182dfc1e11833c5e3b0958a3b6d7f5d070c"
+        },
+        "compositions/coach-pistes.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/eb/ebbec22ed1054f7811bae4074417575f09640b0a30def81be7b052ebd0e7086b",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5c/5c9e2b005b5bf61001ab69ad52d763f9c0fddce11c6f9b28d7c6957eb7edd6a1"
+        },
+        "compositions/coach-presentation.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ae/aedfa4515fee09b355ee5ee24ca74206ba1dd16b826792d66543b9377136e48d",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/4d/4df573786dfa82ad9ac90e7ff828d068dc801767cf325b2f2d23dbfbd1008c48"
+        },
+        "compositions/coach-profil.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/7b/7b48b0b8b16f65bfd09a008b51395f61296499955dc43e63c0c7e97fb5ff3d72",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ac/acbdbe0ae93761788901350f5ebb5173750b7515aa7b47536c79c9f7294544c8"
+        },
+        "compositions/coach-suite.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/19/1929507f6fa5d83462486d47c96c2f8e02f1ca294885d8f44cea30a883ef2384",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/27/2787951b043fc7df6aacd7172d28ac50f3880ab33aabaed93091f2d1391ea47e"
+        },
+        "compositions/coach-verifier.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/00/004ff3e66f1deff7ad0f5448df35f523f72ee41ee8fdfb75ce9eebeb91388baf",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/c0/c0ba36af5ff74d2367f0ec6d5d58269f5b8dab10bf98963fbf2960b35cceded8"
+        },
+        "compositions/coach-versions.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/57/574a0d8c9fcd3468ccc8841c97b2a5ee713c4a9347a9ab8c172870823108b1fd",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ce/ce49e46dbbe24d6994a8ac8dd118dd4266aeb9ae9dd504a971c0c1005b05ab6b"
+        },
+        "compositions/cours.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ac/aca0d43483df080416154fd41d1040881aee561512fb428f8ce7ebd985bc6c86",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/59/59d470047639b8766a3b058603e4040e7c06b4ef432d07754338df07d2d549e5"
+        },
+        "compositions/favoris.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d9/d9dd360b4a2c6e3f18f197995f382a8a2cc9a7af53b9870c05173f815f0b8f20",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/46/465a95d033e48ae14cdc30670c85864b4c74063db3ea7ba7c1b6a976af5b4c90"
+        },
+        "compositions/fermeture.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5b/5b09508ebd213b9d380d7573d12d3aea2be65ced37d29771b6bf8d57659e327c",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f0/f0519226151113f958247e35027ac5587644b569a9351cf80d98966a290b69b0"
+        },
+        "compositions/outils.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/42/42a0ec4f13515ae7a3f5de40fa8f6a4e9369f31f6ff4a8e4b40742dc533cf0e1",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/63/6367cb2a098cca31a81f7a0975c1a98b2ae49a2658139c2c1b3322a67b7f2889"
+        },
+        "compositions/ouverture.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/96/96c02c561183b1a00b18572b12df1f3bdeb585b5f1decfd392cdc8de06698b41",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/f0/f0e53c530766bf63b1943b0f87a44b1df6a7cfa807944bfa54c9c5f8c7f3fe0f"
+        },
+        "compositions/parcours.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/0c/0c69c64a21003a21ffdbec703201cd00569d3d0089814f13bd1cca0bdb81d363",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/ba/ba1180714960c044380abcc1fdceb53afe764ac6a1da616032332a3ff9ecf59c"
+        },
+        "compositions/progresser.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/d9/d9912357c499e506f21f91b8fb12d44f65a2567595d4171018614d5ddd4b536f",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/5e/5ec1f31d0e49617dff9f403e264528c926684f3a4f3148a606d04ec9014161e9"
+        },
+        "compositions/semaine.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/a9/a96cf05aaeb42b3d9ed45ae8fef5feb6db397f188d127bdc5d36df2c1f0f5a14",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/41/41bbaae715491c3f95efced8121f87f7337dba5133e334687876286594f46df1"
+        },
+        "index.html": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/82/825694bee57507216f0f19ec2f5a5227af4eddb6dd65af6acf5670de2715a26c",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/47/47c8f94c8e891a4ee656101cf33eb510c7192ad1bb89aa0a34fe8263b074af0a"
+        },
+        "scenes.json": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/76/763f3d0a3be89468fe7dfa7e4d4ea98e40cb3ee8ae14228cc8bd489123b847da",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/56/56503f0dc8ad4dfc1078468a298ba56fdb0f37ec9a43277da26d9207cd830397"
+        },
+        "STORYBOARD.md": {
+          "before": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/e2/e27776c0faa1f70c44b8ab49614c2d7614b4ec99c85e5426d50380bf2ca1077e",
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/4e/4ea1a05417788221aa30265ab7213fe5096763ef16083fb283d0b5edfd45dcd4"
+        },
+        "tools/gen.py": {
+          "before": null,
+          "after": "/home/lba/.cache/hyperframes/history/104bd1b4-95ea-4724-a23e-b6c34cfe41b7/blobs/16/16ae7bbcd6e7da75fb344c26d9fd548ed0ca54399d75d8fcecb5122ce15824d3"
+        }
+      }
     }
   },
   "checks": {
-    "latest": null,
+    "latest": {
+      "revision": "2a5cb0db-c5aa-479c-b4c2-8a1920476577",
+      "id": "11f30b35-15cc-4a01-b4cb-af31dd1190e7"
+    },
     "revisions": {
       "04880015-d1d4-4b93-a267-cb917cffa218": [
         {
@@ -722,6 +844,35 @@
           "attribution": "recorded-revision",
           "status": "cleaned",
           "cleanedAfterRender": "f07467c1-cd61-43a1-a26b-f103a52aa08a"
+        }
+      ],
+      "2a5cb0db-c5aa-479c-b4c2-8a1920476577": [
+        {
+          "id": "11f30b35-15cc-4a01-b4cb-af31dd1190e7",
+          "scope": "project",
+          "report": "/data/loic/Bercy-Hub-Loic/projects/assistant-ia/.claude/worktrees/nestor-chat/videos/nestor-presentation/.hyperframes/artifacts/checks/11f30b35-15cc-4a01-b4cb-af31dd1190e7.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 3000,
+              "contrast": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto"
+            }
+          },
+          "createdAt": 1791963679924,
+          "contentHash": "c37d1c932a9f938170e6cf47cc24fa3a3ac915fec31c2ccdad16721c73790bba",
+          "revision": "2a5cb0db-c5aa-479c-b4c2-8a1920476577",
+          "inputFingerprint": "ef31e721d5d815daf047df49a5e55fe470448b1d48f6103cdfc620a80f6b96f6",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
         }
       ]
     },
@@ -1512,11 +1663,11 @@
   },
   "renders": {
     "latest": {
-      "id": "f07467c1-cd61-43a1-a26b-f103a52aa08a",
-      "completedAt": 1791955044786,
+      "id": "75e26393-9cda-4a5c-b2d9-c9d0161e5b4f",
+      "completedAt": 1791964191736,
       "output": "/data/loic/Bercy-Hub-Loic/projects/assistant-ia/.claude/worktrees/nestor-chat/videos/nestor-presentation/renders/nestor-presentation-fr.mp4",
       "status": "completed",
-      "revision": "f338b234-05e4-4cf6-a654-77d9945ee671"
+      "revision": null
     },
     "retainedRevisions": [
       "f338b234-05e4-4cf6-a654-77d9945ee671"

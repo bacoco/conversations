@@ -33,7 +33,7 @@
 .coach-metier-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-metier" data-start="0" data-duration="9" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-metier" data-start="0" data-duration="9.7" data-width="1920" data-height="1080">
         <div id="coach-metier-bg"></div>
         <div id="coach-metier-flag"></div>
         <div id="coach-metier-content">
@@ -47,21 +47,21 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-metier-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-metier-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 8.55);
+      tl.to("#coach-metier-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 9.25);
       tl.fromTo("#coach-metier-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-metier-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-metier-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-metier-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-metier-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-metier-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.50);
-      tl.fromTo("#coach-metier-p0-c", {opacity: 0, x: 160, y: 120}, {opacity: 1, x: 0, y: 0, duration: 1.0, ease: "power2.inOut"}, 2.30);
-      tl.to("#coach-metier-p0-c", {scale: 0.82, duration: 0.12, ease: "power1.in", transformOrigin: "10% 10%"}, 3.30);
-      tl.to("#coach-metier-p0-c", {scale: 1, duration: 0.18, ease: "power1.out"}, 3.43);
-      tl.fromTo("#coach-metier-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#coach-metier-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 4.90);
-      tl.fromTo("#coach-metier-p0", {y: -0, scale: 1}, {y: -327, scale: 1.035, duration: 5.10, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#coach-metier-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 4.90);
-      tl.fromTo("#coach-metier-p1", {y: -0, scale: 1}, {y: -208, scale: 1.035, duration: 4.60, ease: "sine.inOut"}, 4.90);
+      tl.fromTo("#coach-metier-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.77);
+      tl.fromTo("#coach-metier-p0-c", {opacity: 0, x: 160, y: 120}, {opacity: 1, x: 0, y: 0, duration: 1.0, ease: "power2.inOut"}, 2.55);
+      tl.to("#coach-metier-p0-c", {scale: 0.82, duration: 0.12, ease: "power1.in", transformOrigin: "10% 10%"}, 3.55);
+      tl.to("#coach-metier-p0-c", {scale: 1, duration: 0.18, ease: "power1.out"}, 3.68);
+      tl.fromTo("#coach-metier-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.32);
+      tl.to("#coach-metier-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 5.28);
+      tl.fromTo("#coach-metier-p0", {y: -0, scale: 1}, {y: -327, scale: 1.035, duration: 5.46, ease: "sine.inOut"}, 0.32);
+      tl.fromTo("#coach-metier-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 5.28);
+      tl.fromTo("#coach-metier-p1", {y: -0, scale: 1}, {y: -208, scale: 1.035, duration: 4.92, ease: "sine.inOut"}, 5.28);
       window.__timelines["coach-metier"] = tl;
       </script>
     </template>

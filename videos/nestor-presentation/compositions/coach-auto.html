@@ -33,7 +33,7 @@
 .coach-auto-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-auto" data-start="0" data-duration="7.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-auto" data-start="0" data-duration="8.0" data-width="1920" data-height="1080">
         <div id="coach-auto-bg"></div>
         <div id="coach-auto-flag"></div>
         <div id="coach-auto-content">
@@ -47,18 +47,18 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-auto-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-auto-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.05);
+      tl.to("#coach-auto-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.55);
       tl.fromTo("#coach-auto-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-auto-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-auto-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-auto-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-auto-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-auto-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 1.50);
-      tl.fromTo("#coach-auto-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.to("#coach-auto-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.50);
-      tl.fromTo("#coach-auto-p0", {y: 369, scale: 1}, {y: 369, scale: 1.035, duration: 3.70, ease: "sine.inOut"}, 0.30);
-      tl.fromTo("#coach-auto-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.50);
-      tl.fromTo("#coach-auto-p1", {y: 83, scale: 1}, {y: 83, scale: 1.035, duration: 4.50, ease: "sine.inOut"}, 3.50);
+      tl.fromTo("#coach-auto-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 1.60);
+      tl.fromTo("#coach-auto-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.32);
+      tl.to("#coach-auto-v0", {opacity: 0, duration: 0.5, ease: "sine.inOut"}, 3.73);
+      tl.fromTo("#coach-auto-p0", {y: 369, scale: 1}, {y: 369, scale: 1.035, duration: 3.91, ease: "sine.inOut"}, 0.32);
+      tl.fromTo("#coach-auto-v1", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.inOut"}, 3.73);
+      tl.fromTo("#coach-auto-p1", {y: 83, scale: 1}, {y: 83, scale: 1.035, duration: 4.77, ease: "sine.inOut"}, 3.73);
       window.__timelines["coach-auto"] = tl;
       </script>
     </template>

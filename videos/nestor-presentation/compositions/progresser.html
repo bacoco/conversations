@@ -40,7 +40,7 @@
 #progresser-art img { display: block; width: 100%; height: 100%; }
 
       </style>
-      <div id="root" data-composition-id="progresser" data-start="0" data-duration="4.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="progresser" data-start="0" data-duration="5.3" data-width="1920" data-height="1080">
         <div id="progresser-bg"></div>
         <div id="progresser-flag"></div>
         <div id="progresser-content">
@@ -50,11 +50,11 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#progresser-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#progresser-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 4.05);
+      tl.to("#progresser-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 4.85);
       tl.fromTo("#progresser-l0", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 0.40);
       tl.fromTo("#progresser-l1", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.8, ease: "power2.out"}, 2.00);
       tl.fromTo("#progresser-art", {opacity: 0, scale: 0.94}, {opacity: 1, scale: 1, duration: 1.0, ease: "power2.out"}, 0.3);
-      tl.fromTo("#progresser-art img", {scale: 1}, {scale: 1.05, duration: 4.20, ease: "none"}, 0.3);
+      tl.fromTo("#progresser-art img", {scale: 1}, {scale: 1.05, duration: 5.00, ease: "none"}, 0.3);
       window.__timelines["progresser"] = tl;
       </script>
     </template>

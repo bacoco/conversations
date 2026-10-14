@@ -33,7 +33,7 @@
 .coach-profil-cursor { position: absolute; width: 56px; height: 72px; opacity: 0; }
 
       </style>
-      <div id="root" data-composition-id="coach-profil" data-start="0" data-duration="7.5" data-width="1920" data-height="1080">
+      <div id="root" data-composition-id="coach-profil" data-start="0" data-duration="11.6" data-width="1920" data-height="1080">
         <div id="coach-profil-bg"></div>
         <div id="coach-profil-flag"></div>
         <div id="coach-profil-content">
@@ -47,15 +47,15 @@
       <script>
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#coach-profil-content", {opacity: 0}, {opacity: 1, duration: 0.5, ease: "sine.out"}, 0);
-      tl.to("#coach-profil-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 7.05);
+      tl.to("#coach-profil-content", {opacity: 0, duration: 0.45, ease: "sine.in"}, 11.15);
       tl.fromTo("#coach-profil-eyebrow", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 0.15);
       tl.fromTo("#coach-profil-title", {opacity: 0, y: 26}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.35);
       tl.fromTo("#coach-profil-b0", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 1.10);
       tl.fromTo("#coach-profil-b1", {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.6, ease: "power2.out"}, 2.00);
       tl.fromTo("#coach-profil-card", {opacity: 0, y: 30}, {opacity: 1, y: 0, duration: 0.7, ease: "power2.out"}, 0.2);
-      tl.fromTo("#coach-profil-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 3.30);
-      tl.fromTo("#coach-profil-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.30);
-      tl.fromTo("#coach-profil-p0", {y: -0, scale: 1}, {y: -170, scale: 1.035, duration: 7.70, ease: "sine.inOut"}, 0.30);
+      tl.fromTo("#coach-profil-p0-r0", {opacity: 0, scale: 1.25}, {opacity: 1, scale: 1, duration: 0.45, ease: "power2.out"}, 5.10);
+      tl.fromTo("#coach-profil-v0", {opacity: 0}, {opacity: 1, duration: 0.5}, 0.46);
+      tl.fromTo("#coach-profil-p0", {y: -0, scale: 1}, {y: -170, scale: 1.035, duration: 11.64, ease: "sine.inOut"}, 0.46);
       window.__timelines["coach-profil"] = tl;
       </script>
     </template>
