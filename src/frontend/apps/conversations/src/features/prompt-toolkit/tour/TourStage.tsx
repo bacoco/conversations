@@ -427,7 +427,6 @@ export const TourStage = () => {
   const film = useTourStore((state) => state.onFilm);
   const takeTour = useTourStore((state) => state.takeTour);
   const showFilm = useTourStore((state) => state.showFilm);
-  const [filmFailed, setFilmFailed] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   // A click anywhere else on the page closes the tour — the panel included
@@ -536,23 +535,16 @@ export const TourStage = () => {
         >
           <Body>
             {film ? (
-              filmFailed ? (
-                <Words>
-                  {t(
-                    'The new film is coming soon. Meanwhile, take the guided tour: Nestor shows you everything on the real screen.',
-                  )}
-                </Words>
-              ) : (
-                <Film
-                  aria-label={t('Presentation of Nestor')}
-                  src={PRESENTATION_VIDEO_URL}
-                  poster={PRESENTATION_POSTER_URL}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  onError={() => setFilmFailed(true)}
-                />
-              )
+              <Film
+                aria-label={t('Presentation of Nestor')}
+                src={PRESENTATION_VIDEO_URL}
+                poster={PRESENTATION_POSTER_URL}
+                controls
+                playsInline
+                preload="metadata"
+                // No film to play: straight to the guided tour.
+                onError={takeTour}
+              />
             ) : (
               <>
                 <Media>
@@ -586,7 +578,6 @@ export const TourStage = () => {
                     type="button"
                     onClick={() => {
                       hush();
-                      setFilmFailed(false);
                       showFilm();
                     }}
                   >

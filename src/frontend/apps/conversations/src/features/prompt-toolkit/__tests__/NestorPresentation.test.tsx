@@ -47,11 +47,13 @@ describe('the film, first in the window', () => {
     expect(screen.getByLabelText('Presentation of Nestor')).toBeInTheDocument();
   });
 
-  it('a film that cannot play says so, in plain words', () => {
+  it('a film that cannot play: straight to the guided tour, no message', () => {
     render(<TourStage />);
     fireEvent.error(screen.getByLabelText('Presentation of Nestor'));
-    expect(
-      screen.getByText('The new film is coming soon. Meanwhile, take the guided tour: Nestor shows you everything on the real screen.'),
-    ).toBeInTheDocument();
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: false,
+    });
+    expect(screen.queryByText(/coming soon/)).toBeNull();
   });
 });
