@@ -1,0 +1,112 @@
+[
+ [
+  "accroche",
+  "Plein écran, sans Nestor. Une demande écrite vite, puis une réponse qui redemande tout.",
+  "Vous écrivez une demande, vite. Et la réponse ne vous avance pas. Il faut tout reprendre."
+ ],
+ [
+  "promesse",
+  "Grand titre sur fond clair.",
+  "Bien demander à votre IA, ça s'apprend. En travaillant, au quotidien."
+ ],
+ [
+  "nestor",
+  "Plein écran. Le panneau de Nestor apparaît à droite, avec sa remarque et À faire.",
+  "Voici Nestor, votre coach. Je suis là, à droite de l'écran. Rien à installer. Je ne fais pas le travail à votre place. Je vous apprends à bien demander."
+ ],
+ [
+  "metier",
+  "Le coach demande Quel est votre métier, puis propose trois tâches.",
+  "D'abord, je vous demande votre métier. Je connais dix métiers du ministère. Puis je vous propose trois tâches pour commencer."
+ ],
+ [
+  "pistes",
+  "Pendant la frappe, Nestor réfléchit, puis des pistes, un cas et un modèle proches.",
+  "Pendant que vous écrivez, je réfléchis avec vous. Je propose des pistes proches de votre demande. Et un modèle ou un cas pratique proche."
+ ],
+ [
+  "analyser",
+  "Bouton Analyser mon texte. Ce qui est dit, ce qui manque.",
+  "Analyser mon texte. Je vous montre ce que dit votre demande, et ce qui manque. Vous complétez. Vous seul connaissez votre dossier."
+ ],
+ [
+  "conseils",
+  "Bouton Améliorer mon texte. Des conseils avec Ajouter, Ignorer, Je le fais déjà.",
+  "Améliorer mon texte. D'abord, des conseils. Pour chacun, vous choisissez. Ajouter, ignorer, ou je le fais déjà."
+ ],
+ [
+  "versions",
+  "Le bon texte ou deux versions, et Je corrige moi-même.",
+  "Ensuite seulement, le bon texte, ou deux versions au choix. Vos chiffres ne changent pas. Vous pouvez aussi corriger vous-même."
+ ],
+ [
+  "donnees",
+  "Alerte numéro de téléphone avant l'envoi, Je le retire.",
+  "Un numéro de téléphone dans votre texte, je vous préviens avant tout envoi. Vous le retirez, ou vous continuez."
+ ],
+ [
+  "verifier",
+  "La réponse avec des chiffres non donnés, puis la remarque de Nestor et À faire.",
+  "La réponse arrive. Je la relis pour vous. Un chiffre que vous n'avez pas donné, je le signale. Et je vous dis quoi vérifier."
+ ],
+ [
+  "suite",
+  "Conseil après la réponse et Pour continuer.",
+  "Après chaque réponse, un conseil. Et trois idées pour continuer."
+ ],
+ [
+  "bilan",
+  "Bouton Faire le bilan. Bilan de séance.",
+  "Faire le bilan. Je fais le point sur votre séance. Ce qui va bien, et quoi faire la prochaine fois."
+ ],
+ [
+  "parler",
+  "Demander à Nestor, le micro rouge, Le dire, puis une réponse de Nestor.",
+  "Vous pouvez me parler, au lieu d'écrire. Le micro s'allume seulement quand vous appuyez. Une question, je réponds. Rien ne part vers votre IA."
+ ],
+ [
+  "boutons",
+  "Les quatre boutons fixes, puis le bouton Auto.",
+  "Mes quatre boutons restent toujours au même endroit. Avec Auto, je vous aide de moi-même. Sinon, seulement quand vous le demandez."
+ ],
+ [
+  "profil",
+  "Réglages de Nestor, Mon métier, Ma direction, Mes thèmes de travail.",
+  "Votre direction et vos thèmes de travail m'aident à choisir mes exemples. Je ne les ajoute jamais à vos demandes."
+ ],
+ [
+  "progresser",
+  "Grand titre.",
+  "Et je vous fais progresser, semaine après semaine."
+ ],
+ [
+  "entrainer",
+  "Cas de mon métier, puis les cinq étapes de l'entraînement.",
+  "De vrais cas de votre métier, pas à pas. Lire, demander, conseils, comparer, vérifier. Trois niveaux, du plus simple au plus complet."
+ ],
+ [
+  "semaine",
+  "Votre semaine, Réserver vingt minutes par semaine.",
+  "Chaque semaine, quelques actions pour votre métier. Et vingt minutes réservées dans votre agenda."
+ ],
+ [
+  "parcours",
+  "Mon parcours, niveau, badges, attestation.",
+  "Votre niveau, vos badges, une attestation à imprimer. Vos progrès restent sur votre poste. Personne ne vous classe."
+ ],
+ [
+  "cours",
+  "Le cours, huit leçons, le grand quiz, le mémo.",
+  "Huit leçons courtes, des quiz et un mémo. Pour apprendre à vérifier une réponse, et à mieux demander."
+ ],
+ [
+  "outils-favoris",
+  "Outils du quotidien, exemples de demandes, favoris, partage par lien.",
+  "Des demandes prêtes pour le quotidien. Vos favoris sous la main. Et un lien pour les partager avec un collègue."
+ ],
+ [
+  "fermeture",
+  "Nestor, Avec Albert, l'IA de l'État, et le point d'interrogation dans l'en-tête.",
+  "Voici Nestor. Je m'appuie sur Albert, l'IA de l'État. Avec moi, vous apprenez à bien demander, en travaillant. Pour revoir cette présentation, cliquez sur le point d'interrogation."
+ ]
+]

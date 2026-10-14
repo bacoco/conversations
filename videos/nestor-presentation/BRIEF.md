@@ -3,12 +3,12 @@ workflow: product-launch-video
 flow: automation
 storyboard: no
 message: "Nestor, le coach de l'Assistant : il apprend à vos agents à bien demander, en travaillant."
-angle: sell — one real ministry task followed through Nestor, then the training path (cases, weekly actions, progress)
+angle: Apple-style product film — hook (a hasty request, an answer that does not help), promise, Nestor revealed as THE coach, its method, then progress
 destination: modal opened by the « ? » button of Nestor's panel (shown ~800 px wide), also usable in a meeting
 aspect: "16:9"
 language: fr
-length: 75-100s
-audio: silent (muted, no voice, no music) — music none
+length: ~3 min (v3: 184 s)
+audio: French voiceover by Nestor (OmniVoice clone `nestor-aventuriere`, fr, 1.0), no music
 style_preset: none (reuse videos/robin-intro identity)
 ---
 
@@ -42,3 +42,12 @@ https://dev.bhub.cloud/nestor-chat/ (close-ups of one element each, 2× device s
 - Earlier study: scratchpad `video/etude-video-jsl.md` (§1 « ne pas mettre », §2 « supériorité sans comparer »)
 - Feature truth: the coordinator's list (100 cases = 10 per job × 10 jobs, 3 levels, weekly programme,
   attestation, trainer, close matches while typing, personal-data warning, « Le dire », answer check).
+
+## v3 (2026-10-14) — what changed
+- Whole-application base shots (1280×720 captures: left menu, centre, Nestor's panel), soft dim + red ring,
+  no large scrolling crops, no zoom that cuts the left menu. Old test conversation titles blurred.
+- Narration rules (Loic): sentences ≤ 15 words, only periods and commas, numbers in words, never the word
+  « assistant », Nestor says « je ». Text: `tools/narration-v3.json`.
+- Voice: masters in /data/loic/Bercy-Hub-Loic/projects/nestor-voix/film/v3/, MP3 32k in `.media/audio/voice-v3/`.
+- Build: `python3 tools/gen3.py index.html` regenerates `compositions/v3-*.html` and `index.html`.
+- Web delivery: 1280×720 H.264, ≤ 5 MB target, `public/assets/nestor-presentation-fr.mp4` + poster `.jpg`.
