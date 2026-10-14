@@ -276,6 +276,9 @@ export const RightPanel = ({
   const title = showHome ? 'Nestor' : current.label;
   // The coach is a chat with Nestor: his name, Auto and the gear on top.
   const isNestorChat = mode === 'coach' && !showHome && !showFavorites;
+  const starShown =
+    isClaimed &&
+    favoritesCornerShown({ welcomeShown, isNestorChat, showFavorites });
   // Nestor's round button outside the coach: only when asked for.
   const showDock = useCoachPrefsStore((state) => state.showDock);
   // A case in training: the coach is the trainer for now.
@@ -307,7 +310,7 @@ export const RightPanel = ({
           container: panel-header / inline-size;
           height: ${isDesktop ? HEADER_HEIGHT : 48}px;
           /* Tight sides: « Nestor » stays whole beside the tools. */
-          padding: 0 ${isDesktop ? accountToolsWidth + 8 : 8}px 0 8px;
+          padding: 0 ${isDesktop ? accountToolsWidth + 12 : 8}px 0 8px;
           pointer-events: none;
           & > * {
             pointer-events: auto;
@@ -333,7 +336,8 @@ export const RightPanel = ({
             $align="center"
             $gap="6px"
             // The title gives way to the tools: it shortens, never overlaps.
-            $css="min-width: 0; flex: 1 1 auto; overflow: hidden;"
+            // A little air before the tools: never « Mes favorisAuto ».
+            $css="min-width: 0; flex: 1 1 auto; overflow: hidden; padding-right: 8px;"
           >
             <Box
               as="button"
@@ -421,6 +425,8 @@ export const RightPanel = ({
           overflow-x: hidden;
           pointer-events: auto;
           background: var(--c--contextuals--background--surface--primary);
+          /* Room under the round star: it never covers a chip or a block. */
+          ${starShown && 'padding-bottom: 80px;'}
         `}
       >
         {isClaimed && (
@@ -490,20 +496,19 @@ export const RightPanel = ({
       {/* Nestor's guided tour: he speaks in the middle, the panel flashes. */}
       <TourStage />
       {/* « Mes favoris »: a round star, bottom right, outside the coach. */}
-      {isClaimed &&
-        favoritesCornerShown({ welcomeShown, isNestorChat, showFavorites }) && (
-          <Box
-            $css={css`
-              position: absolute;
-              /* Above the field at the bottom of the course and the tools. */
-              bottom: ${showHome ? 16 : 84}px;
-              right: ${showDock ? 84 : 16}px;
-              pointer-events: auto;
-            `}
-          >
-            <FavoritesButton />
-          </Box>
-        )}
+      {starShown && (
+        <Box
+          $css={css`
+            position: absolute;
+            /* Above the field at the bottom of the course and the tools. */
+            bottom: ${showHome ? 16 : 84}px;
+            right: ${showDock ? 84 : 16}px;
+            pointer-events: auto;
+          `}
+        >
+          <FavoritesButton />
+        </Box>
+      )}
       {isClaimed && isAiAvailable && !isNestorChat && showDock && (
         <NestorDock language={languageName(i18n.language)} />
       )}

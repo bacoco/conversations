@@ -352,6 +352,64 @@ const usePanelRoom = () => {
   return room;
 };
 
+const ResumePill = styled.div`
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid ${C.brandLine};
+  box-shadow: 0 8px 24px rgba(30, 30, 70, 0.2);
+  & button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  & button:first-child {
+    background: ${C.brand};
+    color: #ffffff;
+  }
+  & button:last-child {
+    background: transparent;
+    color: ${C.muted};
+    padding: 8px 10px;
+  }
+`;
+
+/** Closed by a click beside: one click brings the tour back to its step. */
+const ResumeTour = ({ index }: { index: number }) => {
+  const { t } = useTranslation();
+  return createPortal(
+    <ResumePill>
+      <button type="button" onClick={() => useTourStore.getState().resume()}>
+        {t('Resume the tour ({{n}} of {{total}})', {
+          n: index + 1,
+          total: TOUR_STEPS.length,
+        })}
+      </button>
+      <button
+        type="button"
+        aria-label={t('End the tour')}
+        title={t('End the tour')}
+        onClick={endTour}
+      >
+        ✕
+      </button>
+    </ResumePill>,
+    document.body,
+  );
+};
+
 /**
  * The guided tour: Nestor, in the middle, says what each part is for; the
  * real element flashes on the right. Some steps ask for a click on it, and
@@ -363,6 +421,7 @@ export const TourStage = () => {
   const index = useTourStore((state) => state.index);
   const next = useTourStore((state) => state.next);
   const step = active ? TOUR_STEPS[index] : undefined;
+  const paused = useTourStore((state) => state.paused);
   const [voiceOn, setVoiceOn] = useState(true);
   // The window opens on the film, still; it plays only when asked.
   const film = useTourStore((state) => state.onFilm);
@@ -382,7 +441,9 @@ export const TourStage = () => {
         const asked = findTarget(step.target);
         if (asked?.contains(target)) return;
       }
-      endTour();
+      // The film is simply closed; the tour waits to be resumed.
+      if (film) endTour();
+      else useTourStore.getState().pause();
     };
     document.addEventListener('pointerdown', onPointerDown, true);
     return () =>
@@ -448,7 +509,9 @@ export const TourStage = () => {
     return hush;
   }, [words, voiceOn, film, step, i18n.language]);
 
-  if (!step) return null;
+  if (!step) {
+    return paused !== null ? <ResumeTour index={paused} /> : null;
+  }
   return createPortal(
     <>
       <FlashStyle />
@@ -459,7 +522,9 @@ export const TourStage = () => {
         }
         data-testid="tour-backdrop"
         onClick={(event) => {
-          if (event.target === event.currentTarget) endTour();
+          if (event.target !== event.currentTarget) return;
+          if (film) endTour();
+          else useTourStore.getState().pause();
         }}
       >
         <Card

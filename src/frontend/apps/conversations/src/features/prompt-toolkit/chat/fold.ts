@@ -35,6 +35,15 @@ const listOf = (items: string[]) =>
   new Intl.ListFormat('fr', { type: 'conjunction' }).format(items);
 
 /** The one line that stands for a past step. */
+/** The five lines of a request, short, as the user reads them. */
+const PART_SHORT = {
+  task: 'the task',
+  reader: 'the reader',
+  material: 'the information',
+  form: 'the form',
+  tone: 'the tone',
+} as const;
+
 export const foldSummary = (messages: NestorMessage[], t: T): string => {
   const find = <K extends NestorMessage['kind']>(kind: K) =>
     messages.find(
@@ -43,7 +52,10 @@ export const foldSummary = (messages: NestorMessage[], t: T): string => {
     );
   const analysis = find('analysis');
   if (analysis) {
-    const missing = analysis.check.missing.map((item) => item.short);
+    // The line's own name when known (« la forme »), never the model's word.
+    const missing = analysis.check.missing.map((item) =>
+      item.part ? t(PART_SHORT[item.part]) : item.short,
+    );
     return missing.length
       ? t('Analysis: missing {{items}}', { items: listOf(missing) })
       : t('Analysis: clear request');

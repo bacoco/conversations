@@ -409,3 +409,12 @@ export const useSectionReset = (mode: RightPanelMode, onReset: () => void) => {
     }
   }, [resetCount, mode]);
 };
+
+/** Asked as « toolRequest »: the everyday tools' list, not a tool. */
+export const TOOLS_LIST = '__list__';
+
+/** « Outils du quotidien » from the home page: the list, never the last tool. */
+export const openToolsList = () => {
+  usePromptToolkitStore.getState().openSection('tools');
+  usePromptToolkitStore.setState({ toolRequest: TOOLS_LIST });
+};

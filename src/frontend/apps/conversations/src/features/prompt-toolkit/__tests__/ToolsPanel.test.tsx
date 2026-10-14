@@ -1,9 +1,12 @@
 import { CunninghamProvider } from '@gouvfr-lasuite/cunningham-react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import type { TFunction } from 'i18next';
 
 import { useMainConversationStore } from '../stores/useMainConversationStore';
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import {
+  openToolsList,
+  usePromptToolkitStore,
+} from '../stores/usePromptToolkitStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 import { buildToolPrompt, getDailyTools } from '../tools/tools';
 import { useToolsUsageStore } from '../tools/useToolsUsageStore';
@@ -232,5 +235,29 @@ describe('<ToolsPanel />', () => {
     );
     expect(setChatInput).not.toHaveBeenCalled();
     expect(usePromptToolkitStore.getState().offerAnswerHelp).toBe(true);
+  });
+
+  it('« Outils du quotidien » from the home page: the list, never the last tool', () => {
+    render(
+      <CunninghamProvider>
+        <ToolsPanel />
+      </CunninghamProvider>,
+    );
+    act(() => {
+      usePromptToolkitStore.setState({ toolRequest: 'minutes' });
+    });
+    expect(
+      screen.queryByLabelText(
+        'Looking for something else? Say it in your words.',
+      ),
+    ).toBeNull();
+    act(() => {
+      openToolsList();
+    });
+    expect(
+      screen.getByLabelText(
+        'Looking for something else? Say it in your words.',
+      ),
+    ).toBeInTheDocument();
   });
 });

@@ -34,6 +34,8 @@ export const useDemoGuide = (chat: NestorChat) => {
       return;
     }
     pending.current = null;
+    // No answer (the AI failed): nothing to explain, the button is tried again.
+    if (last.kind === 'error') return;
     explain(step);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, chat.busy, last?.id]);

@@ -455,7 +455,7 @@ Say first what the request already does well (0 to ${COUNSEL_GOOD_MAX} points, q
 Advise only what changes THIS answer: what to write and for whom, the text to work from, the length and the layout, the tone, what the assistant must not invent. A simple, complete request gets one piece of advice at most.
 Never ask the user a question and never ask them for a fact. When the answer depends on something only the user or their administration knows (a rule, a deadline, an approval, a date), advise to have the assistant state it as a condition without saying it is met, e.g. « Demandez-lui de rappeler les conditions de la note sans dire qu'elles sont remplies. ».
 Never invent a fact, a name, a date or a rule. No jargon: never "prompt", "contexte", "public cible".
-For each piece of advice, also give "add": the few words to add to the request to apply it, in the user's own voice (« en 5 lignes, sur un ton courtois »), or "" when only the user knows them (a fact, a name, a text to paste); and "part": the line it is about (task, reader, material, form, tone), or "".
+For each piece of advice, also give "add": the few words to add to the request to apply it, in the user's own voice (« en 5 lignes, sur un ton courtois »), or "" when only the user knows them (a fact, a name, a text to paste). Never give advice whose words the request already says, even in other words (« pour le directeur » already says who reads); and "part": the line it is about (task, reader, material, form, tone), or "".
 JSON shape: {"good": ["<sentence>"], "tips": [{"text": "<what to do>", "why": "<why it changes the answer>", "add": "", "part": ""}]}`;
 
 export const parseRequestAdvice = (
@@ -550,6 +550,7 @@ ${
     : ''
 }Give each a title of 3 to 7 words saying its length and tone (« Courte : 5 lignes, ton simple »).
 Never write a placeholder, brackets, "à compléter" or a blank. Never invent a name, a date, a place, a figure, a rule or a fact; what the user does not know is stated as a condition, never as met.
+Never bring in a subject, a task, a detail or an example the user did not write — not from their job, direction or themes either: those only choose your words.
 JSON shape: {"versions": [{"title": "", "text": ""}]}`;
 
 /** The pasted texts of a request, as they end each version. */

@@ -78,7 +78,7 @@ export const NestorIntroVideo = ({
         />
       </Box>
       <Box
-        $direction="row"
+        $direction="column"
         $gap="8px"
         $css="flex: none; padding: 12px 16px 16px;"
       >

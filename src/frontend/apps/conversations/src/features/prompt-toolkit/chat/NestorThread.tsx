@@ -164,6 +164,7 @@ export const NestorThread = ({
     closeCount,
     thinking,
     demoNotes.length,
+    fieldSensitive.length,
   ]);
   // The first message of the latest step.
   const firstOfStep = parts.findIndex(

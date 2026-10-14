@@ -16,7 +16,10 @@ import { useRecorderStore } from '../speech/useRecorderStore';
 import { useCoachPrefsStore } from '../stores/useCoachPrefsStore';
 import { useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
-import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
+import {
+  openToolsList,
+  usePromptToolkitStore,
+} from '../stores/usePromptToolkitStore';
 import { startTour, useTourStore } from '../stores/useTourStore';
 
 import { NestorIntroVideo, prefersReducedMotion } from './NestorIntroVideo';
@@ -437,7 +440,7 @@ export const PanelHome = () => {
       tone: 'success',
       title: t('Everyday tools'),
       description: t('Emails, summaries, ready-made templates.'),
-      onSelect: () => openSection('tools'),
+      onSelect: openToolsList,
     },
   ];
 

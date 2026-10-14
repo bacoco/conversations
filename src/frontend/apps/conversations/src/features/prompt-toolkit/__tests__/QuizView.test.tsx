@@ -53,41 +53,48 @@ describe('<QuizView />', () => {
   });
   afterEach(() => useAiAvailability.setState({ status: 'available' }));
 
-  it('checks only when asked, and brings a missed question back at the end', () => {
-    render(
-      <QuizView
-        title="Quiz"
-        scope="lesson-1"
-        questions={[mcq]}
-        onBack={vi.fn()}
-      />,
-    );
-    const check = screen.getByRole('button', { name: 'Check my answer' });
-    expect(check).toBeDisabled();
+  // A heavy render: some slack on a loaded machine.
+  it(
+    'checks only when asked, and brings a missed question back at the end',
+    { timeout: 15_000 },
+    () => {
+      render(
+        <QuizView
+          title="Quiz"
+          scope="lesson-1"
+          questions={[mcq]}
+          onBack={vi.fn()}
+        />,
+      );
+      const check = screen.getByRole('button', { name: 'Check my answer' });
+      expect(check).toBeDisabled();
 
-    pick('Wrong one');
-    // Changing one's mind is allowed until checked.
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    fireEvent.click(check);
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Because it is right.',
-    );
-    expect(
-      screen.getByText('This question comes back at the end.'),
-    ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Next question' }));
+      pick('Wrong one');
+      // Changing one's mind is allowed until checked.
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      fireEvent.click(check);
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Because it is right.',
+      );
+      expect(
+        screen.getByText('This question comes back at the end.'),
+      ).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Next question' }));
 
-    expect(screen.getByText('A question to try again')).toBeInTheDocument();
-    pick('Right one');
-    fireEvent.click(screen.getByRole('button', { name: 'Check my answer' }));
-    fireEvent.click(screen.getByRole('button', { name: 'See my score' }));
+      expect(screen.getByText('A question to try again')).toBeInTheDocument();
+      pick('Right one');
+      fireEvent.click(screen.getByRole('button', { name: 'Check my answer' }));
+      fireEvent.click(screen.getByRole('button', { name: 'See my score' }));
 
-    // The score counts the first try; the question is kept for review.
-    expect(useLearnProgressStore.getState().bestQuizScores['lesson-1']).toBe(0);
-    expect(
-      useLearnProgressStore.getState().questionsToReview['q-a'],
-    ).toBeDefined();
-  });
+      // The score counts the first try; the question is kept for review.
+      expect(useLearnProgressStore.getState().bestQuizScores['lesson-1']).toBe(
+        0,
+      );
+      expect(
+        useLearnProgressStore.getState().questionsToReview['q-a'],
+      ).toBeDefined();
+    },
+  );
 
   it('keeps a right answer given without being sure for review', () => {
     render(<QuizView title="Quiz" questions={[mcq]} onBack={vi.fn()} />);

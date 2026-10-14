@@ -271,4 +271,32 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
       right: '0px',
     });
   });
+
+  it('a click beside pauses the tour; « Reprendre la visite » goes back to that step', () => {
+    const other = document.createElement('button');
+    document.body.appendChild(other);
+    startTour();
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('home-course') }),
+    );
+    render(<TourStage />);
+    fireEvent.pointerDown(other);
+    expect(useTourStore.getState().active).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: /Resume the tour/ }));
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: false,
+      index: indexOf('home-course'),
+    });
+  });
+
+  it('« Passer la visite » ends it for good: nothing to resume', () => {
+    startTour();
+    act(() => useTourStore.setState({ onFilm: false, index: 2 }));
+    render(<TourStage />);
+    fireEvent.click(screen.getByRole('button', { name: 'Skip the tour' }));
+    expect(
+      screen.queryByRole('button', { name: /Resume the tour/ }),
+    ).toBeNull();
+  });
 });

@@ -92,4 +92,32 @@ describe('the demo: the real buttons, explained right after', () => {
       screen.getByRole('button', { name: /Analyse my text/ }),
     ).not.toHaveAttribute('data-next');
   });
+
+  it('a button that failed (no answer from the AI) is not explained as done', () => {
+    startDemo();
+    const echo = { id: 'u', action: 2, kind: 'user', via: 'action', text: 'x' };
+    const chatAt = (messages: unknown[], busy: string | null) =>
+      ({ messages, busy }) as unknown as NestorChat;
+    const { result, rerender } = renderHook(({ chat }) => useDemoGuide(chat), {
+      initialProps: { chat: chatAt([], null) },
+    });
+    act(() => result.current.onBar('analyse'));
+    rerender({ chat: chatAt([echo], 'analyse') });
+    rerender({
+      chat: chatAt(
+        [
+          echo,
+          {
+            id: 'e',
+            action: 2,
+            kind: 'error',
+            retry: { kind: 'bar', bar: 'analyse' },
+          },
+        ],
+        null,
+      ),
+    });
+    expect(useDemoStore.getState().done).toEqual([]);
+    expect(result.current.next).toBe('analyse');
+  });
 });

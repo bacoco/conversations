@@ -22,6 +22,7 @@ import { RecorderView } from '../speech/RecorderView';
 import { TRANSCRIPTION_URL } from '../speech/transcribe';
 import { useMainConversationStore } from '../stores/useMainConversationStore';
 import {
+  TOOLS_LIST,
   usePromptToolkitStore,
   useSectionReset,
 } from '../stores/usePromptToolkitStore';
@@ -689,18 +690,23 @@ export const ToolsPanel = () => {
   const clearToolRequest = usePromptToolkitStore(
     (state) => state.clearToolRequest,
   );
-  useEffect(() => {
-    if (toolRequest) {
-      setOpenId(toolRequest);
-      clearToolRequest();
-    }
-  }, [toolRequest, clearToolRequest]);
   const openTool = tools.find((tool) => tool.id === openId);
   // The trash button empties the open tool by mounting it afresh.
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState('');
   /** The family card opened: its tools, one level down. */
   const [familyId, setFamilyId] = useState<string | null>(null);
+  useEffect(() => {
+    if (toolRequest === TOOLS_LIST) {
+      // From the home page's card: the list, the family closed.
+      setOpenId(null);
+      setFamilyId(null);
+      clearToolRequest();
+    } else if (toolRequest) {
+      setOpenId(toolRequest);
+      clearToolRequest();
+    }
+  }, [toolRequest, clearToolRequest]);
   useSectionReset('tools', () => {
     setResetKey((key) => key + 1);
     setQuery('');
