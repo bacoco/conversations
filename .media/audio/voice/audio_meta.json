@@ -7,9 +7,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-001-nestor.wav",
-    "duration_s": 9.39,
-    "sha256": "9d709078d81610e4d685ebae96ffc0162ade92a93241e735d5da6ad2af3d55d8"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/hello.mp3",
+    "duration_s": 9.456,
+    "sha256": "6c883707915ba811cdfb3378c3f889dd2797b7d71927d45d36df1fe6bd2b995e",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-001-nestor.wav"
   },
   {
     "id": "vo-002-nestor",
@@ -19,9 +20,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-002-nestor.wav",
-    "duration_s": 8.22,
-    "sha256": "ffec6090de11f70edbc7e12e28f053d5c6ed69e7c47531d2822f2906b3899cb3"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/home-coach.mp3",
+    "duration_s": 8.28,
+    "sha256": "5f41c471ad09d210cc8d9310a8f27acf2ccf189ac90a40a1c3acea04ef433981",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-002-nestor.wav"
   },
   {
     "id": "vo-003-nestor",
@@ -31,9 +33,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-003-nestor.wav",
-    "duration_s": 6.05,
-    "sha256": "6c45af5a066fa7afb1ea787f67ff54f917b78ca3d7f2c766f4a2d2c71e9fa908"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/home-transcribe.mp3",
+    "duration_s": 6.12,
+    "sha256": "a231a9bd67a64bf750ca1bec39877f58e33d72edc5ab32ad13e8d4f15662863e",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-003-nestor.wav"
   },
   {
     "id": "vo-004-nestor",
@@ -43,9 +46,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-004-nestor.wav",
-    "duration_s": 5.18,
-    "sha256": "4573358e3784b181837f6a1d2eb86f58223b16f58b26f2edc06bff2109f59b9c"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/home-course.mp3",
+    "duration_s": 5.232,
+    "sha256": "1fdd1faa1794890b1da92484b46fa3e6a139921d3e04aedb2a6359c27f7799c7",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-004-nestor.wav"
   },
   {
     "id": "vo-005-nestor",
@@ -55,9 +59,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-005-nestor.wav",
-    "duration_s": 5.67,
-    "sha256": "7f48e1727935bccb8258517764ac472f4cfff3def9e7a106d648b5db76b3874e"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/home-tools.mp3",
+    "duration_s": 5.736,
+    "sha256": "98974288354d8bfbb8ca0c6391a72a3f7fc89f196423d811ee0bf875c9a849bc",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-005-nestor.wav"
   },
   {
     "id": "vo-006-nestor",
@@ -67,9 +72,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-006-nestor.wav",
-    "duration_s": 4.66,
-    "sha256": "bed15b6b385eb05ac8d13a252f816dda0d5742994dc335fc6545650e22daa5e2"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/open-coach.mp3",
+    "duration_s": 4.728,
+    "sha256": "01f6a5c5b74c3539667d2358439aa90c89607102569a202587cc290159ba8b01",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-006-nestor.wav"
   },
   {
     "id": "vo-007-nestor",
@@ -79,9 +85,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-007-nestor.wav",
-    "duration_s": 4.12,
-    "sha256": "fbf73602b5165062ac870dc38178aff03e5af90305eff930de9ded62664e164d"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/coach-bar.mp3",
+    "duration_s": 4.176,
+    "sha256": "3b6b3f8059590ce32feff5dfb259b7ea9ba61bcfe90bea8d2f704557bd7d795a",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-007-nestor.wav"
   },
   {
     "id": "vo-008-nestor",
@@ -91,9 +98,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-008-nestor.wav",
-    "duration_s": 5.62,
-    "sha256": "e60ce8add0833637835bc22511c30ef1e9d029556d2d9ae63286600daf42e020"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/coach-analyse.mp3",
+    "duration_s": 5.688,
+    "sha256": "f330380c4a56c50211fe119735af54c79b303ac4938c71d9045b1883e28c2af7",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-008-nestor.wav"
   },
   {
     "id": "vo-009-nestor",
@@ -103,9 +111,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-009-nestor.wav",
-    "duration_s": 5.64,
-    "sha256": "d7b1a23f5206020286fd0ab80a2ed6de55a4e47ed3548e16560c868f978ed48a"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/coach-improve.mp3",
+    "duration_s": 5.688,
+    "sha256": "13e49bd0ec48afe4d552701216fae91ca2fcb06db1e25d66924f0f2b3c6d3478",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-009-nestor.wav"
   },
   {
     "id": "vo-010-nestor",
@@ -115,9 +124,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-010-nestor.wav",
-    "duration_s": 5.52,
-    "sha256": "f6973f924156429ab553c512d27d7cfb717f3c98b00d74e60c37e4e7a871bcfb"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/coach-review.mp3",
+    "duration_s": 5.568,
+    "sha256": "86f35d84c6f0f13a9ba437ce70553c9d5334d871d435234d78b66466533e88bb",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-010-nestor.wav"
   },
   {
     "id": "vo-011-nestor",
@@ -127,9 +137,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-011-nestor.wav",
-    "duration_s": 4.28,
-    "sha256": "b226d2d1c771d32183bfd6a3d8eb3094821ebcceb337b90e17ea1b1778b4451e"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/coach-ask.mp3",
+    "duration_s": 4.344,
+    "sha256": "ced906a49a38a15381e1b628dda49dc6807e93a6ee7ba5c7f359a8e10c19d04b",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-011-nestor.wav"
   },
   {
     "id": "vo-012-nestor",
@@ -139,9 +150,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-012-nestor.wav",
-    "duration_s": 6.89,
-    "sha256": "c9a14c9817c2cf76435b89fbc3625454fb59520724dfad39515e8470e56cdad1"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/field.mp3",
+    "duration_s": 6.96,
+    "sha256": "5dd2e75add5c230866e4ea4047a7fa9a44d9d11368bd7bf1410c74229fb34a71",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-012-nestor.wav"
   },
   {
     "id": "vo-013-nestor",
@@ -151,9 +163,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-013-nestor.wav",
-    "duration_s": 3.39,
-    "sha256": "f76cfeb229992442c2c62f0bf4c066bfff9fe8fa5df200fba41f3cbea87c95f2"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/try-analyse.mp3",
+    "duration_s": 3.456,
+    "sha256": "c027c8ffe25faa767fc567d2ecce4750d8357a82890d214ce795834d10a90e1e",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-013-nestor.wav"
   },
   {
     "id": "vo-014-nestor",
@@ -163,9 +176,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-014-nestor.wav",
-    "duration_s": 9.78,
-    "sha256": "174217c9d97837b5a3ea2f65464dca1647768d2eba8c3b490df7c86bffad1991"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/after-analyse.mp3",
+    "duration_s": 9.84,
+    "sha256": "cc747011de7d4423485c9a495a6b6e765a732a16461ac78e548bfba469f9e8fb",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-014-nestor.wav"
   },
   {
     "id": "vo-015-nestor",
@@ -175,9 +189,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-015-nestor.wav",
-    "duration_s": 2.84,
-    "sha256": "66e455fb10cabad3459f22568a73c75c4a4b9227f74fa3a2c9bc6b7202e93a97"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/try-improve.mp3",
+    "duration_s": 2.904,
+    "sha256": "f44e07e8ede58f5df34608b37b458a9c7806be3e1d933f4d48c7a414b77f4634",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-015-nestor.wav"
   },
   {
     "id": "vo-016-nestor",
@@ -187,9 +202,10 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-016-nestor.wav",
-    "duration_s": 8.27,
-    "sha256": "1950f245932f69cae6efa2b3b58d9df53618c180038222e04fd69e772a890a3a"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/after-improve.mp3",
+    "duration_s": 8.328,
+    "sha256": "7de4c54a1456d5bfaf911bc672fc1ec511979342f3397c74bfd8b814b11e4290",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-016-nestor.wav"
   },
   {
     "id": "vo-017-nestor",
@@ -199,8 +215,9 @@
     "voice": "nestor-aventuriere",
     "language": "fr",
     "speed": 1.0,
-    "path": ".media/audio/voice/vo-017-nestor.wav",
-    "duration_s": 5.72,
-    "sha256": "2db711b82b3db2c970cdf555e3ed184ba3c4ebe9a268bf0aff69024ab72b16bb"
+    "path": "src/frontend/apps/conversations/public/assets/nestor-voice/end.mp3",
+    "duration_s": 5.784,
+    "sha256": "5a938e42848f3e18b16d5163d33a6bfdb9e65ec6e2b430f158c7e72ccd82d2a8",
+    "master": "/data/loic/Bercy-Hub-Loic/projects/nestor-voix/visite/vo-017-nestor.wav"
   }
 ]

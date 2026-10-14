@@ -55,7 +55,7 @@ const findTarget = (name: string) =>
 
 /** Nestor's voice, when the browser has one: he reads what he says. */
 /**
- * Nestor's own voice, recorded once per step (French only; masters and
+ * Nestor's own voice, recorded once per step (French only; light MP3 here,
  * their manifest in .media/audio/voice at the repository root).
  */
 export const recordedVoiceUrl = (stepId: string, language?: string) =>
