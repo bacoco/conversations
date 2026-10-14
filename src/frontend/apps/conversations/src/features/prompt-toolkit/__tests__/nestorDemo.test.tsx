@@ -1,17 +1,9 @@
-import { CunninghamProvider } from '@gouvfr-lasuite/cunningham-react';
-import {
-  act,
-  fireEvent,
-  render,
-  renderHook,
-  screen,
-} from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 
 import { NestorBar } from '../chat/NestorBar';
 import { examplePairs } from '../chat/examples';
 import type { NestorChat } from '../chat/useNestorChat';
 import { useDemoGuide } from '../demo/useDemoGuide';
-import { PresentationButton } from '../presentation/PresentationButton';
 import {
   DEMO_KEY,
   startDemo,
@@ -21,7 +13,6 @@ import {
 import { messagesOf, useNestorChatStore } from '../stores/useNestorChatStore';
 import { useProfileStore } from '../stores/useProfileStore';
 import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
-import { useTourStore } from '../stores/useTourStore';
 
 const demoThread = () =>
   messagesOf(useNestorChatStore.getState().chats, DEMO_KEY);
@@ -100,19 +91,5 @@ describe('the demo: the real buttons, explained right after', () => {
     expect(
       screen.getByRole('button', { name: /Analyse my text/ }),
     ).not.toHaveAttribute('data-next');
-  });
-
-  it('the « ? » window offers the guided tour next to the film', () => {
-    useProfileStore.setState({ hasSeenPresentation: true });
-    render(
-      <CunninghamProvider>
-        <PresentationButton />
-      </CunninghamProvider>,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Discover Nestor' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Take the tour' }));
-    expect(useTourStore.getState().active).toBe(true);
-    expect(screen.queryByLabelText('Presentation of Nestor')).toBeNull();
-    useTourStore.getState().stop();
   });
 });

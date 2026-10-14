@@ -40,6 +40,7 @@ import {
 import { useTrainerStore } from '../stores/useTrainerStore';
 import { ToolsPanel } from '../tools/ToolsPanel';
 import { TourStage } from '../tour/TourStage';
+import { useFirstTour } from '../tour/useFirstTour';
 
 import { CoachPanel } from './CoachPanel';
 import { NestorDock } from './NestorChat';
@@ -261,6 +262,9 @@ export const RightPanel = ({
     };
   }, [user?.id, claimRecorder]);
   const isClaimed = !!user?.id && claimedFor === user.id;
+  // The first time the page opens with the panel open: the film's window.
+  const isPanelOpen = usePromptToolkitStore((state) => state.isOpen);
+  useFirstTour(isPanelOpen && isClaimed);
   // Without the Albert relay there is no coach: the home cards instead.
   const showHome =
     isHomeRequested || welcomeShown || (mode === 'coach' && isAiUnavailable);

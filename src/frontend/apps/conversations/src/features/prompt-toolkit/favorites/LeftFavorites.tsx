@@ -108,7 +108,8 @@ export const LeftFavorites = () => {
           <Row
             key={favorite.key}
             type="button"
-            title={favorite.title}
+            // The whole request on hover: the title is only its name.
+            title={favorite.prompt}
             onClick={() => use(favorite)}
           >
             <Icon

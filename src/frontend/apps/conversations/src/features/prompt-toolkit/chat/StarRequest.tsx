@@ -3,8 +3,10 @@ import styled from 'styled-components';
 
 import { Icon } from '@/components';
 
+import { languageName } from '../coach/language';
 import { useMyPromptsStore } from '../library/useMyPromptsStore';
 
+import { nameRequest } from './nestorChatApi';
 import { C } from './ui';
 
 const Star = styled.button`
@@ -38,8 +40,25 @@ export const StarRequest = ({ text }: { text: string }) => {
   const kept = useMyPromptsStore((state) =>
     state.prompts.find((item) => item.prompt.trim() === text.trim()),
   );
+  const { i18n } = useTranslation();
   const save = useMyPromptsStore((state) => state.save);
   const remove = useMyPromptsStore((state) => state.remove);
+  /**
+   * Kept at once under its first words; Nestor's short name replaces them
+   * when it comes (nothing changes if it does not).
+   */
+  const keep = () => {
+    if (!save(text)) return;
+    void nameRequest(text, languageName(i18n.language))
+      .then((title) => {
+        const saved = useMyPromptsStore
+          .getState()
+          .prompts.find((item) => item.prompt === text.trim());
+        if (title && saved)
+          useMyPromptsStore.getState().rename(saved.id, title);
+      })
+      .catch(() => undefined);
+  };
   return (
     <Star
       type="button"
@@ -48,7 +67,7 @@ export const StarRequest = ({ text }: { text: string }) => {
         kept ? t('Remove from my favorites') : t('Keep in my favorites')
       }
       title={kept ? t('Remove from my favorites') : t('Keep in my favorites')}
-      onClick={() => (kept ? remove(kept.id) : save(text))}
+      onClick={() => (kept ? remove(kept.id) : keep())}
     >
       <Icon
         iconName="star"

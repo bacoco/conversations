@@ -749,6 +749,40 @@ export const starterFor = async (
     ),
   );
 
+/* « Mes favoris »: a kept request gets a short name, never a cut text. */
+
+const NAME_MAX_CHARS = 60;
+
+const NAME_SYSTEM_PROMPT = (language: string) =>
+  `You name a request a public servant keeps in their favorites, so they find it again at a glance.
+${COMMON_RULES(language)}
+"title": 3 to 7 words saying what the request is for (« Indicateurs de vulnérabilité des stations », « Réponse à un agent sur ses RTT »). No quotes, no final period.
+JSON shape: {"title": ""}`;
+
+export const parseRequestName = (raw: Record<string, unknown>) => {
+  const title = (typeof raw.title === 'string' ? raw.title : '')
+    .replace(/[«»"“”]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/[.\s]+$/, '')
+    .trim();
+  return title && title.length <= NAME_MAX_CHARS ? title : null;
+};
+
+export const nameRequest = async (
+  request: string,
+  language: string,
+  signal?: AbortSignal,
+) =>
+  parseRequestName(
+    await complete(
+      NAME_SYSTEM_PROMPT(language),
+      `<request>\n${request}\n</request>`,
+      signal,
+      false,
+      COACH_MODEL,
+    ),
+  );
+
 /* « J'ai corrigé »: Nestor looks only at the advice he gave. */
 
 export interface FixCheck {

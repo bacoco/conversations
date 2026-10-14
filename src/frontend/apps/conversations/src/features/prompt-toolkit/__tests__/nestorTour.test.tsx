@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+} from '@testing-library/react';
 
 import { useDemoStore } from '../stores/useDemoStore';
 import { useProfileStore } from '../stores/useProfileStore';
@@ -6,6 +12,7 @@ import { usePromptToolkitStore } from '../stores/usePromptToolkitStore';
 import { startTour, useTourStore } from '../stores/useTourStore';
 import { TourStage } from '../tour/TourStage';
 import { TOUR_STEPS } from '../tour/tourScript';
+import { useFirstTour } from '../tour/useFirstTour';
 
 const indexOf = (id: string) => TOUR_STEPS.findIndex((step) => step.id === id);
 
@@ -29,7 +36,11 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
 
   it('starts on the home page of the panel, once seen never by itself again', () => {
     startTour();
-    expect(useTourStore.getState()).toMatchObject({ active: true, index: 0 });
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      index: 0,
+      onFilm: true,
+    });
     expect(usePromptToolkitStore.getState()).toMatchObject({
       isOpen: true,
       showHome: true,
@@ -37,9 +48,29 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     expect(useProfileStore.getState().hasSeenTour).toBe(true);
   });
 
+  it('opens on the film, still: it plays only when asked', () => {
+    startTour();
+    render(<TourStage />);
+    const film = screen.getByLabelText('Presentation of Nestor');
+    expect(film).toHaveAttribute('controls');
+    expect(film).not.toHaveAttribute('autoplay');
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(useTourStore.getState().active).toBe(false);
+  });
+
+  it('a click outside the window closes it; inside, nothing happens', () => {
+    startTour();
+    render(<TourStage />);
+    fireEvent.click(screen.getByRole('dialog'));
+    expect(useTourStore.getState().active).toBe(true);
+    fireEvent.click(screen.getByTestId('tour-backdrop'));
+    expect(useTourStore.getState().active).toBe(false);
+  });
+
   it('Nestor says the step; « Suivant » goes on; « Passer la visite » ends it', () => {
     startTour();
     render(<TourStage />);
+    fireEvent.click(screen.getByRole('button', { name: 'Take the tour' }));
     expect(screen.getByText(/I am Nestor, your coach/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(useTourStore.getState().index).toBeGreaterThan(0);
@@ -52,16 +83,56 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     card.dataset.tour = 'card-coach-manual';
     document.body.appendChild(card);
     startTour();
-    act(() => useTourStore.setState({ index: indexOf('home-coach') }));
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('home-coach') }),
+    );
     render(<TourStage />);
     expect(card).toHaveClass('nestor-tour-flash');
   });
 
-  it('a step about something not on screen is passed', () => {
+  it('a card not on screen is passed, after giving the page time to show it', () => {
+    vi.useFakeTimers();
     startTour();
-    act(() => useTourStore.setState({ index: indexOf('home-transcribe') }));
+    act(() =>
+      useTourStore.setState({
+        onFilm: false,
+        index: indexOf('home-transcribe'),
+      }),
+    );
     render(<TourStage />);
+    // The home page may still be appearing: not passed at once.
+    expect(useTourStore.getState().index).toBe(indexOf('home-transcribe'));
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
     expect(useTourStore.getState().index).toBe(indexOf('home-transcribe') + 1);
+    vi.useRealTimers();
+  });
+
+  it('a card that shows a moment later flashes, it is not passed', () => {
+    vi.useFakeTimers();
+    startTour();
+    act(() =>
+      useTourStore.setState({
+        onFilm: false,
+        index: indexOf('home-transcribe'),
+      }),
+    );
+    render(<TourStage />);
+    const card = document.createElement('button');
+    card.dataset.tour = 'card-transcription';
+    document.body.appendChild(card);
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+    expect(useTourStore.getState().index).toBe(indexOf('home-transcribe'));
+    expect(card).toHaveClass('nestor-tour-flash');
+    vi.useRealTimers();
+  });
+
+  it('the coach first: it is the most important', () => {
+    const order = TOUR_STEPS.map((step) => step.id);
+    expect(order.indexOf('home-coach')).toBe(1);
   });
 
   it('« Cliquez sur la carte Coach »: it waits for the click, then the try begins', () => {
@@ -69,9 +140,12 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
     card.dataset.tour = 'card-coach-manual';
     document.body.appendChild(card);
     startTour();
-    act(() => useTourStore.setState({ index: indexOf('open-coach') }));
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('open-coach') }),
+    );
     render(<TourStage />);
-    expect(screen.queryByRole('button', { name: 'Next' })).toBeNull();
+    // « Suivant » stays in its place, greyed: the click is asked for.
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
     act(() => usePromptToolkitStore.getState().openSection('coach'));
     expect(useTourStore.getState().index).toBe(indexOf('open-coach') + 1);
     // An example of the job is in the field: the buttons work on it.
@@ -81,7 +155,9 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
   it('« Cliquez sur Analyser »: goes on once the analysis is there', () => {
     startTour();
     useDemoStore.getState().start('');
-    act(() => useTourStore.setState({ index: indexOf('try-analyse') }));
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('try-analyse') }),
+    );
     render(<TourStage />);
     act(() => useDemoStore.getState().markDone('analyse'));
     expect(useTourStore.getState().index).toBe(indexOf('try-analyse') + 1);
@@ -89,7 +165,9 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
 
   it('shows the very picture to click: the card’s own Nestor', () => {
     startTour();
-    act(() => useTourStore.setState({ index: indexOf('home-coach') }));
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('home-coach') }),
+    );
     render(<TourStage />);
     expect(screen.getByRole('img', { name: 'Coach' })).toHaveAttribute(
       'src',
@@ -99,10 +177,31 @@ describe('the guided tour: Nestor speaks, the real buttons flash', () => {
 
   it('for a button of the bar: the button itself, round and named', () => {
     startTour();
-    act(() => useTourStore.setState({ index: indexOf('coach-analyse') }));
+    act(() =>
+      useTourStore.setState({ onFilm: false, index: indexOf('coach-analyse') }),
+    );
     render(<TourStage />);
     expect(
       screen.getByRole('img', { name: 'Analyse my text' }),
     ).toBeInTheDocument();
+  });
+
+  it('the first time the page opens with the panel open, the window comes', () => {
+    useProfileStore.setState({ hasSeenTour: false });
+    const { rerender } = renderHook(({ ready }) => useFirstTour(ready), {
+      initialProps: { ready: false },
+    });
+    expect(useTourStore.getState().active).toBe(false);
+    rerender({ ready: true });
+    expect(useTourStore.getState()).toMatchObject({
+      active: true,
+      onFilm: true,
+    });
+  });
+
+  it('never again once seen', () => {
+    useProfileStore.setState({ hasSeenTour: true });
+    renderHook(() => useFirstTour(true));
+    expect(useTourStore.getState().active).toBe(false);
   });
 });

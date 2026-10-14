@@ -200,6 +200,17 @@ describe('<PanelHome />', () => {
     expect(screen.queryByRole('button', { name: /My favorites/ })).toBeNull();
   });
 
+  it('the coach alone on top, the whole width: it is the most important', () => {
+    render(<PanelHome />);
+    const [first] = screen.getAllByRole('listitem');
+    expect(first).toHaveTextContent('Coach');
+    expect(first).toHaveStyle({ gridColumn: '1 / -1' });
+    // Same size as the cards under it, centred: never stretched.
+    expect(
+      screen.getByRole('button', { name: /Improves your requests/ }),
+    ).toHaveStyle({ width: 'calc(50% - 6px)' });
+  });
+
   it('shows a beginner where to start: the coach', () => {
     useNestorChatStore.setState({ chats: {} });
     render(<PanelHome />);

@@ -3,6 +3,8 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Watch the film instead (3 min)": "Voir plutôt le film (3 min)",
+      "Back to the tour": "Retour à la visite",
       "Your week on the home page": "Votre semaine sur l’accueil",
       "{{job}}: {{count}} real tasks, from the simplest. Each case opens the next level.": "{{job}} : {{count}} vraies tâches, de la plus simple à la plus complète. Chaque cas ouvre le niveau suivant.",
       "Hello! I am Nestor, your coach. In a few minutes, I show you how I help you write well to the Assistant. Everything happens here, in the panel on the right.": "Bonjour ! Je suis Nestor, votre coach. En quelques minutes, je vous montre comment je vous aide à bien écrire à l’Assistant. Tout se passe ici, dans le panneau de droite.",

@@ -44,7 +44,9 @@ describe('<FavoritesPage />', () => {
 
   it('a model with blanks opens Nestor to complete it', () => {
     render(<FavoritesPage />);
-    fireEvent.click(screen.getByRole('button', { name: model.title }));
+    fireEvent.click(
+      screen.getByRole('button', { name: new RegExp(`^${model.title}`) }),
+    );
     expect(usePromptToolkitStore.getState().fill?.template).toBe(model.prompt);
   });
 
@@ -68,5 +70,14 @@ describe('<FavoritesPage />', () => {
         'Star a request in Nestor: it waits for you here, one click away.',
       ),
     ).toBeInTheDocument();
+  });
+
+  it('a title, the start of the text under it, the whole text on hover', () => {
+    useMyPromptsStore.setState({ prompts: [] });
+    useMyPromptsStore.getState().save(own, 'Note en cinq lignes');
+    render(<FavoritesPage />);
+    const button = screen.getByRole('button', { name: /Note en cinq lignes/ });
+    expect(button).toHaveAttribute('title', own);
+    expect(button).toHaveTextContent(own);
   });
 });

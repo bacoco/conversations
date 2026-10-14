@@ -431,9 +431,13 @@ export const PanelHome = () => {
     return <NestorIntro />;
   }
   // Without the Albert relay, only what works without AI is offered.
-  const shownCards = (
-    isAiAvailable && TRANSCRIPTION_URL ? [transcriptionCard, ...cards] : cards
-  ).filter((card) => !isAiUnavailable || card.id !== 'coach-manual');
+  // The coach first, alone on its row: it is the heart of Nestor.
+  const [coachCard, ...otherCards] = cards;
+  const shownCards = [
+    coachCard,
+    ...(isAiAvailable && TRANSCRIPTION_URL ? [transcriptionCard] : []),
+    ...otherCards,
+  ].filter((card) => !isAiUnavailable || card.id !== 'coach-manual');
 
   return (
     <Box $gap="16px" $padding={{ all: 'base' }} $css={homeCss}>
@@ -452,24 +456,36 @@ export const PanelHome = () => {
           list-style: none;
         `}
       >
-        {shownCards.map((card, index) => {
-          // An odd last card takes the whole row, low and wide: no hole in
-          // the grid, and everything fits without scrolling.
-          const isWide =
-            shownCards.length % 2 === 1 && index === shownCards.length - 1;
+        {shownCards.map((card) => {
+          // The coach alone on its row, and an odd last card: same size as
+          // the others, centred — never stretched across the panel.
+          const isCoach = card.id === 'coach-manual';
+          const others = shownCards.filter((item) => item !== coachCard);
+          const isAlone =
+            isCoach ||
+            (others.length % 2 === 1 && card === others[others.length - 1]);
           return (
             <li
               key={card.id}
-              style={isWide ? { gridColumn: '1 / -1' } : undefined}
+              style={
+                isAlone
+                  ? {
+                      gridColumn: '1 / -1',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }
+                  : undefined
+              }
             >
               <Box
                 as="button"
                 type="button"
                 data-tour={`card-${card.id}`}
+                style={isAlone ? { width: 'calc(50% - 6px)' } : undefined}
                 onClick={card.onSelect}
-                $direction={isWide ? 'row' : 'column'}
+                $direction="column"
                 $align="center"
-                $gap={isWide ? '12px' : '4px'}
+                $gap="4px"
                 $css={css`
                   ${cardCss(card.tone)}
                   position: relative;
@@ -480,8 +496,8 @@ export const PanelHome = () => {
                         var(--c--contextuals--border--semantic--brand--primary);
                     `
                   }
-                  justify-content: ${isWide ? 'center' : 'flex-start'};
-                  text-align: ${isWide ? 'left' : 'center'};
+                  justify-content: flex-start;
+                  text-align: center;
                   padding: 14px 10px;
                 `}
               >

@@ -37,6 +37,16 @@ export const TOUR_STEPS: TourStep[] = [
     say: 'Hello! I am Nestor, your coach. In a few minutes, I show you how I help you write well to the Assistant. Everything happens here, in the panel on the right.',
   },
   {
+    id: 'home-coach',
+    picture: {
+      kind: 'card',
+      src: '/assets/nestor-analyse.webp',
+      label: 'Coach',
+    },
+    target: 'card-coach-manual',
+    say: '« Coach »: that is me. I look at your request before you send it, I give you advice, then I check the Assistant’s answer with you.',
+  },
+  {
     id: 'home-transcribe',
     picture: {
       kind: 'card',
@@ -46,16 +56,6 @@ export const TOUR_STEPS: TourStep[] = [
     target: 'card-transcription',
     optional: true,
     say: '« Enregistrer et transcrire »: you speak, or you record a meeting, and the text writes itself.',
-  },
-  {
-    id: 'home-coach',
-    picture: {
-      kind: 'card',
-      src: '/assets/nestor-analyse.webp',
-      label: 'Coach',
-    },
-    target: 'card-coach-manual',
-    say: '« Coach »: that is me. I look at your request before you send it, I give you advice, then I check the Assistant’s answer with you.',
   },
   {
     id: 'home-course',

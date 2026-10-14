@@ -102,4 +102,23 @@ describe('LeftFavorites', () => {
       ),
     ).toBeInTheDocument();
   });
+
+  it('the whole request shows on hover', async () => {
+    useMyPromptsStore.setState({ prompts: [] });
+    useMyPromptsStore
+      .getState()
+      .save(
+        'Quels indicateurs précis pour évaluer la vulnérabilité ?',
+        'Indicateurs de vulnérabilité',
+      );
+    render(<LeftFavorites />);
+    expect(
+      await screen.findByRole('button', {
+        name: /Indicateurs de vulnérabilité/,
+      }),
+    ).toHaveAttribute(
+      'title',
+      'Quels indicateurs précis pour évaluer la vulnérabilité ?',
+    );
+  });
 });

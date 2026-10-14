@@ -1,46 +1,54 @@
-import { CunninghamProvider } from '@gouvfr-lasuite/cunningham-react';
-import {
-  render as baseRender,
-  fireEvent,
-  screen,
-} from '@testing-library/react';
-import type { ReactElement } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PresentationButton } from '../presentation/PresentationButton';
 import { useProfileStore } from '../stores/useProfileStore';
+import { useTourStore } from '../stores/useTourStore';
+import { TourStage } from '../tour/TourStage';
 
-// The app's provider: the window needs it.
-const render = (ui: ReactElement) =>
-  baseRender(ui, {
-    wrapper: ({ children }) => (
-      <CunninghamProvider>{children}</CunninghamProvider>
-    ),
+describe('<PresentationButton />: the « ? » starts Nestor’s tour at once', () => {
+  beforeEach(() => {
+    useProfileStore.setState({ hasSeenPresentation: false });
+    useTourStore.getState().stop();
   });
 
-describe('<PresentationButton />: the « ? » that presents Nestor', () => {
-  beforeEach(() => useProfileStore.setState({ hasSeenPresentation: false }));
-
-  it('a dot says it is new, until it is opened once', () => {
+  it('a dot says it is new, until it is used once', () => {
     const { rerender } = render(<PresentationButton />);
     expect(screen.getByText('New: discover Nestor')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Discover Nestor' }));
-    expect(useProfileStore.getState().hasSeenPresentation).toBe(true);
     rerender(<PresentationButton />);
     expect(screen.queryByText('New: discover Nestor')).toBeNull();
   });
 
-  it('opens a window with the presentation video, never by itself', () => {
+  it('no window in between: the tour starts', () => {
     render(<PresentationButton />);
-    expect(screen.queryByRole('dialog')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Discover Nestor' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(useTourStore.getState()).toMatchObject({ active: true, index: 0 });
+  });
+});
+
+describe('the film, first in the window', () => {
+  beforeEach(() => {
+    useTourStore.setState({ active: true, index: 0, onFilm: true });
+  });
+  afterEach(() => useTourStore.getState().stop());
+
+  it('under the site’s path; « Faire la visite guidée » goes on', () => {
+    render(<TourStage />);
     const video = screen.getByLabelText('Presentation of Nestor');
-    expect(video).toHaveAttribute('src', '/assets/nestor-presentation-fr.mp4');
-    expect(video).toHaveAttribute('controls');
+    expect(video).toHaveAttribute(
+      'src',
+      `${import.meta.env.BASE_URL}assets/nestor-presentation-fr.mp4`,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Take the tour' }));
+    expect(screen.queryByLabelText('Presentation of Nestor')).toBeNull();
+    // From the tour's first words, the film is one click away again.
+    fireEvent.click(screen.getByRole('button', { name: /Watch the film/ }));
+    expect(screen.getByLabelText('Presentation of Nestor')).toBeInTheDocument();
   });
 
-  it('a video that cannot play says so, in plain words', () => {
-    render(<PresentationButton />);
-    fireEvent.click(screen.getByRole('button', { name: 'Discover Nestor' }));
+  it('a film that cannot play says so, in plain words', () => {
+    render(<TourStage />);
     fireEvent.error(screen.getByLabelText('Presentation of Nestor'));
     expect(
       screen.getByText('The presentation cannot be played here.'),

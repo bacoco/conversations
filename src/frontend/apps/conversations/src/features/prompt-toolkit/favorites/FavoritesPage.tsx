@@ -64,9 +64,24 @@ const Use = styled.button`
   }
 `;
 
-const Title = styled.span`
+const Text = styled.span`
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  & > strong {
+    font-weight: 700;
+  }
+  /* The start of the request; the whole of it on hover. */
+  & > span {
+    color: ${C.muted};
+    font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 `;
 
 const Remove = styled.button`
@@ -109,14 +124,21 @@ export const FavoritesPage = () => {
           <List>
             {favorites.map((favorite) => (
               <li key={favorite.key}>
-                <Use type="button" onClick={() => use(favorite)}>
+                <Use
+                  type="button"
+                  title={favorite.prompt}
+                  onClick={() => use(favorite)}
+                >
                   <Icon
                     iconName="north_west"
                     $size="18px"
                     aria-hidden="true"
                     $theme="brand"
                   />
-                  <Title>{favorite.title}</Title>
+                  <Text>
+                    <strong>{favorite.title}</strong>
+                    <span>{favorite.prompt}</span>
+                  </Text>
                 </Use>
                 <Remove
                   type="button"

@@ -9,14 +9,21 @@ import { usePromptToolkitStore } from './usePromptToolkitStore';
 interface TourState {
   active: boolean;
   index: number;
+  /** The window opens on the film, still; the tour comes when asked. */
+  onFilm: boolean;
   next: () => void;
   stop: () => void;
+  takeTour: () => void;
+  showFilm: () => void;
 }
 
 /** Kept in memory only: a reload ends the tour. */
 export const useTourStore = create<TourState>()((set, get) => ({
   active: false,
   index: 0,
+  onFilm: false,
+  takeTour: () => set({ onFilm: false, index: 0 }),
+  showFilm: () => set({ onFilm: true }),
   next: () => {
     const index = get().index + 1;
     if (index >= TOUR_STEPS.length) {
@@ -25,7 +32,7 @@ export const useTourStore = create<TourState>()((set, get) => ({
     }
     set({ index });
   },
-  stop: () => set({ active: false, index: 0 }),
+  stop: () => set({ active: false, index: 0, onFilm: false }),
 }));
 
 /**
@@ -41,7 +48,7 @@ export const startTour = () => {
     showNestorSettings: false,
     hasSeenWelcome: true,
   });
-  useTourStore.setState({ active: true, index: 0 });
+  useTourStore.setState({ active: true, index: 0, onFilm: true });
 };
 
 /** The end, or « Passer la visite »: the example leaves the field. */
