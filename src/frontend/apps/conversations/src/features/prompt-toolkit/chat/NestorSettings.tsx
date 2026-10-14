@@ -668,7 +668,7 @@ export const NestorSettings = ({ onClose }: { onClose: () => void }) => {
         </Note>
         <Note>
           {t(
-            'Always on, whatever the settings: simple words. Nestor can be wrong: check dates, figures and rules before sending. These settings stay on this computer.',
+            'Always on, whatever the settings: simple words. Nestor can be wrong: check dates, figures and rules before sending. You remain responsible for what you send. These settings stay on this computer.',
           )}
         </Note>
       </Body>

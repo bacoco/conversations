@@ -77,4 +77,20 @@ describe('coachThreadNote', () => {
       .messages[1].content as string;
     expect(content).toContain('written by Nestor');
   });
+
+  it('a cited text of law is to be checked at its source, never from memory', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(completion({ try: 'Vérifiez l’article.' }));
+    await coachThreadNote(
+      [
+        { role: 'user', text: 'Quelle règle pour les congés ?' },
+        { role: 'assistant', text: 'Selon le décret n° 84-972, …' },
+      ],
+      null,
+      'French',
+    );
+    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
+    expect(body.messages[0].content).toMatch(/Légifrance/);
+  });
 });

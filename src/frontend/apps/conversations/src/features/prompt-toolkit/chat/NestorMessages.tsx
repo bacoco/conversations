@@ -59,12 +59,13 @@ export { NestorBubble };
 const AFTER_SHORT = 160;
 
 /** Personal data found before Nestor sends anything, in plain words. */
-const SENSITIVE_WORDS = {
+export const SENSITIVE_WORDS = {
   email: 'an email address',
   phone: 'a phone number',
   nir: 'a social security number',
   iban: 'an IBAN',
   card: 'a card number',
+  siren: 'a SIREN number',
 } as const;
 
 /** The five lines of a request, as the user reads them. */

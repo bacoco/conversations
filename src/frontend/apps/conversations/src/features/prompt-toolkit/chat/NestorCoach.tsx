@@ -19,6 +19,7 @@ import { NestorThread } from './NestorThread';
 import { TrainerView } from './TrainerView';
 import { ActionButton } from './ui';
 import { useCloseMatches } from './useCloseMatches';
+import { useFieldSensitive } from './useFieldSensitive';
 import { useNestorAuto } from './useNestorAuto';
 import { useNestorChat } from './useNestorChat';
 import { usePistes } from './usePistes';
@@ -72,6 +73,8 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
   const livePistes =
     isActive && pistesOn && !chat.questions.current && chatInput !== answeredOn;
   const { phrases, isSearching } = usePistes(chatInput, livePistes);
+  // Personal data typed for the Assistant: Nestor warns, locally.
+  const fieldSensitive = useFieldSensitive(isActive ? chatInput : '');
   // At the same pace: a case to practise and a model, when really close.
   const close = useCloseMatches(chatInput, livePistes, trainer.item?.id);
 
@@ -106,6 +109,7 @@ export const NestorCoach = ({ isActive = true }: { isActive?: boolean }) => {
             pistes={phrases}
             close={close}
             thinking={isSearching}
+            fieldSensitive={fieldSensitive}
           />
         </>
       )}

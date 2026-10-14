@@ -57,6 +57,9 @@ describe('Nestor’s settings', () => {
     ).toBeNull();
     expect(screen.queryByText(/never makes anything up/)).toBeNull();
     expect(screen.getByText(/Nestor can be wrong/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/You remain responsible for what you send/),
+    ).toBeInTheDocument();
   });
 
   it('brings back Nestor’s round button on the other screens', () => {

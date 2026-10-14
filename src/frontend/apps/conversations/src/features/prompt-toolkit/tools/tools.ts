@@ -415,7 +415,58 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       },
       options: [
         {
+          id: 'audience',
+          part: 'context',
+          label: t('For'),
+          choices: [
+            {
+              id: 'management',
+              label: t('Management'),
+              instruction: t(
+                'I work in an administration. This summary is for my management, who must take decisions.',
+              ),
+            },
+            {
+              id: 'team',
+              label: t('My team'),
+              instruction: t(
+                'I work in an administration. This summary is for my team, who need to know what changes in practice.',
+              ),
+            },
+            {
+              id: 'public',
+              label: t('General public'),
+              instruction: t(
+                'I work in an administration. This summary is for the general public.',
+              ),
+            },
+          ],
+        },
+        {
+          id: 'focus',
+          label: t('What to keep'),
+          choices: [
+            {
+              id: 'essentials',
+              label: t('The essentials'),
+              instruction: t('the essentials'),
+            },
+            {
+              id: 'decisions',
+              label: t('The decisions to take'),
+              instruction: t('the decisions to take and what is at stake'),
+            },
+            {
+              id: 'figures',
+              label: t('The key figures'),
+              instruction: t('the key figures and what they mean'),
+            },
+          ],
+        },
+        level,
+        {
           id: 'length',
+          part: 'format',
           label: t('Length'),
           choices: [
             {
@@ -435,35 +486,27 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             },
           ],
         },
-        {
-          id: 'audience',
-          label: t('For'),
-          choices: [
-            {
-              id: 'management',
-              label: t('Management'),
-              instruction: t(
-                'senior management, who need the decisions to take',
-              ),
-            },
-            {
-              id: 'team',
-              label: t('My team'),
-              instruction: t('my team, who need the practical consequences'),
-            },
-            {
-              id: 'public',
-              label: t('General public'),
-              instruction: t('the general public, in plain language'),
-            },
-          ],
-        },
       ],
-      build: (c, source) =>
-        t(
-          'Summarise the content below in {{length}}, for {{audience}}. Only use the content provided and quote the key figures.',
-          { length: c.length, audience: c.audience },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.audience },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('Summarise this document: {{focus}}. Invent nothing.', {
+                  focus: c.focus,
+                })
+              : t(
+                  'Summarise the content below: {{focus}}. Only use the content provided and quote the key figures.',
+                  { focus: c.focus },
+                ),
+        },
+        {
+          kind: 'format',
+          text: t('Length: {{length}}.', { length: c.length }),
+        },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'actions',
@@ -471,11 +514,97 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       title: t('Extract the actions'),
       description: t('Who does what, by when: from any text.'),
       source: pastedText,
-      options: [],
-      build: (_, source) =>
-        t(
-          'List every action to take in the text below, as a table: action, person in charge, deadline, status. Write [not specified] when the text does not say. Do not invent anything.',
-        ) + block(source),
+      options: [
+        {
+          id: 'origin',
+          part: 'context',
+          label: t('From'),
+          choices: [
+            {
+              id: 'meeting',
+              label: t('A meeting'),
+              instruction: t(
+                'Here are the minutes or the notes of a meeting of my department.',
+              ),
+            },
+            {
+              id: 'email',
+              label: t('An email'),
+              instruction: t('Here is an email I received.'),
+            },
+            {
+              id: 'document',
+              label: t('A document'),
+              instruction: t('Here is a working document.'),
+            },
+          ],
+        },
+        {
+          id: 'scope',
+          label: t('Which actions'),
+          choices: [
+            {
+              id: 'all',
+              label: t('All'),
+              instruction: t('every action to take'),
+            },
+            {
+              id: 'mine',
+              label: t('Mine'),
+              instruction: t('the actions that concern me'),
+            },
+            {
+              id: 'late',
+              label: t('Late ones'),
+              instruction: t('the actions whose deadline is near or past'),
+            },
+          ],
+        },
+        level,
+        {
+          id: 'shape',
+          part: 'format',
+          label: t('Format'),
+          choices: [
+            {
+              id: 'table',
+              label: t('A table'),
+              instruction: t('A table: action, person in charge, deadline.'),
+            },
+            {
+              id: 'list',
+              label: t('A list'),
+              instruction: t(
+                'A bulleted list, one action per line, with the person in charge and the deadline.',
+              ),
+            },
+            {
+              id: 'person',
+              label: t('By person'),
+              instruction: t(
+                'A list per person, with their actions and deadlines.',
+              ),
+            },
+          ],
+        },
+      ],
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.origin },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('List {{scope}} in this text. Invent nothing.', {
+                  scope: c.scope,
+                })
+              : t(
+                  'List {{scope}} in the text below. Write [not specified] when the text does not say who or when. Do not invent anything.',
+                  { scope: c.scope },
+                ),
+        },
+        { kind: 'format', text: c.shape },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'translate',
@@ -699,8 +828,36 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
       },
       options: [
         {
+          id: 'situation',
+          part: 'context',
+          label: t('Situation'),
+          choices: [
+            {
+              id: 'project',
+              label: t('A project'),
+              instruction: t(
+                'I work in an administration and I must carry out a project.',
+              ),
+            },
+            {
+              id: 'event',
+              label: t('An event'),
+              instruction: t(
+                'I work in an administration and I must organise an event (a meeting, a seminar, a training).',
+              ),
+            },
+            {
+              id: 'change',
+              label: t('A change'),
+              instruction: t(
+                'I work in an administration and I must lead a change in my department.',
+              ),
+            },
+          ],
+        },
+        {
           id: 'shape',
-          label: t('Format'),
+          label: t('Type'),
           choices: [
             {
               id: 'plan',
@@ -723,12 +880,45 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             },
           ],
         },
+        level,
+        {
+          id: 'presentation',
+          part: 'format',
+          label: t('Format'),
+          choices: [
+            {
+              id: 'table',
+              label: t('A table'),
+              instruction: t('Present it as a table.'),
+            },
+            {
+              id: 'steps',
+              label: t('Numbered steps'),
+              instruction: t('Present it as numbered steps.'),
+            },
+            {
+              id: 'timeline',
+              label: t('Week by week'),
+              instruction: t('Present it week by week.'),
+            },
+          ],
+        },
       ],
-      build: (c, source) =>
-        t(
-          'Build {{shape}} for the project below. Present it as a table, flag the risks and the points to decide first.',
-          { shape: c.shape },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.situation },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('Build {{shape}} for this project.', { shape: c.shape })
+              : t(
+                  'Build {{shape}} for the project below. Flag the risks and the points to decide first.',
+                  { shape: c.shape },
+                ),
+        },
+        { kind: 'format', text: c.presentation },
+        { kind: 'document', text: source },
+      ]),
     },
     {
       id: 'brainstorm',
@@ -741,6 +931,28 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
         fallback: t('[the topic]'),
       },
       options: [
+        {
+          id: 'for',
+          part: 'context',
+          label: t('For'),
+          choices: [
+            {
+              id: 'team',
+              label: t('My team'),
+              instruction: t('I am preparing a reflection with my team.'),
+            },
+            {
+              id: 'management',
+              label: t('My management'),
+              instruction: t('I am preparing proposals for my management.'),
+            },
+            {
+              id: 'myself',
+              label: t('Myself'),
+              instruction: t('I am thinking on my own about a work topic.'),
+            },
+          ],
+        },
         {
           id: 'method',
           label: t('Method'),
@@ -768,14 +980,45 @@ export const getDailyTools = (t: TFunction): DailyTool[] => {
             },
           ],
         },
+        level,
+        {
+          id: 'shape',
+          part: 'format',
+          label: t('Format'),
+          choices: [
+            {
+              id: 'list',
+              label: t('A list'),
+              instruction: t('A short list, one idea per line.'),
+            },
+            {
+              id: 'table',
+              label: t('A table'),
+              instruction: t('A table: idea, benefit, difficulty.'),
+            },
+            {
+              id: 'prose',
+              label: t('Short paragraphs'),
+              instruction: t('Short paragraphs.'),
+            },
+          ],
+        },
       ],
-      build: (c, source) =>
-        t(
-          'On the topic below, give {{method}}. End with the two ideas you would explore first, and why.',
-          {
-            method: c.method,
-          },
-        ) + block(source),
+      ...byParts((c, source) => [
+        { kind: 'context', text: c.for },
+        {
+          kind: 'instruction',
+          text:
+            c.level === 'simple'
+              ? t('On this topic, give {{method}}.', { method: c.method })
+              : t(
+                  'On the topic below, give {{method}}. End with the two ideas you would explore first, and why.',
+                  { method: c.method },
+                ),
+        },
+        { kind: 'format', text: c.shape },
+        { kind: 'document', text: source },
+      ]),
     },
   ];
 };

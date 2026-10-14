@@ -904,9 +904,13 @@ Reply with valid JSON only:
  * Models sometimes return the prompt as an object (sections, task lists):
  * turn it back into readable text rather than failing.
  */
+/** Markdown emphasis the model slips in (*mot*, **mot**): shown as words. */
+const withoutStars = (text: string) =>
+  text.replace(/(\*{1,2})(?=\S)([^*\n]*?\S)\1/g, '$2');
+
 export const asPlainText = (value: unknown, depth = 0): string => {
   if (typeof value === 'string') {
-    return value;
+    return withoutStars(value);
   }
   if (typeof value === 'number') {
     return String(value);
@@ -1284,6 +1288,7 @@ Be specific to these exchanges, warm and concrete; never generic. Raise an issue
 Never invent facts. In "prompt", never brackets, placeholders or blanks: leave out what only the user knows, the user adds it.
 Blanks the assistant left for the user to fill ([Nom de l'agent], [Votre nom]) are normal, never an issue and never « pas utilisable »: say it calmly in "try", e.g. « Avant d'envoyer : remplacez [Nom de l'agent] et [Votre nom]. »
 When the request asks for what belongs to the user's own organisation or case (its criteria, rules, figures, people, dates, decisions) and gives no document or source, the assistant cannot know them: its answer is general knowledge or invented. Say it first in "issue" (« Ces critères sont généraux : l'Assistant ne connaît pas ceux de votre réseau. »), and in "try" suggest pasting the source or asking the assistant to separate what is general from what must be checked. Never say such a request « leaves no room for invention ».
+When the answer cites a text (a law, a decree, an article, a circular, a case number, a jurisprudence), say in "try" to check it at its source (Légifrance, the official bulletin, the ministry's intranet) before using it: the assistant may cite from memory and be wrong.
 Check the answer against the requests: any fact the requests did not give (a year, a date, a name, a place, an activity, a figure, a justification) is invented by the assistant. Name it first in "issue" as invented, to check or remove before use; this is the most useful thing to teach.
 Blanks for the sender's own name, title or signature are a light reminder to fill in before sending, never "not usable".
 Write correct French: « à l'Assistant », never « au assistant ».

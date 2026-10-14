@@ -3,6 +3,10 @@
   "en": { "translation": { "Login": "Login", "Logout": "Logout" } },
   "fr": {
     "translation": {
+      "Always on, whatever the settings: simple words. Nestor can be wrong: check dates, figures and rules before sending. You remain responsible for what you send. These settings stay on this computer.": "Toujours actif, quels que soient les réglages : des mots simples. Nestor peut se tromper : vérifiez dates, chiffres et règles avant d’envoyer. Vous restez responsable de ce que vous envoyez. Ces réglages restent sur cet ordinateur.",
+      "Nothing has left yet. Remove it before sending, or replace it with a neutral marker (« [numéro] », « Personne A »): the task often works without it.": "Rien n’est encore parti. Retirez-la avant d’envoyer, ou remplacez-la par un repère neutre (« [numéro] », « Personne A ») : la tâche se fait souvent sans elle.",
+      "⚠ Your request for the Assistant holds {{what}}.": "⚠ Votre demande pour l’Assistant contient {{what}}.",
+      "a SIREN number": "un numéro SIREN",
       "Watch the film instead (3 min)": "Voir plutôt le film (3 min)",
       "Back to the tour": "Retour à la visite",
       "Your week on the home page": "Votre semaine sur l’accueil",

@@ -953,9 +953,13 @@ export const ToolsPanel = () => {
               $gap="10px"
               $css={familyCardCss}
             >
-              <Box $align="center" $justify="center" $css={iconBadgeCss(56)}>
-                <Icon iconName={tool.icon} $size="30px" $withThemeInherited />
-              </Box>
+              {/* Nestor doing what the tool does. */}
+              <img
+                src={`${import.meta.env.BASE_URL}assets/nestor-tool-${tool.id}.webp`}
+                alt=""
+                width={88}
+                height={88}
+              />
               <Text $size="lg" $weight="800" $textAlign="center">
                 {cardTitles[tool.id] ?? tool.title}
               </Text>

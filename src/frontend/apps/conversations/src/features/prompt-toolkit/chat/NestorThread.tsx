@@ -2,18 +2,28 @@ import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { keyframes } from 'styled-components';
 
+import type { SensitiveKind } from '../coach/sensitiveData';
 import { DemoNoteView } from '../demo/DemoNoteView';
 import { type DemoNote, useDemoStore } from '../stores/useDemoStore';
 import { useTourStore } from '../stores/useTourStore';
 
 import { CloseMatches } from './CloseMatches';
 import { InChatRounds } from './InChatRounds';
-import { MessageView } from './NestorMessages';
+import { MessageView, SENSITIVE_WORDS } from './NestorMessages';
 import { Welcome } from './Welcome';
 import { NESTOR_AVATAR_URL } from './avatar';
 import type { CloseMatchesFound } from './closeMatches';
 import { foldSummary, foldThread } from './fold';
-import { C, Fold, FoldChevron, Hello, ThreadInner, ThreadScroll } from './ui';
+import {
+  C,
+  Fold,
+  FoldChevron,
+  Hello,
+  NestorBubble,
+  ThreadInner,
+  ThreadScroll,
+  Warn,
+} from './ui';
 import type { NestorChat } from './useNestorChat';
 
 const NO_NOTES: DemoNote[] = [];
@@ -79,11 +89,14 @@ export const NestorThread = ({
   pistes,
   close,
   thinking = false,
+  fieldSensitive = [],
 }: {
   chat: NestorChat;
   pistes: string[];
   /** Nestor reads what is being typed: three dots move. */
   thinking?: boolean;
+  /** Personal data in the request typed for the Assistant: a warning. */
+  fieldSensitive?: SensitiveKind[];
   /** A case and a model close to what is being typed, under the ideas. */
   close?: CloseMatchesFound;
 }) => {
@@ -205,6 +218,23 @@ export const NestorThread = ({
             }}
             chat={chat}
           />
+        )}
+        {/* A safety warning, the one thing shown without being asked. */}
+        {fieldSensitive.length > 0 && (
+          <NestorBubble>
+            <Warn>
+              {t('⚠ Your request for the Assistant holds {{what}}.', {
+                what: fieldSensitive
+                  .map((kind) => t(SENSITIVE_WORDS[kind]))
+                  .join(', '),
+              })}
+            </Warn>
+            <span>
+              {t(
+                'Nothing has left yet. Remove it before sending, or replace it with a neutral marker (« [numéro] », « Personne A »): the task often works without it.',
+              )}
+            </span>
+          </NestorBubble>
         )}
         {close && <CloseMatches {...close} />}
         {thinking && !chat.busy && (
